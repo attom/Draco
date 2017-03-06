@@ -4,9 +4,7 @@
  * \author  Paul Henning
  * \brief   Declaration of class Data_Table
  * \note    Copyright (C) 2016-2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- * \version $Id$
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 #ifndef dsxx_Data_Table_hh
 #define dsxx_Data_Table_hh
@@ -16,10 +14,10 @@
 #include <vector>
 
 /*!
-  Data_Table provides read-only, DBC-checked, container-like
-  access to a sequential range of memory locations, or a scalar.  This is
-  useful in situations where the amount of data changes depending on
-  compile-time factors, but you always want to access it as an array.
+  Data_Table provides read-only, DBC-checked, container-like access to a
+  sequential range of memory locations, or a scalar.  This is useful in
+  situations where the amount of data changes depending on compile-time factors,
+  but you always want to access it as an array.
 */
 
 namespace rtt_dsxx {
@@ -48,14 +46,14 @@ private:
   const_iterator const d_begin;
   const_iterator const d_end;
 
-  /*! We hold a copy of the scalar to prevent the problems that would arise
-     *  if you took a pointer to a function-return temporary. */
+  /*! We hold a copy of the scalar to prevent the problems that would arise if
+   *  you took a pointer to a function-return temporary. */
   T const d_value;
 };
 
-/*! 
+/*!
   Copy constructor, but update the pointers to point to the local d_value if
-  they pointed to the d_value in the rhs. 
+  they pointed to the d_value in the rhs.
 */
 template <typename T>
 Data_Table<T>::Data_Table(Data_Table<T> const &rhs)
@@ -82,9 +80,9 @@ Data_Table<T> &Data_Table<T>::operator=(Data_Table<T> const &rhs) {
 }
 
 /*!
-  Bad things will happen if you alter the size of the source vector while
-  this Data_Table is in existence.
-  
+  Bad things will happen if you alter the size of the source vector while this
+  Data_Table is in existence.
+
   \bug Removed ctor because it does not conform to the C++ standard
   (dereferencing of end iterator is not allowed).  This particular ctor causes
   run time failures for STLport and MSVC/Debug.
@@ -105,7 +103,7 @@ inline Data_Table<T>::Data_Table(const_iterator const begin,
   Require(!(begin > end));
 }
 
-/*! 
+/*!
   Copy the scalar into a local variable, and set the pointers to that copy.
 */
 template <typename T>

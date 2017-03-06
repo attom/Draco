@@ -33,6 +33,7 @@ message(" ")
 message( STATUS "Configuring Level 2 packages --" )
 add_dir_if_exists( c4 )           # needs ds++
 add_dir_if_exists( cdi )          # needs ds++
+add_dir_if_exists( compton )      # needs ds++
 add_dir_if_exists( device )       # needs ds++
 add_dir_if_exists( linear )       # needs ds++
 add_dir_if_exists( mesh_element ) # needs ds++
