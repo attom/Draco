@@ -80,12 +80,53 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
   is_dependent_.resize(number_of_ordinates, false);
   alpha_.resize(number_of_ordinates, 0.0);
   tau_.resize(number_of_ordinates, 1.0);
-
-  // We rely on OrdinateSet to have already sorted the ordinates and
-  // inserted the starting ordinates for each level. We assume that the
-  // starting ordinates are distinguished by zero quadrature weight.
-
   levels_.resize(number_of_ordinates);
+
+  bool const useLevels = (geometry == rtt_mesh_element::AXISYMMETRIC ||
+                          geometry == rtt_mesh_element::SPHERICAL ||
+                          (geometry == rtt_mesh_element::CARTESIAN &&
+                           this->dimension() == 2 &&
+                           this->ordering() == LEVEL_ORDERED));
+
+  if (useLevels) {
+    // We rely on OrdinateSet to have already sorted the ordinates and
+    // inserted the starting ordinates for each level. We NO LONGER assume
+    // starting ordinates have zero quadrature weights. INSTEAD, we determine
+    // starting ordinates based on when eta changes.
+
+    // The use of the first_angles_ vector is to find the index into the first
+    // ordinate on each level
+
+      // TODO: Can use this to generalize new level detection, then later use for new levels
+      int level = 0;
+      double etap;
+      double eta;
+      for (unsigned a = 0; a < number_of_ordinates; a++) {
+        levels_[a] = level;
+
+        if (a > 0) {
+          if (!soft_equiv(eta, etap)) {
+            // New level
+            level++;
+            first_angles_.push_back(a - 1);
+            etap = eta;
+          } else {
+            etap = eta;
+            eta = ordinates[a].eta();
+          }
+        } else {
+          eta = ordinates[a].eta();
+          etap = eta;
+        }
+      }
+
+      first_angles_.push_back(number_of_ordinates);
+      number_of_levels_ = level + 1;
+
+  } else {
+    number_of_levels_ = 0;
+  }
+
   if (geometry == rtt_mesh_element::AXISYMMETRIC) {
     vector<double> C;
 
@@ -94,10 +135,14 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
     for (unsigned a = 0; a < number_of_ordinates; a++) {
       double const mu = ordinates[a].mu();
       double const wt = ordinates[a].wt();
-      if (wt != 0 || (wt == 0 && mu > 0))
+      if (wt != 0 || (wt == 0 && mu > 0)) // TODO: Generalize level check
       // Not a starting ordinate.  Use Morel's recurrence relations
       // to determine the next ordinate derivative coefficient.
       {
+          // TODO HERE: Sort of a mess: uses a check on wt to see if a starting direction
+          // Could duplicate starting directions and do a bunch of checks on repeated mu,eta
+          // Could add member variable of starting direction locations, or some other sentinel
+          // Worry about sort
         Check(a > 0);
         alpha_[a] = alpha_[a - 1] + mu * wt;
         Csum += wt;
@@ -164,7 +209,7 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
       double const wt = ordinates[a].wt();
       double const omm = omp;
       double const mum = mup;
-      if (wt != 0)
+      if (wt != 0) // TODO: Generalize level check
       // Not a new level.  Apply Morel's recurrence relation.
       {
         omp = omm - rtt_units::PI * C[level] * wt;
@@ -180,11 +225,15 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
         level++;
       }
       mup = sinth * std::cos(omp);
-      if (wt != 0) {
+      if (wt != 0) { // TODO: Generalize new level check
         tau_[a] = (mu - mum) / (mup - mum);
         //tau_[a] = 0.5;                          // old school
 
-        Check(tau_[a] >= 0.0 && tau_[a] < 1.0);
+        if (abs(eta) == 1.0) {
+            tau_[a] = 1.0;
+        }
+        std::cout << "MOREL " << mu << " " << eta << " " << wt << " " << tau_[a] << " " << omm << " " << mum << " " << mup <<  "\n";
+        Check(tau_[a] >= 0.0 && tau_[a] <= 1.0);
       }
     }
   } else if (geometry == rtt_mesh_element::SPHERICAL) {
@@ -201,7 +250,7 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
       double const mu(ordinates[a].mu());
       double const wt(ordinates[a].wt());
 
-      if (wt != 0) {
+      if (wt != 0) { // TODO: Generalize new level check
         is_dependent_[a] = true;
         alpha_[a] = alpha_[a - 1] + 2 * wt * mu;
       } else {
@@ -223,12 +272,12 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
 
       double const mum = mup;
 
-      if (wt != 0)
+      if (wt != 0) // TODO: Generalize new level check
         mup = mum + 2 * wt * rnorm;
       else
         mup = mu;
 
-      if (wt != 0) {
+      if (wt != 0) { // TODO: Generalize new level check
         tau_[a] = (mu - mum) / (2 * wt * rnorm);
 
         Check(tau_[a] > 0.0 && tau_[a] <= 1.0);
@@ -242,6 +291,7 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
       // different from the use for axisymmetric coordinates; it is used to
       // record find the index into the first ordinate on each level
 
+      // TODO: Can use this to generalize new level detection, then later use for new levels
       int level = 0;
       double etap;
       double eta;
@@ -439,6 +489,7 @@ bool Ordinate_Space::check_class_invariants() const {
     unsigned const number_of_ordinates = ordinates.size();
 
     // Check that the number of levels is correct.
+    // TODO: Remove the invariant that # levels = # zero-weighted ordinates with mu < 0
     unsigned levels = 0;
     for (unsigned a = 0; a < number_of_ordinates; ++a) {
       if ((ordinates[a].wt() == 0) && (ordinates[a].mu() < 0.0)) {
@@ -487,6 +538,20 @@ void Ordinate_Space::compute_reflection_maps_() {
         reflect_xi_[a] = ap;
         reflect_xi_[ap] = a;
       }
+    }
+  }
+
+  // Make reflection mapping the identity for tangentially aligned ordinates
+  for (unsigned a = 0; a + 1 < number_of_ordinates; ++a) {
+    if (abs(ordinates[a].mu()) == 1.0) {
+      reflect_eta_[a] = a;
+      reflect_xi_[a] = a;
+    } else if (abs(ordinates[a].eta()) == 1.0) {
+      reflect_mu_[a] = a;
+      reflect_xi_[a] = a;
+    } else if (abs(ordinates[a].xi()) == 1.0) {
+      reflect_mu_[a] = a;
+      reflect_eta_[a] = a;
     }
   }
 }

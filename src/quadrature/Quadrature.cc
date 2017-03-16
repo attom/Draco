@@ -12,6 +12,9 @@
 #include "Sn_Ordinate_Space.hh"
 #include <algorithm>
 
+// RM
+#include <iostream>
+
 namespace rtt_quadrature {
 typedef Ordinate_Set::Ordering Ordering;
 
@@ -124,14 +127,21 @@ void Quadrature::add_1D_starting_directions_(
     if (geometry == rtt_mesh_element::SPHERICAL) {
       // insert mu=-1 starting direction
       vector<Ordinate>::iterator a = ordinates.begin();
+      // TODO: Test if ordinate already exists before inserting
       a = ordinates.insert(a, Ordinate(-1.0, 0.0, 0.0, 0.0));
 
       // insert mu=1 starting direction
+      // TODO: Test if ordinate already exists before inserting
       if (add_extra_starting_directions)
         ordinates.push_back(Ordinate(1.0, 0.0, 0.0, 0.0));
     } else if (geometry == rtt_mesh_element::AXISYMMETRIC) {
       Insist(false, "should not be reached");
     }
+  }
+  //RM:
+  for (vector<Ordinate>::iterator a = ordinates.begin();
+       a != ordinates.end(); ++a) {
+    std::cout << "DBG IN " << a->mu() << " " << a->eta() << " " << a->xi() << " " << a->wt() << "\n";
   }
 }
 
@@ -148,6 +158,13 @@ void Quadrature::add_2D_starting_directions_(
       std::sort(ordinates.begin(), ordinates.end(),
                 Ordinate_Set::level_compare);
 
+      //RM:
+      for (vector<Ordinate>::iterator a = ordinates.begin();
+           a != ordinates.end(); ++a) {
+        std::cout << "DBG IN " << a->mu() << " " << a->eta() << " " << a->xi() << " " << a->wt() << "\n";
+      }
+      std::cout << add_extra_starting_directions << "\n";
+
       // Define an impossible value for a direction cosine.  We use this to
       // simplify the logic of determining when we are at the head of a new
       // level set.
@@ -162,7 +179,14 @@ void Quadrature::add_2D_starting_directions_(
            a != ordinates.end(); ++a) {
         double const old_eta = eta;
         eta = a->eta();
-        if (!soft_equiv(eta, old_eta))
+        std::cout << "DBG START  " << a->mu() << " " << a->eta() << " " << a->xi() << "\n";
+        std::cout << "DBG DESIRE " << -sqrt(1.0 - eta * eta) << " " << eta << " " << 0.0 << "\n";
+        bool const ordinateExists =
+            (soft_equiv(a->mu(), -sqrt(1.0 - eta * eta)) &&
+             soft_equiv(a->eta(), eta) && soft_equiv(a->xi(), 0.0));
+        if (ordinateExists) std::cout << " Same! " << "\n";
+        // TODO: Don't insert either + or - if it already exists (which would happen, e.g., with Lobatto)
+        if (!soft_equiv(eta, old_eta) && !ordinateExists) // TODO: Verify this is what you want
         // We are at the start of a new level.  Insert the starting ordinate.
         // This has xi==0 and mu determined by the normalization condition.
         {
@@ -184,6 +208,11 @@ void Quadrature::add_2D_starting_directions_(
       if (add_extra_starting_directions)
         ordinates.push_back(Ordinate(sqrt(1.0 - eta * eta), eta, 0.0, 0.0));
     }
+  }
+
+  for (vector<Ordinate>::iterator a = ordinates.begin();
+       a != ordinates.end(); ++a) {
+    std::cout << "DBG OUT  " << a->mu() << " " << a->eta() << " " << a->xi() << " " << a->wt() << "\n";
   }
 }
 

@@ -82,6 +82,10 @@ private:
                     unsigned eta_axis, bool include_starting_directions,
                     bool include_extra_directions) const;
 
+  unsigned
+  create_aligned_ordinates_(vector<double> &mu, vector<double> &eta,
+                            vector<double> &wt) const;
+
   // DATA
 
   bool has_axis_assignments_;

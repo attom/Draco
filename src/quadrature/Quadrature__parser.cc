@@ -16,6 +16,7 @@
 #include "Level_Symmetric.hh"
 #include "Lobatto.hh"
 #include "Product_Chebyshev_Legendre.hh"
+#include "Product_Chebyshev_Lobatto.hh"
 #include "Square_Chebyshev_Legendre.hh"
 #include "Tri_Chebyshev_Legendre.hh"
 #include "parser/Abstract_Class_Parser.hh"
@@ -49,6 +50,11 @@ std::shared_ptr<Quadrature> parse_square_cl(Token_Stream &tokens) {
 //---------------------------------------------------------------------------//
 std::shared_ptr<Quadrature> parse_product_cl(Token_Stream &tokens) {
   return Product_Chebyshev_Legendre::parse(tokens);
+}
+
+//---------------------------------------------------------------------------//
+std::shared_ptr<Quadrature> parse_product_clo(Token_Stream &tokens) {
+  return Product_Chebyshev_Lobatto::parse(tokens);
 }
 
 //---------------------------------------------------------------------------//
@@ -90,6 +96,8 @@ Class_Parse_Table<Quadrature>::Class_Parse_Table() {
     register_quadrature("square cl", parse_square_cl);
 
     register_quadrature("product cl", parse_product_cl);
+
+    register_quadrature("product clo", parse_product_clo);
 
     register_quadrature("double gauss", parse_double_gauss);
 
