@@ -82,6 +82,8 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
   tau_.resize(number_of_ordinates, 1.0);
   levels_.resize(number_of_ordinates);
 
+  // TODO: Finish
+  /*
   bool const useLevels = (geometry == rtt_mesh_element::AXISYMMETRIC ||
                           geometry == rtt_mesh_element::SPHERICAL ||
                           (geometry == rtt_mesh_element::CARTESIAN &&
@@ -126,6 +128,7 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
   } else {
     number_of_levels_ = 0;
   }
+  */
 
   if (geometry == rtt_mesh_element::AXISYMMETRIC) {
     vector<double> C;
