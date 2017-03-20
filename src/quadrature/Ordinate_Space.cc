@@ -142,10 +142,10 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
       // Not a starting ordinate.  Use Morel's recurrence relations
       // to determine the next ordinate derivative coefficient.
       {
-          // TODO HERE: Sort of a mess: uses a check on wt to see if a starting direction
-          // Could duplicate starting directions and do a bunch of checks on repeated mu,eta
-          // Could add member variable of starting direction locations, or some other sentinel
-          // Worry about sort
+        // TODO HERE: Sort of a mess: uses a check on wt to see if a starting direction
+        // Could duplicate starting directions and do a bunch of checks on repeated mu,eta
+        // Could add member variable of starting direction locations, or some other sentinel
+        // Worry about sort
         Check(a > 0);
         alpha_[a] = alpha_[a - 1] + mu * wt;
         Csum += wt;
@@ -233,9 +233,10 @@ void Ordinate_Space::compute_angle_operator_coefficients_() {
         //tau_[a] = 0.5;                          // old school
 
         if (abs(eta) == 1.0) {
-            tau_[a] = 1.0;
+          tau_[a] = 1.0;
         }
-        std::cout << "MOREL " << mu << " " << eta << " " << wt << " " << tau_[a] << " " << omm << " " << mum << " " << mup <<  "\n";
+        std::cout << "MOREL " << mu << " " << eta << " " << wt << " " << tau_[a]
+                  << " " << omm << " " << mum << " " << mup << "\n";
         Check(tau_[a] >= 0.0 && tau_[a] <= 1.0);
       }
     }
