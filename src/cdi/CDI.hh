@@ -17,6 +17,7 @@
 #include "OdfmgOpacity.hh"
 #include "ds++/Soft_Equivalence.hh"
 #include <algorithm>
+#include <limits>
 #include <memory>
 
 //---------------------------------------------------------------------------//
@@ -189,15 +190,42 @@ static double polylog_series_minus_one_planck(double const x,
   return poly;
 }
 
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Compute the difference between an integrated Planck and Rosseland
+ * curves over \f$ (0,\nu) \f$.
+ *
+ * This helper function is used by CDI::integrate_planck_rosseland
+ * (also in this file).
+ * 
+ * ==> The underlying function x^4/(exp(x) - 1) can be difficult to evaluate 
+ *     with double precision when x is very small. Instead, when x < 1.e-5,
+ *     we use the first 2 terms in the expansion x^4/(exp(x) - 1) ~ x^3(1-x/2),
+ *     remaining terms are x^5/12 + O(x^7).
+ * ==> When x is large, e^x reaches floating point overflow rapidly, thus the
+ *     the function is modified to the form exp(-x)*x^4/(1-exp(-x)). Accuracy of
+ *     1-exp(-x) suffers when x is large. However, std::expm1 should improve
+ *     the accuracy of that evaluation.
+ * ==> The large x fix might be able to be changed in the future if bug listed
+ *     in man page is corrected. 
+ * 
+ * \param  freq The frequency for the upper limit of the integrand. 
+ * \param  exp_freq exp(-freq)
+ * \return The difference between the integrated Planck and Rosseland 
+ * curves over \f$ (0,\nu) \f$.
+ */
 static double Planck2Rosseland(double const freq, double const exp_freq) {
   Check(rtt_dsxx::soft_equiv(exp_freq, std::exp(-freq)));
 
   double const freq_3 = freq * freq * freq;
+  // ensure freq_3 is not an overflow
+  Check(freq > 1.0 ? freq < std::numeric_limits<decltype(freq)>::max() / freq_3
+                   : true);
 
-  double factor;
+  double factor(0.0);
 
   if (freq > 1.0e-5)
-    factor = NORM_FACTOR * (freq_3 * freq) / std::expm1(freq);
+    factor = NORM_FACTOR * exp_freq * freq_3 * freq / -std::expm1(-freq);
   else
     factor = NORM_FACTOR * freq_3 * (1 - 0.5 * freq);
 

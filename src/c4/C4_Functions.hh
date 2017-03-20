@@ -143,6 +143,14 @@ DLL_PUBLIC_c4 int send_udt(const T *buffer, int size, int destination,
                            C4_Datatype &, int tag = C4_Traits<T *>::tag);
 
 //---------------------------------------------------------------------------//
+//! Do a point-to-point, blocking send-receive.
+template <typename TS, typename TR>
+DLL_PUBLIC_c4 int send_receive(TS *sendbuf, int sendcount, int destination,
+                               TR *recvbuf, int recvcount, int source,
+                               int sendtag = C4_Traits<TS *>::tag,
+                               int recvtag = C4_Traits<TR *>::tag);
+
+//---------------------------------------------------------------------------//
 //! Do a point-to-point, blocking receive of a user-defined type.
 template <typename T>
 DLL_PUBLIC_c4 int receive_udt(T *buffer, int size, int source, C4_Datatype &,

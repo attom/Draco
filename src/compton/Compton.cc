@@ -1,19 +1,18 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   compton/Compton_NWA.cc
+ * \file   compton/Compton.cc
  * \author Kendra Keady
  * \date   Tues Feb 21 2017
- * \brief  Implementation file for compton NWA interface
+ * \brief  Implementation file for compton CSK_generator interface
  * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 // headers provided in draco:
-#include "Compton_NWA.hh"
+#include "Compton.hh"
 #include "ds++/Assert.hh"
-// headers provided in Compton_NWA include directory:
+// headers provided in Compton include directory:
 #include "compton_file.hh"
-#include "multigroup_compton_data.hh"
 #include "multigroup_data_types.hh"
 #include "multigroup_lib_builder.hh"
 
@@ -27,13 +26,13 @@ namespace rtt_compton {
 /*!
  * \brief Constructor for an existing multigroup libfile.
  *
- * This calls NWA methods to read the data file and store everything in a
+ * This calls CSK_generator methods to read the data file and store everything in a
  * Compton data object, a smart pointer to which is then passed to (and held by)
- * the NWA etemp_interp class.
+ * the CSK_generator etemp_interp class.
  *
  * \param filehandle The name of the multigroup file to use for Compton scatters
  */
-Compton_NWA::Compton_NWA(const std::string &filehandle) {
+Compton::Compton(const std::string &filehandle) {
 
   // Check input validity
   Require(std::ifstream(filehandle).good());
@@ -52,16 +51,16 @@ Compton_NWA::Compton_NWA(const std::string &filehandle) {
 /*!
  * \brief Constructor for an existing pointwise file and a multigroup structure.
  *
- * This calls NWA methods to read the pointwise library and construct a
+ * This calls CSK_generator methods to read the pointwise library and construct a
  * multigroup Compton data object, a smart pointer to which is then passed
- * to (and held by) the NWA etemp_interp class.
+ * to (and held by) the CSK_generator etemp_interp class.
  *
  * \param filehandle The name of the pointwise lib to build MG data from
  * \param grp_bds    A vector containing the multigroup bounds (in keV)
  * \param n_xi       The number of angular points/Legendre moments desired
  */
-Compton_NWA::Compton_NWA(const std::string &filehandle,
-                         const std::vector<double> &grp_bds, const size_t nxi) {
+Compton::Compton(const std::string &filehandle,
+                 const std::vector<double> &grp_bds, const size_t nxi) {
 
   // Check input validity
   Require(std::ifstream(filehandle).good());
@@ -109,7 +108,18 @@ Compton_NWA::Compton_NWA(const std::string &filehandle,
  * \return      n_grp x n_grp x n_xi interpolated scattering kernel values
  */
 std::vector<std::vector<std::vector<double>>>
-Compton_NWA::interpolate(const double etemp) {
+Compton::interpolate(const double etemp) {
+
+  // Be sure the passed electron temperature is within the bounds of the lib!
+  Require(etemp >= ei->get_min_etemp());
+  Require(etemp <= ei->get_max_etemp());
+
+  // call the appropriate routine in the electron interp object
+  return ei->interpolate_etemp(etemp);
+}
+
+std::vector<std::vector<std::vector<double>>>
+Compton::interpolate(const double etemp) const {
 
   // Be sure the passed electron temperature is within the bounds of the lib!
   Require(etemp >= ei->get_min_etemp());

@@ -10,16 +10,16 @@ cmake_minimum_required(VERSION 3.0.0)
 project( compton CXX )
 
 ##---------------------------------------------------------------------------##
-# Requires NWA
+# Requires COMPTON
 ##---------------------------------------------------------------------------##
-find_package( NWA QUIET )
-set_package_properties( NWA PROPERTIES
+find_package( COMPTON QUIET )
+set_package_properties( COMPTON PROPERTIES
    DESCRIPTION "Access multigroup Compton scattering data."
    TYPE OPTIONAL
    PURPOSE "Required for bulding the compton component."
    )
 
-if( NWA_FOUND )
+if( COMPTON_FOUND )
 # ---------------------------------------------------------------------------- #
 # Source files
 # ---------------------------------------------------------------------------- #
@@ -42,7 +42,7 @@ include_directories(
    ${PROJECT_SOURCE_DIR}/..   # ds++ and compton header files
    ${dsxx_BINARY_DIR}         # ds++/config.h
    ${ode_BINARY_DIR}          # ode/config.h
-   ${NWA_INCLUDE_DIR}
+   ${COMPTON_INCLUDE_DIR}
 )
 
 # ---------------------------------------------------------------------------- #
@@ -54,9 +54,9 @@ add_component_library(
    TARGET_DEPS  Lib_dsxx
    LIBRARY_NAME compton
    SOURCES      "${sources}"
-   VENDOR_LIST "NWA"
-   VENDOR_LIBS "${NWA_LIBRARY}"
-   VENDOR_INCLUDE_DIRS "${NWA_INCLUDE_DIR}" )
+   VENDOR_LIST "COMPTON"
+   VENDOR_LIBS "${COMPTON_LIBRARY}"
+   VENDOR_INCLUDE_DIRS "${COMPTON_INCLUDE_DIR}" )
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions
@@ -79,4 +79,4 @@ endif()
 
 process_autodoc_pages()
 
-endif() # NWA_FOUND
+endif() # COMPTON_FOUND

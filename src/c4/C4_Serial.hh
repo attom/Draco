@@ -73,6 +73,14 @@ DLL_PUBLIC_c4 int send_udt(const T * /*buffer*/, int /*size*/,
   return C4_SUCCESS;
 }
 
+template <typename TS, typename TR>
+DLL_PUBLIC_c4 int send_receive(TS * /*sendbuf*/, int /*sendcount*/,
+                               int /*destination*/, TR * /*recvbuf*/,
+                               int /*recvcount*/, int /*source*/,
+                               int /*sendtag*/, int /*recvtag*/) {
+  Insist(false, "send_receive is not support for C4_SCALAR builds.");
+}
+
 //---------------------------------------------------------------------------//
 
 template <class T>

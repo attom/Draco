@@ -83,6 +83,27 @@ template DLL_PUBLIC_c4 int broadcast<float>(float *, int, int);
 template DLL_PUBLIC_c4 int broadcast<double>(double *, int, int);
 template DLL_PUBLIC_c4 int broadcast<long double>(long double *, int, int);
 
+template DLL_PUBLIC_c4 int send_receive(char *sendbuf, int sendcount,
+                                        int destination, char *recvbuf,
+                                        int recvcount, int source, int sendtag,
+                                        int recvtag);
+template DLL_PUBLIC_c4 int send_receive(int *sendbuf, int sendcount,
+                                        int destination, int *recvbuf,
+                                        int recvcount, int source, int sendtag,
+                                        int recvtag);
+template DLL_PUBLIC_c4 int send_receive(long *sendbuf, int sendcount,
+                                        int destination, long *recvbuf,
+                                        int recvcount, int source, int sendtag,
+                                        int recvtag);
+template DLL_PUBLIC_c4 int send_receive(float *sendbuf, int sendcount,
+                                        int destination, float *recvbuf,
+                                        int recvcount, int source, int sendtag,
+                                        int recvtag);
+template DLL_PUBLIC_c4 int send_receive(double *sendbuf, int sendcount,
+                                        int destination, double *recvbuf,
+                                        int recvcount, int source, int sendtag,
+                                        int recvtag);
+
 } // end namespace rtt_c4
 
 #endif // C4_MPI

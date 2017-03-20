@@ -32,6 +32,7 @@ Product_Chebyshev_Legendre::parse(Token_Stream &tokens) {
   unsigned azimuthal_order = parse_positive_integer(tokens);
   tokens.check_semantics(azimuthal_order > 0,
                          "order must be greater than zero");
+  tokens.check_semantics(azimuthal_order % 2 == 0, "order must be even");
 
   bool has_axis_assignments;
   unsigned mu_axis, eta_axis;

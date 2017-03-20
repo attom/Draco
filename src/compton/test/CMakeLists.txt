@@ -14,7 +14,7 @@ project( compton_test CXX )
 # ---------------------------------------------------------------------------- #
 
  set( test_sources
-  ${PROJECT_SOURCE_DIR}/tCompton_NWA.cc )
+  ${PROJECT_SOURCE_DIR}/tCompton.cc )
  file( GLOB compton_data *.compton )
 
 # ---------------------------------------------------------------------------- #
