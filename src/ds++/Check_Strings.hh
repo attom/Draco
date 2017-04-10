@@ -81,7 +81,6 @@ struct strings_equal {
  *
  * \sa Other string checking utilities are available in
  *         rtt_dsxx::check_string_lengths, and rtt_dsxx::check_strings_unique.
- *
  */
 template <class IT>
 std::vector<IT> check_string_chars(IT const &first, IT const &last,

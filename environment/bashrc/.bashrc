@@ -48,10 +48,10 @@ case ${-} in
 
    # Generic Settings
 
-   alias ll='ls -Flh'
-   alias lt='ls -Flth'
-   alias ls='ls -F'
-   alias l.='ls -h -d .*'
+   alias ll='\ls -Flh'
+   alias lt='\ls -Flth'
+   alias ls='\ls -F'
+   alias l.='\ls -h -d .*'
 
    # alias a2ps='a2ps --sides=duplex --medium=letter'
    alias btar='tar --use-compress-program /usr/bin/bzip2'
@@ -79,11 +79,11 @@ case ${-} in
    if test "${TERM}" != emacs &&
        test "${TERM}" != dumb; then
      # replace list aliases with ones that include colorized output.
-     alias ll='ls --color -Flh'
-     alias l.='ls --color -hd .*'
-     alias lt='ls --color -Flth'
-     alias lt.='ls --color -Flth .*'
-     alias ls='ls --color -F'
+     alias ll='\ls --color -Flh'
+     alias l.='\ls --color -hd .*'
+     alias lt='\ls --color -Flth'
+     alias lt.='\ls --color -Flth .*'
+     alias ls='\ls --color -F'
    fi
 
    # Turquoise network
@@ -226,10 +226,8 @@ if test ${DRACO_BASHRC_DONE:-no} = no && test ${INTERACTIVE} = true; then
     # only define if they do not already exist...
     function dracoenv ()
     {
-      for m in $dracomodules; do
-        echo $m
-        module load $m
-      done
+      echo $dracomodules
+      module load $dracomodules
     }
     function rmdracoenv ()
     {

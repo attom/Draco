@@ -216,13 +216,11 @@ endmacro()
 ##   MPI_HYPERTHREADING
 ##
 ## See also:
-##   - Try running 'lstopo' for a graphical view of the local
-##     topology.
-##   - EAP's flags can be found in Test.rh/General/run_job.pl (look
-##     for $other_args).  In particular, it may be useful to examine
-##     EAP's options for srun or aprun.
-##   - http://blogs.cisco.com/performance/open-mpi-v1-5-processor-affinity-options/
-##
+##   - Try running 'lstopo' for a graphical view of the local topology or
+##     'lscpu' for a text version.
+##   - EAP's flags can be found in Test.rh/General/run_job.pl (look for
+##     $other_args).  In particular, it may be useful to examine EAP's options
+##     for srun or aprun.
 ##---------------------------------------------------------------------------##
 macro( query_topology )
 
@@ -233,16 +231,15 @@ macro( query_topology )
   if( "${SITENAME}" STREQUAL "Trinitite" OR
       "${SITENAME}" STREQUAL "Trinity" )
     # Backend is different than build-node
-    set( MPI_CORES_PER_CPU 32 )
-    set( MPI_PHYSICAL_CORES 1 )
-    set( MPIEXEC_MAX_NUMPROCS 32 CACHE STRING "Max procs on node." FORCE )
-  elseif( "${SITENAME}" STREQUAL "Cielito" OR
-          "${SITENAME}" STREQUAL "Cielo")
-    # Backend is different than build-node
-    set( MPI_CORES_PER_CPU 16 )
-    set( MPI_PHYSICAL_CORES 1 )
-    set( MPIEXEC_MAX_NUMPROCS 16 CACHE STRING "Max procs on node." FORCE )
-
+    if( $ENV{CRAY_CPU_TARGET} MATCHES "mic-knl" )
+      set( MPI_CORES_PER_CPU 17 )
+      set( MPI_PHYSICAL_CORES 4 )
+      set( MPIEXEC_MAX_NUMPROCS 68 CACHE STRING "Max procs on node." FORCE )
+    else()
+      set( MPI_CORES_PER_CPU 16 )
+      set( MPI_PHYSICAL_CORES 2 )
+      set( MPIEXEC_MAX_NUMPROCS 32 CACHE STRING "Max procs on node." FORCE )
+    endif()
   elseif( EXISTS "/proc/cpuinfo" )
     # read the system's cpuinfo...
     file( READ "/proc/cpuinfo" cpuinfo_data )

@@ -7,7 +7,7 @@
 function die () { echo "ERROR: $1"; exit 1;}
 
 function run () {
-  echo $1
+  echo "==> $1"
   if test ${dry_run:-no} = "no"; then eval $1; fi
 }
 
@@ -187,6 +187,7 @@ usr/projects/draco/devs/releases"
   done
 }
 
+#------------------------------------------------------------------------------#
 function lookupppn()
 {
   # https://hpc.lanl.gov/index.php?q=summary_table
@@ -194,15 +195,16 @@ function lookupppn()
   local ppn=1
   case ${target} in
     ml* | pi* | wf* | lu* ) ppn=16 ;;
-    t[rt]-fe* | t[rt]-login*)
-      if [[ $TARGET ]]; then
-        if $TARGET == 'haswell'; then
+    tr-fe* | tr-login*) ppn=32 ;;
+    tt-fe* | tt-login*)
+      if [[ $CRAY_CPU_TARGET ]]; then
+        if [[ $CRAY_CPU_TARGET == 'haswell' ]]; then
           ppn=32
-        elif $TARGET == 'knl'; then
+        elif [[ $CRAY_CPU_TARGET == 'knl' ]]; then
           ppn=68
         fi
       else
-        echo "ERROR: Exected TARGET to be set in the environment."
+        echo "ERROR: Expected CRAY_CPU_TARGET to be set in the environment."
         exit 1
       fi
       ;;

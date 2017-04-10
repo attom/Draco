@@ -42,10 +42,16 @@ site_name( SITENAME )
 string( REGEX REPLACE "([A-z0-9]+).*" "\\1" SITENAME ${SITENAME} )
 if( ${SITENAME} MATCHES "ml" OR ${SITENAME} MATCHES "lu" )
   set( SITENAME "Moonlight" )
-elseif( ${SITENAME} MATCHES "tt") #" -login[0-9]+" OR ${SITENAME} MATCHES "tt-fey[0-9]+" )
+elseif( ${SITENAME} MATCHES "tt")
   set( SITENAME "Trinitite" )
-elseif( ${SITENAME} MATCHES "tr") #" -login[0-9]+" OR ${SITENAME} MATCHES "tr-fe[0-9]+" )
+elseif( ${SITENAME} MATCHES "tr")
   set( SITENAME "Trinity" )
+elseif( ${SITENAME} MATCHES "sn")
+  set( SITENAME "Snow" )
+elseif( ${SITENAME} MATCHES "fi")
+  set( SITENAME "Fire" )
+elseif( ${SITENAME} MATCHES "ic")
+  set( SITENAME "Ice" )
 elseif( ${SITENAME} MATCHES "ccscs[0-9]+" )
   # do nothing (keep the fullname)
 endif()
@@ -237,6 +243,33 @@ macro(dbsSetupCxx)
     set( CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -D_DARWIN_C_SOURCE ")
   endif()
 
+  # From https://crascit.com/2016/04/09/using-ccache-with-cmake/
+  message( STATUS "Looking for ccache...")
+  find_program(CCACHE_PROGRAM ccache)
+  if(CCACHE_PROGRAM)
+    message( STATUS "Looking for ccache... ${CCACHE_PROGRAM}")
+    # Set up wrapper scripts
+    set(CMAKE_C_COMPILER_LAUNCHER   "${CCACHE_PROGRAM}")
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+    # configure_file(launch-c.in   launch-c)
+    # configure_file(launch-cxx.in launch-cxx)
+    # execute_process(COMMAND chmod a+rx "${CMAKE_BINARY_DIR}/launch-c" "${CMAKE_BINARY_DIR}/launch-cxx")
+    # if(CMAKE_GENERATOR STREQUAL "Xcode")
+    #   # Set Xcode project attributes to route compilation and linking
+    #     # through our scripts
+    #     set(CMAKE_XCODE_ATTRIBUTE_CC         "${CMAKE_BINARY_DIR}/launch-c")
+    #     set(CMAKE_XCODE_ATTRIBUTE_CXX        "${CMAKE_BINARY_DIR}/launch-cxx")
+    #     set(CMAKE_XCODE_ATTRIBUTE_LD         "${CMAKE_BINARY_DIR}/launch-c")
+    #     set(CMAKE_XCODE_ATTRIBUTE_LDPLUSPLUS "${CMAKE_BINARY_DIR}/launch-cxx")
+    #   else()
+    #     # Support Unix Makefiles and Ninja
+    #     set(CMAKE_C_COMPILER_LAUNCHER        "${CMAKE_BINARY_DIR}/launch-c")
+    #     set(CMAKE_CXX_COMPILER_LAUNCHER      "${CMAKE_BINARY_DIR}/launch-cxx")
+    #   endif()
+  else()
+    message( STATUS "Looking for ccache... not found.")
+  endif()
+
 endmacro()
 
 #------------------------------------------------------------------------------#
@@ -346,9 +379,9 @@ macro(dbsSetupFortran)
 
 endmacro()
 
-##---------------------------------------------------------------------------------------##
+##---------------------------------------------------------------------------##
 ## Setup profile tools: MAP, PAPI, HPCToolkit, TAU, etc.
-##---------------------------------------------------------------------------------------##
+##---------------------------------------------------------------------------##
 macro( dbsSetupProfilerTools )
 
   # ------------------------------------------------------------
@@ -425,7 +458,7 @@ macro( dbsSetupProfilerTools )
     if( NOT EXISTS $ENV{DDTROOT} )
       message( FATAL_ERROR "You must load the Allinea module first!")
     endif()
-    if( "${SITENAME}" STREQUAL "Trinitite" OR "${SITENAME}" STREQUAL "Cielito" )
+    if( "${SITENAME}" STREQUAL "Trinitite" OR "${SITENAME}" STREQUAL "Trinity" )
       #set( OLD_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES} )
       #set( CMAKE_FIND_LIBRARY_SUFFIXES .a )
       find_library( ddt-dmalloc
