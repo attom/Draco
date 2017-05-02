@@ -123,11 +123,10 @@ ppn=`lookupppn`
 
 OPTIMIZE_ON="-DCMAKE_BUILD_TYPE=Release -DDRACO_LIBRARY_TYPE=SHARED"
 OPTIMIZE_OFF="-DCMAKE_BUILD_TYPE=Debug  -DDRACO_LIBRARY_TYPE=SHARED"
-OPTIMIZE_RWDI="-DCMAKE_BUILD_TYPE=RELWITHDEBINFO -DDRACO_LIBRARY_TYPE=SHARED"
+OPTIMIZE_RWDI="-DCMAKE_BUILD_TYPE=RELWITHDEBINFO -DDRACO_LIBRARY_TYPE=SHARED -DDRACO_DBC_LEVEL=15"
 
 LOGGING_ON="-DDRACO_DIAGNOSTICS=7 -DDRACO_TIMING=1"
 LOGGING_OFF="-DDRACO_DIAGNOSTICS=0 -DDRACO_TIMING=0"
-LOGGING_RWDI="-DDRACO_DBC_LEVEL=15 -DDRACO_DIAGNOSTICS=0 -DDRACO_TIMING=0"
 
 # Define the meanings of the various code versions:
 
@@ -135,13 +134,8 @@ VERSIONS=( "debug" "opt" "rwdi" )
 OPTIONS=(\
     "$OPTIMIZE_OFF  $LOGGING_OFF" \
     "$OPTIMIZE_ON   $LOGGING_OFF" \
-    "$OPTIMIZE_RWDI $LOGGING_RWDI" \
+    "$OPTIMIZE_RWDI $LOGGING_OFF" \
 )
-
-# VERSIONS=( "debug" )
-# OPTIONS=(\
-#     "$OPTIMIZE_OFF  $LOGGING_OFF" \
-# )
 
 ##---------------------------------------------------------------------------##
 ## Environment review
@@ -182,7 +176,7 @@ for env in $environments; do
   # e.g.: buildflavor=moonlight-openmpi-1.6.5-intel-15.0.3
 
   export install_prefix="$source_prefix/$buildflavor"
-  export build_prefix="/$scratchdir/$USER/$pdir/$buildflavor"
+  export build_prefix="$scratchdir/$USER/$pdir/$buildflavor"
   export draco_prefix="/usr/projects/draco/$ddir/$buildflavor"
 
   for (( i=0 ; i < ${#VERSIONS[@]} ; ++i )); do
@@ -214,7 +208,6 @@ $draco_script_dir/release_cray.msub"
 
     # export dry_run=0
   done
-
 done
 
 ##---------------------------------------------------------------------------##

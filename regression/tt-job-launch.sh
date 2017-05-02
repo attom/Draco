@@ -60,16 +60,6 @@ if test $subproj == draco || test $subproj == jayenne; then
   fi
 fi
 
-# What queue should we use
-#access_queue=""
-#if test -x /opt/MOAB/bin/drmgroups; then
-#   avail_queues=`/opt/MOAB/bin/drmgroups`
-avail_queues=`mdiag -u $LOGNAME | grep ALIST | sed -e 's/.*ALIST=//' | sed -e 's/,/ /g'`
-case $avail_queues in
-*access*) access_queue="-A access" ;;
-esac
-#fi
-
 # Banner
 echo "==========================================================================="
 echo "Trinitite Regression job launcher for ${subproj} - ${build_type} flavor."
@@ -88,6 +78,7 @@ if [[ ${featurebranch} ]]; then
 fi
 echo "   regdir         = ${regdir}"
 echo "   rscriptdir     = ${rscriptdir}"
+echo "   scratchdir     = ${scratchdir}"
 echo "   logdir         = ${logdir}"
 echo "   dashboard_type = ${dashboard_type}"
 echo "   build_autodoc  = ${build_autodoc}"

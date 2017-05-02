@@ -18,6 +18,18 @@
 # Enable job control
 set -m
 
+# load some common bash functions
+export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [[ -f $rscriptdir/scripts/common.sh ]]; then
+  source $rscriptdir/scripts/common.sh
+else
+  echo " "
+  echo "FATAL ERROR: Unable to locate Draco's bash functions: "
+  echo "   looking for .../regression/scripts/common.sh"
+  echo "   searched rscriptdir = $rscriptdir"
+  exit 1
+fi
+
 # Host based variables
 export host=`uname -n | sed -e 's/[.].*//g'`
 
@@ -27,7 +39,7 @@ export host=`uname -n | sed -e 's/[.].*//g'`
 ccs_extra_params="belosmods bounds_checking clang coverage fulldiagnostics gcc530 gcc610 nr perfbench valgrind "
 darwin_extra_params="cuda fulldiagnostics nr perfbench valgrind"
 ml_extra_params="fulldiagnostics nr perfbench pgi valgrind"
-sn_extra_params="fulldiagnostics nr perfbench"
+sn_extra_params="fulldiagnostics gcc610 newtools nr perfbench"
 tt_extra_params="fulldiagnostics knl nr perfbench"
 all_extra_params=`echo $ml_extra_params $tt_extra_params $sn_extra_params $ccs_extra_params $darwin_extra_params | xargs -n1 | sort -u | xargs`
 
@@ -70,18 +82,6 @@ print_use()
   echo " "
 }
 
-fn_exists()
-{
-    type $1 2>/dev/null | grep -q 'is a function'
-    res=$?
-    echo $res
-    return $res
-}
-
-# redirect all script output to file
-#exec 1>${logfile}
-#exec 2>&1
-
 ##---------------------------------------------------------------------------##
 ## Default values
 ##---------------------------------------------------------------------------##
@@ -92,11 +92,9 @@ projects="draco"
 extra_params=""
 regress_mode="off"
 epdash=""
-userlogdir=""
-export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+scratchdir=`selectscratchdir`
 
 # Default to using GitHub for Draco and gitlab.lanl.gov for Jayenne
-USE_GITHUB=1
 prdash="-"
 unset nfb
 
@@ -169,8 +167,22 @@ for proj in ${projects}; do
 done
 
 case $regress_mode in
-on) ;;
-off) userlogdir="/${USER}" ;;
+on)
+    if ! [[ ${USER} == "kellyt" ]]; then
+      echo "You are not authorized to use option '-r'."
+      exit 1
+    fi
+    if [[ -d /usr/projects/jayenne/regress ]]; then
+      regdir=/usr/projects/jayenne/regress
+    else
+      regdir=/scratch/regress
+    fi
+    logdir=$regdir/logs
+    ;;
+off)
+    regdir="$scratchdir/$USER"
+    logdir="$HOME/logs"
+    ;;
 *)  echo "" ;echo "FATAL ERROR: value of regress_mode=$regress_mode is incorrect."
     exit 1 ;;
 esac
@@ -178,7 +190,6 @@ esac
 ##---------------------------------------------------------------------------##
 ## Main
 ##---------------------------------------------------------------------------##
-
 
 case ${host} in
 ml-*)
@@ -189,7 +200,6 @@ ml-*)
       source /usr/share/Modules/init/bash
     fi
     module purge
-    export regdir=/usr/projects/jayenne/regress
     # Argument checks
     if [[ ${extra_params} ]]; then
         case $extra_params in
@@ -209,12 +219,11 @@ sn-*)
       source /usr/share/lmod/lmod/init/bash
     fi
     module purge
-    export regdir=/usr/projects/jayenne/regress
     # Argument checks
     if [[ ${extra_params} ]]; then
         case $extra_params in
         none)  extra_params=""; epdash="" ;;
-        fulldiagnostics | nr | perfbench ) # known, continue
+        fulldiagnostics | gcc610 | newtools | nr | perfbench ) # known, continue
         ;;
         *) echo "" ;echo "FATAL ERROR: unknown extra params (-e) = ${extra_params}"
            print_use; exit 1 ;;
@@ -224,7 +233,6 @@ sn-*)
 tt-*)
     export machine_name_long=Trinitite
     export machine_name_short=tt
-    export regdir=/usr/projects/jayenne/regress
     # Argument checks
     if [[ ${extra_params} ]]; then
         case $extra_params in
@@ -239,9 +247,6 @@ tt-*)
 ccscs[0-9])
     export machine_name_long="Linux64 on CCS LAN"
     export machine_name_short=ccscs
-    #if ! test -d "${regdir}/draco/regression"; then
-       export regdir=/scratch/regress
-    #fi
     # Argument checks
     if [[ ${extra_params} ]]; then
         case $extra_params in
@@ -258,7 +263,6 @@ ccscs[0-9])
 darwin*)
     export machine_name_long="Linux64 on CCS Darwin cluster"
     export machine_name_short=darwin
-    export regdir=/usr/projects/draco/regress
     # Argument checks
     if [[ ${extra_params} ]]; then
         case $extra_params in
@@ -275,15 +279,25 @@ darwin*)
     print_use;  exit 1 ;;
 esac
 
+#------------------------------------------------------------------------------#
+# Redirect output to a logfile.
+#------------------------------------------------------------------------------#
+
+# Ensure log dir exists.
+mkdir -p $logdir || die "Could not create a directory for log files."
+
+# Redirect output to logfile.
+timestamp=`date +%Y%m%d-%H%M`
+logfile=$logdir/${machine_name_short}-${build_type}-master-$timestamp.log
+#echo "Redirecting output to $logfile"
+exec > $logfile
+exec 2>&1
+
 ##---------------------------------------------------------------------------##
 ## Export environment
 ##---------------------------------------------------------------------------##
-# Logs go here (userlogdir is blank for 'option -r')
-export logdir="${regdir}/logs${userlogdir}"
-mkdir -p $logdir
-
-export build_type dashboard_type extra_params regress_mode epdash
-export featurebranches USE_GITHUB prdash build_autodoc
+export build_autodoc build_type dashboard_type epdash extra_params
+export featurebranches logdir prdash regdir regress_mode scratchdir
 
 ##---------------------------------------------------------------------------##
 # Banner
@@ -304,6 +318,7 @@ echo "   regdir         = ${regdir}"
 echo "   dashboard_type = ${dashboard_type}"
 echo "   rscriptdir     = ${rscriptdir}"
 echo "   logdir         = ${logdir}"
+echo "   scratchdir     = ${scratchdir}"
 echo "   projects       = \"${projects}\""
 echo "   regress_mode   = ${regress_mode}"
 echo "   featurebranches  = ${featurebranches}"
@@ -367,13 +382,6 @@ if test `echo $projects | grep -c $subproj` -gt 0; then
   jayenne_jobid=`jobs -p | sort -gr | head -n 1`
   ((ifb++))
 fi
-
-# Only Draco is on github, other projects still use svn.
-#unset featurebranch
-#unset fb
-#unset ifb
-#unset prdash
-#unset USE_GITHUB
 
 export subproj=capsaicin
 if test `echo $projects | grep -c $subproj` -gt 0; then

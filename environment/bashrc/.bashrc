@@ -4,7 +4,7 @@
 ## File  : environment/bashrc/.bashrc
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##
 ##  Bash configuration file upon bash shell startup
@@ -204,7 +204,7 @@ if test ${DRACO_BASHRC_DONE:-no} = no && test ${INTERACTIVE} = true; then
 
     # Assume CCS machine (ccscs[0-9] or personal workstation)
     *)
-      if test -d /ccs/codes/radtran; then
+      if [[ -d /ccs/codes/radtran ]]; then
         # assume this is a CCS LAN machine (64-bit)
         if test `uname -m` = 'x86_64'; then
           # draco environment only supports 64-bit linux...
@@ -214,6 +214,9 @@ if test ${DRACO_BASHRC_DONE:-no} = no && test ${INTERACTIVE} = true; then
           echo "Module support may not be available. Email kgt@lanl.gov for more information."
           source ${DRACO_ENV_DIR}/bashrc/.bashrc_linux32
         fi
+      elif [[ -d /usr/projects/draco ]]; then
+        # XCP machine like 'toolbox'?
+        source ${DRACO_ENV_DIR}/bashrc/.bashrc_linux64
       fi
       export NoModules=1
       ;;

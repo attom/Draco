@@ -86,7 +86,7 @@ if( NOT CXX_FLAGS_INITIALIZED )
   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0 )
     # LTO appears to be broken for gcc/4.8.5 (at least for Jayenne).
     # LTO appears to be broken for gcc/5.3.0 (Draco on Moonlight).
-    #string( APPEND CMAKE_C_FLAGS_RELEASE " -flto" )
+    # string( APPEND CMAKE_C_FLAGS_RELEASE " -flto" )
 
     # See https://gcc.gnu.org/gcc-5/changes.html
     # UndefinedBehaviorSanitizer gained a few new sanitization options:
@@ -112,7 +112,14 @@ if( NOT CXX_FLAGS_INITIALIZED )
     # GCC_COLORS="error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01"
   endif()
 
-  if (NOT APPLE AND HAS_MARCH_NATIVE)
+  # [2017-04-15 KT] -march=native doesn't seem to work correctly on toolbox
+  # Systems running CRAY_PE use commpile wrappers to specify this option.
+  site_name( sitename )
+  string( REGEX REPLACE "([A-z0-9]+).*" "\\1" sitename ${sitename} )
+  if (HAS_MARCH_NATIVE AND
+      NOT APPLE AND
+      NOT CRAY_PE AND
+      NOT "${sitename}" MATCHES "toolbox")
     string( APPEND CMAKE_C_FLAGS " -march=native" )
   endif()
 

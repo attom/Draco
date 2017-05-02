@@ -24,17 +24,33 @@
 #    all pull requests.
 
 target="`uname -n | sed -e s/[.].*//`"
+verbose=off
 
 # Locate the directory that this script is located in:
 scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # All output will be saved to this log file.  This is also the lockfile for flock.
 logdir="$( cd $scriptdir/../../logs && pwd )"
-logfile=$logdir/sync_repository_$target.log
+timestamp=`date +%Y%m%d-%H%M`
+logfile=$logdir/sync_repository_${target}_${timestamp}.log
 lockfile=/var/tmp/sync_repository_$target.lock
+
+if [[ ${verbose:-off} == "on" ]]; then
+  echo "looking for locks..."
+  echo "   FLOCKER     = ${FLOCKER}"
+  echo "   lockfile    = $lockfile"
+  echo "   logfile     = $logfile"
+  echo "   script name = ${0}"
+  echo "   script args = $@"
+fi
 
 # Prevent multiple copies of this script from running at the same time:
 [ "${FLOCKER}" != "${lockfile}" ] && exec env FLOCKER="${lockfile}" flock -en "${lockfile}" "${0}" "$@" || :
+
+if [[ ${verbose:-off} == "on" ]]; then
+  echo "running..."
+  echo "redirecting output to $logfile"
+fi
 
 # Redirect all future output to the logfile.
 exec > $logfile
@@ -69,33 +85,6 @@ fi
 #
 # Environment
 #
-
-##----------------------------------------------------------------------------##
-# Pause until the 'last modified' timestamp of file $1 to be $2 seconds old.
-function allow_file_to_age
-{
-  if [[ ! $2 ]]; then
-    echo "ERROR: This function requires two arguments: a filename and an age value (sec)."
-    exit 1
-  fi
-
-  # If file does not exist, no need to wait.
-  if [[ ! -f $1 ]]; then
-    return
-  fi
-
-  # assume file was last modified 0 seconds ago.
-  timediff=0
-
-  # If no changes for $2 seconds, continue
-  # else, wait until until file, $1, hasn't been touched for $2 seconds.
-  while [[ $timediff -lt $2 ]]; do
-    eval "$(date +'now=%s')"
-    pr_last_check=$(date +%s -r $1)
-    timediff=$(expr $now - $pr_last_check)
-    sleep 30s
-  done
-}
 
 # import some bash functions
 source $scriptdir/scripts/common.sh
@@ -154,7 +143,7 @@ fi
 # Credentials via Keychain (SSH)
 # http://www.cyberciti.biz/faq/ssh-passwordless-login-with-keychain-for-scripts
 MYHOSTNAME="`uname -n`"
-$VENDOR_DIR/$keychain/keychain $HOME/.ssh/cmake_dsa
+$VENDOR_DIR/$keychain/keychain $HOME/.ssh/cmake_dsa $HOME/.ssh/cmake_rsa
 if test -f $HOME/.keychain/$MYHOSTNAME-sh; then
   run "source $HOME/.keychain/$MYHOSTNAME-sh"
 else
@@ -191,8 +180,10 @@ if test -d $gitroot/Draco.git; then
   run "cd $gitroot/Draco.git"
   run "git fetch origin +refs/heads/*:refs/heads/*"
   run "git fetch origin +refs/pull/*:refs/pull/*" &> $TMPFILE_DRACO
-  cat $TMPFILE_DRACO
+  run "cat $TMPFILE_DRACO"
   run "git reset --soft"
+  run "chgrp -R draco $gitroot/Draco.git"
+  run "chmod -R g+rwX $gitroot/Draco.git"
 else
   run "mkdir -p $gitroot"
   run "cd $gitroot"
@@ -232,8 +223,10 @@ if test -d $gitroot/jayenne.git; then
   run "cd $gitroot/jayenne.git"
   run "git fetch origin +refs/heads/*:refs/heads/*"
   run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*" &> $TMPFILE_JAYENNE
-  cat $TMPFILE_JAYENNE
+  run "cat $TMPFILE_JAYENNE"
   run "git reset --soft"
+  run "chgrp -R draco $gitroot/jayenne.git"
+  run "chmod -R g+rwX $gitroot/jayenne.git"
 else
   run "mkdir -p $gitroot; cd $gitroot"
   run "git clone --bare git@gitlab.lanl.gov:jayenne/jayenne.git jayenne.git"
@@ -251,6 +244,8 @@ case ${target} in
       run "cd $gitroot/jayenne-redmine.git"
       run "git fetch origin +refs/heads/*:refs/heads/*"
       run "git reset --soft"
+      run "chgrp -R draco $gitroot/capsaicin.git"
+      run "chmod -R g+rwX $gitroot/capsaicin.git"
     else
       run "mkdir -p $gitroot"
       run "cd $gitroot"
@@ -271,7 +266,7 @@ if test -d $gitroot/capsaicin.git; then
   run "cd $gitroot/capsaicin.git"
   run "git fetch origin +refs/heads/*:refs/heads/*"
   run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*" &> $TMPFILE_CAPSAICIN
-  cat $TMPFILE_CAPSAICIN
+  run "cat $TMPFILE_CAPSAICIN"
   run "git reset --soft"
 else
   run "mkdir -p $gitroot; cd $gitroot"
@@ -306,14 +301,23 @@ esac
 # parsing the output of 'git fetch' from above.
 #
 # The output from the above command may include text of the form:
+#
 #   [new ref]        refs/pull/84/head -> refs/pull/84/head <-- new PR
 #   03392b8..fd3eabc refs/pull/86/head -> refs/pull/86/head <-- updated PR
-#                    Extract a list of PRs that are new and optionally start
-#                    regression run
+#   881a1f4...86c80c8 refs/pull/157/merge -> refs/pull/157/merge  (forced update)
+#
+# Extract a list of PRs that are new and optionally start regression run
 # ------------------------------------------------------------------------------#
 
+echo " "
+echo "========================================================================"
+echo "Starting CI regressions (if any)"
+echo "========================================================================"
+echo " "
 # Draco CI ------------------------------------------------------------
-draco_prs=`grep 'refs/pull/[0-9]*/head$' $TMPFILE_DRACO | awk '{print $NF}'`
+#draco_prs=`grep 'refs/pull/[0-9]*/head$' $TMPFILE_DRACO | awk '{print $NF}'`
+draco_prs=`cat $TMPFILE_DRACO | grep -e 'refs/pull/[0-9]*/merge.*forced update' -e 'refs/pull/[0-9]*/head$' | sed -e 's/  (forced update)//' | awk '{print $NF}'`
+
 for prline in $draco_prs; do
   echo " "
   case ${target} in
@@ -387,11 +391,16 @@ case ${target} in
   tt-fe*) draco_tag_file=$regdir/logs/last-draco-develop-tt.log ;;
   darwin-fe*) draco_tag_file=$regdir/logs/last-draco-develop-darwin.log ;;
 esac
+if ! [[ -f $draco_tag_file ]]; then
+  touch $draco_tag_file
+fi
 draco_last_built=$(date +%s -r $draco_tag_file)
 
 # Get the list of new Jayenne and Capsaicin Prs
-jayenne_prs=`grep 'refs/merge-requests/[0-9]*/head$' $TMPFILE_JAYENNE | awk '{print $NF}'`
-capsaicin_prs=`grep 'refs/merge-requests/[0-9]*/head$' $TMPFILE_CAPSAICIN | awk '{print $NF}'`
+#jayenne_prs=`grep 'refs/merge-requests/[0-9]*/head$' $TMPFILE_JAYENNE | awk '{print $NF}'`
+#capsaicin_prs=`grep 'refs/merge-requests/[0-9]*/head$' $TMPFILE_CAPSAICIN | awk '{print $NF}'`
+jayenne_prs=`cat $TMPFILE_JAYENNE | grep -e 'refs/merge-requests/[0-9]*/merge.*forced update' -e 'refs/merge-requests/[0-9]*/head$' | sed -e 's/  (forced update)//' | awk '{print $NF}'`
+capsaicin_prs=`cat $TMPFILE_CAPSAICIN | grep -e 'refs/merge-requests/[0-9]*/merge.*forced update' -e 'refs/merge-requests/[0-9]*/head$' | sed -e 's/  (forced update)//' | awk '{print $NF}'`
 
 ipr=0 # count the number of PRs processed. Only the first needs to build draco.
 for prline in $jayenne_prs $capsaicin_prs; do
@@ -644,7 +653,6 @@ run "rm $lockfile"
 
 echo " "
 echo "All done."
-
 
 #------------------------------------------------------------------------------#
 # End sync_repository.sh

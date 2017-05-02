@@ -243,6 +243,25 @@ macro(dbsSetupCxx)
     set( CMAKE_REQUIRED_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS} -D_DARWIN_C_SOURCE ")
   endif()
 
+  #----------------------------------------------------------------------------#
+  # Add user provided options:
+  #
+  # 1. Users may set environment variables
+  #    - C_FLAGS
+  #    - CXX_FLAGS
+  #    - Fortran_FLAGS
+  #    - EXE_LINKER_FLAGS
+  # 2. Provide these as arguments to cmake as -DC_FLAGS="whatever".
+  #----------------------------------------------------------------------------#
+  foreach( lang C CXX Fortran EXE_LINKER )
+    if( DEFINED ENV{${lang}_FLAGS} )
+      string( APPEND ${lang}_FLAGS " $ENV{${lang}_FLAGS}")
+    endif()
+    if( ${lang}_FLAGS )
+      toggle_compiler_flag( TRUE "${${lang}_FLAGS}" ${lang} "" )
+    endif()
+  endforeach()
+
   # From https://crascit.com/2016/04/09/using-ccache-with-cmake/
   message( STATUS "Looking for ccache...")
   find_program(CCACHE_PROGRAM ccache)

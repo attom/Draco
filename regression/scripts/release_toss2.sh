@@ -98,19 +98,18 @@ esac
 
 OPTIMIZE_ON="-DCMAKE_BUILD_TYPE=Release"
 OPTIMIZE_OFF="-DCMAKE_BUILD_TYPE=Debug"
-OPTIMIZE_RWDI="-DCMAKE_BUILD_TYPE=RELWITHDEBINFO"
+OPTIMIZE_RWDI="-DCMAKE_BUILD_TYPE=RELWITHDEBINFO -DDRACO_DBC_LEVEL=15"
 
 LOGGING_ON="-DDRACO_DIAGNOSTICS=7 -DDRACO_TIMING=1"
 LOGGING_OFF="-DDRACO_DIAGNOSTICS=0 -DDRACO_TIMING=0"
-LOGGING_RWDI="-DDRACO_DBC_LEVEL=15 -DDRACO_DIAGNOSTICS=7 -DDRACO_TIMING=1"
 
 # Define the meanings of the various code versions:
 
-VERSIONS=( "debug" "opt" "rwdi")
+VERSIONS=( "debug" "opt" "rwdi" )
 OPTIONS=(\
     "$OPTIMIZE_OFF $LOGGING_OFF" \
     "$OPTIMIZE_ON $LOGGING_OFF" \
-    "$OPTIMIZE_RWDI $LOGGING_RWDI" \
+    "$OPTIMIZE_RWDI $LOGGING_OFF" \
 )
 
 ##---------------------------------------------------------------------------##
@@ -125,7 +124,7 @@ if test $verbose == 1; then
   echo "script_dir     = $script_dir"
   echo "source_prefix  = $source_prefix"
   echo "log_dir        = $source_prefix/logs"
-  echo "scratchdir     = /$scratchdir/$USER"
+  echo "scratchdir     = $scratchdir/$USER"
   echo
   echo "package     = $package"
   echo "versions:"
@@ -152,7 +151,7 @@ for env in $environments; do
   # e.g.: buildflavor=moonlight-openmpi-1.6.5-intel-15.0.3
 
   export install_prefix="$source_prefix/$buildflavor"
-  export build_prefix="/$scratchdir/$USER/$pdir/$buildflavor"
+  export build_prefix="$scratchdir/$USER/$pdir/$buildflavor"
   export draco_prefix="/usr/projects/draco/$ddir/$buildflavor"
 
   for (( i=0 ; i < ${#VERSIONS[@]} ; ++i )); do

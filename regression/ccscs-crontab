@@ -50,16 +50,6 @@
 
 00 06 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p "draco capsaicin" -e belosmods &> /scratch/regress/logs/ccscs-Debug-belosmods.log
 
-#------------------------------------------------------------------------------#
-# Example for running a regression for a PR that is under consideration
-#------------------------------------------------------------------------------#
-
-# Build both draco and jayenne from PRs.
-# 05 06 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -b Release -p "draco jayenne" -f "develop pr42" &> /scratch/regress/logs/ccscs-Release-master-pr1.log
-
-# Build jayenne from PR (use develop for draco)
-# 05 06 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -b Release -p "draco" -f "pr42" &> /scratch/regress/logs/ccscs-Release-master-pr1.log
-
 # |    |    |    |    |   |
 # |    |    |    |    |   +- command
 # |    |    |    |    +----- day of week (0 - 6) (Sunday=0)

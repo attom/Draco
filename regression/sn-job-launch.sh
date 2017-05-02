@@ -67,10 +67,10 @@ if test $subproj == draco || test $subproj == jayenne; then
   fi
 fi
 
-# What queue should we use ('-A access' or '-A dev')?
-avail_queues=`mdiag -u $LOGNAME | grep ALIST | sed -e 's/.*ALIST=//' | sed -e 's/,/ /g'`
+# What queue should we use?
+avail_queues=`mdiag -v -u $LOGNAME | grep "standard" | awk '{print $5}'`
+echo "avail_queues = $avail_queues"
 case $avail_queues in
-*access*) access_queue="-A access" ;;
 *dev*) access_queue="-l qos=dev" ;;
 esac
 
@@ -92,6 +92,7 @@ if [[ ${featurebranch} ]]; then
 fi
 echo "   regdir         = ${regdir}"
 echo "   rscriptdir     = ${rscriptdir}"
+echo "   scratchdir     = ${scratchdir}"
 echo "   logdir         = ${logdir}"
 echo "   dashboard_type = ${dashboard_type}"
 echo "   build_autodoc  = ${build_autodoc}"
