@@ -69,7 +69,7 @@ cd $sdir
 export script_dir=`pwd`
 export draco_script_dir=$script_dir
 cd $cdir
-source $draco_script_dir/common.sh
+source $draco_script_dir/common_slurm.sh
 
 # CMake options that will be included in the configuration step
 export CONFIG_BASE="-DDRACO_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
@@ -81,14 +81,34 @@ establish_permissions
 export source_prefix="/usr/projects/$package/$pdir"
 (cd /usr/projects/$package; rm latest; ln -s $pdir latest)
 scratchdir=`selectscratchdir`
-ppn=`showstats -n | tail -n 1 | awk '{print $3}'`
+
+# ppn=`showstats -n | tail -n 1 | awk '{print $3}'`
 #build_pe=`npes_build`
 #test_pe=`npes_test`
 
-avail_queues=`mdiag -u $LOGNAME | grep ALIST | sed -e 's/.*ALIST=//' | sed -e 's/,/ /g'`
+myos=`osName`
+case $myos in
+  toss2) # MOAB
+    avail_queues=`mdiag -u $LOGNAME | grep ALIST | sed -e 's/.*ALIST=//' | sed -e 's/,/ /g'`
+    ;;
+  toss3) # SLURM
+    available_queues=`sacctmgr -np list assoc user=$LOGNAME | sed -e 's/.*|\(.*dev.*\)|.*/\1/' | sed -e 's/|.*//'`
+    ;;
+esac
 case $avail_queues in
   *access*) access_queue="-A access" ;;
+  *dev*) access_queue="--qos=dev" ;;
 esac
+
+# Make sure there is enough tmp space for the compiler's temporary files.
+export TMPDIR=/$scratchdir/$USER/tmp
+if ! test -d $TMPDIR; then
+  mkdir -p $TMPDIR
+fi
+if ! test -d $TMPDIR; then
+  echo "Could not create TMPDIR=$TMPDIR."
+  exit 1
+fi
 
 # =============================================================================
 # Build types:
@@ -163,8 +183,10 @@ for env in $environments; do
 
     # export dry_run=1
     export steps="config build test"
-    cmd="msub -V $access_queue -l walltime=01:00:00 -l nodes=1:ppn=${ppn} -j oe \
--o $source_prefix/logs/release-$buildflavor-$version.log $script_dir/release_toss2.msub"
+    cmd="sbatch -v $access_queue -t 1:00:00 -N 1 \
+-o $source_prefix/logs/release-$buildflavor-$version.log \
+-e $source_prefix/logs/release-$buildflavor-$version.log \
+$script_dir/release_toss_slurm.msub"
     echo -e "\nConfigure, Build and Test $buildflavor-$version version of $package."
     echo "$cmd"
     jobid=`eval ${cmd} &`

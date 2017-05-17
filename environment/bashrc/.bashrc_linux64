@@ -18,9 +18,6 @@ fi
 ## ENVIRONMENTS
 ##---------------------------------------------------------------------------##
 
-# unlimit stack and core dump sizes.
-# ulimit -s unlimited
-
 # Is the module function available?
 found=`declare -f module | wc -l`
 # Module is provided by the system:
@@ -69,48 +66,26 @@ parmetis-4.0.3-intel-17.0.1 superlu-dist-4.3-intel-17.0.1"
     ;;
 *)
     # Locate the vendor directory
-    if test "${VENDOR_DIR}x" == "x"; then
+    if ! [[ ${VENDOR_DIR} ]]; then
       export VENDOR_DIR=/ccs/codes/radtran/vendors
       if test -d /var/tmp/vendors; then
-      export VENDOR_DIR=/var/tmp/vendors
+        export VENDOR_DIR=/var/tmp/vendors
       fi
     fi
     module use /ccs/codes/radtran/vendors/Modules
-  export dracomodules="gcc openmpi emacs/24.4 totalview cmake grace \
+  export dracomodules="gcc openmpi emacs/24.4 totalview cmake \
 lapack random123 eospac dracoscripts git svn dia graphviz doxygen \
 metis parmetis superlu-dist trilinos ndi csk"
     ;;
 esac
 
-# extra paths
-# extradirs="$VENDOR_DIR/bin"
-# for mydir in ${extradirs}; do
-#   if test -z "`echo $PATH | grep $mydir`" && test -d $mydir; then
-#     export PATH=$mydir:$PATH
-#   fi
-# done
-
 #LaTeX
-extradirs=". ${DRACO_SRC_DIR}/environment/latex"
-for mydir in ${extradirs}; do
-  if test -z "`echo $TEXINPUTS | grep $mydir`" && test -d $mydir; then
-    export TEXINPUTS=$mydir:$TEXINPUTS
-  fi
-done
-extradirs=". ${DRACO_SRC_DIR}/environment/bibtex"
-for mydir in ${extradirs}; do
-  if test -z "`echo $BSTINPUTS | grep $mydir`" && test -d $mydir; then
-    export BSTINPUTS=$mydir:$BSTINPUTS
-  fi
-done
-extradirs=". ${DRACO_SRC_DIR}/environment/bibfiles"
-for mydir in ${extradirs}; do
-  if test -z "`echo $BIBINPUTS | grep $mydir`" && test -d $mydir; then
-    export BIBINPUTS=$mydir:$BIBINPUTS
-  fi
-done
-unset extradirs
+add_to_path ${DRACO_SRC_DIR}/environment/latex TEXINPUTS
+add_to_path ${DRACO_SRC_DIR}/environment/bibtex BSTINPUTS
+add_to_path ${DRACO_SRC_DIR}/environment/bibfiles BIBINPUTS
 
+# see environment/bin/bash_functions.sh for the 'switch_to_lmod' bash function
+# definition.
 
 ##---------------------------------------------------------------------------##
 ## end of .bashrc_linux64

@@ -7,10 +7,6 @@
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
-#MSUB -l walltime=08:00:00
-#MSUB -l nodes=1:ppn=36
-#MSUB -j oe
-
 #----------------------------------------------------------------------#
 # The script starts here
 #----------------------------------------------------------------------#
@@ -41,7 +37,6 @@ fi
 # Environment setup
 # ----------------------------------------
 umask 0002
-run "ulimit -a"
 
 export http_proxy=http://proxyout.lanl.gov:8080
 export HTTP_PROXY=$http_proxy
@@ -79,12 +74,11 @@ echo "Snow regression: ${ctestparts} from ${machine}."
 echo "                 ${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}"
 echo "==========================================================================="
 
+run "ulimit -a"
+
 # Modules
 # ----------------------------------------
-result=`fn_exists module`
-if test $result -eq 0; then
-    echo 'module function is defined'
-else
+if [[ `fn_exists module` == 0 ]]; then
     echo 'module function does not exist. defining a local function ...'
     run "source /usr/share/Modules/init/bash"
 fi
@@ -105,6 +99,7 @@ if [[ "${comp}" == "icpc" ]]; then
   comp="intel"
 fi
 
+# Extra parameters
 case $extra_params in
 "")
     # no-op
@@ -120,7 +115,9 @@ gcc610)
     run "module load trilinos/12.8.1 superlu-dist metis parmetis"
     run "module load cmake/3.7.1 ndi numdiff git"
     run "module load random123 eospac/6.2.4 lapack/3.6.1"
-    comp=`basename $CC`
+    comp="${LCOMPILER}"
+    # ${LCOMPILERVER}
+    echo "comp = $comp"
     ;;
 newtools)
     run "module purge &> /dev/null"
@@ -181,7 +178,7 @@ if [[ ! ${dashboard_type} ]]; then
    dashboard_type=Experimental
 fi
 if [[ ! ${base_dir} ]]; then
-   if ! test -d ${scratchdir}; then
+   if ! [[ -d ${scratchdir} ]]; then
       echo "FATAL ERROR, scratchdir=${scratchdir} not found."
       echo "  Have the names/locations of scratch space changed?"
       exit 1
@@ -278,9 +275,11 @@ echo ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},$
 echo " "
 ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}
 
-echo " "
-run "chgrp -R draco ${work_dir}"
-run "chmod -R g+rwX,o-rwX ${work_dir}"
+if [[ ${regress_mode} == "on" ]]; then
+  echo " "
+  run "chgrp -R draco ${work_dir}"
+  run "chmod -R g+rX,o-rwX ${work_dir}"
+fi
 
 echo "All done."
 

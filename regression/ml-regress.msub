@@ -7,10 +7,6 @@
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
-#MSUB -l walltime=08:00:00
-#MSUB -l nodes=1:ppn=16
-#MSUB -j oe
-
 #----------------------------------------------------------------------#
 # The script starts here
 #----------------------------------------------------------------------#
@@ -41,7 +37,6 @@ fi
 # Environment setup
 # ----------------------------------------
 umask 0002
-run "ulimit -a"
 
 export http_proxy=http://proxyout.lanl.gov:8080
 export HTTP_PROXY=$http_proxy
@@ -79,12 +74,11 @@ echo "Moonlight regression: ${ctestparts} from ${machine}."
 echo "                      ${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}"
 echo "==========================================================================="
 
+run "ulimit -a"
+
 # Modules
 # ----------------------------------------
-result=`fn_exists module`
-if test $result -eq 0; then
-    echo 'module function is defined'
-else
+if [[ `fn_exists module` == 0 ]]; then
     echo 'module function does not exist. defining a local function ...'
     run "source /usr/share/Modules/init/bash"
 fi
@@ -246,45 +240,62 @@ fi
 # work_dir and scratch_dir are not the same for regress_mode == on.
 export work_dir=${base_dir}/${subproj}/${dashboard_type}_${comp}/${build_type}
 export scratch_dir=${scratchdir}/${subproj}/${dashboard_type}_${comp}/${build_type}
+if ! [[ -d $scratch_dir ]]; then
+  run "mkdir -p $scratch_dir" || die "unable to access scratch_dir = $scratch_dir"
+fi
+if ! [[ -d $work_dir ]]; then
+  run "mkdir -p $work_dir" || die "unable to access work_dir = $work_dir"
+fi
 
 echo "ml-regress.msub: work_dir       = ${work_dir}"
 echo "ml-regress.msub: scratch_dir    = ${scratch_dir}"
 echo " "
 setup_dirs=`echo $ctestparts | grep Configure`
 if [[ ${setup_dirs} ]]; then
+
    if ! test -d ${work_dir}/source; then
       run "mkdir -p ${work_dir}/source"
    fi
+
    # See notes above where scratch_dir is set concerning why these are soft
    # links.
-   if test "${regress_mode}" = "on"; then
-     if ! test -d ${scratch_dir}/build; then
+   if [[ "${regress_mode}" == "on" ]]; then
+     if ! [[ -d ${scratch_dir}/build ]]; then
        run "mkdir -p ${scratch_dir}/build"
      fi
-     if ! test -d ${work_dir}/build; then
-       run "ln -s ${scratch_dir}/build ${work_dir}/build"
+     if [[ -L ${work_dir}/build ]]; then
+       rm ${work_dir}/build
+     elif [[ -d ${work_dir}/build ]]; then
+       rm -rf ${work_dir}/build
      fi
-     if ! test -d ${scratch_dir}/target; then
+     run "ln -s ${scratch_dir}/build ${work_dir}/build"
+
+     if ! [[ -d ${scratch_dir}/target ]]; then
        run "mkdir -p ${scratch_dir}/target"
      fi
-     if ! test -d ${work_dir}/target; then
-       run "ln -s ${scratch_dir}/target ${work_dir}/target"
+     if [[ -L ${work_dir}/target ]]; then
+       rm ${work_dir}/target
+     elif [[ -d ${work_dir}/target ]]; then
+       rm -rf ${work_dir}/target
      fi
+     run "ln -s ${scratch_dir}/target ${work_dir}/target"
+
    else
-     if ! test -d ${work_dir}/build; then
+
+     if ! [[ -d ${work_dir}/build ]]; then
        run "mkdir -p ${work_dir}/build"
      fi
-     if ! test -d ${work_dir}/target; then
-       run "mkdir -p ${scratch_dir}/target"
+     if ! [[ -d ${work_dir}/target ]]; then
+       run "mkdir -p ${work_dir}/target"
      fi
    fi
 
    # clean the installation directory to remove any files that might no longer
    # be generated.
-   if test -d ${work_dir}/target/lib; then
+   if [[ -d ${work_dir}/target/lib ]]; then
        run "rm -rf ${work_dir}/target/*"
    fi
-   if test -f ${work_dir}/build/CMakeCache.txt; then
+   if [[ -f ${work_dir}/build/CMakeCache.txt ]]; then
        run "rm -rf ${work_dir}/build/*"
    fi
 fi
@@ -300,9 +311,11 @@ echo ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},$
 echo " "
 ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}
 
-echo " "
-run "chgrp -R draco ${work_dir}"
-run "chmod -R g+rwX,o-rwX ${work_dir}"
+if [[ ${regress_mode} == "on" ]]; then
+  echo " "
+  run "chgrp -R draco ${work_dir}"
+  run "chmod -R g+rwX,o-rwX ${work_dir}"
+fi
 
 echo "All done."
 

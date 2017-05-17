@@ -1,4 +1,4 @@
-#!/bin/bash -l
+#!/bin/bash
 ##---------------------------------------------------------------------------##
 ## File  : regression/tt-regress.msub
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
@@ -7,37 +7,45 @@
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
+# Under cron, a basic environment might not be loaded yet.
+if [[ `which srun 2>/dev/null | grep -c srun` == 0 ]]; then
+  source /etc/bash.bashrc.local
+fi
+
 #----------------------------------------------------------------------#
 # The script starts here
 #----------------------------------------------------------------------#
 
 # Sanity Check
 # ----------------------------------------
-if [[ ! ${subproj} ]]; then
-   echo "Fatal Error, subproj not found in environment."
-   exit 1
-fi
-if [[ ! ${regdir} ]]; then
-   echo "Fatal Error, regdir not found in environment."
-   exit 1
-fi
 if [[ ! ${rscriptdir} ]]; then
    echo "Fatal Error, rscriptdir not found in environment."
    exit 1
 fi
+
+# import some bash functions
+source $rscriptdir/scripts/common.sh
+
+
+if [[ ! ${subproj} ]]; then
+  die "Fatal Error, subproj not found in environment."
+fi
+if [[ ! ${regdir} ]]; then
+  die "Fatal Error, regdir not found in environment."
+fi
 if [[ ! ${build_type} ]]; then
-   echo "Fatal Error, build_type not found in environment."
-   exit 1
+  die "Fatal Error, build_type not found in environment."
 fi
 if [[ ! ${logdir} ]]; then
-   echo "Fatal Error, logdir not found in environment."
-   exit 1
+  die "Fatal Error, logdir not found in environment."
+fi
+if [[ `which srun 2>/dev/null | grep -c srun` == 0 ]]; then
+  die "Cannot find srun.  Possibly bad environment or machine issue."
 fi
 
 # Environment setup
 # ----------------------------------------
 umask 0002
-run "ulimit -a"
 
 export http_proxy=http://proxyout.lanl.gov:8080
 export HTTP_PROXY=$http_proxy
@@ -51,35 +59,30 @@ export VENDOR_DIR=/usr/projects/draco/vendors
 # gitlab.lanl.gov has an unkown certificate, disable checking
 export GIT_SSL_NO_VERIFY=true
 
-# import some bash functions
-source $rscriptdir/scripts/common.sh
-
 machine=`uname -n`
-case $machine in
-tt-login[0-9]*)
+case $REGRESSION_PHASE in
+  cb) ctestparts="Configure,Build" ;;
+  t)
     ctestparts="Test"
 
     # Node type (aprun -n 1 lscpu)
-    partition=`aprun -q -n $PBS_NUM_NODES -N 1 grep -i "model name" /proc/cpuinfo | sort | uniq -c`
+    #partition=`aprun -q -n $PBS_NUM_NODES -N 1 grep -i "model name" /proc/cpuinfo | sort | uniq -c`
 
     # Force create of a new log file (don't append)
     echo "Purging ${logdir}/tt-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-t.log"
     echo "    " > ${logdir}/tt-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-t.log
     ;;
-tt-fey*)
-    if test "${REGRESSION_PHASE}" = "cb"; then
-       ctestparts="Configure,Build"
-    elif test "${REGRESSION_PHASE}" = "s"; then
-       ctestparts="Submit"
-       # Submitting to CDash requires this
-       unset http_proxy
-       unset https_proxy
-       unset HTTP_PROXY
-       unset HTTPS_PROXY
-    else
-       echo "Fatal Error, REGRESSION_PHASE = \"${REGRESSION_PHASE}\" does not match \"cb\" or \"s\"."
-       exit 1
-    fi
+  s)
+    ctestparts="Submit"
+    # Submitting to CDash requires this
+    unset http_proxy
+    unset https_proxy
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+    ;;
+  *)
+    echo "Fatal Error, REGRESSION_PHASE = \"${REGRESSION_PHASE}\" does not match \"cb\" or \"s\"."
+    exit 1
     ;;
 esac
 
@@ -89,23 +92,21 @@ echo "==========================================================================
 echo "Trinitite regression: ${ctestparts} from ${machine}."
 echo "                      ${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}"
 echo "==========================================================================="
-if [[ ${partition} ]]; then
+if [[ ${SLURM_JOB_PARTITION} ]]; then
   echo " "
   echo "Allocation configuration:"
-  echo $partition
+  echo $SLURM_JOB_PARTITION
   echo " "
 fi
+run "ulimit -a"
 
 # Modules
 # ----------------------------------------
-result=`fn_exists module`
-if test $result -eq 0; then
-    echo 'module function is defined'
-else
+if [[ `fn_exists module` == 0 ]]; then
     echo 'module function does not exist. defining a local function ...'
     module ()
     {
-        eval `/opt/cray/pe/modules/3.2.10.4/bin/modulecmd bash $*`
+      eval `/opt/cray/pe/modules/3.2.10.5/bin/modulecmd bash $*`
     }
 fi
 
@@ -124,7 +125,7 @@ run "module load intel/17.0.1"
 #run "module swap cray-mpich cray-mpich/7.4.2"
 run "module unload cray-libsci gcc/6.1.0"
 run "module load craype-hugepages4M"
-run "module load cmake/3.6.2 numdiff git"
+run "module load cmake/3.7.1 numdiff git"
 run "module load gsl/2.1 random123 eospac/6.2.4 ndi"
 run "module load trilinos/12.8.1 ndi metis parmetis/4.0.3 superlu-dist/4.3"
 
@@ -135,7 +136,7 @@ export CRAYPE_LINK_TYPE=dynamic
 export OMP_NUM_THREADS=16
 comp=CC
 
-# Extra parameers
+# Extra parameters
 case $extra_params in
 knl)
     run "module swap craype-haswell craype-mic-knl"
@@ -280,9 +281,11 @@ echo ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},$
 echo " "
 ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}
 
-echo " "
-run "chgrp -R draco ${work_dir}"
-run "chmod -R g+rwX,o-rwX ${work_dir}"
+if [[ ${regress_mode} == "on" ]]; then
+  echo " "
+  run "chgrp -R draco ${work_dir}"
+  run "chmod -R g+rX,o-rwX ${work_dir}"
+fi
 
 echo "All done."
 

@@ -41,15 +41,10 @@ fi
 # defaults
 export target=`uname -n | sed -e 's/[.].*//g'`
 scratchdir=`selectscratchdir`
-export regdir="$scratchdir/$USER"
-export logdir="$HOME/logs"
+export logdir="$scratchdir/$USER/logs"
 pr=develop
 project=draco
 regress_mode="off"
-
-if ! [[ -d $logdir ]]; then
-  run "mkdir -p $logdir"
-fi
 
 ##---------------------------------------------------------------------------##
 ## Support functions
@@ -79,7 +74,7 @@ print_use()
 ## Command options
 ##---------------------------------------------------------------------------##
 
-while getopts ":f:hp:" opt; do
+while getopts ":f:hp:r" opt; do
 case $opt in
 f)  pr=$OPTARG ;;
 h)  print_use; exit 0 ;;
@@ -106,8 +101,20 @@ if [[ $regress_mode == "on" ]]; then
     echo ""; echo "FATAL ERROR: invalid use of -r"
     print_use; exit 1
   fi
+  # special defaults for regress_mode
+  if [[ -d /scratch/regress/logs ]]; then
+    # ccs-net machines
+    logdir=/scratch/regress/logs
+  elif [[ -d /usr/projects/jayenne/regress/logs ]]; then
+    # HPC machines, Darwin
+    logdir=/usr/projects/jayenne/regress/logs
+  fi
 fi
-export regress_mode
+export regress_mode logdir
+
+if ! [[ -d $logdir ]]; then
+  run "mkdir -p $logdir" || die "Cannot create logdir = $logdir"
+fi
 
 #------------------------------------------------------------------------------#
 # Banner
@@ -118,7 +125,6 @@ echo "   project      = $project"
 echo "   pr           = $pr"
 echo "   target       = $target"
 echo "   scratchdir   = $scratchdir"
-echo "   regdir       = $regdir"
 echo "   logdir       = $logdir"
 echo "   rscriptdir   = $rscriptdir"
 echo "   regress_mode = $regress_mode"
@@ -180,15 +186,22 @@ case $project in
     eval "$(date +'today=%F now=%s')"
     midnight=$(date -d "$today 0" +%s)
     draco_tag_file=$logdir/last-draco-develop-${machine_name_short}.log
-    draco_last_built=$(date +%s -r $draco_tag_file)
-    build_draco=0
+    if [[ -f $draco_tag_file ]]; then
+      draco_last_built=$(date +%s -r $draco_tag_file)
+    else
+      draco_last_built=0
+    fi
     if [[ $midnight -gt $draco_last_built ]]; then
       echo " "
       echo "Found a Jayenne or Capsaicin PR, but we need to build draco-develop first..."
       echo " "
 
       # Call this script recursively to build the draco 'develop' branch.
-      $rscriptdir/checkpr.sh draco
+      if [[ ${regress_mode} == "on" ]]; then
+        rflag="-r"
+      fi
+      run "$rscriptdir/checkpr.sh ${rflag} -p draco"
+      echo " "
 
       # Reset the modified date on the file used to determine when draco was
       # last built.

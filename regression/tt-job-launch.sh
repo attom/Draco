@@ -16,13 +16,22 @@
 #    $build_type - 'Debug', 'Release'
 #    $extra_params - '', 'intel13', 'pgi', 'coverage'
 
+# Under cron, a basic environment might not be loaded yet.
+if [[ `which sbatch 2>/dev/null | grep -c sbatch` == 0 ]]; then
+  source /etc/bash.bashrc.local
+fi
+
 # command line arguments
 args=( "$@" )
 nargs=${#args[@]}
 scriptname=${0##*/}
 host=`uname -n`
 
-export SHOWQ=/opt/MOAB/bin/showq
+# import some bash functions
+source $rscriptdir/scripts/common.sh
+
+export SHOWQ=`which squeue`
+export MSUB=`which sbatch`
 
  # Dependencies: wait for these jobs to finish
 dep_jobids=""
@@ -32,24 +41,19 @@ done
 
 # sanity check
 if [[ ! ${regdir} ]]; then
-    echo "FATAL ERROR in ${scriptname}: You did not set 'regdir' in the environment!"
-    exit 1
+  die "FATAL ERROR in ${scriptname}: You did not set 'regdir' in the environment!"
 fi
 if [[ ! ${rscriptdir} ]]; then
-    echo "FATAL ERROR in ${scriptname}: You did not set 'rscriptdir' in the environment!"
-    exit 1
+  die "FATAL ERROR in ${scriptname}: You did not set 'rscriptdir' in the environment!"
 fi
 if [[ ! ${subproj} ]]; then
-    echo "FATAL ERROR in ${scriptname}: You did not set 'subproj' in the environment!"
-    exit 1
+  die "FATAL ERROR in ${scriptname}: You did not set 'subproj' in the environment!"
 fi
 if [[ ! ${build_type} ]]; then
-    echo "FATAL ERROR in ${scriptname}: You did not set 'build_type' in the environment!"
-    exit 1
+  die "FATAL ERROR in ${scriptname}: You did not set 'build_type' in the environment!"
 fi
 if [[ ! ${logdir} ]]; then
-    echo "FATAL ERROR in ${scriptname}: You did not set 'logdir' in the environment!"
-    exit 1
+  die "FATAL ERROR in ${scriptname}: You did not set 'logdir' in the environment!"
 fi
 
 if test $subproj == draco || test $subproj == jayenne; then
@@ -82,6 +86,7 @@ echo "   scratchdir     = ${scratchdir}"
 echo "   logdir         = ${logdir}"
 echo "   dashboard_type = ${dashboard_type}"
 echo "   build_autodoc  = ${build_autodoc}"
+echo "   access_queue   = ${access_queue}"
 echo " "
 echo "   ${subproj}: dep_jobids = ${dep_jobids}"
 echo " "
@@ -97,38 +102,42 @@ for jobid in ${dep_jobids}; do
 done
 
 # Select haswell or knl partition
-# option '-e knl' will select KNL, default is haswell.
+# Optional: Use -C quad,flat to select KNL mode
+# sinfo -o "%45n %30b %65f" | cut -b 47-120 | sort | uniq -c
 case $extra_params in
-knl) partition_options="-lnodes=4:knl:ppn=68,walltime=8:00:00" ;;
-#knl) partition_options="-lnodes=2:ppn=68:knl,advres=quadflat,walltime=8:00:00" ;;
-*)   partition_options="-lnodes=4:haswell:ppn=32,walltime=8:00:00" ;;
+knl) partition_options="-p knl -N 1 -t 8:00:00" ;;
+*)   partition_options="-N 1 -t 8:00:00" ;;
 esac
 
 # Configure, Build on front end
-export REGRESSION_PHASE=cb
 echo "Configure and Build on the front end..."
+export REGRESSION_PHASE=cb
 echo " "
 cmd="${rscriptdir}/tt-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
 echo "${cmd}"
 eval "${cmd}"
 
 # Wait for CB (Configure and Build) before starting the testing and
-# reporting from the login node:
+# reporting from the worker node:
 echo " "
 export REGRESSION_PHASE=t
 echo "Test from the login node..."
 echo " "
-cmd="/opt/MOAB/bin/msub -j oe -V -o ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log ${partition_options} ${rscriptdir}/tt-regress.msub"
+logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
+cmd="$MSUB -o ${logfile} -e ${logfile} ${partition_options} ${rscriptdir}/tt-regress.msub"
 echo "${cmd}"
 jobid=`eval ${cmd}`
-jobid=`echo $jobid | sed '/^$/d'`
+# delete blank lines
+#jobid=`echo $jobid | sed '/^$/d'`
+# only keep the job number
+jobid=`echo $jobid | sed -e 's/.*[ ]//'`
 echo "jobid = ${jobid}"
 
 # Wait for testing to finish
 sleep 1m
 while test "`${SHOWQ} | grep $jobid`" != ""; do
    ${SHOWQ} | grep $jobid
-   sleep 1m
+   sleep 5m
 done
 
 # Submit from the front end

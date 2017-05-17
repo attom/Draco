@@ -79,6 +79,7 @@ DLL_PUBLIC_c4 int send_receive(TS * /*sendbuf*/, int /*sendcount*/,
                                int /*recvcount*/, int /*source*/,
                                int /*sendtag*/, int /*recvtag*/) {
   Insist(false, "send_receive is not support for C4_SCALAR builds.");
+  return 1;
 }
 
 //---------------------------------------------------------------------------//
@@ -98,6 +99,10 @@ template <typename T>
 DLL_PUBLIC_c4 int receive_udt(T * /*buffer*/, int /*size*/, int /*destination*/,
                               C4_Datatype & /*data_type*/, int /*tag*/) {
   return C4_SUCCESS;
+}
+
+template <typename T> DLL_PUBLIC_c4 T prefix_sum(T &node_value) {
+  return node_value;
 }
 
 //---------------------------------------------------------------------------//

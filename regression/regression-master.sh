@@ -131,11 +131,7 @@ else
   # default: use 'develop' for all git branches.
   featurebranches=''
   for p in $projects; do
-#    if [[ ${featurebranches} ]]; then
-#      featurebranches+="-develop "
-#    else
-      featurebranches+="develop "
-#    fi
+    featurebranches+="develop "
   done
 fi
 
@@ -181,7 +177,7 @@ on)
     ;;
 off)
     regdir="$scratchdir/$USER"
-    logdir="$HOME/logs"
+    logdir="$regdir/logs"
     ;;
 *)  echo "" ;echo "FATAL ERROR: value of regress_mode=$regress_mode is incorrect."
     exit 1 ;;
@@ -195,8 +191,7 @@ case ${host} in
 ml-*)
     export machine_name_long=Moonlight
     export machine_name_short=ml
-    result=`fn_exists module`
-    if ! test $result -eq 0; then
+    if [[ `fn_exists module` == 0 ]]; then
       source /usr/share/Modules/init/bash
     fi
     module purge
@@ -214,8 +209,7 @@ ml-*)
 sn-*)
     export machine_name_long=Snow
     export machine_name_short=sn
-    result=`fn_exists module`
-    if ! test $result -eq 0; then
+    if [[ `fn_exists module` == 0 ]]; then
       source /usr/share/lmod/lmod/init/bash
     fi
     module purge
@@ -312,16 +306,21 @@ echo " "
 echo "Host: $host"
 echo " "
 echo "Environment:"
+echo "   build_autodoc  = $build_autodoc"
 echo "   build_type     = ${build_type}"
-echo "   extra_params   = ${extra_params}"
-echo "   regdir         = ${regdir}"
 echo "   dashboard_type = ${dashboard_type}"
-echo "   rscriptdir     = ${rscriptdir}"
+echo "   epdash         = $epdash"
+echo "   extra_params   = ${extra_params}"
+echo "   featurebranches= \"${featurebranches}\""
 echo "   logdir         = ${logdir}"
-echo "   scratchdir     = ${scratchdir}"
+echo "   logfile        = ${logfile}"
+echo "   machine_name_long = $machine_name_long"
+echo "   prdash         = $prdash"
 echo "   projects       = \"${projects}\""
+echo "   regdir         = ${regdir}"
 echo "   regress_mode   = ${regress_mode}"
-echo "   featurebranches  = ${featurebranches}"
+echo "   rscriptdir     = ${rscriptdir}"
+echo "   scratchdir     = ${scratchdir}"
 echo " "
 echo "Descriptions:"
 echo "   rscriptdir -  the location of the draco regression scripts."
@@ -349,13 +348,13 @@ ifb=0
 # do any real work until both draco and clubimc have completed.
 
 # More sanity checks
-if ! test -x ${rscriptdir}/${machine_name_short}-job-launch.sh; then
+if ! [[ -x ${rscriptdir}/${machine_name_short}-job-launch.sh ]]; then
    echo "FATAL ERROR: I cannot find ${rscriptdir}/${machine_name_short}-job-launch.sh."
    exit 1
 fi
 
 export subproj=draco
-if test `echo $projects | grep -c $subproj` -gt 0; then
+if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   export featurebranch=${fb[$ifb]}
   cmd="${rscriptdir}/${machine_name_short}-job-launch.sh"
   cmd+=" &> ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-joblaunch.log"
@@ -367,7 +366,7 @@ if test `echo $projects | grep -c $subproj` -gt 0; then
 fi
 
 export subproj=jayenne
-if test `echo $projects | grep -c $subproj` -gt 0; then
+if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   export featurebranch=${fb[$ifb]}
   # Run the *-job-launch.sh script (special for each platform).
   cmd="${rscriptdir}/${machine_name_short}-job-launch.sh"
@@ -384,7 +383,7 @@ if test `echo $projects | grep -c $subproj` -gt 0; then
 fi
 
 export subproj=capsaicin
-if test `echo $projects | grep -c $subproj` -gt 0; then
+if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   export featurebranch=${fb[$ifb]}
   cmd="${rscriptdir}/${machine_name_short}-job-launch.sh"
   # Wait for draco regressions to finish
@@ -420,7 +419,7 @@ fi
 
 # set permissions
 chgrp -R draco ${logdir} &> /dev/null
-chmod -R g+rwX ${logdir} &> /dev/null
+chmod -R g+rX ${logdir} &> /dev/null
 
 echo " "
 echo "All done"

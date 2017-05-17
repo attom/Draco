@@ -494,8 +494,11 @@ macro( setupCrayMPI )
   #           haswells, 1.4GB/core for KNL
   # -F shared enabled shared mode to allow multiple applications to run on a
   #           single node.
-  set( MPIEXEC_POSTFLAGS "-q -F shared -b -m 1400m" CACHE STRING
-    "extra mpirun flags (list)." FORCE)
+  # set( MPIEXEC_POSTFLAGS "-q -F shared -b -m 1400m" CACHE STRING
+  #   "extra mpirun flags (list)." FORCE)
+   set( MPIEXEC_POSTFLAGS "-O --exclusive"
+     CACHE STRING
+     "extra mpirun flags (list)." FORCE)
     # Consider using 'aprun -n # -N # -S # -d # -T -cc depth ...'
     # -n #  number of processes
     # -N #  number of processes per node
@@ -505,16 +508,19 @@ macro( setupCrayMPI )
     # -cc depth PEs are constrained to CPUs with a distance of depth between
     #       them so each PE's threads can be constrained to the CPUs closest to
     #       the PE's CPU.
-    set( MPIEXEC_OMP_POSTFLAGS "-q -b -d $ENV{OMP_NUM_THREADS}"
+    #set( MPIEXEC_OMP_POSTFLAGS "-q -b -d $ENV{OMP_NUM_THREADS}"
+    #  CACHE STRING "extra mpirun flags (list)." FORCE)
+
+    set( MPIEXEC_OMP_POSTFLAGS "-N 1 -c ${MPI_CORES_PER_CPU} --exclusive"
       CACHE STRING "extra mpirun flags (list)." FORCE)
   # Extra flags for OpenMP + MPI
-  if( DEFINED ENV{OMP_NUM_THREADS} )
+#   if( DEFINED ENV{OMP_NUM_THREADS} )
 
-  else()
-    message( STATUS "
-WARNING: ENV{OMP_NUM_THREADS} is not set in your environment,
-         all OMP tests will be disabled." )
-  endif()
+#   else()
+#     message( STATUS "
+# WARNING: ENV{OMP_NUM_THREADS} is not set in your environment,
+#          all OMP tests will be disabled." )
+#   endif()
 
 endmacro()
 
@@ -528,7 +534,7 @@ macro( setupSequoiaMPI )
       "Number of multi-core CPUs per node" FORCE )
     set( MPI_CORES_PER_CPU $ENV{OMP_NUM_THREADS} CACHE STRING
       "Number of cores per cpu" FORCE )
-    set( MPIEXEC_OMP_POSTFLAGS "-c${MPI_CORES_PER_CPU}" CACHE
+    set( MPIEXEC_OMP_POSTFLAGS "-c ${MPI_CORES_PER_CPU}" CACHE
       STRING "extra mpirun flags (list)." FORCE)
   else()
     message( STATUS "
@@ -562,28 +568,33 @@ macro( setupMPILibrariesUnix )
 
       # If this is a Cray system and the Cray MPI compile wrappers are used,
       # then do some special setup:
+
       if( CRAY_PE )
-        set( MPIEXEC "aprun" CACHE STRING
+        set( MPIEXEC "srun" CACHE STRING
           "Program to execute MPI prallel programs." )
         set( MPIEXEC_NUMPROC_FLAG "-n" CACHE STRING
           "mpirun flag used to specify the number of processors to use")
-     endif()
+      endif()
 
       # Preserve data that may already be set.
       if( DEFINED ENV{MPIRUN} )
-        set( MPIEXEC $ENV{MPIRUN} CACHE STRING "Program to execute MPI prallel programs." )
+        set( MPIEXEC $ENV{MPIRUN} CACHE STRING
+          "Program to execute MPI prallel programs." )
       elseif( DEFINED ENV{MPIEXEC} )
-        set( MPIEXEC $ENV{MPIEXEC} CACHE STRING "Program to execute MPI prallel programs." )
+        set( MPIEXEC $ENV{MPIEXEC} CACHE STRING
+          "Program to execute MPI prallel programs." )
       endif()
 
-      # Temporary work around until FindMPI.cmake is fixed:
-      # Setting MPI_<LANG>_COMPILER and MPI_<LANG>_NO_INTERROGATE
-      # forces FindMPI to skip it's bad logic and just rely on the MPI
-      # compiler wrapper to do the right thing. see Bug #467.
+      # Temporary work around until FindMPI.cmake is fixed: Setting
+      # MPI_<LANG>_COMPILER and MPI_<LANG>_NO_INTERROGATE forces FindMPI to skip
+      # it's bad logic and just rely on the MPI compiler wrapper to do the right
+      # thing. see Bug #467.
       foreach( lang C CXX Fortran )
-        get_filename_component( CMAKE_${lang}_COMPILER_NOPATH "${CMAKE_${lang}_COMPILER}" NAME )
+        get_filename_component( CMAKE_${lang}_COMPILER_NOPATH
+          "${CMAKE_${lang}_COMPILER}" NAME )
         if( "${CMAKE_${lang}_COMPILER_NOPATH}" MATCHES "^mpi[A-z+]+" )
-          get_filename_component( compiler_wo_path "${CMAKE_${lang}_COMPILER}" NAME )
+          get_filename_component( compiler_wo_path "${CMAKE_${lang}_COMPILER}"
+            NAME )
           set( MPI_${lang}_COMPILER ${CMAKE_${lang}_COMPILER} )
           set( MPI_${lang}_NO_INTERROGATE ${CMAKE_${lang}_COMPILER} )
         endif()
@@ -610,7 +621,7 @@ macro( setupMPILibrariesUnix )
         PURPOSE "If not available, all Draco components will be built as scalar applications."
         )
 
-      # -------------------------------------------------------------------------------- #
+      # ---------------------------------------------------------------------- #
       # Check flavor and add optional flags
       #
       # Notes:
@@ -628,7 +639,8 @@ macro( setupMPILibrariesUnix )
           "${DBS_MPI_VER}" MATCHES "Intel[(]R[)] MPI Library" )
         setupIntelMPI()
 
-      elseif( "${MPIEXEC}" MATCHES aprun)
+      # elseif( "${MPIEXEC}" MATCHES aprun)
+      elseif( CRAY_PE )
         setupCrayMPI()
 
       elseif( "${MPIEXEC}" MATCHES srun)
@@ -650,7 +662,8 @@ The Draco build system doesn't know how to configure the build for
 
       # Sanity Checks for DRACO_C4==MPI
       if( "${MPI_CORES_PER_CPU}x" STREQUAL "x" )
-         message( FATAL_ERROR "setupMPILibrariesUnix:: MPI_CORES_PER_CPU is not set!")
+         message( FATAL_ERROR "setupMPILibrariesUnix:: MPI_CORES_PER_CPU "
+           "is not set!")
       endif()
 
     else()

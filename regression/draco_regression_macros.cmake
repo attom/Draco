@@ -28,7 +28,9 @@ macro( find_num_procs_avail_for_running_tests )
 
   # If this job is running under Torque (msub script), use the environment
   # variable PBS_NP or SLURM_NPROCS
-  if( NOT "$ENV{PBS_NP}x" STREQUAL "x" )
+  if( ENV{CRAYPE_DIR} )
+    set( num_test_procs 1 )
+  elseif( NOT "$ENV{PBS_NP}x" STREQUAL "x" )
     set( num_test_procs $ENV{PBS_NP} )
   elseif( NOT "$ENV{SLURM_NPROCS}x" STREQUAL "x")
     set( num_test_procs $ENV{SLURM_NPROCS} )
@@ -80,23 +82,21 @@ win32$ set work_dir=c:/full/path/to/work_dir
   endif( NOT work_dir )
   file( TO_CMAKE_PATH ${work_dir} work_dir )
 
-  # Set the sitename, but strip any domain information
-  site_name( sitename )
-  string( REGEX REPLACE "([A-z0-9]+).*" "\\1" sitename ${sitename} )
-  if( ${sitename} MATCHES "tt" )
-     set( sitename "Trinitite" )
-  elseif( ${sitename} MATCHES "tr" )
-     set( sitename "Trinity" )
-  elseif( ${sitename} MATCHES "ml[0-9]+" OR
-      ${sitename} MATCHES "ml-fey"       OR
-      ${sitename} STREQUAL "ml")
-    set( sitename "Moonlight" )
-  elseif( ${sitename} MATCHES "cn[0-9]+" OR ${sitename} MATCHES "darwin-fe")
-     set( sitename "Darwin" )
-  elseif( ${sitename} MATCHES "sn[0-9]+" OR
-      ${sitename} MATCHES "sn-fey" OR
-      ${sitename} STREQUAL "sn")
-     set( sitename "Snow" )
+  # Set the sitename, but strip any domain information. If we are on an HPC
+  # machine, attempt to associate the backend name with the same string that is
+  # used to identify the front end. If we are on a LANL HPC machine, attempt to
+  # use the sys_name tool for this purpose.
+  if( EXISTS /usr/projects/hpcsoft/utilities/bin/sys_name )
+    execute_process( COMMAND /usr/projects/hpcsoft/utilities/bin/sys_name
+      OUTPUT_VARIABLE sitename
+      OUTPUT_STRIP_TRAILING_WHITESPACE )
+  else()
+    site_name( sitename )
+    string( REGEX REPLACE "([A-z0-9]+).*" "\\1" sitename ${sitename} )
+  endif()
+
+  if( ${sitename} MATCHES "cn[0-9]+" OR ${sitename} MATCHES "darwin-fe")
+    set( sitename "Darwin" )
   endif()
   message( "sitename = ${sitename}")
   set( CTEST_SITE ${sitename} )
@@ -366,7 +366,7 @@ macro( parse_args )
 
   # Bounds Checking
   if( ${CTEST_SCRIPT_ARG} MATCHES bounds_checking )
-    if( "${compiler_short_name}" STREQUAL "gcc-4.8.5" )
+    if( "${compiler_short_name}" MATCHES "gcc-4.8.5" )
       set( BOUNDS_CHECKING "GCC_ENABLE_GLIBCXX_DEBUG:BOOL=ON" )
     else()
       message(FATAL_ERROR "I don't know how to turn on bounds checking for compiler = ${compiler_short_name}" )

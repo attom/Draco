@@ -58,7 +58,7 @@ class C4_Req;
  * \brief Initialize a parallel job.
  */
 DLL_PUBLIC_c4 int initialize(int &argc, char **&argv,
-                             int required = MPI_THREAD_SINGLE);
+                             int required = DRACO_MPI_THREAD_SINGLE);
 
 //---------------------------------------------------------------------------//
 /*!
@@ -465,6 +465,17 @@ DLL_PUBLIC_c4 bool isScalar();
 //---------------------------------------------------------------------------//
 //! Return the processor name for each rank.
 DLL_PUBLIC_c4 std::string get_processor_name();
+
+//---------------------------------------------------------------------------//
+// prefix_sum
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Return the value of the prefix sum at this processor.
+ *
+ * \param node_value Current node's value of variable to be prefix summed
+ * \return Sum of value over nodes up to and including this node.
+ */
+template <typename T> DLL_PUBLIC_c4 T prefix_sum(const T node_value);
 
 } // end namespace rtt_c4
 

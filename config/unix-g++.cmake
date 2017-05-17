@@ -68,7 +68,11 @@ endif()
 # Consider using these diagnostic flags for Debug builds:
 # -Wundef     - warn about CPP macros read but not defined.
 # -Wcast-qual - warn about casts that remove qualifiers like const.
+# -Wfloat-equal
+# -Wstrict-overflow=4
+# -Wwrite-strings
 # -Wunreachable-code
+# - https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 #
 # Consider using these optimization flags:
 # -ffast-math -ftree-vectorize
@@ -84,28 +88,24 @@ if( NOT CXX_FLAGS_INITIALIZED )
   set( CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -g -gdwarf-3 -fno-eliminate-unused-debug-types -Wextra -funroll-loops" )
 
   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0 )
-    # LTO appears to be broken for gcc/4.8.5 (at least for Jayenne).
-    # LTO appears to be broken for gcc/5.3.0 (Draco on Moonlight).
+    # LTO appears to be broken (at least for Jayenne with gcc 4 and 5 series).
     # string( APPEND CMAKE_C_FLAGS_RELEASE " -flto" )
 
     # See https://gcc.gnu.org/gcc-5/changes.html
     # UndefinedBehaviorSanitizer gained a few new sanitization options:
-    #    -fsanitize=float-divide-by-zero: detect floating-point division
-    #                     by zero;
-    #    -fsanitize=float-cast-overflow: check that the result of
-    #                     floating-point type to integer conversions do
-    #                     not overflow;
-    #    -fsanitize=bounds: enable instrumentation of array bounds and
-    #                     detect out-of-bounds accesses;
-    #    -fsanitize=alignment: enable alignment checking, detect various
-    #                     misaligned objects;
-    #    -fsanitize=object-size: enable object size checking, detect
-    #                     various out-of-bounds accesses.
-    #    -fsanitize=vptr: enable checking of C++ member function calls,
-    #                     member accesses and some conversions between
-    #                     pointers to base and derived classes, detect if
-    #                     the referenced object does not have the correct
-    #                     dynamic type.
+    #  -fsanitize=float-divide-by-zero: detect floating-point division by 0
+    #  -fsanitize=float-cast-overflow: check that the result of floating-point
+    #             type to integer conversions do not overflow;
+    #  -fsanitize=bounds: enable instrumentation of array bounds and detect
+    #             out-of-bounds accesses;
+    #  -fsanitize=alignment: enable alignment checking, detect various
+    #             misaligned objects;
+    #  -fsanitize=object-size: enable object size checking, detect various
+    #             out-of-bounds accesses.
+    #  -fsanitize=vptr: enable checking of C++ member function calls, member
+    #             accesses and some conversions between pointers to base and
+    #             derived classes, detect if the referenced object does not have
+    #             the correct dynamic type.
     string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=float-divide-by-zero")
     string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=float-cast-overflow")
     string( APPEND CMAKE_C_FLAGS_DEBUG " -fdiagnostics-color=always")
