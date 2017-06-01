@@ -28,8 +28,31 @@ macro( find_num_procs_avail_for_running_tests )
 
   # If this job is running under Torque (msub script), use the environment
   # variable PBS_NP or SLURM_NPROCS
-  if( ENV{CRAYPE_DIR} )
+  if( DEFINED ENV{CRAYPE_DIR} )
+
     set( num_test_procs 1 )
+    if( EXISTS /usr/bin/lscpu )
+      execute_process( COMMAND /usr/bin/lscpu
+        OUTPUT_VARIABLE lscpu_out
+        OUTPUT_STRIP_TRAILING_WHITESPACE )
+      # break text block into a list of lines
+      string( REPLACE "\n" ";"  lscpu ${lscpu_out} )
+      foreach( line ${lscpu} )
+        # find number of physical cores
+        if( ${line} MATCHES "per socket")
+          string( REGEX REPLACE "^.* ([0-9]+)$" "\\1" num_test_procs ${line} )
+        endif()
+        if( ${line} MATCHES "Model name")
+          if( ${line} MATCHES "Xeon Phi" )
+            #     message("is knl")
+            # With srun, the KNL has trouble with 68 cores worth of jobs, so
+            # limit to a lower number
+            set( num_test_procs 8 )
+          endif()
+        endif()
+      endforeach()
+    endif()
+
   elseif( NOT "$ENV{PBS_NP}x" STREQUAL "x" )
     set( num_test_procs $ENV{PBS_NP} )
   elseif( NOT "$ENV{SLURM_NPROCS}x" STREQUAL "x")

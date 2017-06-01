@@ -301,8 +301,8 @@ macro( setupOpenMPI )
   endif()
 
   # sanity check, these OpenMPI flags (below) require version >= 1.4
-  if( ${DBS_MPI_VER_MAJOR}.${DBS_MPI_VER_MINOR} VERSION_LESS 1.4 )
-    message( FATAL_ERROR "OpenMPI version < 1.4 found." )
+  if( ${DBS_MPI_VER_MAJOR}.${DBS_MPI_VER_MINOR} VERSION_LESS 1.8 )
+    message( FATAL_ERROR "OpenMPI version < 1.8 found." )
   endif()
 
   # Setting mpi_paffinity_alone to 0 allows parallel ctest to work correctly.
@@ -313,15 +313,11 @@ macro( setupOpenMPI )
 
   # This flag also shows up in jayenne/pkg_tools/run_milagro_test.py and
   # regress_funcs.py.
-  if( ${DBS_MPI_VER_MAJOR}.${DBS_MPI_VER_MINOR} VERSION_LESS 1.7 )
-    set( MPIEXEC_POSTFLAGS "--mca mpi_paffinity_alone 0 ${runasroot}" CACHE
-      STRING "extra mpirun flags (list)." FORCE)
-  else()
-    # (2017-01-13) Bugs in openmpi-1.10.x are mostly fixed. Remove flags used
-    # to work around bugs: '-mca btl self,vader -mca timer_require_monotonic 0'
-    set( MPIEXEC_POSTFLAGS "-bind-to none ${runasroot}" CACHE STRING
-      "extra mpirun flags (list)." FORCE)
-  endif()
+
+  # (2017-01-13) Bugs in openmpi-1.10.x are mostly fixed. Remove flags used
+  # to work around bugs: '-mca btl self,vader -mca timer_require_monotonic 0'
+  set( MPIEXEC_POSTFLAGS "-bind-to none ${runasroot}" CACHE STRING
+    "extra mpirun flags (list)." FORCE)
 
   # Find cores/cpu, cpu/node, hyperthreading
   query_topology()
@@ -329,18 +325,11 @@ macro( setupOpenMPI )
   #
   # Setup for OMP plus MPI
   #
-  if( ${DBS_MPI_VER_MAJOR}.${DBS_MPI_VER_MINOR} VERSION_LESS 1.7 )
+  if( NOT APPLE )
+    # -bind-to fails on OSX, See #691
     set( MPIEXEC_OMP_POSTFLAGS
-      "-bind-to-socket -cpus-per-proc ${MPI_CORES_PER_CPU} --report-bindings" )
-  elseif( ${DBS_MPI_VER_MAJOR}.${DBS_MPI_VER_MINOR} VERSION_GREATER 1.7 )
-    if( NOT APPLE )
-      # -bind-to fails on OSX, See #691
-      set( MPIEXEC_OMP_POSTFLAGS
-        "-bind-to socket --map-by ppr:${MPI_CORES_PER_CPU}:socket --report-bindings ${runasroot}" )
-    endif()
-  else()  # Version 1.7.4
-    set( MPIEXEC_OMP_POSTFLAGS
-      "-bind-to socket --map-by socket:PPR=${MPI_CORES_PER_CPU}" )
+      "--map-by ppr:${MPI_CORES_PER_CPU}:socket --report-bindings ${runasroot}" )
+      # "-bind-to socket --map-by ppr:${MPI_CORES_PER_CPU}:socket --report-bindings ${runasroot}"
   endif()
 
   set( MPIEXEC_OMP_POSTFLAGS ${MPIEXEC_OMP_POSTFLAGS}
@@ -606,8 +595,9 @@ macro( setupMPILibrariesUnix )
       # Set DRACO_C4 and other variables
       setupDracoMPIVars()
 
-      # Find the version
-      if( NOT "${MPIEXEC}" MATCHES "aprun" )
+      # Find the mpirun version (skip this on Cray because this command seems to
+      # occasionally hang).
+      if( NOT CRAY_PE )
         execute_process( COMMAND ${MPIEXEC} --version
           OUTPUT_VARIABLE DBS_MPI_VER_OUT
           ERROR_VARIABLE DBS_MPI_VER_ERR)
