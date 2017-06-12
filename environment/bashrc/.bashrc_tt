@@ -38,6 +38,18 @@ if [[ -n "${LESS}" ]]; then
 fi
 
 #
+# OpenMP
+#
+export OMP_PLACES=threads
+if [[ `lscpu | grep Flags | grep -c knl` == 0 ]]; then
+  export OMP_NUM_THREADS=16
+  export NRANKS_PER_NODE=32
+else
+  export OMP_NUM_THREADS=17
+  export NRANKS_PER_NODE=68
+fi
+
+#
 # MODULES
 #
 
@@ -85,8 +97,6 @@ function rmdracoenv ()
   module unload PrgEnv-intel
   module load PrgEnv-intel
 }
-
-export OMP_NUM_THREADS=16
 
 # Do not escape $ for bash completion
 shopt -s direxpand
