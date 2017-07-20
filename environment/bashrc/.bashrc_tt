@@ -29,6 +29,8 @@ if [[ ! ${VENDOR_DIR} ]]; then
    fi
 fi
 
+add_to_path $VENDOR_DIR/bin
+
 # If LESS is set, is should include '-R' so that git diff's color
 # displays correctly.
 if [[ -n "${LESS}" ]]; then
@@ -41,7 +43,7 @@ fi
 # OpenMP
 #
 export OMP_PLACES=threads
-if [[ `lscpu | grep Flags | grep -c knl` == 0 ]]; then
+if [[ `lscpu | grep Flags | grep -c avx512` == 0 ]]; then
   export OMP_NUM_THREADS=16
   export NRANKS_PER_NODE=32
 else
@@ -65,6 +67,9 @@ else
   module load user_contrib
 fi
 module load friendly-testing
+if [[ ${SLURM_JOB_PARTITION} == "knl" ]]; then
+  module swap craype-haswell craype-mic-knl
+fi
 
 export dracomodules="clang-format metis parmetis/4.0.3 trilinos/12.8.1 \
 superlu-dist/4.3 gsl/2.1 cmake/3.6.2 numdiff ndi random123 eospac/6.2.4 \
