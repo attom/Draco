@@ -13,6 +13,7 @@
 #include "Timer.hh"
 #include "C4_sys_times.h"
 #include "ds++/XGetopt.hh"
+#include <cmath>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -321,6 +322,71 @@ void Timer::pause(double const pauseSeconds) {
   Ensure(elapsed >= pauseSeconds);
   return;
 }
+
+//---------------------------------------------------------------------------//
+/*! Print out a summary timing report for averages across MPI ranks.
+ *
+ * \param out Stream to which to write the report.
+ *
+ * \param p Precision with which to write the timing and variance numbers.
+ * Defaults to 2.
+ *
+ * \param w Width of the timing number fields. Defaults to each field being 13
+ * characters wide.
+ *
+ * \param v Width of the variance number fields. Defaults to each field being 5
+ * characters wide.
+ */
+void Timer::printline_mean(std::ostream &out, unsigned const p,
+                           unsigned const w, unsigned const v) const {
+  using std::setw;
+  using std::ios;
+
+  unsigned const ranks = rtt_c4::nodes();
+
+  double ni = num_intervals, ni2 = ni * ni;
+  double u = sum_user_cpu(), u2 = u * u;
+  double s = sum_system_cpu(), s2 = s * s;
+  double ww = sum_wall_clock(), ww2 = ww * ww;
+
+  double buffer[8] = {ni, ni2, u, u2, s, s2, ww, ww2};
+  rtt_c4::global_sum(buffer, 8);
+
+  ni = buffer[0];
+  ni2 = buffer[1];
+  u = buffer[2];
+  u2 = buffer[3];
+  s = buffer[4];
+  s2 = buffer[5];
+  ww = buffer[6];
+  ww2 = buffer[7];
+
+  unsigned mni = ni / ranks;
+  double mu = u / ranks;
+  double ms = s / ranks;
+  double mww = ww / ranks;
+
+  if (rtt_c4::node() == 0) {
+    out.setf(ios::fixed, ios::floatfield);
+    out.precision(p);
+
+    // Width of first column (intervals) should be set by client before
+    // calling this function.
+    out << setw(w) << mni << " +/- " << setw(v)
+        << sqrt((ni2 - 2 * mni * ni + ranks * mni * mni) / ranks) << setw(w)
+        << mu << " +/- " << setw(v)
+        << sqrt((u2 - 2 * mu * u + ranks * mu * mu) / ranks) << setw(w) << mu
+        << " +/- " << setw(v)
+        << sqrt((s2 - 2 * ms * s + ranks * ms * ms) / ranks) << setw(w) << mu
+        << " +/- " << setw(v)
+        << sqrt((ww2 - 2 * mww * ww + ranks * mww * mww) / ranks);
+
+    // Omit PAPI for now.
+
+    out << std::endl;
+  }
+}
+
 } // end namespace rtt_c4
 
 //---------------------------------------------------------------------------//
