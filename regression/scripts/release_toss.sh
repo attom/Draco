@@ -5,7 +5,7 @@
 ##---------------------------------------------------------------------------##
 ## 1. Directory layout:
 ##    /usr/projects/draco/draco-NN_NN_NN/
-##                  scripts/release_toss2.sh # this script
+##                  scripts/release_toss.sh # this script
 ##                  logs/                    # build/test logs
 ##                  source/draco-NN_NN_NN    # svn checkout of release branch
 ##                  flavor/opt|debug         # released libraries/headers
@@ -18,7 +18,7 @@
 ## 1. Set modulefiles to be loaded in named environment functions.
 ## 2. Update variables that control the build:
 ##    - $ddir
-## 3. Run this script: ./release_toss2.sh &> ../logs/relase_moonlight.log
+## 3. Run this script: ./release_toss.sh &> ../logs/relase_moonlight.log
 
 #----------------------------------------------------------------------#
 # Per release settings go here (edits go here)
@@ -26,32 +26,43 @@
 
 # Draco install directory name (/usr/projects/draco/draco-NN_NN_NN)
 export package=draco
-ddir=draco-6_22_0
+ddir=draco-6_23_0
 pdir=$ddir
 
 # environment (use draco modules)
 # release for each module set
-environments="intel17env gcc610env"
-function intel17env()
+environments="intel1701env intel1704env gcc640env"
+function intel1701env()
 {
   run "module purge"
   run "module load friendly-testing user_contrib"
-  run "module load cmake/3.7.1 git numdiff"
+  run "module load cmake/3.9.0 git numdiff"
   run "module load intel/17.0.1 openmpi/1.10.5"
-  run "module load random123 eospac/6.2.4 gsl/2.1"
-  run "module load mkl metis/5.1.0 ndi"
-  run "module load parmetis/4.0.3 superlu-dist/4.3 trilinos/12.8.1"
+  run "module load random123 eospac/6.2.4 gsl"
+  run "module load mkl metis ndi csk"
+  run "module load parmetis superlu-dist trilinos"
   run "module list"
 }
-function gcc610env()
+function intel1704env()
 {
   run "module purge"
   run "module load friendly-testing user_contrib"
-  run "module load cmake/3.7.1 git numdiff"
-  run "module load gcc/6.1.0 openmpi/1.10.5"
-  run "module load random123 eospac/6.2.4 gsl/2.3"
-  run "module load lapack/3.6.1 metis/5.1.0 ndi"
-  run "module load parmetis/4.0.3 superlu-dist/4.3 trilinos/12.8.1"
+  run "module load cmake/3.9.0 git numdiff"
+  run "module load intel/17.0.4 openmpi/2.1.2"
+  run "module load random123 eospac/6.2.4 gsl"
+  run "module load mkl metis ndi csk"
+  run "module load parmetis superlu-dist trilinos"
+  run "module list"
+}
+function gcc640env()
+{
+  run "module purge"
+  run "module load friendly-testing user_contrib"
+  run "module load cmake/3.9.0 git numdiff"
+  run "module load gcc/6.4.0 openmpi/2.1.2"
+  run "module load random123 eospac/6.2.4 gsl"
+  run "module load mkl metis ndi"
+  run "module load parmetis superlu-dist trilinos"
   run "module list"
 }
 
@@ -62,11 +73,9 @@ function gcc610env()
 ##---------------------------------------------------------------------------##
 ## Generic setup (do not edit)
 ##---------------------------------------------------------------------------##
-initial_working_dir=`pwd`
-cd $`dirname $0`
-export script_dir=`pwd`
-export draco_script_dir=$script_dir
-cd $initial_working_dir
+
+export script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export draco_script_dir=`readlink -f $script_dir`
 source $draco_script_dir/common.sh
 
 # CMake options that will be included in the configuration step
@@ -123,6 +132,8 @@ OPTIONS=(\
     "$OPTIMIZE_ON $LOGGING_OFF" \
     "$OPTIMIZE_RWDI $LOGGING_OFF" \
 )
+#VERSIONS=( "debug")
+#OPTIONS=( "$OPTIMIZE_OFF $LOGGING_OFF" )
 
 ##---------------------------------------------------------------------------##
 ## Environment review
@@ -177,7 +188,7 @@ for env in $environments; do
     export steps="config build test"
     cmd="sbatch -J release_draco $access_queue -t 1:00:00 -N 1 \
 -o $source_prefix/logs/release-$buildflavor-$version.log \
-$script_dir/release_toss2.msub"
+$script_dir/release.msub"
     echo -e "\nConfigure, Build and Test $buildflavor-$version version of $package."
     echo "$cmd"
     jobid=`eval ${cmd} &`

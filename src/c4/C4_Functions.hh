@@ -136,10 +136,20 @@ DLL_PUBLIC_c4 int send(const T *buffer, int size, int destination,
                        int tag = C4_Traits<T *>::tag);
 
 //---------------------------------------------------------------------------//
+//! Do a point-to-point, blocking send.
+template <typename T>
+int send_custom(const T *buffer, int size, int destination, int tag);
+
+//---------------------------------------------------------------------------//
 //! Do a point-to-point, blocking receive.
 template <typename T>
 DLL_PUBLIC_c4 int receive(T *buffer, int size, int source,
                           int tag = C4_Traits<T *>::tag);
+
+//---------------------------------------------------------------------------//
+//! Do a point-to-point, blocking receive with a custom MPI type
+template <typename T>
+int receive_custom(T *buffer, int size, int source, int tag);
 
 //---------------------------------------------------------------------------//
 //! Do a point-to-point, blocking send of a user-defined type.
@@ -230,6 +240,30 @@ void send_is(C4_Req &request, T const *buffer, int size, int destination) {
   return;
 }
 
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Get the size of a message with custom types
+ *
+ * \param[in] request C4_Req object that will hold MPI request
+ * \return number of type T objects in the completed message
+ */
+template <typename T>
+int message_size_custom(C4_Status status, const T &mpi_type);
+
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Do a point-to-point, non-blocking send with a MPI custom type
+ *
+ * \param[in|out] request C4_Req object that will hold MPI request
+ * \param[in|out] buffer array of data of type T that has an MPI type
+ * \param[in] size size of buffer
+ * \param[in] destination rank that will receive this message
+ * \param[in] tag message tag
+ */
+template <typename T>
+void send_is_custom(C4_Req &request, T const *buffer, int size, int destination,
+                    int tag);
+
 // [2011-05-11 GMR] This declaration should replace the two preceeding ones.
 // However, I expect that PGI-10 doesn't like this syntax for the same reason
 // that it doesn't like the syntax for send_async above.
@@ -279,6 +313,20 @@ void receive_async(C4_Req &request, T *buffer, int size, int source) {
   receive_async(request, buffer, size, source, tag);
   return;
 }
+
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Post a non-blocking receive for a message of custom MPI type data
+ *
+ * \param[in|out] request C4_Req object that will hold MPI request
+ * \param[in|out] buffer array of data of type T that has a registered MPI type
+ * \param[in] size size of buffer
+ * \param[in] source remote rank sending message to this rank
+ * \param[in] tag message tag
+ */
+template <typename T>
+void receive_async_custom(C4_Req &request, T *buffer, int size, int source,
+                          int tag);
 
 // [2010-07-22 KT] This declaration should replace the two preceeding ones.
 // However, PGI-10 doesn't like this syntax and issues the warning:
@@ -334,6 +382,17 @@ int scatterv(T *send_buffer, int *send_sizes, int *send_displs,
  * \brief Do a global sum of a scalar variable.
  */
 template <typename T> DLL_PUBLIC_c4 void global_sum(T &x);
+
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Do a non-blocking global sum of a scalar variable.
+ *
+ * \param[in|out] send_buffer scalar value on this processing element
+ * \param[in|out] recv_buffer scalar value summed across all ranks
+ * \param[in|out] request C4_Requst handle for testing completed message
+ */
+template <typename T>
+DLL_PUBLIC_c4 void global_isum(T &send_buffer, T &recv_buffer, C4_Req &request);
 
 //---------------------------------------------------------------------------//
 /*!
@@ -481,6 +540,14 @@ DLL_PUBLIC_c4 std::string get_processor_name();
  * \return Sum of value over nodes up to and including this node.
  */
 template <typename T> DLL_PUBLIC_c4 T prefix_sum(const T node_value);
+
+/*!
+ * \brief Return the value of the prefix sum at this processor.
+ *
+ * \param buffer Current node's starting buffer address to be prefix summed
+ * \param n number of ojbects of type T in the buffer
+ */
+template <typename T> DLL_PUBLIC_c4 void prefix_sum(T *buffer, const int32_t n);
 
 } // end namespace rtt_c4
 

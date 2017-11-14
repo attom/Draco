@@ -48,7 +48,7 @@ job_launch_sanity_checks
 available_queues=`sacctmgr -np list assoc user=$LOGNAME | grep access | sed -e 's/.*|\(.*access.*\)|.*/\1/'  | sed -e 's/|.*//'`
 case $available_queues in
   *access*) access_queue="-A access --qos=access" ;;
-  *dev*) access_queue="--qos=dev" ;;
+  *dev*)    access_queue="--qos=dev" ;;
 esac
 
 # Banner
@@ -86,7 +86,7 @@ logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra
 if [[ -f $logfile ]]; then
   rm $logfile
 fi
-cmd="$MSUB ${access_queue} -o ${logfile} -t 4:00:00 ${rscriptdir}/ml-regress.msub"
+cmd="$MSUB ${access_queue} -o ${logfile} -J ${subproj:0:5}-${featurebranch} -t 4:00:00 ${rscriptdir}/ml-regress.msub"
 echo "${cmd}"
 jobid=`eval ${cmd}`
 # trim extra whitespace from number
@@ -94,9 +94,8 @@ jobid=`echo ${jobid//[^0-9]/}`
 
 # Wait for BT (build and test) to finish
 sleep 1m
-echo "$SHOWQ | grep $jobid"
+# echo "$SHOWQ | grep $jobid"
 while test "`$SHOWQ | grep -c $jobid`" == "1"; do
-#   $SHOWQ | grep $jobid
    echo "   ${subproj}: waiting for jobid = $jobid to finish (sleeping 5 minutes)."
    sleep 5m
 done

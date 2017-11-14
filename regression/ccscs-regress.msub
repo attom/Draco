@@ -36,6 +36,7 @@ fi
 
 # Environment setup
 # ----------------------------------------
+umask 0007
 
 export http_proxy=http://proxyout.lanl.gov:8080
 export HTTP_PROXY=$http_proxy
@@ -48,6 +49,8 @@ export NO_PROXY=$no_proxy
 export VENDOR_DIR=/scratch/vendors
 # gitlab.lanl.gov has an unkown certificate, disable checking
 export GIT_SSL_NO_VERIFY=true
+# ccscs7 has 8 cores per socket
+export OMP_NUM_THREADS=8
 
 # import some bash functions
 source $rscriptdir/scripts/common.sh
@@ -77,60 +80,29 @@ echo "CCSCS Regression: ${ctestparts} from ${machine}."
 echo "                  ${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}"
 echo "==========================================================================="
 
-umask 0002
-ulimit -a
+run "ulimit -a"
 
 # Modules
 # ----------------------------------------
 
 if [[ `fn_exists module` == 1 ]]; then
   echo " "
-  if [[ `declare -f module | grep -c LMOD` == 0 ]]; then
-    # we have tcl modules
-    echo "Found Tcl modules:"
-    run "module list"
-    echo "unloading"
-    run "module purge"
-    run "module list"
-    unset dracomodules
-    unset NoModules
-    unset _LMFILES_
-    unset MODULEPATH
-    unset LOADEDMODULES
-    unset MODULESHOME
-
-    # If TCL modulefiles, switch to Lmod
-    echo " "
-    echo "Switching to Lmod modulefiles..."
-    export MODULE_HOME=/scratch/vendors/spack.20170502/opt/spack/linux-rhel7-x86_64/gcc-4.8.5/lmod-7.4.8-oytncsoih2sa4jdogz2ojvwly6mwle4n
-    source $MODULE_HOME/lmod/lmod/init/bash || die "Can't find /mod/init/bash"
-    run "module use /scratch/vendors/spack.20170502/share/spack/lmod/linux-rhel7-x86_64/Core" || die "Can't find Lmod Core modulefiles."
-
-  else
-    # we have Lmod modules
-    echo "Found Lmod modules:"
-    run "module avail"
-    run "module list"
-    run "module purge"
-    run "module list"
-  fi
+  # we have Lmod modules
+  echo "Found Lmod modules:"
+  run "module purge"
+  run "module load user_contrib"
 else
+  # The nightly crontabs follow this branch!
   echo " "
   echo "No modules available"
-  echo "Loading Lmod modulefiles..."
-  export MODULE_HOME=/scratch/vendors/spack.20170502/opt/spack/linux-rhel7-x86_64/gcc-4.8.5/lmod-7.4.8-oytncsoih2sa4jdogz2ojvwly6mwle4n
-  source $MODULE_HOME/lmod/lmod/init/bash || die "Can't find /mod/init/bash"
-  run "module use /scratch/vendors/spack.20170502/share/spack/lmod/linux-rhel7-x86_64/Core" || die "Can't find Lmod Core modulefiles."
+  echo "Trying to setup Lmod modulefiles..."
+  run "source /etc/bashrc"
+  run "module load user_contrib"
 fi
 
-# Establish environment via Lmod...
-
-# eospac, ndi, csk
-run "module use --append /scratch/vendors/Modules.lmod"
-
 # Load default set of modules
-dm_core="cmake eospac git ndi python graphviz doxygen ccache numdiff"
-dm_gcc="gcc/6.3.0 netlib-lapack gsl metis random123 csk qt"
+dm_core="eospac git ndi python graphviz doxygen ccache numdiff"
+dm_gcc="gcc/7.2.0 cmake netlib-lapack gsl metis random123 csk qt"
 dm_openmpi="openmpi parmetis superlu-dist trilinos"
 export dracomodules="$dm_core $dm_gcc $dm_openmpi"
 
@@ -161,7 +133,7 @@ case $extra_params in
     ;;
   clang)
     run "module load $dm_core"
-    run "module load llvm netlib-lapack gsl metis random123 csk"
+    run "module load llvm cmake netlib-lapack gsl metis random123 csk"
     run "module load $dm_openmpi"
     comp=clang
     ;;
@@ -169,10 +141,10 @@ case $extra_params in
     run "module load $dracomodules"
     comp="gcc-fulldiagnostics"
     ;;
-  gcc630)
-    run "module load $dracomodules"
-    comp=gcc-6.3.0
-    ;;
+#  gcc630)
+#    run "module load $dracomodules"
+#    comp=gcc-6.3.0
+#    ;;
   valgrind)
     run "module load $dracomodules valgrind"
     comp=gcc
@@ -190,12 +162,13 @@ case $extra_params in
     ;;
 esac
 run "module list"
+comp=$comp-$featurebranch
 
 # When run by crontab, use a special ssh-key to allow authentication to gitlab
 if test "$USER" == "kellyt"; then
   MYHOSTNAME="`uname -n`"
   keychain=keychain-2.8.2
-  $VENDOR_DIR/$keychain/keychain $HOME/.ssh/cmake_dsa $HOME/.ssh/cmake_rsa
+  run "$VENDOR_DIR/$keychain/keychain $HOME/.ssh/id_rsa"
   if test -f $HOME/.keychain/$MYHOSTNAME-sh; then
     run "source $HOME/.keychain/$MYHOSTNAME-sh"
   else
@@ -251,6 +224,9 @@ elif test "${subproj}" == jayenne; then
   script_dir=`echo ${rscriptdir} | sed -e 's/draco/jayenne/'`
   script_name=Jayenne_Linux64.cmake
 elif test "${subproj}" == capsaicin; then
+  # For now force Capsaicin to only 1 OMP thread per MPI rank to avoid
+  # oversubscribing the system.
+  export OMP_NUM_THREADS=1
   script_dir=`echo ${rscriptdir} | sed -e 's%draco/regression%capsaicin/scripts%'`
   script_name=Capsaicin_Linux64.cmake
 elif test "${subproj}" == asterisk; then
@@ -313,10 +289,10 @@ if test "${bounds_checking:-off}" = "on"; then
 fi
 
 # Environment
-echo " "
-echo "--------------------(environment)------------------------------"
-set
-echo "--------------------(end environment)--------------------------"
+#echo " "
+#echo "--------------------(environment)------------------------------"
+#set
+#echo "--------------------(end environment)--------------------------"
 
 echo ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}
 ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}

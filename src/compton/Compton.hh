@@ -11,13 +11,14 @@
 #ifndef __compton_Compton_hh__
 #define __compton_Compton_hh__
 
+#include "compton/config.h"
+
+#ifdef COMPTON_FOUND
+
 // C++ standard library dependencies
 #include <iostream>
 #include <memory>
 #include <vector>
-// headers provided in compton CSK_generator include directory
-#include "etemp_interp.hh"
-#include "multigroup_compton_data.hh"
 
 namespace rtt_compton {
 //===========================================================================//
@@ -25,7 +26,7 @@ namespace rtt_compton {
  * \class Compton
  *
  * \brief Provides access to relativistic Compton scattering angle and
- * multigroup frequency distributions from the CSK_generator project.
+ *        multigroup frequency distributions from the CSK_generator project.
  *
  * This interface class allows the client to:
  * 1) access (interpolate) data from existing multigroup CSK_generator libraries
@@ -38,13 +39,12 @@ namespace rtt_compton {
  * If this is not found at the CMake configure step, the lib_compton portion of
  * draco will not be built.
  *
- * <b>User's environment</b>
+ * \b User's \b environment
  *
- * Cmake searches for the CSK_generator library/include headers during the
+ * CMake searches for the CSK_generator library/include headers during the
  * configuration step. The script that does this is located at:
  *
- * /draco/config/findCOMPTON.cmake
- *
+ * \c /draco/config/FindCOMPTON.cmake
  */
 
 /*!
@@ -67,19 +67,20 @@ public:
   //! Constructor to build a multigroup library from an existing pointwise file
   Compton(const std::string &file, const std::vector<double> &group_bounds,
           const std::string &opac_type, const std::string &wt_func,
-          const bool induced, const size_t n_xi = 0);
+          const bool induced, const bool det_bal = false,
+          const size_t n_xi = 0);
 
   //! Interpolation of all csk opacity data to a certain electron temperature:
   std::vector<std::vector<std::vector<std::vector<double>>>>
-  interpolate_csk(const double etemp) const;
+  interpolate_csk(const double etemp, const bool limit_grps = true) const;
 
   //! Interpolation of all nu_ratio data to an electron temperature:
   std::vector<std::vector<double>>
-  interpolate_nu_ratio(const double etemp) const;
+  interpolate_nu_ratio(const double etemp, const bool limit_grps = true) const;
 
-  //! Retrieve group structure for the given library:
+  //! Retrieve group structure for the given library (in kev):
   std::vector<double> get_group_bounds() const {
-    return ei->get_Cdata()->get_group_bds();
+    return ei->get_Cdata()->get_group_bds_kev();
   }
 
   //! Retrieve min electron temperature for the given library:
@@ -99,4 +100,10 @@ public:
 };
 }
 
-#endif
+#endif // COMPTON_FOUND
+
+#endif // __compton_Compton_hh__
+
+//----------------------------------------------------------------------------//
+// End compton/Compton.hh
+//----------------------------------------------------------------------------//

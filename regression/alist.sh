@@ -54,7 +54,8 @@ for file in $tmp; do
     *mesh | *output.in | *png | *ps | *xs4 )
       # drop these files from the count.
       ;;
-    *) projectfiles="$projectfiles $file" ;;
+    *)
+      if [[ -f $file ]]; then projectfiles="$projectfiles $file"; fi ;;
   esac
 done
 
@@ -96,7 +97,7 @@ for entry in "${entries[@]}"; do
     pahrens) current_author="Peter Ahrens" ;;
     talbotp) current_author="Paul Talbot" ;;
     tmonster) current_author="Todd J. Urbatsch" ;;
-    warsa) current_author="James S. Warsa" ;;
+    warsa | *Warsa) current_author="James S. Warsa" ;;
     wollaber) current_author="Allan B. Wollaber" ;;
     wollaege | *Wollaeger) current_author="Ryan T. Wollaeger" ;;
   esac

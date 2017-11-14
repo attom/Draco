@@ -1022,43 +1022,40 @@ macro( add_parallel_tests )
 
 endmacro()
 
-#----------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
 # provide_aux_files
 #
-# Call this macro from a package CMakeLists.txt to instruct the build
-# system that some files should be copied from the source directory
-# into the build directory.
-#----------------------------------------------------------------------#
+# Call this macro from a package CMakeLists.txt to instruct the build system
+# that some files should be copied from the source directory into the build
+# directory.
+# ------------------------------------------------------------------------------#
 macro( provide_aux_files )
 
   cmake_parse_arguments(
     auxfiles
     "NONE"
     "SRC_EXT;DEST_EXT;FOLDER"
-    "FILES"
+    "FILES;TARGETS"
     ${ARGV}
     )
 
   unset(required_files)
   foreach( file ${auxfiles_FILES} )
     get_filename_component( srcfilenameonly ${file} NAME )
-    if( "${auxfiles_SRC_EXT}none" STREQUAL "none" )
-      if( "${auxfiles_DEST_EXT}none" STREQUAL "none" )
-        # do nothing
+    if( auxfiles_SRC_EXT )
+      if( auxfiles_DEST_EXT )
+        # replace SRC_EXT with DEST_EXT
+        string( REPLACE "${auxfiles_SRC_EXT}" "${auxfiles_DEST_EXT}"
+          srcfilenameonly "${srcfilenameonly}" )
       else()
-        # add DEST_EXT
-        set( srcfilenameonly
-          "${srcfilenameonly}${auxfiles_DEST_EXT}" )
+        # strip SRC_EXT
+        string( REPLACE ${auxfiles_SRC_EXT} "" srcfilenameonly
+          ${srcfilenameonly} )
       endif()
     else()
-      if( "${auxfiles_DEST_EXT}none" STREQUAL "none" )
-        # strip SRC_EXT
-        string( REPLACE ${auxfiles_SRC_EXT} ""
-          srcfilenameonly ${srcfilenameonly} )
-      else()
-        # replace SRC_EXT with DEST_EXT
-        string( REPLACE ${auxfiles_SRC_EXT} ${auxfiles_DEST_EXT}
-          srcfilenameonly ${srcfilenameonly} )
+      if( auxfiles_DEST_EXT )
+        # add DEST_EXT
+        set( srcfilenameonly "${srcfilenameonly}${auxfiles_DEST_EXT}" )
       endif()
     endif()
     set( outfile ${PROJECT_BINARY_DIR}/${srcfilenameonly} )
@@ -1073,49 +1070,51 @@ macro( provide_aux_files )
   string( REPLACE "_test" "" compname ${PROJECT_NAME} )
 
   # Extra logic if multiple calls from the same directory.
-  if( "${Ut_${compname}_install_inputs_iarg}notset" STREQUAL "notset" )
-    set( Ut_${compname}_install_inputs_iarg "0" CACHE INTERNAL
-      "counter for each provide_aux_files command.  Used to create individual targets for copying support files.")
-  else()
+  if( DEFINED Ut_${compname}_install_inputs_iarg )
     math( EXPR Ut_${compname}_install_inputs_iarg
       "${Ut_${compname}_install_inputs_iarg} + 1" )
+  else()
+    set( Ut_${compname}_install_inputs_iarg "0" CACHE INTERNAL
+      "counter for each provide_aux_files command. Used to create individual
+targets for copying support files.")
   endif()
   add_custom_target(
     Ut_${compname}_install_inputs_${Ut_${compname}_install_inputs_iarg}
     ALL
-    DEPENDS ${required_files}
+    DEPENDS ${required_files};${auxfiles_TARGETS}
     )
   if( auxfiles_FOLDER )
     set( folder_name ${auxfiles_FOLDER} )
   else()
     set( folder_name ${compname}_test )
   endif()
-  set_target_properties( Ut_${compname}_install_inputs_${Ut_${compname}_install_inputs_iarg}
+  set_target_properties(
+    Ut_${compname}_install_inputs_${Ut_${compname}_install_inputs_iarg}
     PROPERTIES FOLDER ${folder_name}
     )
 
 endmacro()
 
-#----------------------------------------------------------------------#
-# PROCESS_AUTODOC_PAGES - Run configure_file(...) for all .dcc.in
-# files found in the autodoc directory.  Destination will be the
-# autodoc directory in the component binary directory.  The
-# CMakeLists.txt in the draco/autodoc directory knows how to find
-# these files.
+#------------------------------------------------------------------------------#
+# PROCESS_AUTODOC_PAGES - Run configure_file(...) for all .dcc.in files found in
+# the autodoc directory.  Destination will be the autodoc directory in the
+# component binary directory.  The CMakeLists.txt in the draco/autodoc directory
+# knows how to find these files.
 #
-# This allows CMAKE variables to be inserted into the .dcc files
-# (e.g.: @DRACO_VERSION@)
+# This allows CMAKE variables to be inserted into the .dcc files (e.g.:
+# @DRACO_VERSION@)
 #
 # E.g.: process_autodoc_pages()
-#----------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
 macro( process_autodoc_pages )
   file( GLOB autodoc_in autodoc/*.in )
   foreach( file ${autodoc_in} )
     get_filename_component( dest_file ${file} NAME_WE )
-    configure_file( ${file} ${PROJECT_BINARY_DIR}/autodoc/${dest_file}.dcc @ONLY )
+    configure_file( ${file} ${PROJECT_BINARY_DIR}/autodoc/${dest_file}.dcc
+      @ONLY )
   endforeach()
 endmacro()
 
-#----------------------------------------------------------------------#
-# End
-#----------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# End config/component_macros.cmake
+#------------------------------------------------------------------------------#

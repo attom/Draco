@@ -13,7 +13,7 @@
 
 # Main Options
 export machine_name_long="Snow"
-platform_extra_params="fulldiagnostics gcc610 newtools nr perfbench valgrind"
+platform_extra_params="fulldiagnostics gcc610 gcc640 newtools nr perfbench valgrind"
 pem_match=`echo $platform_extra_params | sed -e 's/[ ]/|/g'`
 
 ##---------------------------------------------------------------------------##

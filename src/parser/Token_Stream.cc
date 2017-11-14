@@ -22,15 +22,20 @@ Syntax_Error::Syntax_Error() : runtime_error("syntax error") {
 }
 
 //-----------------------------------------------------------------------//
-/*! 
+/*!
  *
- * This function returns the token at the cursor position and advance the 
+ * This function returns the token at the cursor position and advance the
  * cursor. It will, if necessary, fill() the token buffer first.
  *
  * \return <code>old lookahead()</code>
  */
 Token Token_Stream::shift() {
-  Token const Result = lookahead();
+  if (deq.size() == 0) {
+    deq.push_back(fill_());
+  }
+
+  Token Result;
+  Result.swap(deq[0]);
   deq.pop_front();
 
   Ensure(check_class_invariants());
@@ -40,7 +45,7 @@ Token Token_Stream::shift() {
 }
 
 //-----------------------------------------------------------------------//
-/*! 
+/*!
  *
  * This function looks ahead in the token stream without changing the cursor
  * position.  It will, if necessary, fill_() the token buffer first.  If the
@@ -53,7 +58,7 @@ Token Token_Stream::shift() {
  * \return The token at the specified position relative to the
  * cursor.
  */
-Token Token_Stream::lookahead(unsigned const pos) {
+Token const &Token_Stream::lookahead(unsigned const pos) {
   while (deq.size() <= pos) {
     deq.push_back(fill_());
   }
@@ -63,7 +68,7 @@ Token Token_Stream::lookahead(unsigned const pos) {
 }
 
 //-----------------------------------------------------------------------//
-/*! 
+/*!
  *
  * This function pushes the specified token onto the front of the token
  * stream, so that it is now the token in the lookahead(0) position.
@@ -76,7 +81,7 @@ void Token_Stream::pushback(Token const &token) {
 }
 
 //-----------------------------------------------------------------------//
-/*! 
+/*!
  *
  * The default implementation of this function passes its message on to
  * Report_Error, then throws a Syntax_Error exception.
@@ -109,7 +114,7 @@ void Token_Stream::report_syntax_error(Token const &token,
 }
 
 //-----------------------------------------------------------------------//
-/*! 
+/*!
  *
  * The default implementation of this function passes its message on to
  * report, then throws a Syntax_Error exception.
@@ -140,7 +145,7 @@ void Token_Stream::report_syntax_error(string const &message) {
 }
 
 //--------------------------------------------------------------------------//
-/*! 
+/*!
  *
  * The default implementation of this function passes its message on to
  * report, then returns.
@@ -163,7 +168,7 @@ void Token_Stream::report_semantic_error(Token const &token,
 }
 
 //---------------------------------------------------------------------------//
-/*! 
+/*!
  *
  * The default implementation of this function passes its message
  * on to report, then returns.
@@ -185,7 +190,7 @@ void Token_Stream::report_semantic_error(string const &message) {
 }
 
 //---------------------------------------------------------------------------//
-/*! 
+/*!
  *
  * The default implementation of this function passes its message on to
  * report, then returns.
@@ -207,7 +212,7 @@ void Token_Stream::report_semantic_error(exception const &message) {
 }
 
 //---------------------------------------------------------------------------//
-/*! 
+/*!
  * \brief Reset the token stream.
  *
  * This function is normally called by its overriding version in children of

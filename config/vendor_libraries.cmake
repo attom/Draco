@@ -99,6 +99,13 @@ macro( setupLAPACKLibrariesUnix )
         set( MKL_LIBRARY_TYPE "SHARED" )
       endif()
 
+      # should we link against libmkl_gnu_thread.so or libmkl_intel_thread.so
+      if( ${CMAKE_C_COMPILER_ID} MATCHES GNU )
+        set(tlib "mkl_gnu_thread")
+      else()
+        set(tlib "mkl_intel_thread")
+      endif()
+
       if( BLAS_FOUND )
         set( LAPACK_FOUND TRUE CACHE BOOL "lapack (MKL) found?" FORCE)
         set( lapack_FOUND TRUE CACHE BOOL "lapack (MKL) found?" FORCE)
@@ -109,7 +116,7 @@ macro( setupLAPACKLibrariesUnix )
         add_library( blas::mkl_thread  ${MKL_LIBRARY_TYPE} IMPORTED)
         add_library( blas::mkl_core    ${MKL_LIBRARY_TYPE} IMPORTED)
         set_target_properties( blas::mkl_thread PROPERTIES
-          IMPORTED_LOCATION                 "${BLAS_mkl_intel_thread_LIBRARY}"
+          IMPORTED_LOCATION                 "${BLAS_${tlib}_LIBRARY}"
           IMPORTED_LINK_INTERFACE_LANGUAGES "C"
           IMPORTED_LINK_INTERFACE_MULTIPLICITY 20 )
         set_target_properties( blas::mkl_core PROPERTIES
@@ -120,7 +127,7 @@ macro( setupLAPACKLibrariesUnix )
         set_target_properties( blas PROPERTIES
           IMPORTED_LOCATION                 "${BLAS_mkl_intel_lp64_LIBRARY}"
           IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-          IMPORTED_LINK_INTERFACE_LIBRARIES "-Wl,--start-group;${BLAS_mkl_core_LIBRARY};${BLAS_mkl_intel_thread_LIBRARY};-Wl,--end-group"
+          IMPORTED_LINK_INTERFACE_LIBRARIES "-Wl,--start-group;${BLAS_mkl_core_LIBRARY};${BLAS_${tlib}_LIBRARY};-Wl,--end-group"
           IMPORTED_LINK_INTERFACE_MULTIPLICITY 20)
         set_target_properties( lapack PROPERTIES
           IMPORTED_LOCATION                 "${BLAS_mkl_intel_lp64_LIBRARY}"
@@ -550,9 +557,9 @@ macro( setupParMETIS )
     set_package_properties( ParMETIS PROPERTIES
       DESCRIPTION "MPI Parallel METIS"
       URL "http://glaros.dtc.umn.edu/gkhome/metis/parmetis/overview"
-      PURPOSE "ParMETIS is an MPI-based parallel library that implements a variety of algorithms for partitioning
-   unstructured graphs, meshes, and for computing fill-reducing orderings of sparse matrices."
-      )
+      PURPOSE "ParMETIS is an MPI-based parallel library that implements a
+   variety of algorithms for partitioning unstructured graphs, meshes, and for
+   computing fill-reducing orderings of sparse matrices." )
 
   endif()
 
@@ -588,20 +595,68 @@ macro( setupSuperLU_DIST )
         POSITION_INDEPENDENT_CODE
         IMPORTED_LOCATION )
 
-      save_vendor_imported_library_to_draco_config( "SuperLU_DIST::superludist" "${props}" )
+      save_vendor_imported_library_to_draco_config(
+        "SuperLU_DIST::superludist" "${props}" )
     else()
       message( STATUS "Looking for SuperLU_DIST.....not found" )
     endif()
 
-    #=============================================================================
+    #===========================================================================
     # Include some information that can be printed by the build system.
     set_package_properties( SuperLU_DIST PROPERTIES
       DESCRIPTION "SuperLU_DIST"
       URL " http://crd-legacy.lbl.gov/~xiaoye/SuperLU/"
-      PURPOSE "SuperLU is a general purpose library for the direct solution of large, sparse,
-   nonsymmetric systems of linear equations on high performance machines."
-      )
+      PURPOSE "SuperLU is a general purpose library for the direct solution of
+   large, sparse, nonsymmetric systems of linear equations on high performance
+   machines."  )
 
+  endif()
+
+endmacro()
+
+#------------------------------------------------------------------------------
+# Setup COMPTON (https://gitlab.lanl.gov/keadyk/CSK_generator)
+#------------------------------------------------------------------------------
+macro( setupCOMPTON )
+
+  if( NOT TARGET compton::compton )
+    message( STATUS "Looking for COMPTON..." )
+
+    find_package( COMPTON QUIET )
+
+    if( COMPTON_FOUND )
+      message( STATUS "Looking for COMPTON.....found ${COMPTON_LIBRARY}" )
+
+      # Export COMPTON target information to draco-config.cmake
+      # Choose items for props list via:
+      # include(print_target_properties)
+      # print_targets_properties("COMPTON::compton")
+      set( props
+        GNUtoMS
+        IMPORTED_CONFIGURATIONS
+        IMPORTED_IMPLIB
+        IMPORTED_IMPLIB_DEBUG
+        IMPORTED_LINK_INTERFACE_LANGUAGES
+        INTERFACE_LINK_LIBRARIES
+        IMPORTED_LOCATION_DEBUG
+        IMPORTED_LOCATION_RELEASE
+        IMPORTED
+        INTERFACE_INCLUDE_DIRECTORIES
+        POSITION_INDEPENDENT_CODE
+        IMPORTED_LOCATION )
+
+      save_vendor_imported_library_to_draco_config(
+        "COMPTON::compton" "${props}" )
+    else()
+      message( STATUS "Looking for COMPTON.....not found" )
+    endif()
+
+    #===========================================================================
+    # Include some information that can be printed by the build system.
+    set_package_properties( COMPTON PROPERTIES
+      DESCRIPTION "Access multigroup Compton scattering data."
+      TYPE OPTIONAL
+      PURPOSE "Required for bulding the compton component." )
   endif()
 
 endmacro()
@@ -615,6 +670,7 @@ macro( SetupVendorLibrariesUnix )
   setupGSL()
   setupParMETIS()
   setupSuperLU_DIST()
+  setupCOMPTON()
 
   # Random123 ----------------------------------------------------------------
   message( STATUS "Looking for Random123...")

@@ -1,3 +1,248 @@
+2017-10-16  Kelly (KT) Thompson  <kgt@lanl.gov>
+
+	* "Release draco-6_23_0":https://rtt.lanl.gov/redmine/versions/55.
+	  This is a minor Draco release.
+
+	* This release was required by Jayenne and Capsaicin.  It is
+	  linked to:
+	  - "Jayenne-7_16_0":https://rtt.lanl.gov/redmine/versions/56
+	  - "Capsaicin-4_12_0":https://rtt.lanl.gov/redmine/projects/capsaicin
+
+	* Platforms:
+	  PI/ML/LU           Intel 17.0.1    OpenMPI-1.10.5
+	                     Intel 17.0.4    OpenMPI-2.1.2
+	                     (GCC 6.4.0)     (OpenMPI-2.1.2)
+	  SN/FI/IC           Intel 17.0.1    OpenMPI-1.10.5
+	                     Intel 17.0.4    OpenMPI-2.1.2
+	                     (GCC 6.4.0)     (OpenMPI-2.1.2)
+	  TT/TR              Intel 17.0.1    Cray_MPICH2-7.5.2
+	                     Intel 17.0.4    Cray_MPICH2-7.6.2
+
+	* Summary of changes:
+	- 314 files changed, added or removed in 111 commits.
+	- Eliminate direct comparison of floating point types, #251, #252,
+	  #253, #254.
+	- Begin requiring CMake 3.9.0 or later, #272.
+	- Added more MPI functions to c4 including, #280
+	  . Added non-blocking sends and receives with custom MPI datatypes
+	  . Added no-blocking allreduce call with the standard of send_is test
+	    now includes example of a custom MPI datatype and a send/receive with
+	    that type.
+	- Provide prefix sum for arrays, #320.
+	- Provide a thread_wrapper, #327.
+
+	* Developer Environment:
+	- Improved bash function `selectscratchdir`, #250.
+	- Provide some bash functions that provide information about slurm,
+	  #324.  Try `slurmhelp`.
+	- Begin using newer tools, vendors on HPC machines, #324.
+	  . Intel/17.0.4, openmpi/2.1.2.
+	  . superlu-dist/5.1.3, trilinos/12.10.1, etc.
+
+	* Build system
+	- Fix inconsistent use of case for the special string RELWITHDEBINFO,
+	  #250.
+	- On Cray systems, test registration fixed to use correct srun options,
+	  #257.
+	- Begin requiring CMake 3.9.0 or later, #272.
+	- Allow tstSuperludist.cc to link to superlu-dist-5+, #278.
+	- Upgrade how the Compton TPL is discovered, presented and used. #292.
+	- Fix compilation against MKL when using GNU compilers, #330
+	- Cray regressions now run from /ccs/codes/ccsrad to eliminate 'bus
+	  error' issues seen when running from lustre.
+
+	* c4:
+	- Global_Timer was updated to be more useful for parallel runs. The new
+	  implementation provides mean time plus deviations per rank, #256.
+	- Provide a C++ version of the xthi tool.  This tool shows thread
+	  assignmetns to hardware, #269.
+	- Added more MPI functions to c4 including, #280
+	  . Added non-blocking sends and receives with custom MPI datatypes
+	  . Added no-blocking allreduce call with the standard of send_is test
+	    now includes example of a custom MPI datatype and a send/receive with
+	    that type.
+	- Restore ability to compile Draco when DRACO_C4=SCALAR, #315.
+	- Provide prefix sum for arrays, #320.
+
+	* compton:
+	- Updated Compton test to use input files found in the source
+	  directory, #246.
+	- Upgrade how the Compton TPL is discovered, presented and used. #292
+	- Compton interface updates for v0.3,  #296
+	- Begin testing CSK via draco on LANL HPC, #313.
+
+	* ds++
+	- Begin using `std::enable_if` to simplify the definition of
+	  `soft_equiv`.  It is no longer defined for integral types, #255.
+	- Provide new CPP macros for unit tests: `FAIL_IF(c)` and
+	  `FAIL_IF_NOT(c)`, #271.
+	- Provide common string functions in a single file, #285:
+	  New functions:
+	  . trim         - remove whitespace (or any specified characters) from
+ 	                   beginning and end of a string.
+	  . prune        - remove specified characters from a string.
+	  . parse_number - Convert a string into a floating-point or integral
+	                   type (int, long, unsigned, float, double, etc.)
+	  . string_to_numvec - Convert a string into a vector where T is a
+	                   numeric type. String entries are separated by
+	                   specified delimiter. Optional beginning and ending
+	                   range symbols may also be provided. For example,
+	                   string = "{ 1.3, 2.3 }" --> vector<float> = {1,3,
+	                   2.3};
+	  Relocated functions:
+
+	  . to_string    - convert a number into a string preserving
+	                   precision. Previously found at ds++/to_string.hh
+	  . tokenize     - convert a string into a vector based on the
+	                   specified delimiter. Previously found at
+	                   UnitTest.hh.
+	  . get_word_count - convert a stringstream or fstream into a
+	                   map<string,unsigned> where the number of occurrences
+	                   of each word is reported. Previously found at
+	                   UnitTest.hh. Often used to check text output from
+	                   unit tests.
+	- Provide a thread_wrapper, #327.
+
+	* norms:
+	- Provide code to compute the norm of the difference of two vectors,
+	  #262.
+
+	* parser:
+	- Improve efficiency of Parallel_File_Token_Stream's open function,
+	  #290
+	- Tweak the parser package, #291, #299
+	  . Remove unneeded global_barrier from
+	    Parallel_File_Token_Stream::fill_character_buffer_. Processors
+	    should be synchronized by the preceding broadcast, with intervening
+	    code such that there should be no danger of processors getting out
+	    of synch.
+	  . Replace use of NULL with nullptr in Parse_Table.cc. This is the
+	    more modern syntax.
+	  . Add a move-aware version of the basic constructor for
+	    String_Token_Stream, since calling this constructor with a c-string
+	    (implicitly converted to std::string rvalue) is a common practice.
+	  . Strengthen DBC checks in Text_Token_Stream.cc
+	  . Clean up Parse_Table by spelling out null pointer comparisons and
+	    using auto judiciously.
+	  . Remove difficult to test branches through use of check_syntax and
+	    check_semantics in place of if-tests.
+	- Tighten up the parser code, #326.
+
+	* plot2d:
+	- Fixed plot2d tests that were failing on snow, #247.
+
+	* quadrature:
+	- Provided azimuthal order accessor for Chebyshev-Legendre quadrature,
+	  #284.
+	- Only add starting-directions when required, #286.
+
+	* units:
+	- Added the classical electron radius to the PhysicalConstants file,
+	  #268.
+
+	* Details for defects and features can be found at
+	  https://rtt.lanl.gov/redmine/isues/#.
+
+	Corrected defects:
+
+	* Bug #906 All gitlab pipelines are failing
+	* Bug #954 plot2D test are failing on snow
+	* Bug #956 snow: Not finding MKL as suitable provider of LAPACK
+	* Bug #959 Force rebuild of serrano when running 'make' from test
+	           directory
+	* Bug #960 Add ccscs2 Release CI build for every PR.
+	* Bug #961 Trinitite CIs are not running
+	* Bug #964 metrics_report.sh should not report package
+	           sub-sub-directories
+	* Bug #966 Totalview and DDT encounter 'pipe error'
+	* Bug #972 ApplicationUnitTest is missing options for srun
+	* Bug #1005 Make TPL compton a full vendor
+	* Bug #1011 clang-format no longer works
+	* Bug #1012 Build out new vendors
+	* Bug #1018 Nightly regressions not running correctly on ccscs7
+	* Bug #1024 Fix gcc-6.4.0 + mkl builds on snow
+
+	New Features:
+	* None
+
+	Known Defects:
+	* Bug #1010 Review, reset file permissions
+	* Bug #1025 Add common build options to "Enabled features" list in
+	  build summary
+
+	* Statistics:
+
+Contributers (updated Release.cc and README.md with this ordering).
+
+CCS-2 Draco Team: Kelly G. Thompson, Kent G. Budge, James S. Warsa,
+     Alex R. Long, Rob B. Lowrie, Kendra P. Keady, Jae H. Chang,
+     Matt A. Cleveland,  Ryan T. Wollaeger, Andrew T. Till, Daniel Holladay,
+     Massimiliano Rosa and Kris C. Garrett.
+Prior Contributers: Jeff D. Densmore, Gabriel M. Rockefeller,
+     Allan B. Wollaber, Lori A. Pritchett-Sheats,  Paul W. Talbot,
+     and Katherine J. Wang.
+
+Lines of code
+-------------
+
+--------------------------------------------------------------------------------
+Language                      files          blank        comment           code
+--------------------------------------------------------------------------------
+C++                             423          12364          22105          51054
+C/C++ Header                    331           6695          20707          16176
+Lisp                             17           2027           2897          13059
+CMake                           120           2153           5705           9005
+Bourne Shell                     33            663           1507           2945
+Bourne Again Shell               14            282            553           1543
+Python                           13            387            654           1315
+CSS                               1            113             37            395
+Fortran 90                        8            113            218            380
+C                                 4             48            114            244
+C Shell                           2             32             36            167
+DOS Batch                         4             53             71             93
+YAML                              2             18             98             77
+HTML                              2              6             47             65
+CUDA                              3             17             61             40
+make                              2             22             14             39
+--------------------------------------------------------------------------------
+SUM:                            979          24993          54824          96597
+--------------------------------------------------------------------------------
+
+Code coverage
+-------------
+
+Directory                             Function Coverage           C/D Coverage
+--------------------------------  ---------------------  ---------------------
+FortranChecks/                        1 /     1 = 100%       7 /    14 =  50%
+RTT_Format_Reader/                  323 /   323 = 100%     373 /   434 =  85%
+c4/                                 157 /   166 =  94%     380 /   429 =  88%
+cdi/                                 46 /    46 = 100%      63 /    76 =  82%
+cdi_analytic/                       146 /   165 =  88%     172 /   224 =  76%
+cdi_eospac/                          52 /    52 = 100%      65 /   127 =  51%
+cdi_ipcress/                        106 /   106 = 100%     188 /   247 =  76%
+compton/                             10 /    10 = 100%       0 /     0
+diagnostics/                         15 /    20 =  75%      28 /    42 =  66%
+ds++/                               317 /   321 =  98%     457 /   522 =  87%
+fit/                                  1 /     1 = 100%      15 /    16 =  93%
+lapack_wrap/                         12 /    12 = 100%       0 /     0
+linear/                              16 /    16 = 100%     334 /   392 =  85%
+memory/                               4 /     6 =  66%       0 /     2 =   0%
+meshReaders/                         15 /    15 = 100%     127 /   172 =  73%
+mesh_element/                        23 /    24 =  95%     154 /   201 =  76%
+min/                                  9 /     9 = 100%     137 /   154 =  88%
+norms/                               25 /    26 =  96%      21 /    34 =  61%
+ode/                                  5 /     5 = 100%      29 /    32 =  90%
+parser/                             293 /   298 =  98%    1184 /  1512 =  78%
+quadrature/                         221 /   227 =  97%     580 /   738 =  78%
+rng/                                 57 /    57 = 100%      23 /    24 =  95%
+roots/                                8 /     8 = 100%     259 /   312 =  83%
+special_functions/                   30 /    32 =  93%     192 /   216 =  88%
+timestep/                            62 /    63 =  98%     104 /   178 =  58%
+units/                               80 /    80 = 100%      58 /    58 = 100%
+viz/                                 32 /    32 = 100%     131 /   174 =  75%
+--------------------------------  ---------------------  ---------------------
+Total                               2066 /  2121 =  97%    5081 /  6330 =  80%
+
 2017-07-03  Kelly (KT) Thompson  <kgt@lanl.gov>
 
 	* "Release draco-6_22_0":https://rtt.lanl.gov/redmine/versions/52.
@@ -23,6 +268,8 @@
 	- Change Invert_Comm_Map to eliminate n_proc length arrays (#914)
 
 	* Developer Environment:
+
+	* Build system:
 
 	- Make setup of lmod modulefiles run faster for setup scripts.
 	- Automate selection of scratch directory.

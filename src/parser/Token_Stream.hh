@@ -41,7 +41,7 @@ public:
  * problem specification language used in such input files has some
  * similarities to a programming language, though it is typically simpler than
  * a high-level language like C++ or Java. The problem specification expressed
- * in this problem specification langauge must be scanned and parsed by the
+ * in this problem specification language must be scanned and parsed by the
  * simulation code in order to load the data structures and control parameters
  * required to run the simulation.
  *
@@ -59,7 +59,7 @@ public:
  * Modern input readers split the task of reading a problem specification taxt
  * into scanning and parsing. Scanning is the task of converting the raw text
  * into a sequence of \b tokens\b, which represent the keywords, numerical or
- * stringn values, and other lowest-level constructs in the problem
+ * string values, and other lowest-level constructs in the problem
  * specification language. This sequence or stream of tokens is then analyzed
  * by a parser that understands the syntax of the problem specification
  * language and can extract the semantic meaning of each part of the problem
@@ -90,14 +90,9 @@ public:
  * the human client where the error occurred. For example, a \c
  * File_Token_Stream can tell the human client the line in the input file
  * where the error was detected.
- *
- * \bug It is not recommended to derive from STL containers because they do
- * not provide virtual destructors.
  */
 
-class DLL_PUBLIC_parser Token_Stream
-//    : private std::deque<Token>
-{
+class DLL_PUBLIC_parser Token_Stream {
 public:
   // CREATORS
 
@@ -109,7 +104,8 @@ public:
   Token shift();
 
   //! Look ahead at tokens.
-  Token lookahead(unsigned pos = 0);
+  // Lookahead references should remain valid until the referenced token is shifted.
+  Token const &lookahead(unsigned pos = 0);
 
   //! Insert a token into the stream at the cursor position.
   void pushback(Token const &token);
@@ -208,7 +204,7 @@ public:
 
   //! Return the number of errors reported to the stream since it was last
   //! constructed or rewound.
-  unsigned error_count() const { return error_count_; }
+  unsigned error_count() const noexcept { return error_count_; }
 
   //! Check that all class invariants are satisfied.
   bool check_class_invariants() const { return true; }

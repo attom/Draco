@@ -43,11 +43,11 @@ else
   exit 1
 fi
 
-# sanity check
+# sanity checks
 job_launch_sanity_checks
 
 available_queues=`sacctmgr -np list assoc user=$LOGNAME | sed -e 's/.*|\(.*dev.*\)|.*/\1/' | sed -e 's/|.*//'`
-case $avail_queues in
+case $available_queues in
   *access*) access_queue="-A access --qos=access" ;;
   *dev*)    access_queue="--qos=dev" ;;
 esac
@@ -87,7 +87,7 @@ logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra
 if [[ -f $logfile ]]; then
   rm $logfile
 fi
-cmd="$MSUB ${access_queue} -o ${logfile} -J ${subproj:0:5}-{featurebranch} -t 4:00:00 ${rscriptdir}/sn-regress.msub"
+cmd="$MSUB ${access_queue} -o ${logfile} -J ${subproj:0:5}-${featurebranch} -t 4:00:00 ${rscriptdir}/sn-regress.msub"
 echo "${cmd}"
 jobid=`eval ${cmd}`
 # trim extra whitespace from number

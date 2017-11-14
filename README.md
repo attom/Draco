@@ -28,7 +28,7 @@ Draco was originally written by staff from Los Alamos's [CCS-2 Computational Phy
 
 > Kelly G. Thompson, Kent G. Budge, James S. Warsa, Alex R. Long,
 > Rob B. Lowrie, Kendra P. Keady, Jae H. Chang, Mathew A. Cleveland,
-> Andrew T. Till, Daniel Holladay, Ryan T. Wollaeger,
+> Ryan T. Wollaeger, Andrew T. Till, Daniel Holladay,
 > Massimiliano Rosa and Kris C. Garrett.
 
 > Jeff D. Densmore, Gabriel M. Rockefeller, Allan B. Wollaber,

@@ -171,10 +171,10 @@ public:
   // MANIPULATORS
 
   //! Add keywords to the table.
-  void add(Keyword const *table, size_t count);
+  void add(Keyword const *table, size_t count) noexcept(false);
 
   //! Add the keywords from another Parse_Table
-  void add(Parse_Table const &);
+  void add(Parse_Table const &) noexcept(false);
 
   //! Remove a keyword from the table.
   void remove(char const *);
@@ -223,10 +223,10 @@ private:
 
     bool operator()(Keyword const &k1, Keyword const &k2) const;
 
-    bool operator()(Keyword const &keyword, Token const &token) const;
+    bool operator()(Keyword const &keyword, Token const &token) const noexcept;
 
     int kk_comparison(char const *, char const *) const;
-    int kt_comparison(char const *, char const *) const;
+    int kt_comparison(char const *, char const *) const noexcept;
 
   private:
     unsigned char flags_;
@@ -235,7 +235,7 @@ private:
   // IMPLEMENTATION
 
   //! Sort and check the table following the addition of new keywords
-  void sort_table_();
+  void sort_table_() noexcept(false);
 
   // DATA
 

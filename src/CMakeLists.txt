@@ -6,7 +6,7 @@
 # note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.9.0)
 project( draco_src_dir )
 
 # Provide helper functions used by component CMakeLists.txt files
@@ -22,6 +22,13 @@ macro( add_dir_if_exists package )
     add_subdirectory( ${package} )
   endif()
 endmacro()
+
+# Extra 'draco-only' flags (don't pass these to Capsaicin).
+if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+  if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0 )
+    toggle_compiler_flag( TRUE "-Wfloat-equal -Wunused-macros" "CXX;C" "DEBUG")
+  endif()
+endif()
 
 # Level 1
 message(" ")

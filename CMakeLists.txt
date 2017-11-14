@@ -7,9 +7,11 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
-# Build notes: http://rtt/redmine/projects/draco/wiki/Configuration_and_Building
+# Build notes:
+#   https://rtt.lanl.gov/redmine/projects/draco/wiki/
+#   https://rtt.lanl.gov/redmine/projects/draco/wiki/Common_Configure_Options
 
-cmake_minimum_required(VERSION 3.5.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.9.0 FATAL_ERROR)
 project( Draco CXX C )
 
 # Do not look for Fortran for
@@ -40,7 +42,7 @@ set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/config )
 # The Draco version number.
 #
 set(DRACO_VERSION_MAJOR 6)
-set(DRACO_VERSION_MINOR 22)
+set(DRACO_VERSION_MINOR 23)
 # set(DRACO_VERSION_PATCH 0) # only set this for a release
 include(dracoVersion)
 set_ccs2_software_version( DRACO )

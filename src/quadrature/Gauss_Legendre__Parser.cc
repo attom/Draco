@@ -24,7 +24,7 @@ std::shared_ptr<Quadrature> Gauss_Legendre::parse(Token_Stream &tokens) {
   tokens.check_semantics(sn_order % 2 == 0, "order must be even");
   tokens.check_syntax(tokens.shift().type() == END, "missing end?");
 
-  return std::shared_ptr<Quadrature>(new Gauss_Legendre(sn_order));
+  return std::make_shared<Gauss_Legendre>(sn_order);
 }
 
 } // end namespace rtt_quadrature

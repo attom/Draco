@@ -7,6 +7,49 @@
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
+# switch to group 'ccsrad' and set umask
+if [[ $(id -gn) != ccsrad ]]; then
+  exec sg ccsrad "$0 $*"
+fi
+umask 0007
+
+# Locate the directory that this script is located in:
+scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+target="`uname -n | sed -e s/[.].*//`"
+
+# Prevent multiple copies of this script from running at the same time:
+lockfile=/var/tmp/sync_repository_$target.lock
+[ "${FLOCKER}" != "${lockfile}" ] && exec env FLOCKER="${lockfile}" flock -en "${lockfile}" "${0}" "$@" || :
+
+
+# All output will be saved to this log file.  This is also the lockfile for flock.
+timestamp=`date +%Y%m%d-%H%M`
+logdir="$( cd $scriptdir/../../logs && pwd )"
+logfile=$logdir/sync_repository_${target}_${timestamp}.log
+
+# Debug stuff
+verbose=off
+if [[ ${verbose:-off} == "on" ]]; then
+  echo "looking for locks..."
+  echo "   FLOCKER     = ${FLOCKER}"
+  echo "   lockfile    = $lockfile"
+  echo "   logfile     = $logfile"
+  echo "   script name = ${0}"
+  echo "   script args = $@"
+fi
+
+# Redirect all future output to the logfile.
+exec > $logfile
+exec 2>&1
+
+# import some bash functions
+source $scriptdir/scripts/common.sh
+
+echo -e "Executing $0 $*...\n"
+echo "Group: `id -gn`"
+echo -e "umask: `umask`\n"
+
+#------------------------------------------------------------------------------#
 # This script is used for 2 similar but distinct operations:
 #
 # 1. It mirrors git@github.com/lanl/Draco.git,
@@ -23,42 +66,6 @@
 #    is found in the mirrored repository, continuous integration testing is
 #    started.
 
-target="`uname -n | sed -e s/[.].*//`"
-verbose=off
-
-# Locate the directory that this script is located in:
-scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# All output will be saved to this log file.  This is also the lockfile for flock.
-logdir="$( cd $scriptdir/../../logs && pwd )"
-timestamp=`date +%Y%m%d-%H%M`
-logfile=$logdir/sync_repository_${target}_${timestamp}.log
-lockfile=/var/tmp/sync_repository_$target.lock
-
-if [[ ${verbose:-off} == "on" ]]; then
-  echo "looking for locks..."
-  echo "   FLOCKER     = ${FLOCKER}"
-  echo "   lockfile    = $lockfile"
-  echo "   logfile     = $logfile"
-  echo "   script name = ${0}"
-  echo "   script args = $@"
-fi
-
-# Prevent multiple copies of this script from running at the same time:
-[ "${FLOCKER}" != "${lockfile}" ] && exec env FLOCKER="${lockfile}" flock -en "${lockfile}" "${0}" "$@" || :
-
-if [[ ${verbose:-off} == "on" ]]; then
-  echo "running..."
-  echo "redirecting output to $logfile"
-fi
-
-# Redirect all future output to the logfile.
-exec > $logfile
-exec 2>&1
-
-# import some bash functions
-source $scriptdir/scripts/common.sh
-
 #
 # MODULES
 #
@@ -67,13 +74,16 @@ source $scriptdir/scripts/common.sh
 if [[ `fn_exists module` == 0 ]]; then
   case ${target} in
     tt-fey*) module_init_dir=/opt/cray/pe/modules/3.2.10.4/init/bash ;;
-    # snow (Toss3)
+    # snow (Toss3, lmod)
     sn-fey*) module_init_dir=/usr/share/lmod/lmod/init/profile ;;
-    # ccs-net, darwin, ml
+    # ccs-net (lmod)
+    ccscs*)  module_init_dir=/usr/share/lmod/lmod/init/bash ;;
+    # darwin, ml
     *)       module_init_dir=/usr/share/Modules/init/bash ;;
   esac
   if [[ -f ${module_init_dir} ]]; then
-    source ${module_init_dir}
+    echo "Module environment not found, trying to init the module environment."
+    run "source ${module_init_dir}"
   else
     echo "ERROR: The module command was not found. No modules will be loaded."
   fi
@@ -87,14 +97,12 @@ fi
 # Environment
 #
 
-# Ensure that the permissions are correct
-run "umask 0002"
-
 case ${target} in
   ccscs*)
+    run "module use /usr/share/lmod/lmod/modulefiles/Core"
     run "module load user_contrib subversion git"
     regdir=/scratch/regress
-    gitroot=/ccs/codes/radtran/git
+    gitroot=/ccs/codes/radtran/git.${target}
     VENDOR_DIR=/scratch/vendors
     keychain=keychain-2.8.2
     ;;
@@ -135,14 +143,14 @@ case ${target} in
 esac
 
 if ! [[ -d $regdir ]]; then
-  mkdir -p $regdir
+  run "mkdir -p $regdir"
 fi
 
 # Credentials via Keychain (SSH)
 # http://www.cyberciti.biz/faq/ssh-passwordless-login-with-keychain-for-scripts
-if [[ -f $HOME/.ssh/cmake_rsa ]]; then
+if [[ -f $HOME/.ssh/id_rsa ]]; then
   MYHOSTNAME="`uname -n`"
-  $VENDOR_DIR/$keychain/keychain $HOME/.ssh/cmake_dsa $HOME/.ssh/cmake_rsa
+  run "$VENDOR_DIR/$keychain/keychain $HOME/.ssh/id_rsa"
   if [[ -f $HOME/.keychain/$MYHOSTNAME-sh ]]; then
     run "source $HOME/.keychain/$MYHOSTNAME-sh"
   else
@@ -172,15 +180,17 @@ fi
 # to the local file system.
 
 # Store some output into a local file to simplify parsing.
-TMPFILE_DRACO=$(mktemp /var/tmp/draco_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
+TMPFILE_DRACO_HEAD=$(mktemp /var/tmp/draco_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
+TMPFILE_DRACO_PULL=$(mktemp /var/tmp/draco_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
 
 echo " "
 echo "Copy Draco git repository to the local file system..."
 if [[ -d $gitroot/Draco.git ]]; then
   run "cd $gitroot/Draco.git"
-  run "git fetch origin +refs/heads/*:refs/heads/*"
-  run "git fetch origin +refs/pull/*:refs/pull/*" &> $TMPFILE_DRACO
-  run "cat $TMPFILE_DRACO"
+  run "git fetch origin +refs/heads/*:refs/heads/*" &> $TMPFILE_DRACO_HEAD
+  run "cat $TMPFILE_DRACO_HEAD"
+  run "git fetch origin +refs/pull/*:refs/pull/*" &> $TMPFILE_DRACO_PULL
+  run "cat $TMPFILE_DRACO_PULL"
   run "git reset --soft"
   run "chgrp -R draco $gitroot/Draco.git"
   run "chmod -R g+rwX $gitroot/Draco.git"
@@ -188,7 +198,7 @@ else
   run "mkdir -p $gitroot"
   run "cd $gitroot"
   run "git clone --bare git@github.com:lanl/Draco.git Draco.git"
-  run "Draco.git"
+  run "cd Draco.git"
   run "git fetch origin +refs/heads/*:refs/heads/*"
   run "git fetch origin +refs/pull/*:refs/pull/*"
 fi
@@ -206,8 +216,8 @@ if [[ -d $gitroot/jayenne.git ]]; then
   run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*" &> $TMPFILE_JAYENNE
   run "cat $TMPFILE_JAYENNE"
   run "git reset --soft"
-  run "chgrp -R draco $gitroot/jayenne.git"
-  run "chmod -R g+rwX $gitroot/jayenne.git"
+  run "chgrp ccsrad $gitroot/jayenne.git"
+  run "chmod -R g+rwX,o-rwX $gitroot/jayenne.git"
 else
   run "mkdir -p $gitroot; cd $gitroot"
   run "git clone --bare git@gitlab.lanl.gov:jayenne/jayenne.git jayenne.git"
@@ -229,6 +239,7 @@ if [[ -d $gitroot/capsaicin.git ]]; then
   run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*" &> $TMPFILE_CAPSAICIN
   run "cat $TMPFILE_CAPSAICIN"
   run "git reset --soft"
+  run "chgrp ccsrad $gitroot/capsaicin.git"
 else
   run "mkdir -p $gitroot; cd $gitroot"
   run "git clone --bare git@gitlab.lanl.gov:capsaicin/capsaicin.git capsaicin.git"
@@ -241,66 +252,33 @@ fi
 # Mirror git repository for redmine integration
 #------------------------------------------------------------------------------#
 
-# Broken? - KT needs to research this.
+if [[ ${target} == "ccscs7" ]]; then
 
-# case ${target} in
-#   ccscs7*)
-#     # Keep a copy of the bare repo for Redmine.  This version doesn't have the
-#     # PRs since this seems to confuse Redmine.
-#     echo " "
-#     echo "(Redmine) Copy Draco git repository to the local file system..."
-#     if test -d $gitroot/Draco-redmine.git; then
-#       run "cd $gitroot/Draco-redmine.git"
-#       run "git fetch origin +refs/heads/*:refs/heads/*"
-#       run "git reset --soft"
-#     else
-#       run "mkdir -p $gitroot"
-#       run "cd $gitroot"
-#       run "git clone --mirror git@github.com:lanl/Draco.git Draco-redmine.git"
-#       run "chmod -R g+rwX Draco-redmine.git"
-#     fi
-#     ;;
-# esac
+  # Keep a copy of the bare repo for Redmine.  This version doesn't have the
+  # PRs since this seems to confuse Redmine.
+  projects="jayenne capsaicin"
+  for p in $projects; do
+    echo -e "\n(Redmine) Copy ${p} git repository to the local file system..."
+    if [[ -d $gitroot/${p}-redmine.git ]]; then
+      run "cd $gitroot/${p}-redmine.git"
+      run "git fetch origin +refs/heads/*:refs/heads/*"
+      run "git reset --soft"
+      run "cd $gitroot"
+      run "chmod -R g+rwX,o-rwX $gitroot/${p}-redmine.git"
+    else
+      run "mkdir -p $gitroot"
+      run "cd $gitroot"
+      if [[ ${p} == "Draco" ]]; then
+        run "git clone --bare git@github.com:lanl/${p}.git ${p}-redmine.git"
+      else
+        run "git clone --bare git@gitlab.lanl.gov:${p}/${p}.git ${p}-redmine.git"
+      fi
+      run "chmod -R g+rwX,o-rwX ${p}-redmine.git"
+      run "chmod g+s ${p}-redmine.git"
+    fi
+  done
 
-# case ${target} in
-#   ccscs7*)
-#     # Keep a copy of the bare repo for Redmine.  This version doesn't have the
-#     # PRs since this seems to confuse Redmine.
-#     echo " "
-#     echo "(Redmine) Copy Jayenne git repository to the local file system..."
-#     if test -d $gitroot/jayenne-redmine.git; then
-#       run "cd $gitroot/jayenne-redmine.git"
-#       run "git fetch origin +refs/heads/*:refs/heads/*"
-#       run "git reset --soft"
-#       run "chgrp -R draco $gitroot/capsaicin.git"
-#       run "chmod -R g+rwX $gitroot/capsaicin.git"
-#     else
-#       run "mkdir -p $gitroot"
-#       run "cd $gitroot"
-#       run "git clone --mirror git@gitlab.lanl.gov:jayenne/jayenne.git jayenne-redmine.git"
-#       run "chmod -R g+rwX jayenne-redmine.git"
-#     fi
-#     ;;
-# esac
-
-# case ${target} in
-#   ccscs7*)
-#     # Keep a copy of the bare repo for Redmine.  This version doesn't have the
-#     # PRs since this seems to confuse Redmine.
-#     echo " "
-#     echo "(Redmine) Copy Capsaicin git repository to the local file system..."
-#     if test -d $gitroot/capsaicin-redmine.git; then
-#       run "cd $gitroot/capsaicin-redmine.git"
-#       run "git fetch origin +refs/heads/*:refs/heads/*"
-#       run "git reset --soft"
-#     else
-#       run "mkdir -p $gitroot"
-#       run "cd $gitroot"
-#       run "git clone --mirror git@gitlab.lanl.gov:capsaicin/capsaicin.git capsaicin-redmine.git"
-#       run "chmod -R g+rwX capsaicin-redmine.git"
-#     fi
-#     ;;
-# esac
+fi
 
 #------------------------------------------------------------------------------#
 # Continuous Integration Hooks:
@@ -314,6 +292,10 @@ fi
 #   03392b8..fd3eabc refs/pull/86/head -> refs/pull/86/head <-- updated PR
 #   881a1f4...86c80c8 refs/pull/157/merge -> refs/pull/157/merge  (forced update)
 #
+# From gitlab:
+#
+# * [new ref]        refs/merge-requests/141/head -> refs/merge-requests/141/head
+#
 # Extract a list of PRs that are new and optionally start regression run
 # ------------------------------------------------------------------------------#
 
@@ -325,11 +307,18 @@ echo "========================================================================"
 echo " "
 # Draco CI ------------------------------------------------------------
 
-draco_prs=`cat $TMPFILE_DRACO | grep -e 'refs/pull/[0-9]*/\(head\|merge\)' | sed -e 's%.*/\([0-9][0-9]*\)/.*%\1%'`
+# Did we find 'merge' in the repo sync?  If so, then we should reset the
+# last-draco tagfile.
+unset rmlastdracotag
+draco_merge=`cat $TMPFILE_DRACO_HEAD | grep -c "develop    -> develop"`
+if [[ $draco_merge -gt 0 ]]; then
+  rmlastdracotag="-t"
+fi
+draco_prs=`cat $TMPFILE_DRACO_PULL | grep -e 'refs/pull/[0-9]*/\(head\|merge\)' | sed -e 's%.*/\([0-9][0-9]*\)/.*%\1%'`
 # remove any duplicates
 draco_prs=`echo $draco_prs | xargs -n1 | sort -u | xargs`
 for pr in $draco_prs; do
-  run "$scriptdir/checkpr.sh -r -p draco -f $pr"
+  run "$scriptdir/checkpr.sh -r -p draco -f $pr $rmlastdracotag"
 done
 
 # Jayenne CI ----------------------------------------------------------
@@ -364,7 +353,7 @@ fi
 # Cleanup
 echo " "
 echo "Cleaning up..."
-run "rm $TMPFILE_DRACO $TMPFILE_JAYENNE $TMPFILE_CAPSAICIN"
+run "rm $TMPFILE_DRACO_PULL $TMPFILE_DRACO_HEAD $TMPFILE_JAYENNE $TMPFILE_CAPSAICIN"
 run "rm $lockfile"
 
 echo " "

@@ -1,7 +1,7 @@
 # crontab for tt-fey
 
 # Create a svn hotcopy of capsaicin at /usr/projects/jayenne/regress/svn
-*/15 * * * * /usr/projects/jayenne/regress/draco/regression/sync_repository.sh
+*/20 * * * * /usr/projects/jayenne/regress/draco/regression/sync_repository.sh
 
 #------------------------------------------------------------------------------#
 # Regression Options:
@@ -21,15 +21,15 @@
 # Haswell
 # --------------------
 
-01 01 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Debug -p "draco jayenne capsaicin"
+01 01 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Debug -p \"draco jayenne capsaicin\"
 
-01 02 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p "draco jayenne capsaicin"
+01 02 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne capsaicin\"
 
 # --------------------
 # KNL
 # --------------------
 
-01 01 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p "draco" -e knl
+01 01 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne capsaicin\" -e knl
 
 # |    |    |    |    |   |
 # |    |    |    |    |   +- command

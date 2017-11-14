@@ -463,6 +463,19 @@ void tnoexcept(rtt_dsxx::UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
+int unused(int i) {
+  switch (i) {
+  case 0:
+    return 0;
+
+  default:
+    Insist(false, "bad case");
+    // Should not trigger a return with no value warning, because insist is
+    // flagged as a noreturn function
+  }
+}
+
+//---------------------------------------------------------------------------//
 
 int main(int argc, char *argv[]) {
   rtt_dsxx::ScalarUnitTest ut(argc, argv, rtt_dsxx::release);
@@ -492,6 +505,10 @@ int main(int argc, char *argv[]) {
 
     // noexcept
     tnoexcept(ut);
+
+    // noreturn
+    // called only to keep code coverage good
+    unused(0);
   }
   UT_EPILOG(ut);
 }

@@ -15,6 +15,16 @@
 ## Environment
 ##---------------------------------------------------------------------------##
 
+# Because of this next 'exec sg' command, the crontab must escape double quotes
+# to keep space delimited options together.  Something like:
+# 00 06 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne capsaicin\" -e clang
+
+# switch to group 'ccsrad' and set umask
+if [[ $(id -gn) != ccsrad ]]; then
+  exec sg ccsrad "$0 $*"
+fi
+umask 0007
+
 # Enable job control
 set -m
 
@@ -211,7 +221,7 @@ mkdir -p $logdir || die "Could not create a directory for log files."
 # Redirect output to logfile.
 timestamp=`date +%Y%m%d-%H%M`
 logfile=$logdir/${machine_name_short}-${build_type}-master-$timestamp.log
-echo "Redirecting output to $logfile"
+# echo "Redirecting output to $logfile"
 exec > $logfile
 exec 2>&1
 
@@ -347,8 +357,8 @@ if [[ `jobs -p | wc -l` -gt 0 ]]; then
 fi
 
 # set permissions
-chgrp -R draco ${logdir} &> /dev/null
-chmod -R g+rX ${logdir} &> /dev/null
+chgrp -R ccsrad ${logdir} &> /dev/null
+chmod -R g+rX,o-rwX ${logdir} &> /dev/null
 
 echo " "
 echo "All done"

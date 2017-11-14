@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# -l
-
 # For config and build steps, this file is run as a bash script on the
-# front-end.  For the test step, this file is submitted to the batch
-# system.  This file is designed to be called from
-# scripts/release_cray.sh.
+# front-end.  For the test step, this file is submitted to the batch system.
+# This file is designed to be called from scripts/release_cray.sh.
 
 ##---------------------------------------------------------------------------##
 ## Generic setup
@@ -30,15 +27,15 @@ if test $verbose == 1; then
   echo "make command = make -j $build_pe -l $build_pe"
   echo "test command = ctest -j $test_pe"
   echo "steps        = ${steps}"
+  echo "queue        = $access_queue"
   echo
   echo
 fi
 
-#dry_run=1
+# dry_run=1
 install_versions
 
-echo -e "\nAll done with release_cray.msub\n"
-
+echo -e "\nAll done with $0\n"
 
 ##---------------------------------------------------------------------------##
 ## End

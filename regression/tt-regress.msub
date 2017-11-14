@@ -26,7 +26,6 @@ fi
 # import some bash functions
 source $rscriptdir/scripts/common.sh
 
-
 if [[ ! ${subproj} ]]; then
   die "Fatal Error, subproj not found in environment."
 fi
@@ -45,7 +44,7 @@ fi
 
 # Environment setup
 # ----------------------------------------
-umask 0002
+umask 0007
 
 export http_proxy=http://proxyout.lanl.gov:8080
 export HTTP_PROXY=$http_proxy
@@ -110,7 +109,10 @@ if [[ `fn_exists module` == 0 ]]; then
     }
 fi
 
-run "module load user_contrib friendly-testing"
+run "module load friendly-testing"
+#export ucmf=$HOME/modulefiles
+#run "module use --append $ucmf/`/usr/projects/hpcsoft/sys_name`"
+run "module load user_contrib"
 
 # Clean up old environment
 run "module unload cmake numdiff git"
@@ -120,14 +122,16 @@ run "module unload superlu-dist metis parmetis"
 run "module unload PrgEnv-intel PrgEnv-pgi PrgEnv-cray"
 # Load new environment
 run "module load PrgEnv-intel"
-run "module unload intel"
-run "module load intel/17.0.1"
+#run "module unload intel"
+#run "module load intel/17.0.1"
 #run "module swap cray-mpich cray-mpich/7.4.2"
 run "module unload cray-libsci gcc/6.1.0"
-run "module load craype-hugepages4M"
-run "module load cmake/3.7.1 numdiff git"
-run "module load gsl/2.1 random123 eospac/6.2.4 ndi"
-run "module load trilinos/12.8.1 ndi metis parmetis/4.0.3 superlu-dist/4.3"
+#run "module load craype-hugepages4M"
+run "module load cmake/3.9.0 numdiff git"
+run "module load gsl random123 eospac/6.2.4 ndi"
+run "module load trilinos/12.10.1 ndi metis parmetis/4.0.3 superlu-dist"
+run "module use --append ${VENDOR_DIR}-ec/modulefiles"
+run "module load csk"
 
 export CC=`which cc`
 export CXX=`which CC`
@@ -162,7 +166,7 @@ comp=$comp-$featurebranch
 if [[ ${regress_mode} == "on" ]]; then
   run "module load git"
   keychain=keychain-2.7.1
-  $VENDOR_DIR/$keychain/keychain $HOME/.ssh/cmake_dsa $HOME/.ssh/cmake_rsa
+  $VENDOR_DIR/$keychain/keychain $HOME/.ssh/regress_rsa
   if test -f $HOME/.keychain/$HOSTNAME-sh; then
     run "source $HOME/.keychain/$HOSTNAME-sh"
   else
@@ -193,7 +197,8 @@ if [[ ! ${base_dir} ]]; then
     exit 1
   fi
   scratchdir=$scratchdir/$LOGNAME/cdash/tt
-  base_dir=${regdir}/cdash/tt
+  #base_dir=${regdir}/cdash/tt
+  base_dir=/usr/projects/ccsrad/regress/cdash/tt
 fi
 
 echo " "
@@ -236,28 +241,11 @@ if [[ ${setup_dirs} ]]; then
    if ! test -d ${work_dir}/source; then
       run "mkdir -p ${work_dir}/source"
    fi
-   # See notes above where scratch_dir is set concerning why these are soft
-   # links.
-   if test "${regress_mode}" = "on"; then
-     if ! test -d ${scratch_dir}/build; then
-       run "mkdir -p ${scratch_dir}/build"
-     fi
-     if ! test -d ${work_dir}/build; then
-       run "ln -s ${scratch_dir}/build ${work_dir}/build"
-     fi
-     if ! test -d ${scratch_dir}/target; then
-       run "mkdir -p ${scratch_dir}/target"
-     fi
-     if ! test -d ${work_dir}/target; then
-       run "ln -s ${scratch_dir}/target ${work_dir}/target"
-     fi
-   else
-     if ! test -d ${work_dir}/build; then
-       run "mkdir -p ${work_dir}/build"
-     fi
-     if ! test -d ${work_dir}/target; then
-       run "mkdir -p ${scratch_dir}/target"
-     fi
+   if ! test -d ${work_dir}/build; then
+     run "mkdir -p ${work_dir}/build"
+   fi
+   if ! test -d ${work_dir}/target; then
+     run "mkdir -p ${scratch_dir}/target"
    fi
 
    # clean the installation directory to remove any files that might no longer
@@ -272,18 +260,19 @@ fi
 
 # Environment
 echo " "
-echo "--------------------(environment)------------------------------"
-set
-echo "--------------------(end environment)--------------------------"
+#echo "--------------------(environment)------------------------------"
+#set
+#echo "--------------------(end environment)--------------------------"
 
 date
+echo " "
 echo ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}
 echo " "
 ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}
 
 if [[ ${regress_mode} == "on" ]]; then
   echo " "
-  run "chgrp -R draco ${work_dir}"
+  run "chgrp -R ccsrad ${work_dir}"
   run "chmod -R g+rX,o-rwX ${work_dir}"
 fi
 

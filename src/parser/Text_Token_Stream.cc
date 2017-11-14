@@ -19,6 +19,15 @@ namespace rtt_parser {
 using namespace std;
 
 //----------------------------------------------------------------------------//
+// Helper function to allow a string && argument to take over storage of a
+// string.
+static string give(string &source) {
+  string Result;
+  Result.swap(source);
+  return Result;
+}
+
+//----------------------------------------------------------------------------//
 char const default_ws_string[] = "=:;,";
 
 set<char> const Text_Token_Stream::default_whitespace(
@@ -83,6 +92,7 @@ Text_Token_Stream::Text_Token_Stream(void)
   Ensure(check_class_invariants());
   Ensure(whitespace() == default_whitespace);
   Ensure(line() == 1);
+  Ensure(!no_nonbreaking_ws());
 }
 
 //----------------------------------------------------------------------------//
@@ -99,22 +109,45 @@ Token Text_Token_Stream::fill_() {
 
   string token_location = location_();
 
-  Token returnValue(END, token_location);
-
   if (c == '\0') {
     // Sentinel value for error or end of file.
     if (end_()) {
       Ensure(check_class_invariants());
-      returnValue = Token(EXIT, token_location);
+      return {EXIT, token_location};
     } else {
       Ensure(check_class_invariants());
-      returnValue = Token(rtt_parser::ERROR, token_location);
+      return {rtt_parser::ERROR, token_location};
     }
   } else {
     if (isalpha(c) || c == '_')
     // Beginning of a keyword or END token
     {
-      string text(1, c);
+      unsigned cc = 1;
+      unsigned ci = 1;
+      c = peek_(ci);
+      do {
+        // Scan a C identifier.
+        while (isalnum(c) || c == '_') {
+          cc++;
+          ci++;
+          c = peek_(ci);
+        }
+        if (!no_nonbreaking_ws_) {
+          // Replace any nonbreaking whitespace after the identifier
+          // with a single space, but ONLY if the identifier is
+          // followed by another identifer.
+          while (is_nb_whitespace(c)) {
+            ci++;
+            c = peek_(ci);
+          }
+          if (isalpha(c) || c == '_')
+            cc++;
+        }
+      } while (isalpha(c) || c == '_');
+
+      string text;
+      text.reserve(cc);
+      text += peek_(0);
       pop_char_();
       c = peek_();
       do {
@@ -139,43 +172,74 @@ Token Text_Token_Stream::fill_() {
 
       if (text == "end") {
         Ensure(check_class_invariants());
-        return Token(END, token_location);
+        return {END, give(token_location)};
       } else {
         Ensure(check_class_invariants());
-        return Token(KEYWORD, text, token_location);
+        return {KEYWORD, give(text), give(token_location)};
       }
     } else if (isdigit(c) || c == '.') {
       // A number of some kind.  Note that an initial sign ('+' or '-')
       // is tokenized independently, because it could be interpreted as
       // a binary operator in arithmetic expressions.  It is up to the
       // parser to decide if this is the correct interpretation.
-      string text;
       unsigned const float_length = scan_floating_literal_();
       unsigned const int_length = scan_integer_literal_();
+      string text;
       if (float_length > int_length) {
+        text.reserve(float_length);
         for (unsigned i = 0; i < float_length; i++) {
           c = pop_char_();
           text += c;
         }
         Ensure(check_class_invariants());
-        return Token(REAL, text, token_location);
+        return {REAL, give(text), give(token_location)};
       } else if (int_length > 0) {
+        text.reserve(int_length);
         for (unsigned i = 0; i < int_length; i++) {
           char c = pop_char_();
           text += c;
         }
         Ensure(check_class_invariants());
-        return Token(INTEGER, text, token_location);
+        return {INTEGER, give(text), give(token_location)};
       } else {
         Check(c == '.');
         pop_char_();
         Ensure(check_class_invariants());
-        return Token('.', token_location);
+        return {'.', give(token_location)};
       }
     } else if (c == '"')
     // Manifest string
     {
-      string text(1, c);
+      unsigned ci = 1;
+      c = peek_(ci);
+      for (;;) {
+        while (c != '"' && c != '\\' && c != '\n' && !end_() && !error_()) {
+          ci++;
+          c = peek_(ci);
+        }
+        if (c == '"')
+          break;
+        if (c == '\\') {
+          ci += 2;
+          c = peek_(ci);
+        } else {
+          if (end_() || error_()) {
+            report_syntax_error(Token(EXIT, give(token_location)),
+                                "unexpected end of file; "
+                                "did you forget a closing quote?");
+          } else {
+            Check(c == '\n');
+            report_syntax_error(Token(EXIT, give(token_location)),
+                                "unexpected end of line; "
+                                "did you forget a closing quote?");
+          }
+        }
+      }
+      ci++;
+
+      string text;
+      text.reserve(ci);
+      text += peek_();
       pop_char_();
       c = peek_();
       for (;;) {
@@ -194,12 +258,12 @@ Token Text_Token_Stream::fill_() {
           c = peek_();
         } else {
           if (end_() || error_()) {
-            report_syntax_error(Token(EXIT, token_location),
+            report_syntax_error(Token(EXIT, give(token_location)),
                                 "unexpected end of file; "
                                 "did you forget a closing quote?");
           } else {
             Check(c == '\n');
-            report_syntax_error(Token(EXIT, token_location),
+            report_syntax_error(Token(EXIT, give(token_location)),
                                 "unexpected end of line; "
                                 "did you forget a closing quote?");
           }
@@ -207,8 +271,9 @@ Token Text_Token_Stream::fill_() {
       }
       text += '"';
       pop_char_();
+
       Ensure(check_class_invariants());
-      return Token(STRING, text, token_location);
+      return {STRING, give(text), give(token_location)};
     } else if (c == '<')
     // Multicharacter OTHER
     {
@@ -216,10 +281,10 @@ Token Text_Token_Stream::fill_() {
       if (peek_() == '=') {
         pop_char_();
         Ensure(check_class_invariants());
-        return Token(OTHER, "<=", token_location);
+        return {OTHER, "<=", give(token_location)};
       } else {
         Ensure(check_class_invariants());
-        return Token(c, token_location);
+        return {c, give(token_location)};
       }
     } else if (c == '>')
     // Multicharacter OTHER
@@ -228,10 +293,10 @@ Token Text_Token_Stream::fill_() {
       if (peek_() == '=') {
         pop_char_();
         Ensure(check_class_invariants());
-        return Token(OTHER, ">=", token_location);
+        return {OTHER, ">=", give(token_location)};
       } else {
         Ensure(check_class_invariants());
-        return Token(c, token_location);
+        return {c, give(token_location)};
       }
     } else if (c == '&')
     // Multicharacter OTHER
@@ -240,10 +305,10 @@ Token Text_Token_Stream::fill_() {
       if (peek_() == '&') {
         pop_char_();
         Ensure(check_class_invariants());
-        return Token(OTHER, "&&", token_location);
+        return {OTHER, "&&", give(token_location)};
       } else {
         Ensure(check_class_invariants());
-        return Token(c, token_location);
+        return {c, give(token_location)};
       }
     } else if (c == '|')
     // Multicharacter OTHER
@@ -252,19 +317,18 @@ Token Text_Token_Stream::fill_() {
       if (peek_() == '|') {
         pop_char_();
         Ensure(check_class_invariants());
-        return Token(OTHER, "||", token_location);
+        return {OTHER, "||", give(token_location)};
       } else {
         Ensure(check_class_invariants());
-        return Token(c, token_location);
+        return {c, give(token_location)};
       }
     } else {
       // OTHER
       pop_char_();
       Ensure(check_class_invariants());
-      return Token(c, token_location);
+      return {c, give(token_location)};
     }
   }
-  return returnValue;
 }
 
 //----------------------------------------------------------------------------//
@@ -595,9 +659,13 @@ void Text_Token_Stream::eat_whitespace_() {
  */
 
 void Text_Token_Stream::character_push_back_(char const c) {
+  Remember(unsigned const old_buffer__size = buffer_.size());
+
   buffer_.push_back(c);
 
   Ensure(check_class_invariants());
+  Ensure(buffer_.size() == old_buffer__size + 1);
+  Ensure(buffer_.back() == c);
 }
 
 } // end namespace rtt_parser

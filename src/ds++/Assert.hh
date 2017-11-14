@@ -169,11 +169,12 @@ public:
 //---------------------------------------------------------------------------//
 
 //! Throw a rtt_dsxx::assertion for Require, Check, Ensure.
-DLL_PUBLIC_dsxx void toss_cookies(std::string const &cond,
-                                  std::string const &file, int const line);
+[[noreturn]] DLL_PUBLIC_dsxx void
+toss_cookies(std::string const &cond, std::string const &file, int const line);
 
-DLL_PUBLIC_dsxx void toss_cookies_ptr(char const *const cond,
-                                      char const *const file, int const line);
+[[noreturn]] DLL_PUBLIC_dsxx void toss_cookies_ptr(char const *const cond,
+                                                   char const *const file,
+                                                   int const line);
 
 //! Throw a rtt_dsxx::assertion if condition fails
 DLL_PUBLIC_dsxx void check_cookies(bool cond, char const *cond_text,
@@ -183,12 +184,16 @@ DLL_PUBLIC_dsxx void check_cookies(bool cond, char const *cond_text,
 DLL_PUBLIC_dsxx void show_cookies(std::string const &cond,
                                   std::string const &file, int const line);
 //! Throw a rtt_dsxx::assertion for Insist.
-DLL_PUBLIC_dsxx void insist(std::string const &cond, std::string const &msg,
-                            std::string const &file, int const line);
+[[noreturn]] DLL_PUBLIC_dsxx void insist(std::string const &cond,
+                                         std::string const &msg,
+                                         std::string const &file,
+                                         int const line);
 
 //! Pointer version of insist
-DLL_PUBLIC_dsxx void insist_ptr(char const *const cond, char const *const msg,
-                                char const *const file, int const line);
+[[noreturn]] DLL_PUBLIC_dsxx void insist_ptr(char const *const cond,
+                                             char const *const msg,
+                                             char const *const file,
+                                             int const line);
 
 //! Check version of insist
 DLL_PUBLIC_dsxx void check_insist(bool cond, char const *const condstr,
@@ -435,6 +440,50 @@ DLL_PUBLIC_dsxx std::string verbose_error(std::string const &message);
 #define NOEXCEPT noexcept
 #define NOEXCEPT_C(c) noexcept(c)
 #endif
+
+//----------------------------------------------------------------------------//
+/*!
+ * \brief Define a macro that disables potential exception throws for optimized
+ *        (Release) code.
+ *
+ * Example:
+ *
+ * \code
+ * double get_db(Vec3 const &, Vec3 const &) const ONLY_DBC_THROWS;
+ * \endcode
+ *
+ * Issues:
+ * - C++11 - Dynamic exception specifications are deprecated until C++17 except
+ *           on lambda-declarator or on a function declarator that is the
+ *           top-level (until C++17) declarator of a function, variable, or
+ *           non-static data member, whose type is a function type, a pointer to
+ *           function type, a reference to function type, a pointer to member
+ *           function type. It may appear on the declarator of a parameter or on
+ *           the declarator of a return type.
+ *           \ref http://en.cppreference.com/w/cpp/language/except_spec
+ */
+//----------------------------------------------------------------------------//
+
+// Disable since we default to C++11 ('throw()' is deprecated)
+#if 0
+
+#if DBC
+#define ONLY_DBC_THROWS throw(rtt_dsxx::assertion)
+#else
+#define ONLY_DBC_THROWS throw()
+#endif
+
+#else
+
+#if DBC
+#define ONLY_DBC_THROWS
+#else
+#define ONLY_DBC_THROWS noexcept
+#endif
+
+#endif
+
+//----------------------------------------------------------------------------//
 
 #if defined(MSVC)
 #pragma warning(pop)

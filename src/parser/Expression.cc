@@ -948,7 +948,8 @@ static pE parse_primary(unsigned const number_of_variables,
           }
           return pE(new Constant_Expression(number_of_variables, units));
         } else {
-          tokens.report_semantic_error("undefined variable or unit");
+          tokens.report_semantic_error("undefined variable or unit: " +
+                                       variable.text());
           return pE(new Constant_Expression(number_of_variables, 0.0));
         }
       }
@@ -1029,7 +1030,7 @@ static pE parse_additive(unsigned const number_of_variables,
       pE const Right =
           parse_multiplicative(number_of_variables, variable_map, tokens);
       if (!is_compatible(Result->units(), Right->units())) {
-        tokens.report_semantic_error("unit incompatibility for +");
+        tokens.report_semantic_error("unit incompatibility for + operator");
       } else {
         Result.reset(new Sum_Expression(Result, Right));
       }
@@ -1039,7 +1040,7 @@ static pE parse_additive(unsigned const number_of_variables,
       pE const Right =
           parse_multiplicative(number_of_variables, variable_map, tokens);
       if (!is_compatible(Result->units(), Right->units())) {
-        tokens.report_semantic_error("unit incompatibility for -");
+        tokens.report_semantic_error("unit incompatibility for - operator");
       } else {
         Result.reset(new Difference_Expression(Result, Right));
       }

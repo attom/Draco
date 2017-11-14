@@ -36,7 +36,7 @@ fi
 
 # Environment setup
 # ----------------------------------------
-umask 0002
+umask 0007
 
 export http_proxy=http://proxyout.lanl.gov:8080
 export HTTP_PROXY=$http_proxy
@@ -89,12 +89,12 @@ unset _LMFILES_
 run "module list"
 run "module load user_contrib"
 run "module load friendly-testing"
-run "module load cmake/3.6.2"
-run "module load intel/17.0.1"
-run "module load openmpi/1.10.5"
+run "module load cmake/3.9.0"
+run "module load intel/17.0.4"
+run "module load openmpi/2.1.2"
 run "module load mkl"
-run "module load trilinos/12.8.1"
-run "module load superlu-dist"
+run "module load trilinos/12.10.1"
+run "module load superlu-dist/5.1.3"
 run "module load metis"
 run "module load parmetis"
 run "module load ndi"
@@ -103,6 +103,8 @@ run "module load subversion git"
 run "module load random123"
 run "module load eospac/6.2.4"
 run "module load grace"
+run "module use --append ${VENDOR_DIR}-ec/modulefiles"
+run "module load csk"
 comp=`basename $CXX`
 export OMP_NUM_THREADS=8
 
@@ -174,7 +176,7 @@ if [[ ${regress_mode} == "on" ]]; then
   run "module load git"
   MYHOSTNAME="`uname -n`"
   keychain=keychain-2.7.1
-  $VENDOR_DIR/$keychain/keychain $HOME/.ssh/cmake_dsa $HOME/.ssh/cmake_rsa
+  $VENDOR_DIR/$keychain/keychain $HOME/.ssh/regress_rsa
   if test -f $HOME/.keychain/$MYHOSTNAME-sh; then
     run "source $HOME/.keychain/$MYHOSTNAME-sh"
   else

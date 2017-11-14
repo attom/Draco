@@ -55,15 +55,15 @@ int get_num_recv(Invert_Comm_Map_t::const_iterator first,
 //---------------------------------------------------------------------------//
 // SCALAR version of get_num_recv
 #elif defined(C4_SCALAR)
-int get_num_recv(Invert_Comm_Map_t::const_iterator first,
-                 Invert_Comm_Map_t::const_iterator last) {
+int get_num_recv(Invert_Comm_Map_t::const_iterator /*first*/,
+                 Invert_Comm_Map_t::const_iterator /*last*/) {
   return 0;
 }
 #else
 //---------------------------------------------------------------------------//
 // Default version of get_num_recv, which throws an error.
-int get_num_recv(Invert_Comm_Map_t::const_iterator first,
-                 Invert_Comm_Map_t::const_iterator last) {
+int get_num_recv(Invert_Comm_Map_t::const_iterator /*first*/,
+                 Invert_Comm_Map_t::const_iterator /*last*/) {
   Insist(0, "get_num_recv not implemented for this communication type!");
 }
 #endif // ifdef C4_MPI

@@ -5,10 +5,7 @@
  * \date   Mon Mar 25 14:41:05 2002
  * \brief  C4 MPI Blocking Send/Recv instantiations.
  * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-// $Id$
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include <c4/config.h>
@@ -118,6 +115,12 @@ template DLL_PUBLIC_c4 uint64_t prefix_sum(const uint64_t node_value);
 template DLL_PUBLIC_c4 float prefix_sum(const float node_value);
 template DLL_PUBLIC_c4 double prefix_sum(const double node_value);
 
+template DLL_PUBLIC_c4 void prefix_sum(int32_t *buffer, int32_t n);
+template DLL_PUBLIC_c4 void prefix_sum(uint32_t *buffer, int32_t n);
+template DLL_PUBLIC_c4 void prefix_sum(int64_t *buffer, int32_t n);
+template DLL_PUBLIC_c4 void prefix_sum(uint64_t *buffer, int32_t n);
+template DLL_PUBLIC_c4 void prefix_sum(float *buffer, int32_t n);
+template DLL_PUBLIC_c4 void prefix_sum(double *buffer, int32_t n);
 } // end namespace rtt_c4
 
 #endif // C4_MPI
