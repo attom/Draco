@@ -109,7 +109,7 @@ macro(dbsSetupCompilers)
 
   # 2017-09-15 KT - eliminate configure warning in Win32 nightly regressions:
   #                 "CMake doesn't support IPO for current compiler"
-  # 2017-11-13 KT - This also breaks linking MinGW gfortran libraries into 
+  # 2017-11-13 KT - This also breaks linking MinGW gfortran libraries into
   #                 MSVC applications, so just disable it for all Win32 builds.
   if( WIN32 )
   # if( ${CMAKE_GENERATOR} MATCHES "NMake Makefiles" )
@@ -144,11 +144,11 @@ macro(dbsSetupCxx)
   string( REGEX REPLACE "[^0-9]*([0-9]+).([0-9]+).([0-9]+).*" "\\2"
     DBS_CXX_COMPILER_VER_MINOR "${CMAKE_CXX_COMPILER_VERSION}" )
 
-  # C99 support:
-  set( CMAKE_C_STANDARD 99 )
+  # C11 support:
+  set( CMAKE_C_STANDARD 11 )
 
-  # C++11 support:
-  set( CMAKE_CXX_STANDARD 11 )
+  # C++14 support:
+  set( CMAKE_CXX_STANDARD 14 )
   set( CXX_STANDARD_REQUIRED ON )
 
   # Do not enable extensions (e.g.: --std=gnu++11)

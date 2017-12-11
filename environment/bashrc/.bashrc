@@ -120,7 +120,8 @@ fi
 ## ENVIRONMENTS - once per login
 ##---------------------------------------------------------------------------##
 
-if test ${DRACO_BASHRC_DONE:-no} = no && test ${INTERACTIVE} = true; then
+#if test ${DRACO_BASHRC_DONE:-no} = no && test ${INTERACTIVE} = true; then
+if [[ ${INTERACTIVE} = true ]]; then
 
   # Clean up the default path to remove duplicates
   tmpifs=$IFS

@@ -39,6 +39,10 @@
 
 00 04 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne capsaicin\" -e valgrind
 
+00 05 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco\" -e scalar
+
+15 05 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco\" -e static
+
 #------------------------------------------------------------------------------#
 # Clang-3.8.0, gcc-6.1.0
 #------------------------------------------------------------------------------#

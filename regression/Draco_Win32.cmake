@@ -11,12 +11,12 @@
 cmake_minimum_required(VERSION 3.9.0)
 
 # Use:
-# - See draco/regression/regression_master.sh
+# - See draco/regression/win32-regression-master.bat
 # - Summary: The script must do something like this:
 #   [export work_dir=/full/path/to/working/dir]
 #   ctest [-V] [-VV] -S /path/to/this/script.cmake,\
 #     [Experimental|Nightly|Continuous],\
-#     [Debug[,Coverage]|Release|RelWithDebInfo]
+#     [Debug[,Coverage|,DynamicAnalysis]|Release|RelWithDebInfo]
 
 set( CTEST_PROJECT_NAME "Draco" )
 message("source ${CTEST_SCRIPT_DIRECTORY}/draco_regression_macros.cmake" )
@@ -24,7 +24,7 @@ include( "${CTEST_SCRIPT_DIRECTORY}/draco_regression_macros.cmake" )
 set_defaults()
 parse_args()
 find_tools()
-  set_git_command("Draco.git")
+set_git_command("Draco.git")
 
 # Make machine name lower case
 string( TOLOWER "${CTEST_SITE}" CTEST_SITE )
@@ -46,13 +46,15 @@ CTEST_TEST_TIMEOUT:STRING=${CTEST_TEST_TIMEOUT}
 
 VENDOR_DIR:PATH=${VENDOR_DIR}
 AUTODOCDIR:PATH=${AUTODOCDIR}
-
-CMAKE_MAKE_PROGRAM:FILEPATH=${MAKECOMMAND}
+# CMAKE_MAKE_PROGRAM:FILEPATH=${MAKECOMMAND}
+${TEST_PPE_BINDIR}
+USE_CUDA:BOOL=${USE_CUDA}
 
 ${INIT_CACHE_PPE_PREFIX}
 ${TOOLCHAIN_SETUP}
 # Set DRACO_DIAGNOSTICS and DRACO_TIMING:
 ${FULLDIAGNOSTICS}
+${BOUNDS_CHECKING}
 ")
 
 message("CTEST_INITIAL_CACHE =
@@ -78,7 +80,6 @@ if( ${CTEST_CONFIGURE} )
     message( "ctest_empty_binary_directory( ${CTEST_BINARY_DIRECTORY} )" )
     ctest_empty_binary_directory( ${CTEST_BINARY_DIRECTORY} )
   endif()
-
   # dummy command to give the file system time to catch up before creating
   # CMakeCache.txt.
   # file( WRITE $ENV{TEMP}/foo.txt ${CTEST_INITIAL_CACHE} )
@@ -108,7 +109,7 @@ if( ${CTEST_CONFIGURE} )
 endif()
 
 # Autodoc
-if( ${CTEST_AUTODOC} )
+if( ${CTEST_BUILD} AND ${CTEST_AUTODOC} )
   message( "ctest_build(
    TARGET autodoc
    NUMBER_ERRORS num_errors
@@ -130,9 +131,9 @@ endif()
 if( ${CTEST_BUILD} )
    message( "ctest_build(
    TARGET install
+   RETURN_VALUE res
    NUMBER_ERRORS num_errors
-   NUMBER_WARNINGS num_warnings
-   RETURN_VALUE res )" )
+   NUMBER_WARNINGS num_warnings )" )
    ctest_build(
       TARGET install
       RETURN_VALUE res
@@ -181,3 +182,4 @@ message("end of ${CTEST_SCRIPT_NAME}.")
 #------------------------------------------------------------------------------#
 # End Draco_Win32.cmake
 #------------------------------------------------------------------------------#
+

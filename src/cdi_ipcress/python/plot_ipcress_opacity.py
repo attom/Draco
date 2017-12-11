@@ -45,6 +45,9 @@ ipcress_file = sys.argv[1]
 root = Tk()
 root.wm_title("Data from IPCRESS File {0}".format(ipcress_file))
 
+#font size for text in plots
+#matplotlib.rcParams.update({'font.size': 18})
+
 # get data dictionary from file
 table_key_dict, materials = ip_reader.get_property_map_from_ipcress_file(ipcress_file)
 
@@ -63,6 +66,7 @@ hnu_grid = table_key_dict["{0}_{1}".format("hnugrid", selected_ID.get())]
 mgr_grid = table_key_dict["{0}_{1}".format("ramg", selected_ID.get())]
 mgp_grid = table_key_dict["{0}_{1}".format("pmg", selected_ID.get())]
 mgs_grid = table_key_dict["{0}_{1}".format("rsmg", selected_ID.get())]
+mgrt_grid = table_key_dict["{0}_{1}".format("rtmg", selected_ID.get())]
 
 #get log average rho and T for initial plot
 avg_rho = exp(0.5*(log(max(rho_grid)) + log(min(rho_grid))))
@@ -84,7 +88,12 @@ op_type.set(1)
 mgr_valid = ip_reader.check_valid_data(mgr_grid)
 mgp_valid = ip_reader.check_valid_data(mgp_grid)
 mgs_valid = ip_reader.check_valid_data(mgs_grid)
+mgrt_valid = ip_reader.check_valid_data(mgrt_grid)
 
+name = selected_ID.get()
+print( \
+  "-------------------- BEGIN DATA PRINT FOR {0} ---------------------"\
+  .format(name))
 # if valid, interpolate data at target rho and target T
 if (mgr_valid):
   mgr_interp = ip_reader.interpolate_mg_opacity_data(T_grid, rho_grid, hnu_grid, mgr_grid, \
@@ -95,11 +104,18 @@ if (mgp_valid):
 if (mgs_valid):
   mgs_interp =ip_reader.interpolate_mg_opacity_data(T_grid, rho_grid, hnu_grid, mgs_grid, \
                 target_rho.get(), target_T.get(), "multigroup scattering")
+if (mgrt_valid):
+  mgrt_interp =ip_reader.interpolate_mg_opacity_data(T_grid, rho_grid, hnu_grid, mgrt_grid, \
+                target_rho.get(), target_T.get(), "total rosseland")
+print( \
+  "-------------------- END DATA PRINT FOR {0} ---------------------"\
+  .format(name))
 
 # plotting data arrays
 opr_data = []  # Rosseland absorption
 opp_data = []  # Planck absorption
 ops_data = []  # Rosseland scattering
+oprt_data = []  # Rosseland total
 hnu_data = []  # hnu plot data
 
 # add points to plotting data twice to get the bar structure and find max and min opacity
@@ -130,14 +146,15 @@ for hnu_i, hnu in enumerate(hnu_grid[:-1]):
 a.set_xscale('log')
 a.set_yscale('log')
 a.set_xlabel('hnu (keV)')
-a.set_ylabel('opacity (sq. cm/g)')
+a.set_ylabel('opacity (cm sq./g)')
+
 if (mgr_valid):
-  a.plot(hnu_data, opr_data, 'b-', label = "{0} Rosseland Absorption".format(selected_ID.get()))
+  a.plot(hnu_data, opr_data, 'b-', label = "{0} Rosseland Absorption".format(name))
 else:
   print("ERROR: Invalid multigroup Rosseland absorption data (all zeros)")
 
 if (mgs_valid):
-  a.plot(hnu_data, ops_data, 'r-', label = "{0} Rosseland Scattering".format(selected_ID.get()))
+  a.plot(hnu_data, ops_data, 'r-', label = "{0} Rosseland Scattering".format(name))
 else:
   print("ERROR: Invalid multigroup scattering data (all zeros)")
 
@@ -178,13 +195,19 @@ def plot_op():
   mgp_grid = table_key_dict["{0}_{1}".format("pmg", selected_ID.get())]
   # scattering is only availabe with Rosseland weighting
   mgs_grid = table_key_dict["{0}_{1}".format("rsmg", selected_ID.get())]
+  mgrt_grid = table_key_dict["{0}_{1}".format("rtmg", selected_ID.get())]
 
   # get interpolated opacity data for this temperature and density
   # first check to see if the data is valid (non-zero)
   mgr_valid = ip_reader.check_valid_data(mgr_grid)
   mgp_valid = ip_reader.check_valid_data(mgp_grid)
   mgs_valid = ip_reader.check_valid_data(mgs_grid)
+  mgrt_valid = ip_reader.check_valid_data(mgrt_grid)
 
+  name = selected_ID.get()
+  print( \
+    "-------------------- BEGIN DATA PRINT FOR {0} --------------------"\
+    .format(name))
   # if valid, interpolate data at target rho and target T
   if (mgr_valid):
     mgr_interp = ip_reader.interpolate_mg_opacity_data(T_grid, rho_grid, \
@@ -198,11 +221,19 @@ def plot_op():
     mgs_interp = ip_reader.interpolate_mg_opacity_data(T_grid, rho_grid, \
       hnu_grid, mgs_grid, target_rho.get(), target_T.get(), \
       "multigroup scattering")
+  if (mgrt_valid):
+    mgrt_interp =ip_reader.interpolate_mg_opacity_data(T_grid, rho_grid, \
+      hnu_grid, mgrt_grid, target_rho.get(), target_T.get(), \
+      "total rosseland")
+  print( \
+    "-------------------- END DATA PRINT FOR {0} --------------------"\
+    .format(name))
 
   # plotting data arrays
   opr_data = []  # Rosseland absorption
   opp_data = []  # Planck absorption
   ops_data = []  # Rosseland scattering
+  oprt_data = []  # Rosseland total
   hnu_data = []  # hnu plot data
 
   # add points to plotting data twice to get the bar structure and find max and min opacity
@@ -233,22 +264,23 @@ def plot_op():
   a.set_xscale('log')
   a.set_yscale('log')
   a.set_xlabel('hnu (keV)')
-  a.set_ylabel('opacity (sq. cm/g)')
+  a.set_ylabel('opacity (cm sq./g)')
+
   # use label for Planck or Rosseland
   if (op_type.get() == 1 and mgr_valid ):
-    a.plot(hnu_data, opr_data, 'b-',  label = "{0} Rosseland Absorption".format(selected_ID.get()))
+    a.plot(hnu_data, opr_data, 'b-',  label = "{0} Rosseland Absorption".format(name))
   elif(op_type.get() == 2 and mgp_valid):
-    a.plot(hnu_data, opp_data, 'g-', label = "{0} Planckian Absorption".format(selected_ID.get()))
+    a.plot(hnu_data, opp_data, 'g-', label = "{0} Planckian Absorption".format(name))
   elif(op_type.get() == 3 and mgr_valid and mgp_valid):
-    a.plot(hnu_data, opr_data, 'b-',  label = "{0} Rosseland Absorption".format(selected_ID.get()))
-    a.plot(hnu_data, opp_data, 'g-', label = "{0} Planckian Absorption".format(selected_ID.get()))
+    a.plot(hnu_data, opr_data, 'b-',  label = "{0} Rosseland Absorption".format(name))
+    a.plot(hnu_data, opp_data, 'g-', label = "{0} Planckian Absorption".format(name))
   else:
     if (not mgr_valid):
       print("ERROR: Invalid multigroup Rosseland absorption data (all zeros)")
     if (not mgp_valid):
       print("ERROR: Invalid multigroup Planckian absorption data (all zeros)")
   if (mgs_valid):
-    a.plot(hnu_data, ops_data, 'r-', label = "{0} Rosseland Scattering".format(selected_ID.get()))
+    a.plot(hnu_data, ops_data, 'r-', label = "{0} Rosseland Scattering".format(name))
   else:
     print("ERROR: Invalid multigroup scattering data (all zeros)")
 

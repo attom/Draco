@@ -138,7 +138,7 @@ case ${target} in
     regdir=/usr/projects/jayenne/regress
     gitroot=$regdir/git.tt
     VENDOR_DIR=/usr/projects/draco/vendors
-    keychain=keychain-2.7.1
+    keychain=keychain-2.8.2
     ;;
 esac
 

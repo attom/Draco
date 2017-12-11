@@ -38,11 +38,11 @@ print_use()
 ## Sanity Checks and Setup
 ##---------------------------------------------------------------------------##
 
-if [[ ! ${4} ]]; then
-   echo "ERROR: You must provide at least 4 arguments."
-   print_use
-   exit 1
-fi
+# if [[ ! ${4} ]]; then
+#    echo "ERROR: You must provide at least 4 arguments."
+#    print_use
+#    exit 1
+# fi
 
 mach=`uname -n`
 if test "$mach" != "ccscs7.lanl.gov"; then
@@ -60,6 +60,9 @@ fi
 logdir=/scratch/${USER}
 work_dir=/scratch/regress
 CLOC=/scratch/vendors/bin/cloc
+
+olddir=`pwd`
+cd $work_dir
 
 # Ensure the work directory exists
 if ! test -d $logdir; then
@@ -132,10 +135,10 @@ if [[ `fn_exists module` == 1 ]]; then
   else
     # we have Lmod modules
     echo "Found Lmod modules:"
-    run "module avail"
-    run "module list"
-    run "module purge"
-    run "module list"
+#    run "module avail"
+#    run "module list"
+#    run "module purge"
+#    run "module list"
   fi
 else
   echo " "
@@ -184,9 +187,17 @@ p)
 esac
 done
 
+if ! [[ $projects ]]; then
+  echo "ERROR: You must specify the project(s)."
+  print_use
+  exit 1
+fi
+
 # redirect all script output to file
 echo "The metric report will be saved to $logfile "
-echo "and emailed to ${recipients}."
+if [[ $recipients ]]; then
+  echo "and emailed to ${recipients}."
+fi
 exec 1>${logfile}
 exec 2>&1
 
@@ -262,9 +273,9 @@ for proj in $projects; do
    fi
 done
 # create the new coverage file via covmerge
+# echo $cmd
 eval $cmd
 # run covdir to generate a report (but omit entry for /source/src/)
-olddir=`pwd`
 cd $work_dir
 export COVDIRCFG=$work_dir/draco/regression/mcovdir.cfg
 
@@ -290,4 +301,12 @@ echo "  http://www.bullseye.com/coverage.html#basic_conditionDecision"
 cd $olddir
 
 # Send the email
-/bin/mailx -r "${USER}@lanl.gov" -s "${subj}" ${recipients} < ${logfile}
+if [[ $recipients ]]; then
+  /bin/mailx -r "${USER}@lanl.gov" -s "${subj}" ${recipients} < ${logfile}
+else
+  cat $logfile
+fi
+
+#------------------------------------------------------------------------------#
+# End metrics_report.sh
+#------------------------------------------------------------------------------#

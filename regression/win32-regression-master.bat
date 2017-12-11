@@ -7,6 +7,8 @@ rem Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
 rem         All rights are reserved.
 rem ---------------------------------------------------------------------------
 
+rem Resource for batch file syntax and commands: https://ss64.com/nt/
+
 rem Use Task Scheduler to create a task that runs this script every night at 
 rem midnight.
 

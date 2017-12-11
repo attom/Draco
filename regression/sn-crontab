@@ -32,11 +32,12 @@
 # Special: NR, PerfBench and FullDiagnostics regressions.
 #------------------------------------------------------------------------------#
 
-# intel-17.0.4 + Openmpi-2.1.2 (currently the default)
-# 01 00 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne\" -e newtools
+# intel-18.0.0 + openmpi-2.1.2
+# compiler segfault when building suite-sparse -> no trilinos -> omit capsaicin.
+01 00 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne\" -e newtools
 
 # gcc-6.4.0 + openmpi-2.1.2
-01 00 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne\" -e gcc640
+01 00 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne capsaicin\" -e gcc640
 
 # Floating point traps, etc.
 01 01 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Debug -e fulldiagnostics -p \"draco jayenne capsaicin\"

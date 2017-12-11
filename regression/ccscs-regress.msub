@@ -145,6 +145,14 @@ case $extra_params in
 #    run "module load $dracomodules"
 #    comp=gcc-6.3.0
 #    ;;
+  scalar)
+    run "module load $dracomodules"
+    comp="gcc-scalar"
+    ;;
+  static)
+    run "module load $dracomodules"
+    comp="gcc-staticlink"
+    ;;
   valgrind)
     run "module load $dracomodules valgrind"
     comp=gcc

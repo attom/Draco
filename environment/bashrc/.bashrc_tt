@@ -45,7 +45,7 @@ fi
 #
 # OpenMP
 #
-export OMP_PLACES=threads
+# export OMP_PLACES=threads
 if [[ `lscpu | grep Flags | grep -c avx512` == 0 ]]; then
   export OMP_NUM_THREADS=16
   export NRANKS_PER_NODE=32

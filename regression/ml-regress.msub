@@ -87,6 +87,8 @@ fi
 run "module purge &> /dev/null"
 unset _LMFILES_
 run "module list"
+#export ucmf=$HOME/modulefiles
+#run "module use --append $ucmf/`/usr/projects/hpcsoft/sys_name`"
 run "module load user_contrib"
 run "module load friendly-testing"
 run "module load cmake/3.9.0"
@@ -303,10 +305,10 @@ if [[ ${setup_dirs} ]]; then
 fi
 
 # Environment
-echo " "
-echo "--------------------(environment)------------------------------"
-set
-echo "--------------------(end environment)--------------------------"
+#echo " "
+#echo "--------------------(environment)------------------------------"
+#set
+#echo "--------------------(end environment)--------------------------"
 
 date
 echo ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}

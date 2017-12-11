@@ -141,11 +141,13 @@ newtools)
     run "module purge &> /dev/null"
     run "module list"
     run "module load user_contrib friendly-testing"
-    run "module load intel/17.0.4 openmpi/2.1.2 mkl"
-    run "module load trilinos/12.10.1 superlu-dist metis parmetis"
+    run "module load intel/18.0.0 openmpi/2.1.2 mkl"
+    run "module load superlu-dist metis parmetis"
+# Can't build suite-sparse (and thus trilinos) due to intel/18 bug.
+#    run "module load trilinos/12.10.1 superlu-dist metis parmetis"
     run "module load cmake/3.9.0 ndi numdiff git"
-    run "module load mkl random123 eospac/6.2.4"
-    comp="${comp}-1704"
+    run "module load mkl random123 eospac/6.2.4 csk"
+    comp="${comp}-1800"
     ;;
 nr)
     comp="${comp}-nr"
@@ -283,10 +285,10 @@ if [[ ${setup_dirs} ]]; then
 fi
 
 # Environment
-echo " "
-echo "--------------------(environment)------------------------------"
-set
-echo "--------------------(end environment)--------------------------"
+# echo " "
+# echo "--------------------(environment)------------------------------"
+# set
+# echo "--------------------(end environment)--------------------------"
 
 date
 echo ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}

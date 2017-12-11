@@ -165,7 +165,7 @@ comp=$comp-$featurebranch
 # When run by crontab, use a special ssh-key to allow authentication to gitlab
 if [[ ${regress_mode} == "on" ]]; then
   run "module load git"
-  keychain=keychain-2.7.1
+  keychain=keychain-2.8.2
   $VENDOR_DIR/$keychain/keychain $HOME/.ssh/regress_rsa
   if test -f $HOME/.keychain/$HOSTNAME-sh; then
     run "source $HOME/.keychain/$HOSTNAME-sh"
@@ -259,7 +259,7 @@ if [[ ${setup_dirs} ]]; then
 fi
 
 # Environment
-echo " "
+#echo " "
 #echo "--------------------(environment)------------------------------"
 #set
 #echo "--------------------(end environment)--------------------------"

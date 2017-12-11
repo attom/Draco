@@ -32,22 +32,25 @@ rem set dashboard_type=Experimental
 set dashboard_type=Nightly
 set base_dir=e:\regress
 set comp=cl
-set script_dir=e:\regress\draco\regression
-set script_name=Draco_Win32.cmake
 set ctestparts=Configure,Build,Test,Submit
 
+rem print some information
+echo Environment:  > %logdir%\environment.log 2>&1
+rem echo .
+set > %logdir%\environment.log 2>&1
+rem echo .
+rem echo -----     -----     -----     -----     -----
+
+rem goto :jayennedebug
+
+rem -------------------------------------------------------------------------------------------
 :dracodebug
 
 set subproj=draco
 set build_type=Debug
+set script_name=Draco_Win32.cmake
+set script_dir=e:\regress\draco\regression
 set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
-
-rem print some information
-echo Environment:
-echo .
-set
-echo .
-echo -----     -----     -----     -----     -----
 
 rem navigate to the workdir
 if not exist %work_dir% mkdir %work_dir%
@@ -59,15 +62,44 @@ if not exist %work_dir%\build mkdir build
 if not exist %work_dir%\source mkdir source
 if not exist %work_dir%\target mkdir target
 
-rem goto :jayennerelease
-
 echo "ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\draco-%build_type%-cbts.log"
-ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\draco-%build_type%-cbts.log
+ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\draco-%build_type%-cbts.log 2>&1
 
+rem goto :done
+
+rem -------------------------------------------------------------------------------------------
+:jayennedebug
+
+set subproj=jayenne
+set build_type=Debug
+set script_name=Jayenne_Win32.cmake
+set script_dir=e:\regress\jayenne\regression
+set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
+
+rem navigate to the workdir
+if not exist %work_dir% mkdir %work_dir%
+cd /d %work_dir%
+
+rem clear the build directory (need to do this here to avoid a hang).
+rem if exist %work_dir%\build rmdir /s /q build
+if not exist %work_dir%\build mkdir build
+if not exist %work_dir%\source mkdir source
+if not exist %work_dir%\target mkdir target
+
+rem run the ctest script
+
+echo "ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\%subproj%-%build_type%-cbts.log"
+ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\%subproj%-%build_type%-cbts.log 2>&1
+
+rem goto :done
+
+REM rem -------------------------------------------------------------------------------------------
 :dracorelease
 
 set subproj=draco
 set build_type=Release
+set script_name=Draco_Win32.cmake
+set script_dir=e:\regress\draco\regression
 set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
 
 rem navigate to the workdir
@@ -83,39 +115,18 @@ if not exist %work_dir%\target mkdir target
 rem run the ctest script
 
 echo "ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\draco-%build_type%-cbts.log"
-ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\draco-%build_type%-cbts.log
+ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\draco-%build_type%-cbts.log 2>&1
 
-rem --------------------------------------------------------------------------
+rem release builds are failing so stop here.
+rem goto :done
 
+REM rem --------------------------------------------------------------------------
 :jayennerelease
-
-set script_dir=e:\regress\jayenne\regression
-set script_name=Jayenne_Win32.cmake
 
 set subproj=jayenne
 set build_type=Release
-set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
-
-rem navigate to the workdir
-if not exist %work_dir% mkdir %work_dir%
-cd /d %work_dir%
-
-rem clear the build directory (need to do this here to avoid a hang).
-rem if exist %work_dir%\build rmdir /s /q build
-if not exist %work_dir%\build mkdir build
-if not exist %work_dir%\source mkdir source
-if not exist %work_dir%\target mkdir target
-
-rem goto :jayennedebug
-
-rem run the ctest script
-
-echo "ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\%subproj%-%build_type%-cbts.log"
-ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\%subproj%-%build_type%-cbts.log
-
-:jayennedebug
-
-set build_type=Debug
+set script_dir=e:\regress\jayenne\regression
+set script_name=Jayenne_Win32.cmake
 set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
 
 rem navigate to the workdir
@@ -131,8 +142,11 @@ if not exist %work_dir%\target mkdir target
 rem run the ctest script
 
 echo "ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\%subproj%-%build_type%-cbts.log"
-ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\%subproj%-%build_type%-cbts.log
+ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\%subproj%-%build_type%-cbts.log 2>&1
 
-
+rem -------------------------------------------------------------------------------------------
 :done
-echo You need to remove -k from script launch to let this window close automatically.
+rem echo You need to remove -k from script launch to let this window close automatically.
+echo All done.
+
+

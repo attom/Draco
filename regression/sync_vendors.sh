@@ -11,7 +11,7 @@
 if [[ $(id -gn) != ccsrad ]]; then
   exec sg ccsrad "$0 $*"
 fi
-umask 0002
+umask 0007
 
 # Locate the directory that this script is located in:
 scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -50,7 +50,14 @@ vdir=/scratch/vendors
 r72v=/ccs/codes/radtran/vendors/rhel72vendors
 # To machines (cccs[234568]:/scratch/vendors)
 # omit ccscs5 (scratch is too full)
-ccs_servers="ccscs2 ccscs3 ccscs4 ccscs6 ccscs8"
+ccs_servers="ccscs1 ccscs2 ccscs3 ccscs4 ccscs6 ccscs8 ccscs9"
+
+# exclude these directories
+exclude_dirs="spack.mirror spack.rasa tmp spack.temporary spack.test spack.ccs.developmental"
+exclude_items=""
+for item in $exclude_dirs; do
+  exclude_items+=" --exclude=$item"
+done
 
 # Credentials via Keychain (SSH)
 # http://www.cyberciti.biz/faq/ssh-passwordless-login-with-keychain-for-scripts
@@ -71,13 +78,25 @@ if ! test -d $vdir; then
   echo "Source directory $vdir is missing."
   exit 1
 fi
+if ! test -d ${vdir}-ec; then
+  echo "Source directory ${vdir}-ec is missing."
+  exit 1
+fi
 
 # Make a backup copy of vendors to $r72v
 echo " "
 echo "Clean up permissions on source files..."
-run "chgrp -R draco $vdir &> /dev/null"
-run "chmod -R g+rwX,o=g-w $vdir &> /dev/null"
-run "chmod -R o-rwX $vdir/ndi* $vdir/csk* $vdir/cubit* $vdir/eospac* &> /dev/null"
+vdir_subdirs=`\ls -1 $vdir`
+for dir in $vdir_subdirs; do
+  run "chgrp -R draco $dir &> /dev/null"
+  run "chmod -R g+rX,o+rX $dir &> /dev/null"
+done
+
+vdir_subdirs=`\ls -1 ${vdir}-ec`
+for dir in $vdir_subdirs; do
+  run "chgrp -R ccsrad $dir &> /dev/null"
+  run "chmod -R g+rX,o-rwX $dir &> /dev/null"
+done
 
 echo " "
 echo "Save a copy of /scratch/vendors to $r72v..."
@@ -87,16 +106,19 @@ echo "Save a copy of /scratch/vendors to $r72v..."
 # rsync vendors ccscs7 -> other machines.
 # but limit network to 50 MB/sec (400 mbps)
 echo " "
-echo "Rsync $vdir to other ccs-net servers... "
+echo "Rsync $vdir and ${vdir}-ec to other ccs-net servers... "
 for m in $ccs_servers; do
   if [[ `uname -n | grep -c $m` = 0 ]]; then
     case $m in
       ccscs5)
         # do not copy ndi, not enough space
-        run "rsync -av --exclude ndi --delete --bwlimit=50000 $vdir/ ${m}:$vdir"
+        run "rsync -av ${exclude_items} --exclude=ndi --delete --bwlimit=50000 $vdir/ ${m}:$vdir"
+        run "rsync -av ${exclude_items} --exclude=ndi --delete --bwlimit=50000 ${vdir}-ec/ ${m}:${vdir}-ec"
         ;;
       *)
-        run "rsync -av --delete --bwlimit=50000 $vdir/ ${m}:$vdir"
+        # run "rsync -av --delete --bwlimit=50000 $vdir/ ${m}:$vdir"
+        run "rsync -av ${exclude_items} --delete --bwlimit=200000 $vdir/ ${m}:$vdir"
+        run "rsync -av ${exclude_items} --delete --bwlimit=200000 ${vdir}-ec/ ${m}:${vdir}-ec"
         ;;
     esac
   fi

@@ -50,11 +50,14 @@ case ${-} in
      echo "backfill       - Maximum job size to allow immediate start?"
 }
 
-   alias sqrun='squeue -o "%.7i %.10u %.10a %.8q %.9P %.12j %.6D %.6C %.12L %S" -S "L" -t R'
-   alias sqpend='squeue -o "%.7i %.8Q %.10u %.10a %.8q %.9P %.12j %.6C %.16S %.10L %.r" -t PD --sort=S,-p | grep -v "N/A"; \
-squeue -o "%.7i %.8Q %.10u %.10a %.8q %.9P %.12j %.6C %.16S %.10L %.r" -t PD --sort=S,-p | grep "N/A"'
-   alias sqother='squeue -o "%.7i %.10u %.12T %.6C %10l %R" -S "-T" -t S,CG,CD,CF,CA,F,TO,PR,NF'
-   alias sq='(echo -e "\nRUNNING":;sqrun;echo -e "\nPENDING:";sqpend;echo -e "\nOTHER:";sqother;echo " ")'
+   alias hluser="egrep --color -E '.*${USER}.*|$'"
+   boldface=$(tput bold)
+   normalface=$(tput sgr0)
+
+   alias sqrun='squeue -o "%.7i %.10u %.10a %.8q %.9P %.12j %.6D %.6C %.12L %S" -S "L" -t R | hluser'
+   alias sqpend='squeue -o "%.7i %.8Q %.10u %.10a %.8q %.9P %.12j %.6C %.16S %.10L %.r" -t PD --sort=S,-p | grep -v "N/A" | hluser; squeue -o "%.7i %.8Q %.10u %.10a %.8q %.9P %.12j %.6C %.16S %.10L %.r" -t PD --sort=S,-p | grep --color=never "N/A" | hluser'
+   alias sqother='squeue -o "%.7i %.10u %.12T %.6C %10l %R" -S "-T" -t S,CG,CD,CF,CA,F,TO,PR,NF | hluser'
+   alias sq='(echo -e "\n${boldface}RUNNING${normalface}":;sqrun;echo -e "\n${boldface}PENDING:${normalface}";sqpend;echo -e "\n${boldface}OTHER:${normalface}";sqother;echo " ")'
    alias sqshowme='squeue -u ${USER} -o "%.7i %.10u %.8T %.6D %.6C %.12L %S" -S "-t,-L"'
    alias showme='sqshowme'
    alias sqall='squeue -o "%.7i %.10u %.8T %.6C %.12L %S" -S "-t,-L"'

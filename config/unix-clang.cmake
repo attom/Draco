@@ -5,10 +5,9 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
-# History
-# ----------------------------------------
-# 6/13/2016  - IPO settings moved to compilerEnv.cmake
-#              (CMAKE_INTERPROCEDURAL_OPTIMIZATION=ON).
+# Note: In config/compilerEnv.cmake, the build system sets flags for
+# 1) the language standard (C++14, C99, etc)
+# 2) interprocedural optimization.
 
 #
 # Compiler flag checks
@@ -44,7 +43,7 @@ if( NOT CXX_FLAGS_INITIALIZED )
 
 # Suppress warnings about typeid() called with function as an argument. In this
 # case, the function might not be called if the type can be deduced.
-   set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS} -Wno-potentially-evaluated-expression" ) #  -std=c++11" )
+   set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS} -stdlib=libc++ -Wno-potentially-evaluated-expression" ) #  -std=c++11" )
    if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3.8 )
      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
    endif()

@@ -26,6 +26,9 @@ parse_args()
 find_tools()
 set_git_command("Draco.git")
 
+# Make machine name lower case
+string( TOLOWER "${CTEST_SITE}" CTEST_SITE )
+
 ####################################################################
 # The values in this section are optional you can either
 # have them or leave them commented out
@@ -50,6 +53,8 @@ ${INIT_CACHE_PPE_PREFIX}
 ${TOOLCHAIN_SETUP}
 # Set DRACO_DIAGNOSTICS and DRACO_TIMING:
 ${FULLDIAGNOSTICS}
+${DRACO_C4}
+${DRACO_LIBRARY_TYPE}
 ${BOUNDS_CHECKING}
 ")
 
@@ -76,6 +81,9 @@ if( ${CTEST_CONFIGURE} )
     message( "ctest_empty_binary_directory( ${CTEST_BINARY_DIRECTORY} )" )
     ctest_empty_binary_directory( ${CTEST_BINARY_DIRECTORY} )
   endif()
+  # dummy command to give the file system time to catch up before creating
+  # CMakeCache.txt.
+  # file( WRITE $ENV{TEMP}/foo.txt ${CTEST_INITIAL_CACHE} )
   file( WRITE ${CTEST_BINARY_DIRECTORY}/CMakeCache.txt ${CTEST_INITIAL_CACHE} )
 endif()
 
@@ -173,3 +181,9 @@ if( ${CTEST_SUBMIT} )
 endif()
 
 message("end of ${CTEST_SCRIPT_NAME}.")
+
+#------------------------------------------------------------------------------#
+# End Draco_Linux64.cmake
+#------------------------------------------------------------------------------#
+
+

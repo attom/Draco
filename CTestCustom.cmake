@@ -54,6 +54,9 @@ endforeach()
 # specify maximum number of warnings to display
 # set( CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS "100" )
 
+set( CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE "1024" ) # bytes (1 kB)
+set( CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE "102400" ) # bytes (100 kB)
+
 ##---------------------------------------------------------------------------##
 ## Errors
 ##---------------------------------------------------------------------------##

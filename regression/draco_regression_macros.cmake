@@ -142,8 +142,8 @@ win32$ set work_dir=c:/full/path/to/work_dir
 
   if( WIN32 )
     # add option for "NMake Makefiles JOM"?
-    set( CTEST_CMAKE_GENERATOR "NMake Makefiles" )
-    # set( CTEST_CMAKE_GENERATOR "Visual Studio 11" )
+    # set( CTEST_CMAKE_GENERATOR "NMake Makefiles" )
+    set( CTEST_CMAKE_GENERATOR "Visual Studio 15 2017" )
   else()
     set( CTEST_CMAKE_GENERATOR "Unix Makefiles" )
   endif()
@@ -266,7 +266,7 @@ macro( parse_args )
     set( CTEST_BUILD_CONFIGURATION "RelWithDebInfo" )
   elseif( ${CTEST_SCRIPT_ARG} MATCHES MinSizeRel )
     set( CTEST_BUILD_CONFIGURATION "MinSizeRel" )
-  endif( ${CTEST_SCRIPT_ARG} MATCHES Debug )
+  endif()
 
   # Post options: SubmitOnly or NoSubmit
   set( CTEST_CONFIGURE OFF )
@@ -291,10 +291,6 @@ macro( parse_args )
   endif()
 
   # default compiler name based on platform
-  if( WIN32 )
-    set( compiler_short_name "cl" )
-  endif()
-
   unset(compiler_version)
   if( DEFINED ENV{LCOMPILERVER} )
     set( compiler_version $ENV{LCOMPILERVER} )
@@ -338,6 +334,15 @@ macro( parse_args )
       OUTPUT_STRIP_TRAILING_WHITESPACE )
     string( REGEX REPLACE "[^0-9]*([0-9]+).([0-9]+).([0-9]+).*" "\\1.\\2.\\3"
       compiler_version ${cxx_version} )
+  elseif( CTEST_CMAKE_GENERATOR MATCHES "Visual Studio" )
+    set( compiler_short_name "cl" )
+    execute_process( COMMAND cl
+      ERROR_VARIABLE cxx_version
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      OUTPUT_QUIET
+      )
+    string( REGEX REPLACE "[^0-9]*([0-9]+).([0-9]+).([0-9]+).*" "\\1.\\2.\\3"
+      compiler_version "${cxx_version}" )
   else()
     set( compiler_short_name "unknown" )
     set( compiler_version "unknown" )
@@ -357,16 +362,18 @@ macro( parse_args )
       # Note 'DRACO_TIMING:STRING=2' will break milagro tests (python cannot parse output).
     elseif( $ENV{extra_params} MATCHES "nr" )
       set( RNG_NR "ENABLE_RNG_NR:BOOL=ON" )
+    elseif( $ENV{extra_params} MATCHES "scalar" )
+      set( DRACO_C4 "DRACO_C4:STRING=SCALAR" )
+    elseif( $ENV{extra_params} MATCHES "static" )
+      set( DRACO_LIBRARY_TYPE "DRACO_LIBRARY_TYPE:STRING=STATIC" )
     endif()
   endif()
 
   # Set the build name: (<platform>-<compiler>-<configuration>)
   if( WIN32 )
-    if( "$ENV{dirext}" MATCHES "x64" )
-      set( CTEST_BUILD_NAME "${CTEST_BUILD_CONFIGURATION}" )
-    else()
-      set( CTEST_BUILD_NAME "${CTEST_BUILD_CONFIGURATION}" )
-    endif()
+    set( CTEST_BUILD_NAME "${CTEST_BUILD_CONFIGURATION}" )
+    # if( "$ENV{dirext}" MATCHES "x64" )
+    # endif()
   elseif( APPLE ) # OS/X
     set( CTEST_BUILD_NAME "${compiler_short_name}_${CTEST_BUILD_CONFIGURATION}" )
   else() # Unix
@@ -376,6 +383,10 @@ macro( parse_args )
     endif()
     set( CTEST_BUILD_NAME "${compiler_short_name}_${CTEST_BUILD_CONFIGURATION}-$ENV{featurebranch}" )
   endif()
+
+  # I think this is only used by msbuild targets (e.g. 'ctest -j 4 -C Debug'),
+  # but I want to define it universally.
+  set( CTEST_CONFIGURATION_TYPE "${CTEST_BUILD_CONFIGURATION}" )
 
   # Default is no Coverage Analysis
   if( ${CTEST_SCRIPT_ARG} MATCHES Coverage )
@@ -410,6 +421,7 @@ macro( parse_args )
     message("
 CTEST_MODEL                 = ${CTEST_MODEL}
 CTEST_BUILD_CONFIGURATION   = ${CTEST_BUILD_CONFIGURATION}
+CTEST_CONFIGURATION_TYPE    = ${CTEST_CONFIGURATION_TYPE}
 compiler_short_name         = ${compiler_short_name}
 compiler_version            = ${compiler_version}
 CTEST_BUILD_NAME            = ${CTEST_BUILD_NAME}
@@ -467,20 +479,14 @@ macro( find_tools )
     message( FATAL_ERROR "Cound not find cmake executable." )
   endif()
 
-  find_program( MAKECOMMAND
-    NAMES nmake make
-    HINTS
-      "C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin"
-      # NO_DEFAULT_PATH
-    )
-  if( NOT EXISTS "${MAKECOMMAND}" )
-    message( FATAL_ERROR "Cound not find make/nmake executable." )
+  if( NOT WIN32 )
+    # if MAKECOMMAND is found when using "Visual Studio" as the generator,
+    # the compiler 'cl' will be found to be unable to compile a simple 
+    # program.
+    find_program( MAKECOMMAND NAMES make )
+    # No memory check program on Windows for now.
+    find_program( CTEST_MEMORYCHECK_COMMAND NAMES valgrind )
   endif()
-
-  find_program( CTEST_MEMORYCHECK_COMMAND NAMES valgrind )
-  # --show-reachable --num-callers=50
-  # --suppressions=<filename>
-  # --gen-suppressions=all|yes|no
 
   if(ENABLE_C_CODECOVERAGE)
     find_program( COV01 NAMES cov01 )
@@ -515,7 +521,6 @@ MAKECOMMAND         = ${MAKECOMMAND}
 CTEST_MEMORYCHECK_COMMAND         = ${CTEST_MEMORYCHECK_COMMAND}
 MEMORYCHECK_SUPPRESSIONS_FILE     = ${MEMORYCHECK_SUPPRESSIONS_FILE}
 CTEST_MEMORYCHECK_COMMAND_OPTIONS = ${CTEST_MEMORYCHECK_COMMAND_OPTIONS}
-CTEST_CONFIGURE_COMMAND           = ${CTEST_CONFIGURE_COMMAND}
 
 ")
     if(ENABLE_C_CODECOVERAGE)
