@@ -4,9 +4,8 @@
  * \author <user>
  * \date   <date>
  * \brief  <start>
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"
@@ -19,11 +18,11 @@
 
 //---------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
-    rtt_c4::ParallelUnitTest ut(argc, argv, release);
-    try {
-        // >>> UNIT TESTS
-    }
-    UT_EPILOG(ut);
+  rtt_c4::ParallelUnitTest ut(argc, argv, release);
+  try {
+    // >>> UNIT TESTS
+  }
+  UT_EPILOG(ut);
 }
 
 //---------------------------------------------------------------------------//

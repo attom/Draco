@@ -3,7 +3,7 @@
 # author Kendra Keady <keadyk@lanl.gov>
 # date   2017 February 28
 # brief  Instructions for discovering the Compton vendor libraries.
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 

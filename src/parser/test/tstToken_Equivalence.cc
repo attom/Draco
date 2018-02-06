@@ -4,11 +4,11 @@
  * \author Kelly Thompson
  * \date   Fri Jul 21 09:10:49 2006
  * \brief  Unit test for functions in Token_Equivalence.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "ds++/Release.hh"

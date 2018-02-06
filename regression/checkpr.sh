@@ -28,7 +28,10 @@
 set -m
 
 # load some common bash functions
-export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export rscriptdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" )
+if ! [[ -d $rscriptdir ]]; then
+  export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
 if [[ -f $rscriptdir/scripts/common.sh ]]; then
   source $rscriptdir/scripts/common.sh
 else
@@ -99,9 +102,9 @@ case $project in
     print_use; exit 1 ;;
 esac
 
-# Restrict the use of ccscs7.
+# Restrict the use of ccscs[27].
 # case $target in
-#   ccscs7*)
+#   ccscs[27]*)
 #     if ! [[ $LOGNAME == "kellyt" ]]; then
 #       echo ""; echo "FATAL ERROR: Please use ccscs6 for manual use of checkpr.sh."
 #       exit 1
@@ -155,6 +158,10 @@ function startCI()
   if ! [[ ${pr} == "develop" ]]; then
     pr=pr${pr}
   fi
+  if [[ ${project} == "draco" ]] && [[ ${extra} == 'vtest' ]]; then
+    # Capsaicin/Jayenne -e vtest uses Draco w/o 'vtest'
+    extra="na"
+  fi
   if [[ ${extra} == 'na' ]]; then
     extra=""
     edash=""
@@ -190,7 +197,6 @@ function startCI()
 
 case $target in
   ccscs*) machine_name_short=ccscs ;;
-  ml*) machine_name_short=ml ;;
   sn*) machine_name_short=sn ;;
   tt*) machine_name_short=tt ;;
   darwin*) machine_name_short=darwin ;;
@@ -240,33 +246,46 @@ esac
 
 echo " "
 case $target in
-  # CCS-NET: Release
-  ccscs2*) startCI ${project} Release na $pr ;;
+
+  # CCS-NET: Release, vtest, coverage
+  ccscs2*)
+    startCI ${project} Release na $pr
+    startCI ${project} Release vtest $pr
+    startCI ${project} Debug coverage $pr ;;
 
   # CCS-NET: Valgrind (Debug)
   ccscs6*) startCI ${project} Debug valgrind $pr ;;
 
-  # CCS-NET: Coverage (Debug)
-  ccscs7*) startCI ${project} Debug coverage $pr ;;
-
-  # Moonlight: Fulldiagnostics (Debug)
-  ml-fey*) startCI ${project} Debug na $pr ;;
-
   # Snow: Debug
   sn-fe*)
     startCI ${project} Release na $pr
+    startCI ${project} Release vtest $pr
     startCI ${project} Debug fulldiagnostics $pr
     ;;
 
   # Trinitite: Release
   tt-fe*)
     startCI ${project} Release na $pr
+    startCI ${project} Release vtest $pr
     startCI ${project} Release knl $pr
     ;;
 
   # Darwin: Disabled
   darwin-fe*)
     # startCI ${project} Release na $pr
+    ;;
+
+  # These cases are not automated checks of PRs.  However, these machines are
+  # supported if this script is started by a developer:
+  ccscs[134]*)
+    startCI ${project} Release na $pr
+    startCI ${project} Debug na $pr ;;
+  ccscs[589]*)
+    startCI ${project} Debug coverage $pr ;;
+  ba-fe* | pi-fe* | wf-fe*)
+    startCI ${project} Release na $pr
+    startCI ${project} Release vtest $pr
+    startCI ${project} Debug fulldiagnostics $pr
     ;;
 
   *) echo "Unknown target machine: target = $target" ; exit 1 ;;

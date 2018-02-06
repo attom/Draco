@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Save Draco configuration information for installation (cmake export)
-# note   Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -45,8 +45,9 @@ set_package_properties( draco PROPERTIES
 #set( Draco_Fortran_COMPILER_FLAGS  "@Draco_Fortran_COMPILER_FLAGS@" )
 
 set( DRACO_LIBRARY_TYPE @DRACO_LIBRARY_TYPE@ )
-set( CXX11_FEATURE_LIST "@CXX11_FEATURE_LIST@" )
+# set( CXX11_FEATURE_LIST "@CXX11_FEATURE_LIST@" )
 set( GCC_ENABLE_GLIBCXX_DEBUG "@GCC_ENABLE_GLIBCXX_DEBUG@" )
+set( CRAY_PE "@CRAY_PE@" )
 
 ## ---------------------------------------------------------------------------
 ## Set library specifications and paths
@@ -86,16 +87,6 @@ set(DRACO_C4 "@DRACO_C4@" )
 set(Draco_MPIEXEC "@MPIEXEC@")
 set(Draco_MPIEXEC_MAX_NUMPROCS "@MPIEXEC_MAX_NUMPROCS@")
 set(Draco_MPIEXEC_NUMPROC_FLAG "@MPIEXEC_NUMPROC_FLAG@")
-set(MPI_Fortran_INCLUDE_PATH "@MPI_Fortran_INCLUDE_PATH@")
-set(MPI_Fortran_LIBRARIES    "@MPI_Fortran_LIBRARIES@")
-# These are needed for registering tests
-set(MPIEXEC "@MPIEXEC@")
-set(MPIEXEC_MAX_NUMPROCS "@MPIEXEC_MAX_NUMPROCS@")
-set(MPIEXEC_NUMPROC_FLAG "@MPIEXEC_NUMPROC_FLAG@")
-set(MPIEXEC_POSTFLAGS    "@MPIEXEC_POSTFLAGS@")
-set(MPI_CORES_PER_CPU    "@MPI_CORES_PER_CPU@")
-set(MPI_PHYSICAL_CORES   "@MPI_PHYSICAL_CORES@")
-set(MPIEXEC_MAX_NUMPROCS "@MPIEXEC_MAX_NUMPROCS@")
 
 ## CUDA
 set( USE_CUDA "@USE_CUDA@" )

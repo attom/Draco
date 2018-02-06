@@ -43,7 +43,8 @@ case ${-} in
      echo "sqother   - Show blocked jobs for all users."
      echo "sqqos [qos-name] - Show jobs with provided qos (default 'dev')"
      echo -e "\nOther information:\n"
-     echo "idle           - Show idle processors and nodes".
+     echo "idle           - Show idle processors and nodes"
+     echo "sfeatures      - Show features by node (e.g.: darwin)"
      echo "knownqos       - Table of  qos relative priorities."
      echo "knownaccounts  - Table of known accounts."
      echo "jobpriorities  - List of all jobs and their priorities."
@@ -67,6 +68,7 @@ case ${-} in
    # %t - state of nodes, compact form
    # %F - Number of nodes by state in the form allocated/idle/other/total
    alias idle='sinfo -l | egrep "(idle|PARTITION)"; echo " "; sinfo -o "%P %t %F" -p standard -t idle; echo "(A)llocated, (I)dle, (O)ther, (T)otal"'
+   alias sfeatures='sinfo -o "%P %.5a %.10l %.6D %.6t %N %f"'
    alias knownqos='sacctmgr show qos format=name,priority'
    alias knownaccounts='sacctmgr show account format=account%20,description'
    alias backfill='squeue --start -o "%18S %.18i %.9P %.8j %.iu %.2t %10M %.6D %R" | egrep "(Resources|START)"'

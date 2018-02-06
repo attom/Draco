@@ -4,11 +4,11 @@
  * \author Kent Budge
  * \date   Tue Aug 17 15:30:23 2004
  * \brief  Bracket a root of a function.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef roots_zbrac_hh

@@ -3,9 +3,8 @@
  * \file   <pkg>/<class>__parser.cc
  * \author <user>
  * \brief  Define parse table for <class>
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
 #include "<class>__parser.hh"
@@ -13,13 +12,13 @@
 
 namespace rtt_parser {
 using namespace rtt_dsxx;
-using namespace <namespace>;
+using namespace<namespace>;
 
-Class_Parse_Table <<class>> *Class_Parse_Table <<class>> ::current_;
-Parse_Table Class_Parse_Table <<class>> ::parse_table_;
+Class_Parse_Table << class >> *Class_Parse_Table << class >> ::current_;
+Parse_Table Class_Parse_Table << class >> ::parse_table_;
 
 //----------------------------------------------------------------------------//
-Class_Parse_Table <<class>> ::Class_Parse_Table() {
+Class_Parse_Table << class >> ::Class_Parse_Table() {
   static bool first_time = true;
   if (first_time) {
     const Keyword keywords[] = {
@@ -39,16 +38,15 @@ Class_Parse_Table <<class>> ::Class_Parse_Table() {
 }
 
 //----------------------------------------------------------------------------//
-void Class_Parse_Table <<class>> ::check_completeness(Token_Stream &tokens) {
-}
+void Class_Parse_Table << class >> ::check_completeness(Token_Stream &tokens) {}
 
 //----------------------------------------------------------------------------//
-SP <<class>> Class_Parse_Table <<class>> ::create_object() {
+SP << class >> Class_Parse_Table << class >> ::create_object() {
   return SP << class >> (new<class>());
 }
 
 //----------------------------------------------------------------------------//
-template<> SP<<class>> parse_class<<class>> (Token_Stream & tokens) {
+template <> SP << class >> parse_class << class >> (Token_Stream & tokens) {
   return parse_class_from_table<Class_Parse_Table << class>>> (tokens);
 }
 

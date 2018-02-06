@@ -4,11 +4,11 @@
  * \author Kelly Thompson
  * \date   Mon Jan 8 14:58:55 2001
  * \brief  MultigroupOpacity class header file (an abstract class)
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef __cdi_MultigroupOpacity_hh__

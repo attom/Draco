@@ -3,13 +3,10 @@
  * \file   roots/test/tstlnsrch.cc
  * \author Kent Budge
  * \date   Mon Aug  9 13:39:20 2004
- * \note   Copyright 2016-2017 Los Alamos National Security, LLC
- */
-//---------------------------------------------------------------------------//
-// $Id$
+ * \note   Copyright 2016-2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-#include "c4/global.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 #include "roots/lnsrch.hh"
@@ -31,29 +28,25 @@ void func(const vector<double> &x, vector<double> &fvec) {
 
 //---------------------------------------------------------------------------//
 void tstlnsrch(UnitTest &ut) {
-  vector<double> x(2);
-  x[0] = 0;
-  x[1] = 0;
-
+  vector<double> x = {0.0, 0.0};
   vector<double> xold = x;
   vector<double> fvec;
   double fold = fnorm(x, fvec, &func);
 
-  vector<double> g(2), p(2);
+  vector<double> g(2);
   g[0] = 7.2 * fvec[0] - 2.2 * fvec[1];
   g[1] = 3.5 * fvec[0] + 2.7 * fvec[1];
 
-  p[0] = -0.4675753;
-  p[1] = 1.6190125;
+  vector<double> p = {-0.4675753, 1.6190125};
 
   double f;
   bool check;
   lnsrch(xold, fold, g, p, x, f, check, fvec, &func, 0.01, 0.0);
 
   if (!check) {
-    ut.failure("lnsrch did NOT bomb gracefully");
+    FAILMSG("lnsrch did NOT bomb gracefully");
   } else {
-    ut.passes("lnsrch bombed gracefully");
+    PASSMSG("lnsrch bombed gracefully");
   }
 
   for (unsigned i = 0; i < p.size(); ++i)
@@ -61,14 +54,13 @@ void tstlnsrch(UnitTest &ut) {
   lnsrch(xold, fold, g, p, x, f, check, fvec, &func, 0.01, 0.0);
 
   if (check || f > 1.0e-10) {
-    ut.failure("lnsrch did NOT succeed");
+    FAILMSG("lnsrch did NOT succeed");
   } else {
-    ut.passes("lnsrch successful");
+    PASSMSG("lnsrch successful");
   }
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   try {
     ScalarUnitTest ut(argc, argv, release);
@@ -85,5 +77,5 @@ int main(int argc, char *argv[]) {
 }
 
 //---------------------------------------------------------------------------//
-//                        end of tstlnsrch.cc
+// end of tstlnsrch.cc
 //---------------------------------------------------------------------------//

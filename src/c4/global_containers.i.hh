@@ -4,11 +4,11 @@
  * \author Kent Budge
  * \date   Mon Mar 24 09:26:31 2008
  * \brief  Member definitions of class global_containers
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef c4_global_containers_i_hh

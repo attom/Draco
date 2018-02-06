@@ -3,11 +3,11 @@
  * \file   parser/Token.hh
  * \author Kent G. Budge
  * \brief  Define class Token and enum Token_Type
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef CCS4_Token_HH

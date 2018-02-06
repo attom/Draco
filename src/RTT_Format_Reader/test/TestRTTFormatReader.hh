@@ -4,11 +4,11 @@
  * \author B.T. Adams
  * \date   Tue Mar 14 09:48:00 2000
  * \brief  Header file for the RTT_Format_Reader class unit test.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef __test_TestRTT_Format_Reader_hh__

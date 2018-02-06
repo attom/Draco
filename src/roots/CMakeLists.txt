@@ -1,12 +1,10 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   roots/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for roots.
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id$
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
 project( roots CXX )
@@ -23,18 +21,7 @@ list( REMOVE_ITEM headers ${template_implementations} )
 # Make the header files available in the IDE.
 if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
    list( APPEND sources ${headers} )
-endif()
-
-# ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # sources
-   ${PROJECT_BINARY_DIR}      # roots/config.h
-   ${PROJECT_SOURCE_DIR}/..   # ds++ header files
-   ${dsxx_BINARY_DIR}         # ds++/config.h
-)
+ endif()
 
 # ---------------------------------------------------------------------------- #
 # Build package library
@@ -51,7 +38,8 @@ add_component_library(
 # ---------------------------------------------------------------------------- #
 
 install( TARGETS Lib_roots EXPORT draco-targets DESTINATION ${DBSCFGDIR}lib )
-install( FILES ${headers} ${template_implementations} DESTINATION ${DBSCFGDIR}include/roots )
+install( FILES ${headers} ${template_implementations} DESTINATION
+  ${DBSCFGDIR}include/roots )
 
 # ---------------------------------------------------------------------------- #
 # Unit tests
@@ -66,3 +54,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 
 process_autodoc_pages()
+
+#------------------------------------------------------------------------------#
+# End roots/CMakeLists.txt
+#------------------------------------------------------------------------------#

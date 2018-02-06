@@ -19,7 +19,7 @@
 ## 2. Update variables that control the build:
 ##    - $ddir
 ##    - $CONFIG_BASE
-## 3. Run this script: ./release_ml &> ../logs/relase_moonlight.log
+## 3. Run this script: ./release_darwin.sh &> ../logs/release_darwin.log
 
 #----------------------------------------------------------------------#
 # Per release settings go here (edits go here)
@@ -80,7 +80,7 @@ scratchdir=`selectscratchdir`
 
 # =============================================================================
 # Build types:
-# - These must be copied into release_ml.msub because bash arrays cannot
+# - These must be copied into release_darwin.msub because bash arrays cannot
 #   be passed to the subshell (bash bug)
 # =============================================================================
 
@@ -133,7 +133,7 @@ for env in $environments; do
   $env
 
   buildflavor=`flavor`
-  # e.g.: buildflavor=moonlight-openmpi-1.6.5-intel-15.0.3
+  # e.g.: buildflavor=darwin-openmpi-1.6.5-intel-15.0.3
 
   export install_prefix="$source_prefix/$buildflavor"
   export build_prefix="$scratchdir/$USER/$pdir/$buildflavor"

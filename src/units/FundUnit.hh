@@ -3,11 +3,11 @@
  *  \author Kelly Thompson
  *  \brief  This file defines a fundamental unit type.
  *  \date   Mon Oct 27 16:24:31 2003
- *  \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ *  \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *          All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef __units_FundUnit_hh__

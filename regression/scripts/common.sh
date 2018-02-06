@@ -4,7 +4,7 @@
 ## File  : regression/sripts/common.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 ##
@@ -72,10 +72,10 @@ function establish_permissions
       ;;
     capsaicin | jayenne)
       # Export controlled sources - limit access
-      if [[ `groups | grep -c ccsrad` = 1 ]]; then
-        install_group="ccsrad"
-        install_permissions="g+rwX,o-rwX"
-      elif [[ `groups | grep -c dacodes` = 1 ]]; then
+      # if [[ `groups | grep -c ccsrad` = 1 ]]; then
+      #   install_group="ccsrad"
+      #   install_permissions="g+rwX,o-rwX"
+      if [[ `groups | grep -c dacodes` = 1 ]]; then
         install_group="dacodes"
         install_permissions="g+rwX,o-rwX"
       else
@@ -285,7 +285,7 @@ function lookupppn()
   local target="`uname -n | sed -e s/[.].*//`"
   local ppn=1
   case ${target} in
-    ml* | pi* | wf* | lu* ) ppn=16 ;;
+    pi* | wf* ) ppn=16 ;;
     t[rt]-fe* | t[rt]-login*)
       if [[ $CRAY_CPU_TARGET == "haswell" ]]; then
           ppn=32

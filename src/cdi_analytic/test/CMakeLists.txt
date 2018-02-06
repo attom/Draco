@@ -1,12 +1,10 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   cdi_analytic/test/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for cdi_analytic/test.
-# note   Copyright (C) 2016, Los Alamos National Security
+# note   Copyright (C) 2016-2018, Los Alamos National Security
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id$
 #------------------------------------------------------------------------------#
 project( cdi_analytic_test CXX )
 
@@ -15,16 +13,6 @@ project( cdi_analytic_test CXX )
 # ---------------------------------------------------------------------------- #
 
 file( GLOB test_sources *.cc )
-
-# ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # headers for tests
-   ${PROJECT_SOURCE_DIR}/..   # headers for package
-   ${PROJECT_BINARY_DIR}/..   # c4/config.h
-)
 
 # ---------------------------------------------------------------------------- #
 # Build Unit tests
@@ -46,3 +34,7 @@ list ( REMOVE_ITEM test_sources
 add_scalar_tests(
    SOURCES "${test_sources}"
    DEPS    "Lib_cdi_analytic" )
+
+#------------------------------------------------------------------------------#
+# End cdi_analytic/test/CMakeLists.txt
+#------------------------------------------------------------------------------#

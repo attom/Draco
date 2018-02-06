@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2010 June 5
 # brief  Establish flags for Windows - MSVC
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -54,9 +54,14 @@ if( NOT CXX_FLAGS_INITIALIZED )
   # Notes on options:
   # - /wd 4251 disable warning #4251: 'identifier' : class 'type' needs to have
   #   dll-interface to be used by clients of class 'type2'
-  # - /arch:AVX2 At least for VS2013 with NMake Makefiles, CMake doesn't
-  #   populate the correct project property. Also, this option causes 'illegal
-  #   instruction' for rng on KT's desktop (2017-02-14).
+  # - /arch:[SSE|SSE2|AVX|AVX2|IA32] 
+  #   AVX2 - at least for NMake Makefiles, CMake doesn't populate the 
+  #          correct project property. Also, this option causes 'illegal
+  #          instruction' for rng on KT's desktop (2017-02-14).
+  # - /W[1234] Warning levels.
+  # - /std:c++14 (should be added by cmake in compilerEnv.cmake)
+  # - /showIncludes
+  # - /FC
   set( CMAKE_C_FLAGS "/W2 /Gy /fp:precise /DWIN32 /D_WINDOWS /MP${numproc} /wd4251" )
   set( CMAKE_C_FLAGS_DEBUG "/${MD_or_MT_debug} /Od /Zi /DDEBUG /D_DEBUG" )
   set( CMAKE_C_FLAGS_RELEASE "/${MD_or_MT} /O2 /DNDEBUG" )

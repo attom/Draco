@@ -4,11 +4,11 @@
  * \author Kent Budge
  * \date   Tue Sep 18 08:22:08 2007
  * \brief  Define template function L2norm
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef norms_L2norm_hh

@@ -1,7 +1,7 @@
 #-----------------------------*-cmake-*----------------------------------------#
 # file   config/compilerEnv.cmake
 # brief  Default CMake build parameters
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -11,7 +11,6 @@ include( FeatureSummary )
 # PAPI
 # ----------------------------------------
 if( EXISTS $ENV{PAPI_HOME} )
-
   set( HAVE_PAPI 1 CACHE BOOL "Is PAPI available on this machine?" )
   set( PAPI_INCLUDE $ENV{PAPI_INCLUDE} CACHE PATH "PAPI headers at this location" )
   set( PAPI_LIBRARY $ENV{PAPI_LIBDIR}/libpapi.so CACHE FILEPATH "PAPI library." )
@@ -28,32 +27,39 @@ if( HAVE_PAPI )
   set( PAPI_INCLUDE ${PAPI_INCLUDE} CACHE PATH "PAPI headers at this location" )
   set( PAPI_LIBRARY ${PAPI_LIBDIR}/libpapi.so CACHE FILEPATH "PAPI library." )
   if( NOT EXISTS ${PAPI_LIBRARY} )
-    message( FATAL_ERROR "PAPI requested, but library not found.  Set PAPI_LIBDIR to correct path." )
+    message( FATAL_ERROR
+      "PAPI requested, but library not found. Set PAPI_LIBDIR to correct path.")
   endif()
   mark_as_advanced( PAPI_INCLUDE PAPI_LIBRARY )
-  add_feature_info( HAVE_PAPI HAVE_PAPI "Provide PAPI hardware counters if available." )
+  add_feature_info( HAVE_PAPI HAVE_PAPI
+    "Provide PAPI hardware counters if available." )
 endif()
-
 
 # ------------------------------------------------------------------------------
 # Identify machine and save name in ds++/config.h
 # ------------------------------------------------------------------------------
 site_name( SITENAME )
 string( REGEX REPLACE "([A-z0-9]+).*" "\\1" SITENAME ${SITENAME} )
-if( ${SITENAME} MATCHES "ml" OR ${SITENAME} MATCHES "lu" )
-  set( SITENAME "Moonlight" )
-elseif( ${SITENAME} MATCHES "tt")
-  set( SITENAME "Trinitite" )
-elseif( ${SITENAME} MATCHES "tr")
-  set( SITENAME "Trinity" )
-elseif( ${SITENAME} MATCHES "sn")
-  set( SITENAME "Snow" )
+if( ${SITENAME} MATCHES "ba")
+  set( SITENAME "Badger" )
+elseif( ${SITENAME} MATCHES "ccscs[0-9]+" )
+  # do nothing (keep the fullname)
 elseif( ${SITENAME} MATCHES "fi")
   set( SITENAME "Fire" )
 elseif( ${SITENAME} MATCHES "ic")
   set( SITENAME "Ice" )
-elseif( ${SITENAME} MATCHES "ccscs[0-9]+" )
-  # do nothing (keep the fullname)
+elseif( ${SITENAME} MATCHES "nid")
+  if( "$ENV{SLURM_CLUSTER_NAME}" MATCHES "trinity" )
+    set( SITENAME "Trinity" )
+  else()
+    set( SITENAME "Trinitite" )
+  endif()
+elseif( ${SITENAME} MATCHES "sn")
+  set( SITENAME "Snow" )
+elseif( ${SITENAME} MATCHES "tr")
+  set( SITENAME "Trinity" )
+elseif( ${SITENAME} MATCHES "tt")
+  set( SITENAME "Trinitite" )
 endif()
 set( SITENAME ${SITENAME} CACHE "STRING" "Name of the current machine" FORCE)
 
@@ -265,31 +271,37 @@ macro(dbsSetupCxx)
     endif()
   endforeach()
 
-  # From https://crascit.com/2016/04/09/using-ccache-with-cmake/
-  message( STATUS "Looking for ccache...")
-  find_program(CCACHE_PROGRAM ccache)
-  if(CCACHE_PROGRAM)
-    message( STATUS "Looking for ccache... ${CCACHE_PROGRAM}")
-    # Set up wrapper scripts
-    set(CMAKE_C_COMPILER_LAUNCHER   "${CCACHE_PROGRAM}")
-    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
-    # configure_file(launch-c.in   launch-c)
-    # configure_file(launch-cxx.in launch-cxx)
-    # execute_process(COMMAND chmod a+rx "${CMAKE_BINARY_DIR}/launch-c" "${CMAKE_BINARY_DIR}/launch-cxx")
-    # if(CMAKE_GENERATOR STREQUAL "Xcode")
-    #   # Set Xcode project attributes to route compilation and linking
-    #     # through our scripts
-    #     set(CMAKE_XCODE_ATTRIBUTE_CC         "${CMAKE_BINARY_DIR}/launch-c")
-    #     set(CMAKE_XCODE_ATTRIBUTE_CXX        "${CMAKE_BINARY_DIR}/launch-cxx")
-    #     set(CMAKE_XCODE_ATTRIBUTE_LD         "${CMAKE_BINARY_DIR}/launch-c")
-    #     set(CMAKE_XCODE_ATTRIBUTE_LDPLUSPLUS "${CMAKE_BINARY_DIR}/launch-cxx")
-    #   else()
-    #     # Support Unix Makefiles and Ninja
-    #     set(CMAKE_C_COMPILER_LAUNCHER        "${CMAKE_BINARY_DIR}/launch-c")
-    #     set(CMAKE_CXX_COMPILER_LAUNCHER      "${CMAKE_BINARY_DIR}/launch-cxx")
-    #   endif()
-  else()
-    message( STATUS "Looking for ccache... not found.")
+  if( NOT CCACHE_CHECK_AVAIL_DONE )
+    set( CCACHE_CHECK_AVAIL_DONE TRUE CACHE BOOL "Have we looked for ccache?")
+    mark_as_advanced( CCACHE_CHECK_AVAIL_DONE )
+    # From https://crascit.com/2016/04/09/using-ccache-with-cmake/
+    message( STATUS "Looking for ccache...")
+    find_program(CCACHE_PROGRAM ccache)
+    if(CCACHE_PROGRAM)
+      message( STATUS "Looking for ccache... ${CCACHE_PROGRAM}")
+      # Set up wrapper scripts
+      set(CMAKE_C_COMPILER_LAUNCHER   "${CCACHE_PROGRAM}")
+      set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+      # configure_file(launch-c.in   launch-c)
+      # configure_file(launch-cxx.in launch-cxx)
+      # execute_process(COMMAND chmod a+rx "${CMAKE_BINARY_DIR}/launch-c"
+      #   "${CMAKE_BINARY_DIR}/launch-cxx")
+      # if(CMAKE_GENERATOR STREQUAL "Xcode")
+      #   # Set Xcode project attributes to route compilation and linking
+      #     # through our scripts
+      #     set(CMAKE_XCODE_ATTRIBUTE_CC       "${CMAKE_BINARY_DIR}/launch-c")
+      #     set(CMAKE_XCODE_ATTRIBUTE_CXX      "${CMAKE_BINARY_DIR}/launch-cxx")
+      #     set(CMAKE_XCODE_ATTRIBUTE_LD       "${CMAKE_BINARY_DIR}/launch-c")
+      #     set(CMAKE_XCODE_ATTRIBUTE_LDPLUSPLUS
+      #        "${CMAKE_BINARY_DIR}/launch-cxx")
+      #   else()
+      #     # Support Unix Makefiles and Ninja
+      #     set(CMAKE_C_COMPILER_LAUNCHER      "${CMAKE_BINARY_DIR}/launch-c")
+      #     set(CMAKE_CXX_COMPILER_LAUNCHER    "${CMAKE_BINARY_DIR}/launch-cxx")
+      #   endif()
+    else()
+      message( STATUS "Looking for ccache... not found.")
+    endif()
   endif()
 
 endmacro()

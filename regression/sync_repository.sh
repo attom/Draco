@@ -3,7 +3,7 @@
 ## File  : regression/sync_repository.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
@@ -78,7 +78,7 @@ if [[ `fn_exists module` == 0 ]]; then
     sn-fey*) module_init_dir=/usr/share/lmod/lmod/init/profile ;;
     # ccs-net (lmod)
     ccscs*)  module_init_dir=/usr/share/lmod/lmod/init/bash ;;
-    # darwin, ml
+    # darwin
     *)       module_init_dir=/usr/share/Modules/init/bash ;;
   esac
   if [[ -f ${module_init_dir} ]]; then
@@ -108,13 +108,6 @@ case ${target} in
     ;;
   darwin-fe* | cn[0-9]*)
     regdir=/usr/projects/draco/regress
-    gitroot=$regdir/git
-    VENDOR_DIR=/usr/projects/draco/vendors
-    keychain=keychain-2.7.1
-    ;;
-  ml-fey*)
-    run "module load user_contrib subversion git"
-    regdir=/usr/projects/jayenne/regress
     gitroot=$regdir/git
     VENDOR_DIR=/usr/projects/draco/vendors
     keychain=keychain-2.7.1
@@ -164,7 +157,7 @@ fi
 # Locations:
 # - ccs-net servers:
 #   /ccs/codes/radtran/git
-# - HPC (moonlight, snow, trinitite, etc.)
+# - HPC (snow, trinitite, etc.)
 #   /usr/projects/draco/jayenne/regress/git
 #
 # Keep local copies of the github, gitlab and svn repositories. This local

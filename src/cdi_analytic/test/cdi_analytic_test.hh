@@ -4,11 +4,11 @@
  * \author Thomas M. Evans
  * \date   Mon Sep 24 12:04:00 2001
  * \brief  Dummy model used for testing cdi_analytic software.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef __cdi_analytic_test_hh__

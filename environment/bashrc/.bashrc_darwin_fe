@@ -8,9 +8,16 @@ if test -n "$verbose"; then
   echo "In .bashrc_darwin_fe"
 fi
 
+# sfeatures | grep <feature:=knl>
+# salloc -N 1 -p power8+
+# salloc -N 1 -p knl-quad_flat
+
 ##---------------------------------------------------------------------------##
 ## ENVIRONMENTS
 ##---------------------------------------------------------------------------##
+
+# aliases and bash functions for working with slurm
+source ${DRACO_ENV_DIR}/bashrc/.bashrc_slurm
 
 # unlimit stack and core dump sizes.
 ulimit -s unlimited
@@ -24,18 +31,14 @@ fi
 if test -n "$MODULESHOME"; then
 
   # Nodes that have MIC capability use different modules...
-  if test "$SLURM_JOB_PARTITION" = "knc-mic"; then
-    # mic_status=`/usr/sbin/micctrl -s | egrep -c mic[0-9]+`
-    case `uname -n` in
-      darwin-fe* ) mic_status=0 ;;
-      *)           mic_status=1 ;;
-    esac
-  else
-    mic_status=0
-  fi
+  # if [[ `echo $SLURM_JOB_PARTITION | grep -c knl` = 1 ]]; then
+  #   mic_status=1 ;;
+  # else
+  #   mic_status=0
+  # fi
 
-  if test ${mic_status} -gt 0; then
-    mic_status=1
+  #if test ${mic_status} -gt 0; then
+  #  mic_status=1
     # module unuse ${VENDOR_DIR}/Modules
     # module use --append ${VENDOR_DIR}/Modules_knc
 
@@ -48,24 +51,42 @@ if test -n "$MODULESHOME"; then
     # module load mkl/11.2 gsl/1.16
     # # additional setup for capsaicin
     # module load ParMetis/4.0.3 SuperLU_DIST/3.3 trilinos/11.10.2
-  else
-    module use --append ${VENDOR_DIR}/Modules
-    export dracomodules="emacs subversion/1.9.3 git intel/16.0.3 \
-gsl/2.1 random123 cmake/3.6.0 numdiff/5.8.1 \
-eospac/6.2.4 ndi metis parmetis superlu-dist trilinos"
-  fi
+  # else
+    module use --append ${VENDOR_DIR}/user_contrib
+    module use --append ${VENDOR_DIR}-ec/Modules
+    module load user_contrib
+    cflavor="gcc-7.1.0"
+    mflavor="$cflavor-openmpi@2.1.0"
+    noflavor="emacs subversion git random123 numdiff/5.9.0-gcc-4.8.5 \
+cmake/3.9.4-gcc-4.8.5"
+    compflavor="gcc/7.1.0 gsl/2.4-$cflavor metis/5.1.0-$cflavor"
+    mpiflavor="openmpi/2.1.0-$cflavor parmetis/4.0.3-$mflavor \
+superlu-dist/5.2.2-$mflavor trilinos/12.12.1-$mflavor"
+    ec_mf="ndi eospac/6.2.4"
+    export dracomodules="$noflavor $compflavor $mpiflavor $ec_mf"
+  # fi
 
   function dracoenv ()
   {
     for m in $dracomodules; do
       module load $m
     done
-    export CXX=`which mpiicpc`
-    export CC=`which mpiicc`
-    export FC=`which mpiifort`
+    export CXX=`which g++`
+    export CC=`which gcc`
+    export FC=`which gfortran`
     export MPIEXEC=`which mpirun`
-    echo "mpd --daemon"
-    mpd --daemon
+
+    # Previously, we used Darwin for nightly regressions with Intel-MPI.  When
+    # Intel-MPI is selected, these variables must be set:
+
+    #export CXX=`which mpiicpc`
+    #export CC=`which mpiicc`
+    #export FC=`which mpiifort`
+    #export MPIEXEC=`which mpirun`
+
+    # only for Intel-MPI
+    #echo "mpd --daemon"
+    #mpd --daemon
   }
 
   function rmdracoenv ()

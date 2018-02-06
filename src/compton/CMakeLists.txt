@@ -3,7 +3,7 @@
 # author Kendra Keady
 # date   2017 February 28
 # brief  Instructions for building compton Makefiles.
-# note   Copyright (C) 2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2017-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
@@ -13,36 +13,23 @@ project( compton CXX )
 # and draco/config/FindCOMPTON.cmake to manage how the build system discovers
 # this TPL.  If not found, only a stub header file will be installed.
 
-configure_file( ${PROJECT_SOURCE_DIR}/config.h.in
-  ${PROJECT_BINARY_DIR}/config.h )
-
-set( headers
-  ${PROJECT_BINARY_DIR}/config.h
-  ${PROJECT_SOURCE_DIR}/Compton.hh )
-
 # ---------------------------------------------------------------------------- #
 # Source files
 # ---------------------------------------------------------------------------- #
 
-if( COMPTON_FOUND )
+configure_file( config.h.in ${PROJECT_BINARY_DIR}/compton/config.h )
 
-set( sources ${PROJECT_SOURCE_DIR}/Compton.cc )
+set( sources "${PROJECT_SOURCE_DIR}/Compton.cc" )
+set( headers
+  ${PROJECT_BINARY_DIR}/compton/config.h
+  ${PROJECT_SOURCE_DIR}/Compton.hh )
+
+if( TARGET COMPTON::compton )
 
   # Make the header files available in the IDE.
   if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
     list( APPEND sources ${headers} )
   endif()
-
-  # -------------------------------------------------------------------------- #
-  # Directories to search for include directives
-  # -------------------------------------------------------------------------- #
-
-  include_directories(
-    ${Draco_SOURCE_DIR}/src    # compton/Compton.hh ds++/Assert.hh
-    ${Draco_BINARY_DIR}/src    # compton/config.h
-    ${dsxx_BINARY_DIR}         # ds++/config.h
-    ${c4_BINARY_DIR}           # c4/config.h
-    )
 
   # -------------------------------------------------------------------------- #
   # Build package library
@@ -52,33 +39,39 @@ set( sources ${PROJECT_SOURCE_DIR}/Compton.cc )
     TARGET       Lib_compton
     TARGET_DEPS  "Lib_c4;Lib_dsxx;COMPTON::compton"
     LIBRARY_NAME compton
-    SOURCES      "${sources}"
-)
+    SOURCES      "${sources}" )
+  # generated include directive files (config.h)
+  target_include_directories( Lib_compton
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> )
 
-  install( TARGETS Lib_compton  EXPORT draco-targets DESTINATION
+  # -------------------------------------------------------------------------- #
+  # Installation instructions
+  # -------------------------------------------------------------------------- #
+
+  install( TARGETS Lib_compton EXPORT draco-targets DESTINATION
     ${DBSCFGDIR}lib )
+  install( FILES ${headers} DESTINATION ${DBSCFGDIR}include/compton )
 
-endif() # COMPTON_FOUND
+  # -------------------------------------------------------------------------- #
+  # Unit tests
+  # -------------------------------------------------------------------------- #
 
-# ---------------------------------------------------------------------------- #
-# Installation instructions
-# ---------------------------------------------------------------------------- #
+  if( BUILD_TESTING )
+    add_subdirectory( test )
+  endif()
 
-install( FILES ${headers} DESTINATION ${DBSCFGDIR}include/compton )
+  # -------------------------------------------------------------------------- #
+  # Autodoc
+  # -------------------------------------------------------------------------- #
 
-# ---------------------------------------------------------------------------- #
-# Unit tests
-# ---------------------------------------------------------------------------- #
+  process_autodoc_pages()
 
-if( BUILD_TESTING AND COMPTON_FOUND )
-  add_subdirectory( test )
+else()
+
+  # If no compton library, only install headers (stubs).
+  install( FILES ${headers} DESTINATION ${DBSCFGDIR}include/compton )
+
 endif()
-
-# ---------------------------------------------------------------------------- #
-# Autodoc
-# ---------------------------------------------------------------------------- #
-
-process_autodoc_pages()
 
 #------------------------------------------------------------------------------#
 # End compton/CMakeLists.txt

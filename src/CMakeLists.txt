@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2010 April 28
 # brief  Instructions for building src level Makefile.
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
@@ -11,17 +11,6 @@ project( draco_src_dir )
 
 # Provide helper functions used by component CMakeLists.txt files
 include( component_macros )
-
-# Helper macro that only tries to configure a listed package if it
-# exists in the source tree.  For example, when building milagro, the
-# get_draco script only checks out the parts of Draco that are
-# required by milagro.
-macro( add_dir_if_exists package )
-  message( "   ${package}" )
-  if( EXISTS ${PROJECT_SOURCE_DIR}/${package} )
-    add_subdirectory( ${package} )
-  endif()
-endmacro()
 
 # Extra 'draco-only' flags (don't pass these to Capsaicin).
 if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )

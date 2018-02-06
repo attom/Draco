@@ -4,11 +4,11 @@
  * \author Kent Budge
  * \date   Tue Sep 21 09:28:30 2004
  * \brief  Test the rkqs integrator function template.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "ds++/Release.hh"

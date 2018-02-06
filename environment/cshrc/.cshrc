@@ -46,10 +46,6 @@ case pi-fey*.lanl.gov:
 case pi*.localdomain:
 case wf-fey*.lanl.gov
 case wf*.localdomain:
-case ml-fey*.lanl.gov:
-case ml*.localdomain:
-case lu*.lanl.gov:
-case lu*.localdomain:
 case sn*:
 case fi*:
 case ic*:

@@ -4,11 +4,11 @@
  * \author Kelly Thompson
  * \date   Monday, Aug 11, 2016, 17:05 pm
  * \brief  Declaration of draco info widget.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 #ifndef diwidget_hh
 #define diwidget_hh

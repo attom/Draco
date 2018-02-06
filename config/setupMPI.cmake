@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2016 Sep 22
 # brief  Setup MPI Vendors
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #
 # Try to find MPI in the default locations (look for mpic++ in PATH)
@@ -439,12 +439,14 @@ The Draco build system doesn't know how to configure the build for
 
 macro( setupMPILibrariesWindows )
 
+  set( verbose FALSE )
+
    # MPI ---------------------------------------------------------------------
    if( NOT "${DRACO_C4}" STREQUAL "SCALAR" )
 
       message(STATUS "Looking for MPI...")
-      find_package( MPI )
-
+      find_package( MPI QUIET )
+      
       # For MS-MPI 5, mpifptr.h is architecture dependent. Figure out
       # what arch this is and save this path to MPI_Fortran_INCLUDE_PATH
       list( GET MPI_CXX_LIBRARIES 0 first_cxx_mpi_library )
@@ -454,6 +456,9 @@ macro( setupMPILibrariesWindows )
         set( MPI_Fortran_INCLUDE_PATH
              "${MPI_CXX_INCLUDE_PATH};${MPI_Fortran_INCLUDE_PATH}"
              CACHE STRING "Location for MPI include files for Fortran.")
+        if( verbose )
+           message("MPI_Fortran_INCLUDE_PATH = ${MPI_Fortran_INCLUDE_PATH}")
+        endif()
       endif()
 
       setupDracoMPIVars()
@@ -475,7 +480,7 @@ macro( setupMPILibrariesWindows )
       else()
          set(DBS_MPI_VER "5.0")
       endif()
-
+      
       set_package_properties( MPI PROPERTIES
         URL "https://msdn.microsoft.com/en-us/library/bb524831%28v=vs.85%29.aspx"
         DESCRIPTION "Microsoft MPI"
@@ -530,8 +535,68 @@ macro( setupMPILibrariesWindows )
       setupDracoMPIVars()
    endif() # NOT "${DRACO_C4}" STREQUAL "SCALAR"
 
-#   set( MPI_SETUP_DONE ON CACHE INTERNAL "Have we completed the MPI setup call?" )
-   if( ${MPI_CXX_FOUND} )
+   # Found MPI_C, but not MPI_CXX -- create a duplicate to satisfy link targets.
+   if( TARGET MPI::MPI_C AND NOT TARGET MPI::MPI_CXX)
+
+     # Windows systems with dll libraries.
+       add_library( MPI::MPI_CXX SHARED IMPORTED )
+
+     # Windows with dlls, but only Release libraries.
+       set_target_properties(MPI::MPI_CXX PROPERTIES
+         IMPORTED_LOCATION_RELEASE         "${MPI_C_LIBRARIES}"
+         IMPORTED_IMPLIB                   "${MPI_C_LIBRARIES}"
+         INTERFACE_INCLUDE_DIRECTORIES     "${MPI_C_INCLUDE_DIRS}"
+         IMPORTED_CONFIGURATIONS           Release
+         IMPORTED_LINK_INTERFACE_LANGUAGES "CXX" )
+
+   endif()   
+   
+   # Don't link to the C++ MS-MPI library when compiling with MinGW gfortran.
+   # Instead, link to libmsmpi.a that was created via gendef.exe and
+   # dlltool.exe from msmpi.dll.  Ref:
+   # http://www.geuz.org/pipermail/getdp/2012/001520.html
+
+   # Preparing Microsoft's MPI to work with x86_64-w64-mingw32-gfortran by
+   # creating libmsmpi.a. (Last tested: 2017-08-31)
+   #
+   # 1.) You need MinGW/MSYS. Please make sure that the Devel tools are
+   #     installed.
+   # 2.) Download and install Microsoft's MPI. You need the main program and
+   #     the SDK.
+   # 3.) In the file %MSMPI_INC%\mpif.h, replace INT_PTR_KIND() by 8
+   # 4.) Create a MSYS version of the MPI library:
+   #     cd %TEMP%
+   #     copy c:\Windows\System32\msmpi.dll msmpi.dll
+   #     gendef msmpi.dll
+   #     dlltool -d msmpi.def -l libmsmpi.a -D msmpi.dll
+   #     del msmpi.def
+   #     copy libmsmpi.a %MSMPI_LIB32%/libmsmpi.a
+
+   if( EXISTS ${CMAKE_Fortran_COMPILER} )
+   # only do this if we are in a CMakeAddFortranSubdirectory directive when the
+   # main Generator is Visual Studio and the Fortran subdirectory uses gfortran
+   # with Makefiles.
+   if( "${MPI_Fortran_LIBRARIES}none" STREQUAL "none" OR
+       "${MPI_Fortran_LIBRARIES}" MATCHES "msmpi.lib" )
+     # should be located in ENV{PATH} at c:/Program Files/Microsoft MPI/Bin/
+     find_library( MPI_gfortran_LIBRARIES msmpi )
+     set( MPI_Fortran_LIBRARIES ${MPI_gfortran_LIBRARIES} CACHE FILEPATH
+          "msmpi for gfortran" FORCE )
+        
+     # Windows systems with dll libraries.
+     add_library( MPI::MPI_Fortran SHARED IMPORTED )
+
+     # Windows with dlls, but only Release libraries.
+     set_target_properties(MPI::MPI_Fortran PROPERTIES
+       IMPORTED_LOCATION_RELEASE         "${MPI_gfortran_LIBRARIES}"
+       IMPORTED_IMPLIB                   "${MPI_gfortran_LIBRARIES}"
+       INTERFACE_INCLUDE_DIRECTORIES     "${MPI_C_INCLUDE_DIRS}"
+       IMPORTED_CONFIGURATIONS           Release
+       IMPORTED_LINK_INTERFACE_LANGUAGES "Fortran" )
+   endif()
+   endif()
+   
+   if( ${MPI_C_FOUND} )
       message(STATUS "Looking for MPI...${MPIEXEC}")
    else()
       message(STATUS "Looking for MPI...not found")

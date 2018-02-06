@@ -3,13 +3,10 @@
  * \file   roots/test/tstquadratic.cc
  * \author Kent Budge
  * \date   Tue Jul  6 10:00:38 2004
- * \note   Copyright 2016-2017 Los Alamos National Security, LLC
- */
-//---------------------------------------------------------------------------//
-// $Id$
+ * \note   Copyright 2016-2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-#include "c4/global.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 #include "ds++/Soft_Equivalence.hh"

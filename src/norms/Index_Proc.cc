@@ -4,11 +4,11 @@
  * \author Rob Lowrie
  * \date   Fri Jan 14 13:57:58 2005
  * \brief  Implementation of Index_Proc.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "Index_Proc.hh"

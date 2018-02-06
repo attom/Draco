@@ -4,7 +4,7 @@
 ;; Author : Kelly Thompson
 ;; Created: 30 Nov 2004
 ;; Brief  : ELisp package for making Draco related stuff easier.
-;; Note   : Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+;; Note   : Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 ;;======================================================================
 ;; Commentary:
 ;;

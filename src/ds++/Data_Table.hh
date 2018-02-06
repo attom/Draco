@@ -3,7 +3,7 @@
  * \file    Data_Table.hh
  * \author  Paul Henning
  * \brief   Declaration of class Data_Table
- * \note    Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note    Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *          All rights reserved. */
 //---------------------------------------------------------------------------//
 #ifndef dsxx_Data_Table_hh

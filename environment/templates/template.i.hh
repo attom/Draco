@@ -4,24 +4,25 @@
  * \author <user>
  * \date   <date>
  * \brief  Member definitions of class <class>
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
+
+// clang-format off
 
 #ifndef <spkg>_<class>_i_hh
 #define <spkg>_<class>_i_hh
 
-namespace <namespace> {
+namespace<namespace> {
 
-  <class>::<class>(){
-  }
+  //! one-line description
+  <class>::<class>(){}
 
-  <class>::<class>(const<class> &rhs){
-  }
+  //! one-line description
+  <class>::<class>(const<class> &rhs){}
 
-  <class>::~<class>() {
-  }
+  //! one-line description
+  <class>::~<class>() {}
 
 } // end namespace <namespace>
 

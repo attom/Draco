@@ -3,10 +3,11 @@
  * \file   <pkg>/<class>__parser.hh
  * \author <user>
  * \brief  Define parse table for <class>
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
+
+// clang-format off
 
 #ifndef <spkg>_<class>__parser_hh
 #define <spkg>_<class>__parser_hh
@@ -15,14 +16,14 @@
 #include "parser/Class_Parse_Table.hh"
 
 namespace rtt_parser {
-using <namespace>::<class>;
+using<namespace>::<class>;
 
 //============================================================================//
-template <> class Class_Parse_Table <<class>> {
+template <> class Class_Parse_Table << class >> {
 public:
   // NESTED CLASSES AND TYPEDEFS
 
-  typedef <class> Return_Class;
+  typedef<class> Return_Class;
 
   // CREATORS
 
@@ -39,7 +40,7 @@ public:
 
   void check_completeness(Token_Stream & tokens);
 
-  SP <<class>> create_object();
+  SP << class >> create_object();
 
   // STATICS
 

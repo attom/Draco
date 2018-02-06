@@ -3,11 +3,11 @@
  * \file   c4/test/tstCompare.cc
  * \author Mike Buksas
  * \date   Thu May  1 14:47:00 2008
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "c4/Compare.hh"

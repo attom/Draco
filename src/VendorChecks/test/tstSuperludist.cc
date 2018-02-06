@@ -3,7 +3,7 @@
  * \file   VendorChecks/test/tstSuperludist.cc
  * \date   Monday, May 16, 2016, 16:30 pm
  * \brief  Attempt to link to libsuperludist and run a simple problem.
- * \note   Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
  *         All rights reserved.
  *
  * This code is a modified version of \c pddrive.c provided in the EXAMPLES
@@ -18,7 +18,10 @@
 #include "ds++/Soft_Equivalence.hh"
 #include "ds++/path.hh"
 #include <sstream>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wundef"
 #include <superlu_ddefs.h>
+#pragma GCC diagnostic pop
 #include <vector>
 
 // forward declarations

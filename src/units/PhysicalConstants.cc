@@ -4,11 +4,11 @@
  *  \brief  Provide a single place where physical constants (pi, speed of
  *          light, etc) are defined for the local UnitSystem.
  *  \date   Mon Nov 10 09:24:55 2003
- *  \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ *  \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *          All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "PhysicalConstants.hh"

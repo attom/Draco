@@ -1,12 +1,10 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   special_functions/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for special_functions.
-# note   Copyright (C) 2010-2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id$
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
 project( special_functions CXX )
@@ -27,17 +25,6 @@ if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
 endif()
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}       # sources
-   ${ode_BINARY_DIR}           # ode/config.h
-   ${draco_src_dir_SOURCE_DIR} # ds++ header files
-   ${dsxx_BINARY_DIR}          # ds++/config.h
-   )
-
-# ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
 
@@ -45,15 +32,16 @@ add_component_library(
    TARGET       Lib_special_functions
    TARGET_DEPS  "Lib_units;Lib_roots;GSL::gsl"
    LIBRARY_NAME ${PROJECT_NAME}
-   SOURCES      "${sources}"
-)
+   SOURCES      "${sources}" )
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions
 # ---------------------------------------------------------------------------- #
 
-install( TARGETS Lib_special_functions EXPORT draco-targets DESTINATION ${DBSCFGDIR}lib )
-install( FILES ${headers} ${template_implementations} DESTINATION ${DBSCFGDIR}include/special_functions )
+install( TARGETS Lib_special_functions EXPORT draco-targets DESTINATION
+  ${DBSCFGDIR}lib )
+install( FILES ${headers} ${template_implementations} DESTINATION
+  ${DBSCFGDIR}include/special_functions )
 
 # ---------------------------------------------------------------------------- #
 # Unit tests
@@ -68,3 +56,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 
 process_autodoc_pages()
+
+#------------------------------------------------------------------------------#
+# End special_functions/CMakeLists.txt
+#------------------------------------------------------------------------------#

@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for plot2D/test.
-# note   Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 project( plot2D_test CXX )
@@ -14,15 +14,6 @@ project( plot2D_test CXX )
 
 file( GLOB test_sources *.cc )
 file( GLOB bench_files bench/*.agr bench/*.par )
-
-# ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # headers for tests
-   ${PROJECT_SOURCE_DIR}/..   # headers for package
-   ${PROJECT_BINARY_DIR}/..   # config.h
-   )
 
 # ---------------------------------------------------------------------------- #
 # Build Unit tests

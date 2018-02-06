@@ -5,7 +5,7 @@
  * \date   Wednesday, Aug 23, 2017, 12:48 pm
  * \brief  Enscapulates common string manipulations (implicit template
  *         implementation).
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2017-2018 Los Alamos National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 

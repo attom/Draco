@@ -148,7 +148,7 @@ ppn=`lookupppn`
 
 # =============================================================================
 # Build types:
-# - These must be copied into release_ml.msub because bash arrays cannot
+# - These must be copied into release_cray.msub because bash arrays cannot
 #   be passed to the subshell (bash bug)
 # =============================================================================
 
@@ -204,7 +204,7 @@ for env in $environments; do
   $env
 
   buildflavor=`flavor`
-  # e.g.: buildflavor=moonlight-openmpi-1.6.5-intel-15.0.3
+  # e.g.: buildflavor=trinitite-openmpi-1.6.5-intel-15.0.3
 
   export install_prefix="$source_prefix/$buildflavor"
   export build_prefix="$scratchdir/$USER/$pdir/$buildflavor"

@@ -4,11 +4,11 @@
  * \author Kent Budge
  * \date   Fri Oct 20 13:49:10 2006
  * \brief  Template method definitions of class Processor_Group
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef c4_Processor_Group_i_hh

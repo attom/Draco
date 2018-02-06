@@ -4,11 +4,11 @@
   \author Rob Lowrie
   \date   Fri Jan 14 13:00:32 2005
   \brief  Header file for Norms_Proc.
-  \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+  \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
           All rights reserved.
 */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef rtt_norms_Norms_Proc_hh

@@ -6,11 +6,11 @@
  * \brief  For a fermion species, calculate the dimensionless chemical 
  *         potential given the dimensionless number density and dimensionless
  *         temperature.  
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef sf_F_eta_inv_hh

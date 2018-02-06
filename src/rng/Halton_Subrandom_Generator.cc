@@ -3,11 +3,11 @@
  * \file   rng/Halton_Subrandom_Generator.cc
  * \author Kent Budge
  * \brief  Define methods of class Halton_Subrandom_Generator
- * \note   Copyright (C) 2016-2017 Los Alamos National Laboratory,
+ * \note   Copyright (C) 2016-2018 Los Alamos National Laboratory,
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "Halton_Subrandom_Generator.hh"

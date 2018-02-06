@@ -68,10 +68,9 @@ The regression scripts produce a log file for each flavor of each
 script.  These files are written to $regdir/logs and have name formats
 that follow these rules:  <mach>-<bt>-<proj>-<extra>-<cbts>.log
 
-<mach> is the machine name = {ccscs, ml, ct}
+<mach> is the machine name = {ccscs, sn, tt}
 <bt>   is the build type   = {Release, Debug}
-<proj> is the project name = {draco, capsaicin, clubimc, wedgehog,
-                              milagro}
+<proj> is the project name = {draco, capsaicin, jayenne}
 <extra> is a string that defines extra build data
                            = {intel13,pgi,coverage}
 <cbts> is the regression part = {(c)onfigure, (b)uild, (t)est,

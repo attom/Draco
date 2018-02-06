@@ -1,5 +1,5 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   rng/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for rng.
@@ -30,13 +30,6 @@ if( USE_CUDA OR WIN32 )
    unset(R123_USE_CXX11)
 endif()
 
-# At least one report that Intel/15 doesn't work correctly with Random123 with
-# c++11 features active.
-# if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel" AND
-    # ${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 16.0 )
-   # unset(R123_USE_CXX11)
-# endif()
-
 configure_file( config.h.in ${PROJECT_BINARY_DIR}/rng/config.h )
 
 # ---------------------------------------------------------------------------- #
@@ -53,17 +46,6 @@ if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
 endif()
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # sources
-   ${PROJECT_BINARY_DIR}      # rng/config.h
-   ${PROJECT_SOURCE_DIR}/..   # ds++ header files
-   ${dsxx_BINARY_DIR}         # ds++/config.h
-)
-
-# ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
 
@@ -72,9 +54,11 @@ add_component_library(
    TARGET_DEPS  "Lib_dsxx;GSL::gsl"
    LIBRARY_NAME ${PROJECT_NAME}
    SOURCES      "${sources}"
-   VENDOR_LIST  "Random123"
-   VENDOR_INCLUDE_DIRS "${RANDOM123_INCLUDE_DIR}"
-)
+   )
+target_include_directories( Lib_rng
+  PUBLIC 
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> # config.h
+    ${RANDOM123_INCLUDE_DIR} )
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions
@@ -96,3 +80,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 
 process_autodoc_pages()
+
+#------------------------------------------------------------------------------#
+# End rng/CMakeLists.txt
+#------------------------------------------------------------------------------#

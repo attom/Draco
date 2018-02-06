@@ -4,11 +4,11 @@
  * \author Kelly Thompson
  * \date   Mon Jan 8 15:33:51 2001
  * \brief  DummyGrayOpacity class implementation file.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "DummyGrayOpacity.hh"

@@ -3,10 +3,8 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for viz/test.
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id: CMakeLists.txt 8183 2015-11-05 20:32:54Z kellyt $
 #------------------------------------------------------------------------------#
 project( viz_test CXX )
 
@@ -20,15 +18,6 @@ file( GLOB test_sources
   )
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # headers for tests
-   ${PROJECT_SOURCE_DIR}/..   # headers for package
-)
-
-# ---------------------------------------------------------------------------- #
 # Build Unit tests
 # ---------------------------------------------------------------------------- #
 
@@ -40,8 +29,8 @@ if( NOT APPLE )
     DEPS    "Lib_viz" )
 
   # for Ut_viz_tstEnsight_Translator_exe, check the generated viz files using
-  # numdiff from a cmake script instead of trying to use the system()
-  # command.  Using system fails for BG/Q systems.
+  # numdiff from a cmake script instead of trying to use the system() command.
+  # Using system fails for BG/Q systems.
 
   add_component_executable(
     TARGET      Ut_viz_tstEnsight_Translator_exe
@@ -75,5 +64,8 @@ set( extra_clean_files
    testproblem_ensight
 )
 set_directory_properties(
-   PROPERTIES
-   ADDITIONAL_MAKE_CLEAN_FILES "${extra_clean_files}" )
+   PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${extra_clean_files}" )
+
+#------------------------------------------------------------------------------#
+# End viz/test/CMakeLists.txt
+#------------------------------------------------------------------------------#

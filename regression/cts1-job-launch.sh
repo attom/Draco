@@ -1,9 +1,9 @@
 #!/bin/bash
 ##---------------------------------------------------------------------------##
-## File  : regression/ml-job-launch.sh
+## File  : regression/cts1-job-launch.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
@@ -20,6 +20,7 @@
 args=( "$@" )
 nargs=${#args[@]}
 scriptname=${0##*/}
+host=`uname -n`
 
 export SHOWQ=`which squeue`
 export MSUB=`which sbatch`
@@ -45,7 +46,7 @@ fi
 # sanity checks
 job_launch_sanity_checks
 
-available_queues=`sacctmgr -np list assoc user=$LOGNAME | grep access | sed -e 's/.*|\(.*access.*\)|.*/\1/'  | sed -e 's/|.*//'`
+available_queues=`sacctmgr -np list assoc user=$LOGNAME | sed -e 's/.*|\(.*dev.*\)|.*/\1/' | sed -e 's/|.*//'`
 case $available_queues in
   *access*) access_queue="-A access --qos=access" ;;
   *dev*)    access_queue="--qos=dev" ;;
@@ -74,7 +75,7 @@ fi
 # Configure on the front end
 echo "Configure:"
 export REGRESSION_PHASE=c
-cmd="${rscriptdir}/ml-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
+cmd="${rscriptdir}/cts1-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
 echo "${cmd}"
 eval "${cmd}"
 
@@ -86,7 +87,7 @@ logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra
 if [[ -f $logfile ]]; then
   rm $logfile
 fi
-cmd="$MSUB ${access_queue} -o ${logfile} -J ${subproj:0:5}-${featurebranch} -t 4:00:00 ${rscriptdir}/ml-regress.msub"
+cmd="$MSUB ${access_queue} -o ${logfile} -J ${subproj:0:5}-${featurebranch} -t 4:00:00 ${rscriptdir}/${machine_class}-regress.msub"
 echo "${cmd}"
 jobid=`eval ${cmd}`
 # trim extra whitespace from number
@@ -94,8 +95,8 @@ jobid=`echo ${jobid//[^0-9]/}`
 
 # Wait for BT (build and test) to finish
 sleep 1m
-# echo "$SHOWQ | grep $jobid"
-while test "`$SHOWQ | grep -c $jobid`" == "1"; do
+while test "`$SHOWQ | grep $jobid`" != ""; do
+   $SHOWQ | grep $jobid
    echo "   ${subproj}: waiting for jobid = $jobid to finish (sleeping 5 minutes)."
    sleep 5m
 done
@@ -104,13 +105,13 @@ done
 echo " "
 echo "Submit:"
 export REGRESSION_PHASE=s
-echo "Jobs done, now submitting ${build_type} results."
-cmd="${rscriptdir}/ml-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-s.log"
+echo "Jobs done, now submitting ${build_type} results from ${host}."
+cmd="${rscriptdir}/cts1-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-s.log"
 echo "${cmd}"
 eval "${cmd}"
 
 echo "All done."
 
 ##---------------------------------------------------------------------------##
-## End of ml-job-launch.sh
+## End of ba-job-launch.sh
 ##---------------------------------------------------------------------------##

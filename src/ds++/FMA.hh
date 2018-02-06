@@ -4,7 +4,7 @@
  * \author  Kelly Thompson
  * \date    Thursday, Feb 09, 2017, 11:22 am
  * \brief   Provide extra control for FMA operations.
- * \note    Copyright (C) 2017 Los Alamos National Security, LLC.
+ * \note    Copyright (C) 2017-2018 Los Alamos National Security, LLC.
  *          All rights reserved.
  *
  * Intel Haswell and later (and also modern AMD cpus), have hardware FMA

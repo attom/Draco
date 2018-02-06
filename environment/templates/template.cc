@@ -4,14 +4,16 @@
  * \author <user>
  * \date   <date>
  * \brief  <start>
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "<basename>.hh"
 
-namespace <namespace> {
+namespace<namespace> {
+
+  // void foo() { return; };
+  // class Bar { int i; };
 
 } // end namespace <namespace>
 

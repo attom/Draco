@@ -4,11 +4,11 @@
  * \author Kelly Thompson
  * \date   Mon Sep 20 21:54:18 2010
  * \brief  Encapsulate system headers for timing information.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef c4_C4_sys_times_h

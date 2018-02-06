@@ -4,11 +4,11 @@
  * \author Rob Lowrie
  * \date   Fri Jan 14 12:45:49 2005
  * \brief  Header for Comm_Traits.
- * \note   Copyright © 2016-2017 Los Alamos National Security, LLC.  All
+ * \note   Copyright © 2016-2018 Los Alamos National Security, LLC.  All
  *         rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef rtt_norms_Comm_Traits_hh

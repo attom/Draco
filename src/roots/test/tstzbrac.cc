@@ -4,11 +4,11 @@
  * \author Kent Budge
  * \date   Tue Aug 17 15:24:48 2004
  * \brief  Test the zbrac function template
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "ds++/Release.hh"

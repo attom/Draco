@@ -1,9 +1,9 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   lapack_wrap/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for lapack_wrap.
-# note   Copyright (C) 2016-2017, Los Alamos National Security
+# note   Copyright (C) 2016-2018, Los Alamos National Security
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
@@ -12,8 +12,8 @@ project( lapack_wrap CXX )
 # ---------------------------------------------------------------------------- #
 # Generate config.h (only occurs when cmake is run)
 # ---------------------------------------------------------------------------- #
-if( NOT lapack_FOUND OR ${CMAKE_GENERATOR} MATCHES Xcode)
-  if( NOT lapack_FOUND )
+if( NOT TARGET lapack OR ${CMAKE_GENERATOR} MATCHES Xcode)
+  if( NOT TARGET lapack )
     message( STATUS
       "NOTE: Skipping lapack_wrap component because LAPACK is not found." )
   else()
@@ -21,7 +21,7 @@ if( NOT lapack_FOUND OR ${CMAKE_GENERATOR} MATCHES Xcode)
       "NOTE: Skipping lapack_wrap component because Generator is XCode" )
   endif()
 
-else(NOT lapack_FOUND OR ${CMAKE_GENERATOR} MATCHES Xcode)
+else()
 
   if( MSVC )
 
@@ -77,7 +77,6 @@ else(NOT lapack_FOUND OR ${CMAKE_GENERATOR} MATCHES Xcode)
 
   # Omit this package is the mangling was not found by FortranCInterface.cmake
   if( EXISTS ${PROJECT_BINARY_DIR}/lapack_wrap/config.h )
-    # if( FortranCInterface_GLOBAL_FOUND AND FortranCInterface_MODULE_FOUND )
 
     # ------------------------------------------------------------------------ #
     # Source files
@@ -91,17 +90,6 @@ else(NOT lapack_FOUND OR ${CMAKE_GENERATOR} MATCHES Xcode)
     if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
       list( APPEND sources ${headers} )
     endif()
-
-    # ------------------------------------------------------------------------ #
-    # Directories to search for include directives
-    # ------------------------------------------------------------------------ #
-
-    include_directories(
-      ${PROJECT_SOURCE_DIR}     # sources
-      ${PROJECT_BINARY_DIR}     # lapack_wrap/config.h
-      ${PROJECT_SOURCE_DIR}/..  # ds++ header files
-      ${dsxx_BINARY_DIR}        # ds++/config.h
-      )
 
     # ------------------------------------------------------------------------ #
     # Installation instructions
@@ -123,13 +111,11 @@ else(NOT lapack_FOUND OR ${CMAKE_GENERATOR} MATCHES Xcode)
 
     process_autodoc_pages()
 
-    # ------------------------------------------------------------------------ #
-    # FortranCInterface_GLOBAL_FOUND AND FortranCInterface_MODULE_FOUND
   else()
     message("   lapack_wrap - skipped because FortranCInterface failed.")
   endif()
 
-endif(NOT lapack_FOUND OR ${CMAKE_GENERATOR} MATCHES Xcode) # NOT lapack_FOUND
+endif() # no lapack target
 
 #------------------------------------------------------------------------------#
 # End lapack_wrap/CMakeLists.txt

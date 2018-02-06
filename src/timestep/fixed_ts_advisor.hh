@@ -2,11 +2,11 @@
 /*! 
  * \file   timestep/fixed_ts_advisor.hh
  * \brief  Header file for the fixed time-step advisor class.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef __timestep_fixed_ts_advisor_hh__

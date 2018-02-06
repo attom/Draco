@@ -18,7 +18,7 @@
 ## 1. Set modulefiles to be loaded in named environment functions.
 ## 2. Update variables that control the build:
 ##    - $ddir
-## 3. Run this script: ./release_toss.sh &> ../logs/relase_moonlight.log
+## 3. Run this script: ./release_toss.sh &> ../logs/relase_snow.log
 
 #----------------------------------------------------------------------#
 # Per release settings go here (edits go here)
@@ -79,7 +79,9 @@ export draco_script_dir=`readlink -f $script_dir`
 source $draco_script_dir/common.sh
 
 # CMake options that will be included in the configuration step
-export CONFIG_BASE="-DDRACO_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
+CONFIG_BASE="-DDRACO_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
+CONFIG_BASE+=" -DCMAKE_VERBOSE_MAKEFILE=ON"
+export CONFIG_BASE
 
 # sets umask 0002
 # sets $install_group, $install_permissions, $build_permissions
@@ -113,7 +115,7 @@ fi
 
 # =============================================================================
 # Build types:
-# - These must be copied into release_ml.msub because bash arrays cannot
+# - These must be copied into release_toss.msub because bash arrays cannot
 #   be passed to the subshell (bash bug)
 # =============================================================================
 
@@ -171,7 +173,7 @@ for env in $environments; do
   $env
 
   buildflavor=`flavor`
-  # e.g.: buildflavor=moonlight-openmpi-1.6.5-intel-15.0.3
+  # e.g.: buildflavor=snow-openmpi-1.6.5-intel-15.0.3
 
   export install_prefix="$source_prefix/$buildflavor"
   export build_prefix="$scratchdir/$USER/$pdir/$buildflavor"
@@ -196,15 +198,6 @@ $script_dir/release.msub"
     # trim extra whitespace from number
     jobid=`echo ${jobid//[^0-9]/}`
     export jobids="$jobid $jobids"
-
-    # export dry_run=0
-
-    # The Pack_Build_gnu EAP target needs this symlink on moonlight
-    #if test `machineName` == moonlight; then
-    #  run "cd $source_prefix"
-    #  gccflavor=`echo $flavor | sed -e s%$LMPI-$LMPIVER%gcc-4.9.2%`
-    #  run "ln -s $flavor $gccflavor"
-    #fi
 
   done
 done

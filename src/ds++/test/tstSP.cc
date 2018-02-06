@@ -4,11 +4,11 @@
  * \author Thomas M. Evans
  * \date   Wed Feb  5 17:29:59 2003
  * \brief  SP test.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "ds++/Release.hh"

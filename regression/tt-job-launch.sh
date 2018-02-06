@@ -3,7 +3,7 @@
 ## File  : regression/tt-job-launch.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
@@ -72,24 +72,51 @@ done
 # Select haswell or knl partition
 # Optional: Use -C quad,flat to select KNL mode
 # sinfo -o "%45n %30b %65f" | cut -b 47-120 | sort | uniq -c
+
+# Note that we build on the haswell back-end (even when building code for knl):
+build_partition_options="-N 1 -t 8:00:00 --gres=craynetwork:0"
 case $extra_params in
 knl) partition_options="-N 1 -t 8:00:00 --gres=craynetwork:0 -p knl" ;;
 *)   partition_options="-N 1 -t 8:00:00 --gres=craynetwork:0" ;;
 esac
 
-# Configure, Build on front end
-echo "Configure and Build on the front end..."
-export REGRESSION_PHASE=cb
+# Configure on front end
+# Only the front-end can see the github and gitlab repositories.
+echo "Configure on the front end..."
+export REGRESSION_PHASE=c
 echo " "
 cmd="${rscriptdir}/tt-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
 echo "${cmd}"
 eval "${cmd}"
 
-# Wait for CB (Configure and Build) before starting the testing and
-# reporting from the worker node:
+
+# Wait for Configure to finish before starting the build on the worker node:
+# Build on the back-end to avoid loading up the shared front end.
+echo " "
+export REGRESSION_PHASE=b
+echo "Build from the back end..."
+echo " "
+logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
+cmd="$MSUB -o ${logfile} -J ${subproj:0:5}-${featurebranch} ${build_partition_options} ${rscriptdir}/tt-regress.msub"
+echo "${cmd}"
+jobid=`eval ${cmd}`
+jobid=`echo $jobid | sed -e 's/.*[ ]//'`
+echo "jobid = ${jobid}"
+
+# Wait for testing to finish
+sleep 1m
+while test "`${SHOWQ} | grep $jobid`" != ""; do
+   ${SHOWQ} | grep $jobid
+   sleep 5m
+done
+
+# Wait for the Build to finish before starting the testing from the worker node:
+# Test from a different back end.  This step is separate from the build because
+# we build KNL binaries from a Haswell back-end, but the tests must be run from
+# a KNL node.
 echo " "
 export REGRESSION_PHASE=t
-echo "Test from the login node..."
+echo "Test from the back end..."
 echo " "
 logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
 cmd="$MSUB -o ${logfile} -J ${subproj:0:5}-${featurebranch} ${partition_options} ${rscriptdir}/tt-regress.msub"
@@ -108,7 +135,7 @@ while test "`${SHOWQ} | grep $jobid`" != ""; do
    sleep 5m
 done
 
-# Submit from the front end
+# Submit from the front end.  Only the front end can see our cdash server.
 echo " "
 echo "Submit:"
 export REGRESSION_PHASE=s

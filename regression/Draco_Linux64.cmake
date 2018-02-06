@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2016 June 14
 # brief  CTest regression script for Draco on Linux64
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 # Ref: http://www.cmake.org/Wiki/CMake_Scripting_Of_CTest
@@ -25,9 +25,6 @@ set_defaults()
 parse_args()
 find_tools()
 set_git_command("Draco.git")
-
-# Make machine name lower case
-string( TOLOWER "${CTEST_SITE}" CTEST_SITE )
 
 ####################################################################
 # The values in this section are optional you can either
@@ -53,6 +50,8 @@ ${INIT_CACHE_PPE_PREFIX}
 ${TOOLCHAIN_SETUP}
 # Set DRACO_DIAGNOSTICS and DRACO_TIMING:
 ${FULLDIAGNOSTICS}
+# vtest, perfbench options
+${CUSTOM_VARS}
 ${DRACO_C4}
 ${DRACO_LIBRARY_TYPE}
 ${BOUNDS_CHECKING}

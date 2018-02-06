@@ -3,11 +3,11 @@
  * \file   parser/Parse_Table.hh
  * \author Kent G. Budge
  * \brief  Definition of Keyword and Parse_Table.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef CCS4_Parse_Table_HH

@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for cdi_ipcress/test.
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 project( cdi_ipcress_test CXX )
@@ -32,16 +32,6 @@ foreach( file ${ipcress_data} )
 endforeach()
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-  ${PROJECT_SOURCE_DIR}      # headers for tests
-  ${PROJECT_BINARY_DIR}      # test/config.h
-  ${PROJECT_SOURCE_DIR}/..   # headers for package
-  )
-
-# ---------------------------------------------------------------------------- #
 # Build Unit tests
 # ---------------------------------------------------------------------------- #
 
@@ -64,5 +54,5 @@ add_app_unit_test(
   )
 
 #------------------------------------------------------------------------------#
-# end CMakeLists.txt
+# End cdi_ipcress/test/CMakeLists.txt
 #------------------------------------------------------------------------------#

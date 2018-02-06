@@ -12,8 +12,10 @@
 ##---------------------------------------------------------------------------##
 
 # Main Options
+export machine_class="ccscs"
+export machine_name_short="ccscs"
 export machine_name_long="Linux64 on CCS LAN"
-platform_extra_params="clang coverage fulldiagnostics gcc630 nr perfbench scalar static valgrind"
+platform_extra_params="clang coverage fulldiagnostics gcc630 nr perfbench scalar static valgrind vtest"
 pem_match=`echo $platform_extra_params | sed -e 's/[ ]/|/g'`
 
 ##---------------------------------------------------------------------------##

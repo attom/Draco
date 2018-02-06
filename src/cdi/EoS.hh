@@ -4,11 +4,8 @@
  * \author Kelly Thompson
  * \date   Fri Apr 13 16:15:59 2001
  * \brief  EoS class header file (an abstract class)
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-// $Id$
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef __cdi_EoS_hh__

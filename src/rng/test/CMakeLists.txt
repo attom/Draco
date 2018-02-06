@@ -1,9 +1,9 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   rng/test/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for rng/test.
-# note   Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 project( rng_test C CXX )
@@ -40,15 +40,6 @@ set( random123_known_answer_tests
 )
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # headers for tests
-   ${PROJECT_SOURCE_DIR}/..   # headers for package
-)
-
-# ---------------------------------------------------------------------------- #
 # Build Unit tests
 # ---------------------------------------------------------------------------- #
 
@@ -67,6 +58,8 @@ add_scalar_tests(
   DEPS       "Lib_rng"
   PASS_REGEX "PASSED"
   FAIL_REGEX "FAILED" )
+target_include_directories( Ut_rng_ut_uniform_exe
+  PRIVATE $<BUILD_INTERFACE:${rng_SOURCE_DIR}> )
 
 if( USE_CUDA AND EXISTS "${CUDA_NVCC_EXECUTABLE}" )
   cuda_add_executable( kat_cuda
@@ -86,6 +79,10 @@ add_component_executable(
   SOURCES ${PROJECT_SOURCE_DIR}/time_serial.c
   NOEXPORT
   )
+target_include_directories( Exe_time_serial
+  PRIVATE 
+    $<BUILD_INTERFACE:${rng_BINARY_DIR}> 
+    ${RANDOM123_INCLUDE_DIR} )
 
 configure_file( ${PROJECT_SOURCE_DIR}/kat_vectors
   ${PROJECT_BINARY_DIR}/kat_vectors COPYONLY )

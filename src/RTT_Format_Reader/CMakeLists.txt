@@ -1,12 +1,10 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   RTT_Format_Reader/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for RTT_Format_Reader.
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id$
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
 project( RTT_Format_Reader CXX )
@@ -24,15 +22,6 @@ if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
 endif()
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories( ${PROJECT_SOURCE_DIR}       # sources
-                     ${draco_src_dir_SOURCE_DIR} # ds++ header files
-                     ${dsxx_BINARY_DIR}          # ds++/config.h
-                     )
-
-# ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
 
@@ -47,7 +36,8 @@ add_component_library(
 # Installation instructions
 # ---------------------------------------------------------------------------- #
 
-install( TARGETS Lib_RTT_Format_Reader EXPORT draco-targets DESTINATION ${DBSCFGDIR}lib )
+install( TARGETS Lib_RTT_Format_Reader EXPORT draco-targets DESTINATION
+  ${DBSCFGDIR}lib )
 install( FILES ${headers} DESTINATION ${DBSCFGDIR}include/RTT_Format_Reader )
 
 # ---------------------------------------------------------------------------- #
@@ -63,3 +53,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 
 process_autodoc_pages()
+
+#------------------------------------------------------------------------------#
+# End RTT_Format_Reader/CMakeLists.txt
+#------------------------------------------------------------------------------#

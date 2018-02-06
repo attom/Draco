@@ -5,11 +5,11 @@
  * \date   Mon Jan 8 17:12:51 2001
  * \brief  DummyOdfmgOpacity class header file (derived from
  *         ../OdfmgOpacity)
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef __cdi_DummyOdfmgOpacity_hh__

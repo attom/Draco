@@ -3,7 +3,7 @@
 ## File  : ./travis-install-dependencies.sh
 ## Date  : Tuesday, Sep 20, 2016, 11:50 am
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 

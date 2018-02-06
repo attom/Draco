@@ -1,33 +1,40 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   <pkg>/<class>.i.hh
  * \author <user>
  * \date   <date>
  * \brief  Member definitions of class <class>
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
+ * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
+//----------------------------------------------------------------------------//
+
+// clang-format off
 
 #ifndef <spkg>_<class>_i_hh
 #define <spkg>_<class>_i_hh
 
-namespace <namespace> {
+namespace<namespace> {
 
-  template <typename T> <class><T>::<class>() {
-  }
+  // Definitions of templated class members that use inline or implicit
+  // instantiation.  This file should be inlcuded from the bottom of an .hh
+  // file.
 
-  template <typename T>
-  <class><T>::<class>(const<class><T> &rhs) {
-  }
+  //--------------------------------------------------------------------------//
+  //! one line description
+  template <typename T><class><T>::<class>() {}
 
-  template <typename T><class><T>::~<class>() {
-  }
+  //--------------------------------------------------------------------------//
+  //! one line description
+  template <typename T><class><T>::<class>(const<class><T> &rhs) {}
+
+  //--------------------------------------------------------------------------//
+  //! one line description
+  template <typename T><class><T>::~<class>() {}
 
 } // end namespace <namespace>
 
 #endif // <spkg>_<class>_i_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of <pkg>/<class>.i.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

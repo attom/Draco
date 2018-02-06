@@ -18,6 +18,7 @@
 #    pgi   - build with the PGI compiler
 #    nr    - build with non-reproducible option.
 #    fulldiagnostics - build with IEEE checks enabled
+#    vtest           - verification tests (long running tests)
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
@@ -28,13 +29,14 @@
 
 01 00 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne capsaicin\"
 
+01 01 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \" jayenne capsaicin\" -e vtest
+
 #------------------------------------------------------------------------------#
 # Special: NR, PerfBench and FullDiagnostics regressions.
 #------------------------------------------------------------------------------#
 
-# intel-18.0.0 + openmpi-2.1.2
-# compiler segfault when building suite-sparse -> no trilinos -> omit capsaicin.
-01 00 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne\" -e newtools
+# intel-18.0.1 + openmpi-2.1.2
+01 00 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne capsaicin\" -e newtools
 
 # gcc-6.4.0 + openmpi-2.1.2
 01 00 * * 0-6 /usr/projects/jayenne/regress/draco/regression/regression-master.sh -r -d Nightly -b Release -p \"draco jayenne capsaicin\" -e gcc640

@@ -3,10 +3,8 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for c4
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id$
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
 project( c4 CXX )
@@ -33,31 +31,29 @@ if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
 endif()
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-include_directories( ${PROJECT_SOURCE_DIR}       # sources
-                     ${PROJECT_BINARY_DIR}       # c4/config.h
-                     ${draco_src_dir_SOURCE_DIR} # ds++ header files
-                     ${dsxx_BINARY_DIR}          # ds++/config.h
-                     )
-
-# ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
-set( c4_VENDOR_LIBS "${MPI_CXX_LIBRARIES}")
 if( PAPI_LIBRARY )
-   list( APPEND c4_VENDOR_LIBS ${PAPI_LIBRARY} )
+  set( c4_extra_VENDORS VENDOR_LIST;PAPI;VENDOR_LIBS;${PAPI_LIBRARY} )
+endif()
+
+set( target_deps Lib_dsxx )
+if ( "${DRACO_C4}" STREQUAL "MPI")
+  list(APPEND target_deps MPI::MPI_CXX MPI::MPI_C )
+  if (TARGET MPI::MPI_Fortran)
+    list(APPEND target_deps MPI::MPI_Fortran )
+  endif()
 endif()
 
 add_component_library(
    TARGET       Lib_c4
-   TARGET_DEPS  Lib_dsxx
+   TARGET_DEPS  ${target_deps}
    LIBRARY_NAME c4
    SOURCES      "${sources}"
-   VENDOR_LIST  "MPI"
-   VENDOR_LIBS  "${c4_VENDOR_LIBS}"
-   VENDOR_INCLUDE_DIRS "${MPI_CXX_INCLUDE_PATH}"
+   ${c4_extra_VENDORS}
    )
+target_include_directories( Lib_c4
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> )
 
 # xthi binary
 if( NOT WIN32 AND NOT APPLE )
@@ -82,3 +78,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 
 process_autodoc_pages()
+
+#------------------------------------------------------------------------------#
+# End c4/CMakeLists.txt
+#------------------------------------------------------------------------------#

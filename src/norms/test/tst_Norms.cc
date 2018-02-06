@@ -4,11 +4,11 @@
  * \author Rob Lowrie
  * \date   Fri Jan 14 09:12:16 2005
  * \brief  Tests Norms.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC. 
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC. 
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"

@@ -3,7 +3,7 @@
 ## File  : regression/regression-master.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
@@ -44,19 +44,16 @@ else
 fi
 
 # Host based variables
+platform_extra_params=`echo $platform_extra_params | sed -e 's/ / | /g'`
 export host=`uname -n | sed -e 's/[.].*//g'`
 case $host in
-  ccscs*) machine_name_short=ccscs ;;
-  ml*)    machine_name_short=ml ;;
-  sn*)    machine_name_short=sn ;;
-  tt*)    machine_name_short=tt ;;
+  ba*|sn*) source $rscriptdir/cts1-options.sh ;;
+  ccscs*)  source $rscriptdir/ccscs-options.sh ;;
+  tt*)     source $rscriptdir/tt-options.sh ;;
   *)
     echo "FATAL ERROR: I don't know how to run regression on host = ${host}."
     print_use;  exit 1 ;;
 esac
-
-platform_extra_params=`echo $platform_extra_params | sed -e 's/ / | /g'`
-source $rscriptdir/$machine_name_short-options.sh
 
 ##---------------------------------------------------------------------------##
 ## Support functions
@@ -221,7 +218,9 @@ mkdir -p $logdir || die "Could not create a directory for log files."
 # Redirect output to logfile.
 timestamp=`date +%Y%m%d-%H%M`
 logfile=$logdir/${machine_name_short}-${build_type}-master-$timestamp.log
-# echo "Redirecting output to $logfile"
+case $regress_mode in
+  off) echo "Redirecting output to $logfile" ;;
+esac
 exec > $logfile
 exec 2>&1
 
@@ -283,19 +282,19 @@ ifb=0
 
 # The job launch logic spawns a job for each project immediately, but the
 # *-job-launch.sh script will spin until all dependencies (jobids) are met.
-# Thus, the ml-job-launch.sh for milagro will start immediately, but it will not
+# Thus, the sn-job-launch.sh for milagro will start immediately, but it will not
 # do any real work until both draco and clubimc have completed.
 
 # More sanity checks
-if ! [[ -x ${rscriptdir}/${machine_name_short}-job-launch.sh ]]; then
-   echo "FATAL ERROR: I cannot find ${rscriptdir}/${machine_name_short}-job-launch.sh."
+if ! [[ -x ${rscriptdir}/${machine_class}-job-launch.sh ]]; then
+   echo "FATAL ERROR: I cannot find ${rscriptdir}/${machine_class}-job-launch.sh."
    exit 1
 fi
 
 export subproj=draco
 if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   export featurebranch=${fb[$ifb]}
-  cmd="${rscriptdir}/${machine_name_short}-job-launch.sh"
+  cmd="${rscriptdir}/${machine_class}-job-launch.sh"
   cmd+=" &> ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-joblaunch.log"
   echo "${subproj}: $cmd"
   eval "${cmd} &"
@@ -308,7 +307,7 @@ export subproj=jayenne
 if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   export featurebranch=${fb[$ifb]}
   # Run the *-job-launch.sh script (special for each platform).
-  cmd="${rscriptdir}/${machine_name_short}-job-launch.sh"
+  cmd="${rscriptdir}/${machine_class}-job-launch.sh"
   # Spin until $draco_jobid disappears (indicates that draco has been
   # built and installed)
   cmd+=" ${draco_jobid}"
@@ -324,7 +323,7 @@ fi
 export subproj=capsaicin
 if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   export featurebranch=${fb[$ifb]}
-  cmd="${rscriptdir}/${machine_name_short}-job-launch.sh"
+  cmd="${rscriptdir}/${machine_class}-job-launch.sh"
   # Wait for draco regressions to finish
   case $extra_params in
   coverage)

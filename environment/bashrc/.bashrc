@@ -4,7 +4,7 @@
 ## File  : environment/bashrc/.bashrc
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##
 ##  Bash configuration file upon bash shell startup
@@ -120,8 +120,7 @@ fi
 ## ENVIRONMENTS - once per login
 ##---------------------------------------------------------------------------##
 
-#if test ${DRACO_BASHRC_DONE:-no} = no && test ${INTERACTIVE} = true; then
-if [[ ${INTERACTIVE} = true ]]; then
+if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
 
   # Clean up the default path to remove duplicates
   tmpifs=$IFS
@@ -179,13 +178,13 @@ if [[ ${INTERACTIVE} = true ]]; then
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_darwin_fe
       ;;
 
-    # Mapache | Moonlight | Mustang | Pinto | Wolf | Luna
-    lu* | ml* | pi* | wf* )
+    # Pinto | Wolf
+    pi* | wf* )
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss22
       ;;
 
-    # Snow | Fire | Ice
-    sn* | fi* | ic* )
+    # Snow | Badger | Fire | Ice
+    sn* | ba* | fi* | ic* )
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss3
       ;;
 
@@ -223,32 +222,18 @@ if [[ ${INTERACTIVE} = true ]]; then
 
   esac
 
-  # Generic functions for loading/unloaded the default set of modules.
-  fn_exists=`type dracoenv 2>/dev/null | head -n 1 | grep -c 'is a function'`
-  if test $fn_exists = 0; then
-    # only define if they do not already exist...
-    function dracoenv ()
-    {
-      echo $dracomodules
-      module load $dracomodules
-    }
-    function rmdracoenv ()
-    {
-      # unload in reverse order.
-      mods=( ${dracomodules} )
-      for ((i=${#mods[@]}-1; i>=0; i--)); do
-        loaded=`echo $LOADEDMODULES | grep -c ${mods[$i]}`
-        if test $loaded = 1; then
-          module unload ${mods[$i]}
-        fi
-      done
-    }
-  fi
+  source ${DRACO_ENV_DIR}/bashrc/bash_functions2.sh
   dracoenv
 
   # Mark that we have already done this setup
   export DRACO_BASHRC_DONE=yes
 
+fi
+
+if ! [[ ${INTERACTIVE} ]]; then
+  # provide some bash functions (dracoenv, rmdracoenv) for non-interactive
+  # sessions.
+  source ${DRACO_ENV_DIR}/bashrc/bash_functions2.sh
 fi
 
 ##---------------------------------------------------------------------------##

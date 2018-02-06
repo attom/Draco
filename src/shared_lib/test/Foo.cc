@@ -4,11 +4,11 @@
  * \author Rob Lowrie
  * \date   Wed Dec 29 11:24:17 2004
  * \brief  Implementatin of Foo.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "Foo.hh"

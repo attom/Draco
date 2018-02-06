@@ -1,7 +1,7 @@
 ##---------------------------------------------------------------------------##
 # file   : platform_checks.cmake
 # brief  : Platform Checks for Draco Build System
-# note   : Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   : Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #          All rights reserved
 ##---------------------------------------------------------------------------##
 
@@ -146,9 +146,13 @@ endmacro()
 ##---------------------------------------------------------------------------##
 macro( query_have_restrict_keyword )
 
-   message(STATUS "Looking for the C99 restrict keyword")
-   include( CheckCSourceCompiles )
-   foreach( ac_kw __restrict __restrict__ _Restrict restrict )
+  if( NOT PLATFORM_CHECK_RESTRICT_KYEWORD_DONE )
+    set( PLATFORM_CHECK_RESTRICT_KYEWORD_DONE TRUE CACHE BOOL
+      "Is restrict keyword check done?")
+    mark_as_advanced( PLATFORM_CHECK_RESTRICT_KYEWORD_DONE )
+    message(STATUS "Looking for the C99 restrict keyword")
+    include( CheckCSourceCompiles )
+    foreach( ac_kw __restrict __restrict__ _Restrict restrict )
       check_c_source_compiles("
          typedef int * int_ptr;
          int foo ( int_ptr ${ac_kw} ip ) { return ip[0]; }
@@ -158,17 +162,18 @@ macro( query_have_restrict_keyword )
             t[0] = 0;
             return foo(t); }
          "
-         HAVE_RESTRICT)
+        HAVE_RESTRICT)
 
       if( HAVE_RESTRICT )
-         set( RESTRICT_KEYWORD ${ac_kw} )
-         message(STATUS "Looking for the C99 restrict keyword - found ${RESTRICT_KEYWORD}")
-         break()
+        set( RESTRICT_KEYWORD ${ac_kw} )
+        message(STATUS "Looking for the C99 restrict keyword - found ${RESTRICT_KEYWORD}")
+        break()
       endif()
-   endforeach()
-   if( NOT HAVE_RESTRICT )
+    endforeach()
+    if( NOT HAVE_RESTRICT )
       message(STATUS "Looking for the C99 restrict keyword - not found")
-   endif()
+    endif()
+  endif()
 
 endmacro()
 
@@ -180,13 +185,17 @@ endmacro()
 ## unix-g++.cmake) call this macro.
 ##---------------------------------------------------------------------------##
 macro( query_openmp_availability )
-  message( STATUS "Looking for OpenMP...")
-  find_package(OpenMP QUIET)
-  if( OPENMP_FOUND )
-    message( STATUS "Looking for OpenMP... ${OpenMP_C_FLAGS}")
-    set( OPENMP_FOUND ${OPENMP_FOUND} CACHE BOOL "Is OpenMP availalable?" FORCE )
-  else()
-    message(STATUS "Looking for OpenMP... not found")
+  if( NOT PLATFORM_CHECK_OPENMP_DONE )
+    set( PLATFORM_CHECK_OPENMP_DONE TRUE CACHE BOOL "Is check for OpenMP done?")
+    mark_as_advanced( PLATFORM_CHECK_OPENMP_DONE )
+    message( STATUS "Looking for OpenMP...")
+    find_package(OpenMP QUIET)
+    if( OPENMP_FOUND )
+      message( STATUS "Looking for OpenMP... ${OpenMP_C_FLAGS}")
+      set( OPENMP_FOUND ${OPENMP_FOUND} CACHE BOOL "Is OpenMP availalable?" FORCE )
+    else()
+      message(STATUS "Looking for OpenMP... not found")
+    endif()
   endif()
 endmacro()
 
@@ -198,22 +207,26 @@ endmacro()
 #------------------------------------------------------------------------------#
 macro( query_fma_on_hardware )
 
-  message( STATUS "Looking for hardware FMA support...")
-  unset(HAVE_HARDWARE_FMA)
-  try_run(
-    HAVE_HARDWARE_FMA
-    HAVE_HARDWARE_FMA_COMPILE
-    ${CMAKE_CURRENT_BINARY_DIR}/config
-    ${CMAKE_CURRENT_SOURCE_DIR}/config/query_fma.cc
-    )
-  if( NOT HAVE_HARDWARE_FMA_COMPILE )
-    message( FATAL_ERROR "Unable to compile config/query_fma.cc.")
-  endif()
-  if( HAVE_HARDWARE_FMA )
-    message( STATUS "Looking for hardware FMA support...found fma.")
-  else()
-    message( STATUS "Looking for hardware FMA support...fma not found.")
-  endif()
+  if( NOT PLATFORM_CHECK_FMA_DONE )
+    set( PLATFORM_CHECK_FMA_DONE TRUE CACHE BOOL
+      "Is the check for hardware FMA done?")
+    mark_as_advanced( PLATFORM_CHECK_FMA_DONE )
+    message( STATUS "Looking for hardware FMA support...")
+    unset(HAVE_HARDWARE_FMA)
+    try_run(
+      HAVE_HARDWARE_FMA
+      HAVE_HARDWARE_FMA_COMPILE
+      ${CMAKE_CURRENT_BINARY_DIR}/config
+      ${CMAKE_CURRENT_SOURCE_DIR}/config/query_fma.cc
+      )
+    if( NOT HAVE_HARDWARE_FMA_COMPILE )
+      message( FATAL_ERROR "Unable to compile config/query_fma.cc.")
+    endif()
+    if( HAVE_HARDWARE_FMA )
+      message( STATUS "Looking for hardware FMA support...found fma.")
+    else()
+      message( STATUS "Looking for hardware FMA support...fma not found.")
+    endif()
 
   # Other things to look at (might be able to avoid the try-compile):
 
@@ -242,6 +255,8 @@ macro( query_fma_on_hardware )
   #     set(HAS_HARDWARE_FMA ON)
   #   endif()
   # endif()
+
+  endif()
 
 endmacro()
 

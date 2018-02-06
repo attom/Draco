@@ -4,11 +4,11 @@
  * \author Rob Lowrie
  * \date   Fri Nov 19 12:42:18 2004
  * \brief  Header for File_Output and File_Input.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef rtt_dsxx_File_Streams_hh

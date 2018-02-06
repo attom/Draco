@@ -3,7 +3,7 @@
  * \file   parser/Abstract_Class_Parser.hh
  * \author Kent Budge
  * \brief  Define class Abstract_Class_Parser
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 

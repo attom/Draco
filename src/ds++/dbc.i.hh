@@ -4,7 +4,7 @@
  * \author Kent G. Budge
  * \date   Wed Jan 22 15:18:23 MST 2003
  * \brief  Template implementation for dbc
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  *
  * This header defines several function templates that perform common numerical
@@ -17,9 +17,9 @@
 #ifndef rtt_dsxx_dbc_i_hh
 #define rtt_dsxx_dbc_i_hh
 
+#include "Soft_Equivalence.hh"
 #include <algorithm>
 #include <functional>
-#include "Soft_Equivalence.hh"
 
 namespace rtt_dsxx {
 

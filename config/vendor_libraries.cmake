@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2010 June 6
 # brief  Look for any libraries which are required at the top level.
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -196,40 +196,6 @@ macro( setupLAPACKLibrariesUnix )
 
   endif()
 
-  # Export BLAS/LAPACK target information to draco-config.cmake
-
-  if( lapack_FOUND )
-      # Choose items for props list via:
-      # include(print_target_properties)
-      # print_targets_properties("blas;lapack")
-      set( props
-        GNUtoMS
-        IMPORTED
-        IMPORTED_CONFIGURATIONS
-        IMPORTED_IMPLIB
-        IMPORTED_IMPLIB_DEBUG
-        IMPORTED_LINK_INTERFACE_LANGUAGES
-        IMPORTED_LINK_INTERFACE_LIBRARIES_DEBUG
-        IMPORTED_LINK_INTERFACE_LIBRARIES_RELEASE
-        IMPORTED_LINK_INTERFACE_LIBRARIES_RELWITHDEBINFO
-        IMPORTED_LOCATION
-        IMPORTED_LOCATION_DEBUG
-        IMPORTED_LOCATION_RELEASE
-        IMPORTED_LOCATION_RELWITHDEBINFO
-        IMPORTED_SONAME_DEBUG
-        IMPORTED_SONAME_RELEASE
-        IMPORTED_SONAME_RELWITHDEBINFO
-        INTERFACE_INCLUDE_DIRECTORIES
-        INTERFACE_LINK_LIBRARIES
-        POSITION_INDEPENDENT_CODE
-        )
-      if( "${lapack_flavor}" STREQUAL "mkl" )
-        save_vendor_imported_library_to_draco_config(
-          "blas::mkl_thread;blas::mkl_core" "${props}" )
-      endif()
-      save_vendor_imported_library_to_draco_config( "lapack;blas" "${props}" )
-  endif()
-
 endmacro()
 
 #------------------------------------------------------------------------------
@@ -351,70 +317,6 @@ macro( setupQt )
 endmacro()
 
 #------------------------------------------------------------------------------
-# save_vendor_imported_library_to_draco_config
-#
-# Save imported target information to the installed file
-# "draco-config.cmake"
-#
-# Append the variable Draco_EXPORT_TARGET_PROPERTIES with enough
-# information to use the imported library from Jayenne or
-# Capsaicin.  The string  Draco_EXPORT_TARGET_PROPERTIES is written
-# to lib/cmake/draco/draco-config.cmake during the 'install' phase
-# of the build.
-# - Examine each imported target specified in the the list 'targets'
-#   and generate an 'import_library' for the imported target.
-# - Query each target for each of the properites listed in
-#   'target_properties'
-# - If the target has the requested property, save this value to
-#   Draco_EXPORT_TARGET_PROPERTIES.
-#------------------------------------------------------------------------------
-macro( save_vendor_imported_library_to_draco_config targets target_properties )
-  foreach( tgt ${targets} )
-    # The target's TYPE may not be set correctly, set it manually.
-    get_target_property( fplib ${tgt} IMPORTED_LOCATION )
-    get_target_property( fplibr ${tgt} IMPORTED_LOCATION_RELEASE )
-    get_target_property( fplibd ${tgt} IMPORTED_LOCATION_DEBUG )
-    set( fplib "${fplib} ${fplibr} ${fplibd}" )
-    if( "${fplib}" MATCHES "[.]so"  OR
-        "${fplib}" MATCHES "[.]dll" OR
-        "${fplib}" MATCHES "[.]dylib" )
-      set( library_type SHARED )
-    else()
-      set( library_type STATIC )
-      #set( library_type UNKNOWN )
-    endif()
-
-    set( tmp "add_library( ${tgt} ${library_type} IMPORTED )" )
-    set( tmp "${tmp}
-set_target_properties( ${tgt} PROPERTIES")
-    if(TARGET ${tgt})
-      foreach( prop ${target_properties} )
-        get_property(v TARGET ${tgt} PROPERTY ${prop})
-        #get_property(d TARGET ${tgt} PROPERTY ${prop} DEFINED)
-        get_property(s TARGET ${tgt} PROPERTY ${prop} SET)
-        if( s )
-          set( tmp "${tmp}
-   ${prop} \"${v}\"")
-        endif()
-      endforeach()
-      set( tmp "${tmp} )
-")
-    else()
-      message(FATAL_ERROR "There is no target named '${tgt}'")
-    endif()
-
-    # Append to Draco_EXPORT_TARGET_PROPERTIES the commands needed to
-    # import the library and set all of its properties.
-    set( Draco_EXPORT_TARGET_PROPERTIES
-      "${Draco_EXPORT_TARGET_PROPERTIES}
-${tmp}")
-    # message("${tmp}")
-  endforeach()
-  unset( fplib )
-  unset( library_type )
-endmacro()
-
-#------------------------------------------------------------------------------
 # Setup GSL (any)
 #------------------------------------------------------------------------------
 macro( setupGSL )
@@ -438,26 +340,6 @@ macro( setupGSL )
     if( GSL_FOUND )
       message( STATUS "Looking for GSL.......found ${GSL_LIBRARY}" )
       mark_as_advanced( GSL_CONFIG_EXECUTABLE )
-
-      # Export GSL target information to draco-config.cmake
-      # Choose items for props list via:
-      # include(print_target_properties)
-      # print_targets_properties("GSL::gsl;GSL::gslcblas")
-      set( props
-        GNUtoMS
-        IMPORTED_CONFIGURATIONS
-        IMPORTED_IMPLIB
-        IMPORTED_IMPLIB_DEBUG
-        IMPORTED_LINK_INTERFACE_LANGUAGES
-        INTERFACE_LINK_LIBRARIES
-        IMPORTED_LOCATION_DEBUG
-        IMPORTED_LOCATION_RELEASE
-        IMPORTED
-        INTERFACE_INCLUDE_DIRECTORIES
-        POSITION_INDEPENDENT_CODE
-        IMPORTED_LOCATION )
-      save_vendor_imported_library_to_draco_config(
-        "GSL::gsl;GSL::gslcblas" "${props}" )
     else()
       message( STATUS "Looking for GSL.......not found" )
     endif()
@@ -485,26 +367,6 @@ macro( setupParMETIS )
     find_package( METIS QUIET )
     if( METIS_FOUND )
       message( STATUS "Looking for METIS.....found ${METIS_LIBRARY}" )
-
-      # Export METIS target information to draco-config.cmake
-      # Choose items for props list via:
-      # include(print_target_properties)
-      # print_targets_properties("METIS::metis")
-      set( props
-        GNUtoMS
-        IMPORTED_CONFIGURATIONS
-        IMPORTED_IMPLIB
-        IMPORTED_IMPLIB_DEBUG
-        IMPORTED_LINK_INTERFACE_LANGUAGES
-        INTERFACE_LINK_LIBRARIES
-        IMPORTED_LOCATION_DEBUG
-        IMPORTED_LOCATION_RELEASE
-        IMPORTED
-        INTERFACE_INCLUDE_DIRECTORIES
-        POSITION_INDEPENDENT_CODE
-        IMPORTED_LOCATION )
-
-      save_vendor_imported_library_to_draco_config( "METIS::metis" "${props}" )
     else()
       message( STATUS "Looking for METIS.....not found" )
     endif()
@@ -527,27 +389,6 @@ macro( setupParMETIS )
     find_package( ParMETIS QUIET )
     if( ParMETIS_FOUND )
       message( STATUS "Looking for ParMETIS..found ${ParMETIS_LIBRARY}" )
-
-      # Export ParMETIS target information to draco-config.cmake
-      # Choose items for props list via:
-      # include(print_target_properties)
-      # print_targets_properties("ParMETIS::parmetis")
-      set( props
-        GNUtoMS
-        IMPORTED_CONFIGURATIONS
-        IMPORTED_IMPLIB
-        IMPORTED_IMPLIB_DEBUG
-        IMPORTED_LINK_INTERFACE_LANGUAGES
-        INTERFACE_LINK_LIBRARIES
-        IMPORTED_LOCATION_DEBUG
-        IMPORTED_LOCATION_RELEASE
-        IMPORTED
-        INTERFACE_INCLUDE_DIRECTORIES
-        POSITION_INDEPENDENT_CODE
-        IMPORTED_LOCATION )
-
-      save_vendor_imported_library_to_draco_config(
-        "ParMETIS::parmetis" "${props}" )
     else()
       message( STATUS "Looking for ParMETIS..not found" )
     endif()
@@ -576,27 +417,6 @@ macro( setupSuperLU_DIST )
     find_package( SuperLU_DIST QUIET )
     if( SuperLU_DIST_FOUND )
       message( STATUS "Looking for SuperLU_DIST.....found ${SuperLU_DIST_LIBRARY}" )
-
-      # Export SuperLU_DIST target information to draco-config.cmake
-      # Choose items for props list via:
-      # include(print_target_properties)
-      # print_targets_properties("SuperLU_DIST::superludist")
-      set( props
-        GNUtoMS
-        IMPORTED_CONFIGURATIONS
-        IMPORTED_IMPLIB
-        IMPORTED_IMPLIB_DEBUG
-        IMPORTED_LINK_INTERFACE_LANGUAGES
-        INTERFACE_LINK_LIBRARIES
-        IMPORTED_LOCATION_DEBUG
-        IMPORTED_LOCATION_RELEASE
-        IMPORTED
-        INTERFACE_INCLUDE_DIRECTORIES
-        POSITION_INDEPENDENT_CODE
-        IMPORTED_LOCATION )
-
-      save_vendor_imported_library_to_draco_config(
-        "SuperLU_DIST::superludist" "${props}" )
     else()
       message( STATUS "Looking for SuperLU_DIST.....not found" )
     endif()
@@ -626,27 +446,6 @@ macro( setupCOMPTON )
 
     if( COMPTON_FOUND )
       message( STATUS "Looking for COMPTON.....found ${COMPTON_LIBRARY}" )
-
-      # Export COMPTON target information to draco-config.cmake
-      # Choose items for props list via:
-      # include(print_target_properties)
-      # print_targets_properties("COMPTON::compton")
-      set( props
-        GNUtoMS
-        IMPORTED_CONFIGURATIONS
-        IMPORTED_IMPLIB
-        IMPORTED_IMPLIB_DEBUG
-        IMPORTED_LINK_INTERFACE_LANGUAGES
-        INTERFACE_LINK_LIBRARIES
-        IMPORTED_LOCATION_DEBUG
-        IMPORTED_LOCATION_RELEASE
-        IMPORTED
-        INTERFACE_INCLUDE_DIRECTORIES
-        POSITION_INDEPENDENT_CODE
-        IMPORTED_LOCATION )
-
-      save_vendor_imported_library_to_draco_config(
-        "COMPTON::compton" "${props}" )
     else()
       message( STATUS "Looking for COMPTON.....not found" )
     endif()
@@ -710,11 +509,6 @@ macro( SetupVendorLibrariesUnix )
     PURPOSE "Required for running the fpe_trap tests."
     )
   if( PYTHONINTERP_FOUND )
-    # if( ${PYTHON_VERSION_STRING} GREATER 3.9.9 )
-    #   message( FATAL_ERROR
-    #     "Looking for Python....found version"
-    #     "${PYTHON_VERSION_STRING}, but Draco requires version < 4.0." )
-    # endif()
     message( STATUS "Looking for Python....found ${PYTHON_EXECUTABLE}" )
   else()
     message( STATUS "Looking for Python....not found" )
@@ -791,10 +585,6 @@ macro( setVendorVersionDefaults )
     set( VENDOR_DIR ${VENDOR_DIR} CACHE PATH
       "Root directory where CCS-2 3rd party libraries are located."
       FORCE )
-  else()
-    message( "
-WARNING: VENDOR_DIR not defined locally or in user environment,
-individual vendor directories should be defined." )
   endif()
 
   # Import environment variables related to vendors
@@ -811,10 +601,6 @@ individual vendor directories should be defined." )
     set( LAPACK_LIB_DIR "${VENDOR_DIR}/lapack-3.4.2/lib" )
     set( LAPACK_INC_DIR "${VENDOR_DIR}/lapack-3.4.2/include" )
   endif()
-  # if( NOT LAPACK_LIB_DIR AND IS_DIRECTORY ${VENDOR_DIR}/clapack/lib )
-  # set( LAPACK_LIB_DIR "${VENDOR_DIR}/clapack/lib" )
-  # set( LAPACK_INC_DIR "${VENDOR_DIR}/clapack/include" )
-  # endif()
 
   if( NOT GSL_LIB_DIR )
     if( IS_DIRECTORY $ENV{GSL_LIB_DIR}  )
@@ -860,9 +646,9 @@ individual vendor directories should be defined." )
 endmacro()
 
 #------------------------------------------------------------------------------
-# This macro should contain all the system libraries which are
-# required to link the main objects.
-#------------------------------------------------------------------------------
+# This macro should contain all the system libraries which are required to link
+# the main objects.
+# ------------------------------------------------------------------------------
 macro( setupVendorLibraries )
 
   message( "\nVendor Setup:\n")
@@ -871,31 +657,37 @@ macro( setupVendorLibraries )
   # General settings
   #
   setVendorVersionDefaults()
-  if( NOT TARGET blas )
+  if( NOT TARGET lapack )
     setupLAPACKLibrariesUnix()
   endif()
 
   # System specific settings
   if ( UNIX )
-
-    if( NOT MPI_CXX_COMPILER )
-      setupMPILibrariesUnix()
-    endif()
+    setupMPILibrariesUnix()
     setupVendorLibrariesUnix()
-
   elseif( WIN32 )
-
-    if( NOT MPI_CXX_COMPILER )
-      setupMPILibrariesWindows()
-    endif()
+    setupMPILibrariesWindows()
     setupVendorLibrariesWindows()
-
   else()
     message( FATAL_ERROR "
 I don't know how to setup global (vendor) libraries for this platform.
 WIN32=0; UNIX=0; CMAKE_SYSTEM=${CMAKE_SYSTEM};
 CMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}" )
   endif()
+
+  # Add commands to draco-config.cmake (which is installed for use by othe
+  # projects), to setup Draco's vendors
+  set( Draco_EXPORT_TARGET_PROPERTIES "${Draco_EXPORT_TARGET_PROPERTIES}
+
+# Provide helper functions used by component CMakeLists.txt files
+include( component_macros )
+include( vendor_libraries )
+# Provide targets for MPI, Metis, etc.
+setupVendorLibraries()
+
+")
+
+  message( " " )
 
 endmacro()
 

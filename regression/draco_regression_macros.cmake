@@ -1,7 +1,7 @@
 #-----------------------------*-cmake-*----------------------------------------#
 # file   draco_regression_macros.cmake
 # brief  Helper macros for setting up a CTest/CDash regression system
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -357,21 +357,31 @@ macro( parse_args )
     set( compiler_short_name "${compiler_short_name}-$ENV{extra_params}" )
     if( $ENV{extra_params} MATCHES "cuda" )
       set(USE_CUDA ON)
-    elseif( $ENV{extra_params} MATCHES "fulldiagnostics" )
+    endif()
+    if( $ENV{extra_params} MATCHES "fulldiagnostics" )
       set( FULLDIAGNOSTICS "DRACO_DIAGNOSTICS:STRING=7")
-      # Note 'DRACO_TIMING:STRING=2' will break milagro tests (python cannot parse output).
-    elseif( $ENV{extra_params} MATCHES "nr" )
+      # Note 'DRACO_TIMING:STRING=2' will break milagro tests (python cannot
+      # parse output).
+    endif()
+    if( $ENV{extra_params} MATCHES "nr" )
       set( RNG_NR "ENABLE_RNG_NR:BOOL=ON" )
-    elseif( $ENV{extra_params} MATCHES "scalar" )
+    endif()
+    if( $ENV{extra_params} MATCHES "scalar" )
       set( DRACO_C4 "DRACO_C4:STRING=SCALAR" )
     elseif( $ENV{extra_params} MATCHES "static" )
       set( DRACO_LIBRARY_TYPE "DRACO_LIBRARY_TYPE:STRING=STATIC" )
+    endif()
+    if( $ENV{extra_params} MATCHES "vtest" )
+      list( APPEND CUSTOM_VARS "RUN_VERIFICATION_TESTS:BOOL=ON" )
+    endif()
+    if( $ENV{extra_params} MATCHES "perfbench" )
+      list( APPEND CUSTOM_VARS "ENABLE_PERFBENCH:BOOL=ON" )
     endif()
   endif()
 
   # Set the build name: (<platform>-<compiler>-<configuration>)
   if( WIN32 )
-    set( CTEST_BUILD_NAME "${CTEST_BUILD_CONFIGURATION}" )
+    set( CTEST_BUILD_NAME "${compiler_short_name}-${CTEST_BUILD_CONFIGURATION}" )
     # if( "$ENV{dirext}" MATCHES "x64" )
     # endif()
   elseif( APPLE ) # OS/X
@@ -417,6 +427,9 @@ macro( parse_args )
     set( CTEST_BUILD_NAME "${CTEST_BUILD_NAME}$ENV{buildname_append}" )
   endif()
 
+# Convert CUSTOM_VARS from a list into a multi-line string
+string(REGEX REPLACE ";" "\n" CUSTOM_VARS "${CUSTOM_VARS}")
+
   if( ${drm_verbose} )
     message("
 CTEST_MODEL                 = ${CTEST_MODEL}
@@ -428,6 +441,7 @@ CTEST_BUILD_NAME            = ${CTEST_BUILD_NAME}
 ENABLE_C_CODECOVERAGE       = ${ENABLE_C_CODECOVERAGE}
 ENABLE_DYNAMICANALYSIS      = ${ENABLE_DYNAMICANALYSIS}
 CTEST_USE_LAUNCHERS         = ${CTEST_USE_LAUNCHERS}
+CUSTOM_VARS                 = ${CUSTOM_VARS}
 ")
   endif()
 endmacro( parse_args )
@@ -481,7 +495,7 @@ macro( find_tools )
 
   if( NOT WIN32 )
     # if MAKECOMMAND is found when using "Visual Studio" as the generator,
-    # the compiler 'cl' will be found to be unable to compile a simple 
+    # the compiler 'cl' will be found to be unable to compile a simple
     # program.
     find_program( MAKECOMMAND NAMES make )
     # No memory check program on Windows for now.
@@ -782,25 +796,30 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
   # Assume that draco_work_dir is parallel to our current location, but only
   # replace the directory name preceeding the dashboard name.
   file( TO_CMAKE_PATH "$ENV{work_dir}" work_dir )
-  string( REGEX REPLACE "${this_pkg}[/\\](Nightly|Experimental|Continuous)" "${dep_pkg}/\\1"
-    ${dep_pkg}_work_dir ${work_dir} )
+  string( REGEX REPLACE "${this_pkg}[/\\](Nightly|Experimental|Continuous)"
+    "${dep_pkg}/\\1" ${dep_pkg}_work_dir ${work_dir} )
 
   # If this is a special build, link to the normal Debug/Release Draco files:
+  #
+  # J/C directory       Draco directory
+  # --------------      -----------------
+  # *-nr-*              *-*
+  # *-vtest-*           *-*
+  # *-perfbench-*       *-*
+
   if( "${dep_pkg}" MATCHES "draco" )
-    # coverage  build -> debug   version of Draco
-    # nr        build -> release version of Draco
-    # perfbench build -> release version of Draco
-    # string( REPLACE "Coverage" "Debug"  ${dep_pkg}_work_dir ${${dep_pkg}_work_dir} )
-    string( REPLACE "intel-nr"        "intel" ${dep_pkg}_work_dir ${${dep_pkg}_work_dir} )
-    string( REPLACE "intel-perfbench" "intel" ${dep_pkg}_work_dir ${${dep_pkg}_work_dir} )
-    string( REPLACE "gcc-perfbench"   "gcc"  ${dep_pkg}_work_dir ${${dep_pkg}_work_dir} )
-    # string( REPLACE "-belosmods"      ""     ${dep_pkg}_work_dir ${${dep_pkg}_work_dir} )
+    # not any ${extraparam} since many map to draco builds that have the same
+    # ${extraparam}.  For example: *-newtools-*.
+    foreach( extraparam nr perfbench vtest )
+      string( REPLACE "-${extraparam}-" "-" ${dep_pkg}_work_dir
+        ${${dep_pkg}_work_dir} )
+    endforeach()
 
     if( "${this_pkg}" MATCHES "jayenne" OR "${this_pkg}" MATCHES "capsaicin")
       # If this is jayenne, we might be building a pull request. Replace the PR
       # number in the path with '-develop' before looking for draco.
-      string( REGEX REPLACE "(Nightly|Experimental|Continuous)_(.*)(-pr[0-9]+)/" "\\1_\\2-develop/"
-        ${dep_pkg}_work_dir ${${dep_pkg}_work_dir} )
+      string( REGEX REPLACE "(Nightly|Experimental|Continuous)_(.*)(-pr[0-9]+)/"
+        "\\1_\\2-develop/" ${dep_pkg}_work_dir ${${dep_pkg}_work_dir} )
     endif()
   endif()
 

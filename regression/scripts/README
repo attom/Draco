@@ -1,4 +1,4 @@
-These install scripts are desiged for LANL Toss2.2 and Cle platforms.
+These install scripts are desiged for LANL Toss and Cle platforms.
 
 Assumptions:
 
@@ -23,4 +23,4 @@ Usage:
 2. Select release configurations and special options
    Update release_*.sh scripts to setup modulefiles and configure modes.
 3. Build and test the release
-   scripts/release_toss.sh &> logs/release_moonlight.log &
+   scripts/release_toss.sh &> logs/release_snow.log &

@@ -4,7 +4,7 @@
  * \author Thomas M. Evans
  * \date   Fri Jan  8 15:06:30 1999
  * \brief  put the right includes for MPI header files
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved. */
 /*---------------------------------------------------------------------------*/
 
@@ -13,8 +13,10 @@
 
 #include "c4/config.h"
 
-/* defined in ac_vendors.m4, location of <mpi.h> */
+/* defined in config/setupMPI.cmake */
+#ifdef C4_MPI
 #include <mpi.h>
+#endif
 
 #ifndef DRACO_MAX_PROCESSOR_NAME
 #ifdef MPI_MAX_PROCESSOR_NAME

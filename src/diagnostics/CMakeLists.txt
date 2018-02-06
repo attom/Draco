@@ -1,9 +1,9 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   diagnostics/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for diagnostics.
-# note   Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
@@ -60,19 +60,6 @@ if( CMAKE_CONFIGURATION_TYPES )
 endif()
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}  # sources
-   ${PROJECT_BINARY_DIR}  # config.h
-   ${draco_src_dir_SOURCE_DIR} # ds++ and c4 headers
-   ${dsxx_BINARY_DIR}     # ds++/config.h
-   ${c4_BINARY_DIR}       # c4/config.h
-   ${MPI_CXX_INCLUDE_PATH}
-   )
-
-# ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
 
@@ -83,6 +70,8 @@ add_component_library(
   SOURCES      "${sources}"
   PREFIX       Draco
   )
+target_include_directories( Lib_diagnostics
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> )
 
 add_component_executable(
   TARGET      Exe_draco_info
@@ -100,8 +89,10 @@ endif()
 # Installation instructions
 # ---------------------------------------------------------------------------- #
 
-install( TARGETS Lib_diagnostics EXPORT draco-targets DESTINATION ${DBSCFGDIR}lib )
-install( TARGETS Exe_draco_info  EXPORT draco-targets DESTINATION ${DBSCFGDIR}bin )
+install( TARGETS Lib_diagnostics EXPORT draco-targets DESTINATION
+  ${DBSCFGDIR}lib )
+install( TARGETS Exe_draco_info  EXPORT draco-targets DESTINATION
+  ${DBSCFGDIR}bin )
 install( FILES ${headers}  DESTINATION ${DBSCFGDIR}include/diagnostics )
 
 # ---------------------------------------------------------------------------- #
@@ -117,3 +108,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 
 process_autodoc_pages()
+
+#------------------------------------------------------------------------------#
+# End diagnostics/CMakeLists.txt
+#------------------------------------------------------------------------------#

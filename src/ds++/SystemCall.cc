@@ -3,7 +3,7 @@
  * \file  ds++/SystemCall.cc
  * \brief Implementation for the Draco wrapper for system calls. This routine
  *        attempts to hide differences between Unix/Windows system calls.
- * \note  Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note  Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *        All rights reserved. */
 //---------------------------------------------------------------------------//
 

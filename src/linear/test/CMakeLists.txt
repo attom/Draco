@@ -1,12 +1,10 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   linear/test/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for linear4/test.
-# note   Copyright (C) 2016, Los Alamos National Security
+# note   Copyright (C) 2016-2018, Los Alamos National Security
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id$
 #------------------------------------------------------------------------------#
 project( linear_test CXX )
 
@@ -14,8 +12,8 @@ project( linear_test CXX )
 # Source files
 # ---------------------------------------------------------------------------- #
 
-set( test_lib_sources 
-   ${PROJECT_SOURCE_DIR}/linear_test.cc 
+set( test_lib_sources
+   ${PROJECT_SOURCE_DIR}/linear_test.cc
    ${PROJECT_SOURCE_DIR}/linear_test.hh
 )
 file( GLOB test_sources *.cc )
@@ -25,15 +23,6 @@ file( GLOB python_scripts python/*.py )
 file( GLOB bench_files bench/*.0001 )
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories( 
-   ${PROJECT_SOURCE_DIR}      # headers for tests
-   ${PROJECT_SOURCE_DIR}/..   # headers for package
-)
-
-# ---------------------------------------------------------------------------- #
 # Build Unit tests
 # ---------------------------------------------------------------------------- #
 
@@ -41,3 +30,7 @@ add_scalar_tests(
    SOURCES "${test_sources}"
    DEPS    "Lib_linear;Lib_dsxx"
    )
+
+# ---------------------------------------------------------------------------- #
+# End linear/test/CMakeLists.txt
+# ---------------------------------------------------------------------------- #

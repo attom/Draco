@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2010 Nov 2
 # brief  Install the config directory in the target directory
-# note   Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
@@ -34,14 +34,14 @@ if( "${Draco_PACKAGE_LIST}" STREQUAL "" )
    message( FATAL_ERROR
 "Something is wrong with the build system.  Draco_PACKAGE_LIST is empty." )
 endif()
-if( "${Draco_TPL_LIST}" STREQUAL "" )
-   message( FATAL_ERROR
-"Something is wrong with the build system.  Draco_TPL_LIST is empty." )
-endif()
-if( "${Draco_LIBRARIES}" STREQUAL "" )
-   message( FATAL_ERROR
-"Something is wrong with the build system.  Draco_LIBRARIES is empty." )
-endif()
+# if( "${Draco_TPL_LIST}" STREQUAL "" )
+   # message( FATAL_ERROR
+# "Something is wrong with the build system.  Draco_TPL_LIST is empty." )
+# endif()
+# if( "${Draco_LIBRARIES}" STREQUAL "" )
+   # message( FATAL_ERROR
+# "Something is wrong with the build system.  Draco_LIBRARIES is empty." )
+# endif()
 # An empty Draco_TPL_LIBRARIES is now a valid configuration.
 #if( "${Draco_TPL_LIBRARIES}" STREQUAL "" )
 #   message( FATAL_ERROR

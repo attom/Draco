@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for cdi_eospac/test.
-# note   Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 project( cdi_eospac_test CXX )
@@ -15,16 +15,6 @@ project( cdi_eospac_test CXX )
 set( test_sources
    ${PROJECT_SOURCE_DIR}/tEospac.cc
    ${PROJECT_SOURCE_DIR}/tEospacWithCDI.cc
-)
-
-# ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # headers for tests
-   ${PROJECT_SOURCE_DIR}/..   # headers for package
-   ${PROJECT_BINARY_DIR}/..   # c4/config.h
 )
 
 # ---------------------------------------------------------------------------- #

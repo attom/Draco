@@ -1,11 +1,19 @@
 #!/bin/bash -l
 ##---------------------------------------------------------------------------##
-## File  : regression/sn-regression.sh
+## File  : regression/cts1-regress.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
+
+# Under cron, a basic environment might not be loaded yet.
+#if [[ `which srun 2>/dev/null | grep -c srun` == 0 ]]; then
+#  source /etc/bash.bashrc.local
+#fi
+
+# Allow variable as case condition
+shopt -s extglob
 
 #----------------------------------------------------------------------#
 # The script starts here
@@ -13,30 +21,37 @@
 
 # Sanity Check
 # ----------------------------------------
-if [[ ! ${subproj} ]]; then
-   echo "Fatal Error, subproj not found in environment."
-   exit 1
-fi
-if [[ ! ${regdir} ]]; then
-   echo "Fatal Error, regdir not found in environment."
-   exit 1
-fi
 if [[ ! ${rscriptdir} ]]; then
    echo "Fatal Error, rscriptdir not found in environment."
    exit 1
 fi
+
+# import some bash functions
+source $rscriptdir/scripts/common.sh
+
+if [[ ! ${subproj} ]]; then
+  die "Fatal Error, subproj not found in environment."
+fi
+if [[ ! ${regdir} ]]; then
+  die "Fatal Error, regdir not found in environment."
+fi
 if [[ ! ${build_type} ]]; then
-   echo "Fatal Error, build_type not found in environment."
-   exit 1
+  die "Fatal Error, build_type not found in environment."
 fi
 if [[ ! ${logdir} ]]; then
-   echo "Fatal Error, logdir not found in environment."
-   exit 1
+  die "Fatal Error, logdir not found in environment."
+fi
+if [[ `which srun 2>/dev/null | grep -c srun` == 0 ]]; then
+  die "Cannot find srun.  Possibly bad environment or machine issue."
 fi
 
 # Environment setup
 # ----------------------------------------
 umask 0002
+
+# Set a variable to avoid errors of the form "Assertion failure at psm_ep.c:835:
+# ep->epid !=0". This was suggested by Howard Pritchard via email on 2018 Jan 18.
+export OMPI_MCA_PML=ob1
 
 export http_proxy=http://proxyout.lanl.gov:8080
 export HTTP_PROXY=$http_proxy
@@ -50,9 +65,6 @@ export VENDOR_DIR=/usr/projects/draco/vendors
 # gitlab.lanl.gov has an unkown certificate, disable checking
 export GIT_SSL_NO_VERIFY=true
 
-# import some bash functions
-source $rscriptdir/scripts/common.sh
-
 case $REGRESSION_PHASE in
 c) ctestparts=Configure;;
 bt) ctestparts=Build,Test;;
@@ -64,16 +76,31 @@ s)
     unset HTTP_PROXY
     unset HTTPS_PROXY
     ;;
+  *)
+    echo "Fatal Error, REGRESSION_PHASE = \"${REGRESSION_PHASE}\" does not match \"c\", \"b\", \"t\" or \"s\"."
+    exit 1
+    ;;
 esac
+
+# Host based variables
+# ----------------------------------------
+machine=`uname -n`
+export host=`uname -n | sed -e 's/[.].*//g'`
+platform_extra_params=`echo $platform_extra_params | sed -e 's/ / | /g'`
+source $rscriptdir/cts1-options.sh
 
 # Header
 # ----------------------------------------
-machine=`uname -n`
 echo "==========================================================================="
-echo "Snow regression: ${ctestparts} from ${machine}."
-echo "                 ${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}"
+echo "${machine_name_long} regression: ${ctestparts} from ${machine}."
+echo "                      ${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}"
 echo "==========================================================================="
-
+if [[ ${SLURM_JOB_PARTITION} ]]; then
+  echo " "
+  echo "Allocation configuration:"
+  echo $SLURM_JOB_PARTITION
+  echo " "
+fi
 run "ulimit -a"
 
 # Modules
@@ -111,7 +138,7 @@ case $extra_params in
     # no-op
     ;;
 fulldiagnostics)
-    comp="${comp}-fulldiagnostics"
+    # no-op
     ;;
 gcc610)
     run "module purge &> /dev/null"
@@ -122,7 +149,6 @@ gcc610)
     run "module load cmake/3.9.0 ndi numdiff git"
     run "module load random123 eospac/6.2.4 lapack/3.6.1"
     comp="${LCOMPILER}"
-    # ${LCOMPILERVER}
     echo "comp = $comp"
     ;;
 gcc640)
@@ -134,49 +160,58 @@ gcc640)
     run "module load cmake/3.9.0 ndi numdiff git"
     run "module load random123 eospac/6.2.4"
     comp="${LCOMPILER}"
-    # ${LCOMPILERVER}
     echo "comp = $comp"
     ;;
 newtools)
     run "module purge &> /dev/null"
     run "module list"
     run "module load user_contrib friendly-testing"
-    run "module load intel/18.0.0 openmpi/2.1.2 mkl"
+    run "module load intel/18.0.1 openmpi/2.1.2 mkl"
     run "module load superlu-dist metis parmetis"
-# Can't build suite-sparse (and thus trilinos) due to intel/18 bug.
-#    run "module load trilinos/12.10.1 superlu-dist metis parmetis"
+    run "module load trilinos/12.10.1 superlu-dist metis parmetis"
     run "module load cmake/3.9.0 ndi numdiff git"
     run "module load mkl random123 eospac/6.2.4 csk"
-    comp="${comp}-1800"
     ;;
 nr)
-    comp="${comp}-nr"
+    # no-op
     ;;
 perfbench)
-    comp="${comp}-perfbench"
+    # no-op
+    ;;
+vtest)
+    # no-op
+    ;;
+@($pem_match) )
+    # found in tt-options.sh but no rule found here
+    echo "FATAL ERROR"
+    echo "Extra parameter = ${extra_param} requested and known by ${machine_name_short}-options.sh,"
+    echo "but ${0##*/} doesn't know about this option."
+    exit 1
     ;;
 *)
     echo "FATAL ERROR"
     echo "Extra parameter = ${extra_param} requested but is unknown to"
-    echo "the regression system (edit sn-regress.msub)."
+    echo "the regression system (edit ${0##*/})."
     exit 1
     ;;
 esac
 run "module list"
 
 # Use a unique regression folder for each github branch
+if [[ $extra_params ]]; then
+  comp=$comp-$extra_params
+fi
 comp=$comp-$featurebranch
 
 # When run by crontab, use a special ssh-key to allow authentication to gitlab
 if [[ ${regress_mode} == "on" ]]; then
   run "module load git"
-  MYHOSTNAME="`uname -n`"
   keychain=keychain-2.7.1
   $VENDOR_DIR/$keychain/keychain $HOME/.ssh/regress_rsa
-  if test -f $HOME/.keychain/$MYHOSTNAME-sh; then
-    run "source $HOME/.keychain/$MYHOSTNAME-sh"
+  if test -f $HOME/.keychain/$machine-sh; then
+    run "source $HOME/.keychain/$machine-sh"
   else
-    echo "Error: could not find $HOME/.keychain/$MYHOSTNAME-sh"
+    echo "Error: could not find $HOME/.keychain/$machine-sh"
   fi
 fi
 
@@ -203,18 +238,18 @@ if [[ ! ${base_dir} ]]; then
       echo "  Have the names/locations of scratch space changed?"
       exit 1
    fi
-   scratchdir=$scratchdir/$LOGNAME/cdash/sn
-   base_dir=$regdir/cdash/sn
+   scratchdir=$scratchdir/$LOGNAME/cdash/${machine_name_short}
+   base_dir=${regdir}/cdash/${machine_name_short}
 fi
 
 echo " "
-echo "sn-regress.msub: dashboard_type = $dashboard_type"
-echo "sn-regress.msub: base_dir       = $base_dir"
-echo "sn-regress.msub: build_type     = $build_type"
-echo "sn-regress.msub: comp           = $comp"
-echo "sn-regress.msub: machine        = $machine"
-echo "sn-regress.msub: subproj        = $subproj"
-echo "sn-regress.msub: regdir         = $regdir"
+echo "${0##*/}: dashboard_type = $dashboard_type"
+echo "${0##*/}: base_dir       = $base_dir"
+echo "${0##*/}: build_type     = $build_type"
+echo "${0##*/}: comp           = $comp"
+echo "${0##*/}: machine        = $machine"
+echo "${0##*/}: subproj        = $subproj"
+echo "${0##*/}: regdir         = $regdir"
 
 #----------------------------------------------------------------------#
 # CTest
@@ -239,8 +274,8 @@ fi
 export work_dir=${base_dir}/${subproj}/${dashboard_type}_${comp}/${build_type}
 export scratch_dir=${scratchdir}/${subproj}/${dashboard_type}_${comp}/${build_type}
 
-echo "sn-regress.msub: work_dir       = ${work_dir}"
-echo "sn-regress.msub: scratch_dir    = ${scratch_dir}"
+echo "${0##*/}: work_dir       = ${work_dir}"
+echo "${0##*/}: scratch_dir    = ${scratch_dir}"
 echo " "
 setup_dirs=`echo $ctestparts | grep Configure`
 if [[ ${setup_dirs} ]]; then
@@ -291,13 +326,14 @@ fi
 # echo "--------------------(end environment)--------------------------"
 
 date
+echo " "
 echo ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}
 echo " "
 ctest -VV -S ${script_dir}/${script_name},${dashboard_type},${build_type},${ctestparts}
 
 if [[ ${regress_mode} == "on" ]]; then
   echo " "
-  run "chgrp -R draco ${work_dir}"
+  run "chgrp -R ccsrad ${work_dir}"
   run "chmod -R g+rX,o-rwX ${work_dir}"
 fi
 

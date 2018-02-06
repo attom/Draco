@@ -4,11 +4,11 @@
  * \author Rob Lowrie
  * \date   Fri Nov 12 22:28:37 2004
  * \brief  Header for Ensight_Stream.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef rtt_viz_Ensight_Stream_hh

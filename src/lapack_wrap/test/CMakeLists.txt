@@ -1,11 +1,11 @@
 # ---------------------------------------------------------------------------- #
-# Draco - Support libraries for transport solvers.
-# Copyright (C) 2016-2017 Los Alamos National Security, LLC.
-# All rights reserved.
+# file   lapack_wrap/test/CMakeLists.txt
+# author Kelly Thompson <kgt@lanl.gov>
+# date   2012 Aug 1
+# brief  Generate build project files for lapack_wrap.
+# note   Copyright (C) 2016-2018, Los Alamos National Security
+#        All rights reserved.
 # ---------------------------------------------------------------------------- #
-# $Id$
-# ---------------------------------------------------------------------------- #
-
 project( lapack_wrap_test CXX )
 
 # ---------------------------------------------------------------------------- #
@@ -15,24 +15,16 @@ project( lapack_wrap_test CXX )
 file( GLOB test_sources *.cc )
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # headers for tests
-   ${PROJECT_SOURCE_DIR}/..   # headers for package
-)
-
-# ---------------------------------------------------------------------------- #
 # Build Unit tests
 # ---------------------------------------------------------------------------- #
 
-set( test_dependencies
-   Lib_dsxx
-   lapack
-   blas
-   )
-
 add_scalar_tests(
    SOURCES "${test_sources}"
-   DEPS    "${test_dependencies}" )
+   DEPS    "Lib_dsxx;lapack" )
+
+target_include_directories( Ut_lapack_wrap_tstBlas_Level_1_exe
+  PRIVATE $<BUILD_INTERFACE:${lapack_wrap_BINARY_DIR}> )
+
+#------------------------------------------------------------------------------#
+# End lapack_wrap/test/CMakeLists.txt
+#------------------------------------------------------------------------------#

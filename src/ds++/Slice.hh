@@ -4,11 +4,11 @@
  * \author Kent Budge
  * \date   Thu Jul  8 08:06:53 2004
  * \brief  Definition of Slice template
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef container_Slice_hh

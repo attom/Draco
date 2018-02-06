@@ -3,7 +3,7 @@
 # author Kelly Thompson
 # brief  Instructions for building a C++ main that links against an
 #        F90 library and uses ISO_C_BINDING.
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved
 #------------------------------------------------------------------------------#
 project( FortranChecks_test CXX )
@@ -23,10 +23,10 @@ set( ptest_sources
 # ---------------------------------------------------------------------------- #
 # Directories to search for include directives
 # ---------------------------------------------------------------------------- #
-include_directories(
-  ${PROJECT_SOURCE_DIR}      # headers for tests
-  ${Draco_SOURCE_DIR}/src    # headers for ds++
-  )
+# include_directories(
+#   ${PROJECT_SOURCE_DIR}      # headers for tests
+#   ${Draco_SOURCE_DIR}/src    # headers for ds++
+#   )
 
 # ---------------------------------------------------------------------------- #
 # Build Unit tests

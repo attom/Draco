@@ -3,7 +3,7 @@
 ## File  : regression/ccscs-regression.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
@@ -106,20 +106,22 @@ dm_gcc="gcc/7.2.0 cmake netlib-lapack gsl metis random123 csk qt"
 dm_openmpi="openmpi parmetis superlu-dist trilinos"
 export dracomodules="$dm_core $dm_gcc $dm_openmpi"
 
+# default compiler
+comp=gcc
 # use bash_functions.sh::add_to_path?
 if [ -d $VENDOR_DIR/bin ] && [[ ":${PATH}:" != *":${VENDOR_DIR}/bin:"* ]]; then
   PATH="${PATH:+${PATH}:}${VENDOOR_DIR}/bin"
 fi
 
 # Setup for special builds (extra_params)
+# This variable is known by draco_regression_macros.cmake and is used for
+# setting up ctest for special builds (like static or vtest).
 case $extra_params in
   "")
     run "module load $dracomodules"
-    comp=gcc
     ;;
   coverage)
     run "module load $dracomodules"
-    comp=gcc
     echo "Coverage option selected."
     if ! [[ "${build_type}" == "Debug" ]]; then
       die "FATAL ERROR: build_type (-b) must be Debug when using extra option (-e) coverage."
@@ -139,7 +141,6 @@ case $extra_params in
     ;;
   fulldiagnostics)
     run "module load $dracomodules"
-    comp="gcc-fulldiagnostics"
     ;;
 #  gcc630)
 #    run "module load $dracomodules"
@@ -147,20 +148,20 @@ case $extra_params in
 #    ;;
   scalar)
     run "module load $dracomodules"
-    comp="gcc-scalar"
     ;;
   static)
     run "module load $dracomodules"
-    comp="gcc-staticlink"
     ;;
   valgrind)
     run "module load $dracomodules valgrind"
-    comp=gcc
     echo "Dynamic Analysis (valgrind) option selected."
     if ! [[ "${build_type}" == "Debug" ]]; then
       die "FATAL ERROR: build_type (-b) must be Debug when using extra option (-e) coverage."
     fi
     build_type=DynamicAnalysis
+    ;;
+  vtest)
+    run "module load $dracomodules"
     ;;
   *)
     echo "FATAL ERROR"
@@ -170,7 +171,11 @@ case $extra_params in
     ;;
 esac
 run "module list"
-comp=$comp-$featurebranch
+if [[ $extra_params ]]; then
+  comp=$comp-$extra_params-$featurebranch
+else
+  comp=$comp-$featurebranch
+fi
 
 # When run by crontab, use a special ssh-key to allow authentication to gitlab
 if test "$USER" == "kellyt"; then

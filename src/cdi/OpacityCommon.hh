@@ -4,10 +4,10 @@
  * \author Kelly Thompson
  * \date   Mon Jan 19 13:41:01 2001
  * \brief  Datatypes needed in GrayOpacity and MultigroupOpacity
- * \note   Copyright (C) 2016-2017 Los Alamos National Securty, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Securty, LLC.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef __cdi_OpacityCommon_hh__

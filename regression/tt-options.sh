@@ -12,8 +12,10 @@
 ##---------------------------------------------------------------------------##
 
 # Main Options
+export machine_class="tt"
+export machine_name_short="tt"
 export machine_name_long="Trinitite"
-platform_extra_params="fulldiagnostics knl  nr perfbench"
+platform_extra_params="fulldiagnostics knl  nr perfbench vtest"
 pem_match=`echo $platform_extra_params | sed -e 's/[ ]/|/g'`
 
 ##---------------------------------------------------------------------------##

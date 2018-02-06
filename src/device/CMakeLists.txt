@@ -3,10 +3,9 @@
 # author Gabriel Rockefeller
 # date   2011 June 13
 # brief  Instructions for building device Makefile.
-# note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
-# $Id$
 
 cmake_minimum_required(VERSION 3.9.0)
 project( device CXX )
@@ -42,3 +41,7 @@ process_autodoc_pages()
 # Push some variables up one level
 set( Draco_EXPORT_TARGET_PROPERTIES
    "${Draco_EXPORT_TARGET_PROPERTIES}" PARENT_SCOPE)
+
+# ---------------------------------------------------------------------------- #
+# End devices/CMakeLists.txt
+# ---------------------------------------------------------------------------- #

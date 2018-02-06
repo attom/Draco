@@ -1,9 +1,9 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   fit/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for fit.
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
@@ -20,17 +20,6 @@ file( GLOB headers *.hh )
 if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
    list( APPEND sources ${headers} )
 endif()
-
-# ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # sources
-   ${PROJECT_BINARY_DIR}      # fit/config.h
-   ${PROJECT_SOURCE_DIR}/..   # ds++ header files
-   ${dsxx_BINARY_DIR}         # ds++/config.h
-)
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions
@@ -52,3 +41,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 
 process_autodoc_pages()
+
+#------------------------------------------------------------------------------#
+# End fit/CMakeLists.txt
+#------------------------------------------------------------------------------#

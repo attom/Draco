@@ -4,17 +4,21 @@
  * \author <user>
  * \date   <date>
  * \brief  <start>
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
+
+// clang-format off
 
 #ifndef <spkg>_<class>_t_hh
 #define <spkg>_<class>_t_hh
 
 #include "<basename>.hh"
 
-namespace <namespace> {
+namespace<namespace> {
+
+// Definitions of templated functions that are instantiated from a _pt.cc file
+// go here.
 
 } // end namespace <namespace>
 

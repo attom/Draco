@@ -3,10 +3,8 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for mesh_element/test.
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id$
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
 project( mesh_element CXX )
@@ -25,16 +23,6 @@ if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
 endif()
 
 # ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # sources
-   ${PROJECT_SOURCE_DIR}/..   # ds++ header files
-   ${dsxx_BINARY_DIR}         # ds++/config.h
-)
-
-# ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
 
@@ -48,7 +36,8 @@ add_component_library(
 # Installation instructions
 # ---------------------------------------------------------------------------- #
 
-install( TARGETS Lib_mesh_element EXPORT draco-targets DESTINATION ${DBSCFGDIR}lib )
+install( TARGETS Lib_mesh_element EXPORT draco-targets DESTINATION
+  ${DBSCFGDIR}lib )
 install( FILES ${headers} DESTINATION ${DBSCFGDIR}include/mesh_element )
 
 # ---------------------------------------------------------------------------- #
@@ -64,3 +53,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 
 process_autodoc_pages()
+
+# ---------------------------------------------------------------------------- #
+# End mesh_element/CMakeLists.txt
+# ---------------------------------------------------------------------------- #

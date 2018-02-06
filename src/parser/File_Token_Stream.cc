@@ -4,11 +4,11 @@
  * \author Kent G. Budge
  * \date   Wed Jan 22 15:18:23 MST 2003
  * \brief  Definitions of File_Token_Stream methods.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------------------//
 
 #include "File_Token_Stream.hh"

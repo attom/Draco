@@ -5,11 +5,8 @@
  * \date   Fri Apr  6 08:57:48 2001
  * \brief  Header file for SesameTables (mapping material IDs
  *         to Sesame table indexes).
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-// $Id$
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef __cdi_eospac_SesameTables_hh__
@@ -25,11 +22,11 @@ namespace rtt_cdi_eospac {
 //===========================================================================//
 /*!
  * \class SesameTables
- * 
+ *
  * \brief This is a helper class for Eospac.  It tells Eospac what Sesame data
  *        is being requested and what lookup tables to use.
  *
- * \sa The web page for <a 
+ * \sa The web page for <a
  *     href="http://xweb.lanl.gov/PROJECTS/DATA/eos/">EOSPAC</a>.
  *
  * Each sesame material definition has 16 data tables (actually material
@@ -117,7 +114,7 @@ public:
 
 #if 0
     //! Temperature (K)
-    SesameTables& T_DUiz( unsigned matID ); 
+    SesameTables& T_DUiz( unsigned matID );
     //! Thermoelectric Coefficient (1/cm^2/s)
     SesameTables& B_DT( unsigned matID );
     //! Shear Modulus (Gpa)
@@ -167,7 +164,7 @@ public:
     //! Freeze Specific-Internal-Energy (MJ/kg)
     SesameTables& Uf_D( unsigned matID );
     //! Ion Specific-Internal-Energy plus Cold Curve Specific-Internal-Energy (MJ/kg)
-    SesameTables& Uic_DPic( unsigned matID ); 
+    SesameTables& Uic_DPic( unsigned matID );
     //! Melt Specific-Internal-Energy (MJ/kg)
     SesameTables& Um_D(  unsigned matID );
     //! Melt Specific-Internal-Energy (MJ/kg)

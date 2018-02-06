@@ -3,7 +3,7 @@
  * \file   parser/Debug_Options.cc
  * \author Kent Grimmett Budge
  * \brief  Define Debug_Options parse functions.
- * \note   Copyright (C) 2014-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2014-2018 Los Alamos National Security, LLC.
  *         All rights reserved. */
 /*---------------------------------------------------------------------------*/
 

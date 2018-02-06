@@ -4,11 +4,11 @@
  * \author Kelly Thompson
  * \date   Mon Apr  2 14:14:29 2001
  * \brief
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef __cdi_eospac_Eospac_hh__

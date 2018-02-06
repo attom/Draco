@@ -4,11 +4,11 @@
  * \author Kelly Thompson
  * \date   Thu Jul 7 2011
  * \brief  Test the functionality of the class ParallelUnitTest
- * \note   Copyright (C) 2016-2017 Los Alamos National Securities, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Securities, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"

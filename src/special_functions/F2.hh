@@ -3,11 +3,11 @@
  * \file   sf/F2.hh
  * \author Kent Budge
  * \brief  Fermi-Dirac integral of second order.
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef sf_F2_hh

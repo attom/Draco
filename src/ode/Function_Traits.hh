@@ -4,11 +4,11 @@
  * \author Kent Budge
  * \date   Wed Aug 18 10:31:24 2004
  * \brief  Definition of class template Function_Traits
- * \note   Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *         All rights reserved.
  */
 //---------------------------------------------------------------------------//
-// $Id$
+
 //---------------------------------------------------------------------------//
 
 #ifndef ode_Function_Traits_hh

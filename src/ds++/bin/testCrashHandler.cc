@@ -5,7 +5,7 @@
  * \date   Wed Nov 06 2013
  * \brief  Windows/x86 crash handler tests
  *
- * Copyright (C) 2016-2017 Los Alamos National Security, LLC.
+ * Copyright (C) 2016-2018 Los Alamos National Security, LLC.
  *               All rights reserved.
  *
  * See ds++/COPYING file for more copyright information.  This code is based

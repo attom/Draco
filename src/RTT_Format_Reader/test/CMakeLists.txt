@@ -1,12 +1,10 @@
 #-----------------------------*-cmake-*----------------------------------------#
-# file   config/CMakeLists.txt
+# file   RTT_Format_Reader/test/CMakeLists.txt
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for RTT_Format_Reader/test.
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
-#------------------------------------------------------------------------------#
-# $Id$
 #------------------------------------------------------------------------------#
 project( RTT_Format_Reader_test CXX )
 
@@ -16,16 +14,6 @@ project( RTT_Format_Reader_test CXX )
 
 file( GLOB test_sources *.cc )
 file( GLOB mesh_input_files *.mesh.in )
-
-# ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}      # headers for tests
-   ${PROJECT_SOURCE_DIR}/..   # headers for package
-   ${PROJECT_BINARY_DIR}/..   # config.h
-)
 
 # ---------------------------------------------------------------------------- #
 # Build Unit tests
@@ -44,3 +32,7 @@ provide_aux_files(
    FILES    "${mesh_input_files}"
    SRC_EXT  ".mesh.in"
    DEST_EXT ".mesh" )
+
+#------------------------------------------------------------------------------#
+# End RTT_Format_Reader/test/CMakeLists.txt
+#------------------------------------------------------------------------------#

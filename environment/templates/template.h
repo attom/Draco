@@ -4,13 +4,16 @@
  * \author <user>
  * \date   <date>
  * \brief  <start>
- * \note   Copyright (C) 2017 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ *         All rights reserved. */
 /*---------------------------------------------------------------------------*/
+
+/* clang-format off */
 
 #ifndef <spkg>_<class>_h
 #define <spkg>_<class>_h
+
+/* content goes here */
 
 #endif /* <spkg>_<class>_h */
 

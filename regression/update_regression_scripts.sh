@@ -3,7 +3,7 @@
 ## File  : regression/update_regression_scripts.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
@@ -52,11 +52,6 @@ case ${target} in
     REGDIR=/scratch/regress
     VENDOR_DIR=/scratch/vendors
     keychain=keychain-2.8.2
-    ;;
-  ml-*)
-    REGDIR=/usr/projects/jayenne/regress
-    keychain=keychain-2.7.1
-    VENDOR_DIR=/usr/projects/draco/vendors
     ;;
   *)
     REGDIR=/scratch/regress
@@ -133,8 +128,8 @@ fi
 if [[ -d /usr/projects/ccsrad/regress/cdash ]]; then
   echo -e "\nCleaning up old builds."
   run "cd /usr/projects/ccsrad/regress/cdash"
-  run "find . -maxdepth 3 -mtime +3 -name 'Experimental*-pr*' -type d"
-  run "find . -maxdepth 3 -mtime +3 -name 'Experimental*-pr*' -type d -exec rm -rf {} \;"
+  run "find . -maxdepth 3 -mtime +2 -name 'Experimental*-pr*' -type d"
+  run "find . -maxdepth 3 -mtime +2 -name 'Experimental*-pr*' -type d -exec rm -rf {} \;"
 fi
 
 echo -e "\n--------------------------------------------------------------------------------"
