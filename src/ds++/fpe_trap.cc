@@ -11,7 +11,7 @@
  * Copyright (C) 1990-1994  The Boeing Company.
  *
  * See COPYING file for more copyright information.  This code is based
- * substantially on fpe/i686-pc-linux-gnu.c from algae-4.3.6, which is 
+ * substantially on fpe/i686-pc-linux-gnu.c from algae-4.3.6, which is
  * available at http://algae.sourceforge.net/.
  */
 //---------------------------------------------------------------------------//
@@ -75,7 +75,7 @@ extern "C" void catch_sigfpe(int sig, siginfo_t *psSiginfo,
 namespace rtt_dsxx {
 
 //---------------------------------------------------------------------------//
-/*! 
+/*!
  * \brief Enable trapping fpe signals.
  * \return \b true if trapping is enabled, \b false otherwise.
  *

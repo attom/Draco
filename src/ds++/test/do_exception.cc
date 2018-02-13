@@ -22,33 +22,42 @@ using namespace std;
 
 //---------------------------------------------------------------------------//
 /*
-  Usage: do_exception test
-
-  If test is 0, then simple floating point operations are done which should not
-  cause an error.
-
-  Otherwise, other test values should cause an exception.  Specifically, valid
-  test values are
-
-  Otherwise, other test values should cause an exception.
-  Specifically, valid test values are
-     1: test double division by zero
-     2: test sqrt(-1)
-     3: test overflow
-
-  The file output.dat documents what happened during all tests.
-*/
+ * Usage: 'do_exception <integer_value>'
+ *
+ * <integer_value> must be 0, 1, 2 or 3.
+ *
+ * If the required argument is 0, then simple floating point operations are done
+ * which should not cause any errors.
+ *
+ * If the provided integral value is 1,2, or 3, then one of the test case listed
+ * below will be run. Each of these test cases should cause an IEEE floating
+ * point exception.
+ *
+ * Test
+ * case    Description (type of IEEE exception)
+ * ----    --------------------------------------
+ *    1    test double division by zero
+ *    2    test sqrt(-1)
+ *    3    test overflow
+ *
+ * If \c 'DRACO_DIAGNOSTICS && 0100' is non-zero (e.g.: \c DRACO_DIAGNOSTICS=7),
+ * then Draco's fpe_trap shoud convert the IEEE FPE into a C++ exception and
+ * print a stack trace.
+ *
+ * When run through via \c ctest, the output from these tests is captured in the
+ * files \c do_exception_[0-9]+.out and \c do_exception_[0-9]+.err.
+ */
 void run_test(int /*argc*/, char *argv[]) {
 
   bool const abortWithInsist(true);
   rtt_dsxx::fpe_trap fpet(abortWithInsist);
   if (fpet.enable()) {
-    // Platform supported.
+    // Platform is supported.
     cout << "\n- fpe_trap: This platform is supported.\n";
     if (!fpet.active())
       cout << "- fpe_trap: active flag set to false was not expected.\n";
   } else {
-    // Platform not supported.
+    // Platform is not supported.
     cout << "\n- fpe_trap: This platform is not supported\n";
     if (fpet.active())
       cout << "- fpe_trap: active flag set to true was not expected.\n";
@@ -67,7 +76,8 @@ void run_test(int /*argc*/, char *argv[]) {
   // Certain tests may be optimized away by the compiler, by recogonizing the
   // constants set above and precomputing the results below.  So do something
   // here to hopefully avoid this.  This tricks the optimizer, at least for gnu
-  // and KCC.
+  // and KCC. [2018-02-09 KT -- some web posts hint that marking zero and neg as
+  // 'volitile' may also prevent removal of logic due to optimization.]
 
   if (test < -100) { // this should never happen
     Insist(0, "Something is very wrong.");
@@ -79,23 +89,23 @@ void run_test(int /*argc*/, char *argv[]) {
   case 0:
     // Should not throw a IEEE floating point exception.
     cout << "- Case zero: this operation should not throw a SIGFPE."
-         << " The result should be 2...\n";
+         << " The result should be 2..." << endl;
     result = 1.0 + zero + sqrt(-neg);
     cout << "  result = " << result << endl;
     break;
   case 1:
-    cout << "- Case one: trying a div_by_zero operation...\n";
+    cout << "- Case one: trying a div_by_zero operation..." << endl;
     result = 1.0 / zero; // should fail here
     cout << "  result = " << 1.0 * result;
     break;
   case 2:
     // http://en.cppreference.com/w/cpp/numeric/math/sqrt
-    cout << "- Case two: trying to evaluate sqrt(-1.0)...\n";
+    cout << "\n- Case two: trying to evaluate sqrt(-1.0)..." << endl;
     result = std::sqrt(neg); // should fail here
     cout << "  result = " << result;
     break;
   case 3:
-    cout << "- Case three: trying to cause an overflow condition...\n";
+    cout << "- Case three: trying to cause an overflow condition..." << endl;
     result = 2.0;
     std::vector<double> data;
     for (size_t i = 0; i < 100; i++) {

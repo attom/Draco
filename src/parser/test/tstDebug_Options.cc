@@ -26,13 +26,13 @@ using namespace rtt_dsxx;
 //---------------------------------------------------------------------------//
 
 void debug_options_test(UnitTest &ut) {
-  for (unsigned i = 1; i < 2 * DEBUG_RESET_TIMING - 1; i++) {
+  for (unsigned i = 1; i < 2 * DEBUG_PROBLEM - 1; i++) {
     string out = debug_options_as_text(i);
     String_Token_Stream tokens(out);
     unsigned j = parse_debug_options(tokens);
     ut.check(i == j, "write/read check");
   }
-  for (unsigned i = 1; i <= DEBUG_RESET_TIMING; i <<= 1U) {
+  for (unsigned i = 1; i <= DEBUG_PROBLEM; i <<= 1U) {
     string out = debug_options_as_text(i);
     out = '!' + out.substr(1);
     String_Token_Stream mask_tokens(out);
