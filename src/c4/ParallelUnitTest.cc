@@ -136,6 +136,46 @@ void ParallelUnitTest::status() {
   return;
 }
 
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Increment either the pass or fail count and print a test description.
+ *
+ * This function is similar to check() but assumes a parallel test, checked on
+ * all processors synchronously which all must pass. It eliminates repeated
+ * and possibly inconsistent error messages and also guarantees cleaner
+ * termination if the test fails only on some of the processors.
+ *
+ * \param good True if the test passed, false otherwise.
+ * \param passmsg The message to be printed to the iostream \c UnitTest::out.
+ * \param fatal True if the test is to throw a std::assert on failure.
+ */
+bool ParallelUnitTest::check_all(bool const i_am_good,
+                                 std::string const &passmsg, bool const fatal) {
+  unsigned good = i_am_good;
+  rtt_c4::global_min(good);
+  unsigned p = rtt_c4::node();
+  if (good) {
+    if (p == 0)
+      passes(passmsg);
+  } else {
+    int igood = i_am_good;
+    std::vector<int> ps(rtt_c4::nodes());
+    rtt_c4::gather(&igood, &ps[0], 1);
+    if (p == 0) {
+      failure(passmsg);
+      out << "failing processors:";
+      for (int i = 0; i < rtt_c4::nodes(); ++i) {
+        if (!ps[i])
+          out << ' ' << i;
+      }
+      out << std::endl;
+    }
+    if (fatal)
+      throw rtt_dsxx::assertion("assertion thrown on critical check failure");
+  }
+  return true;
+}
+
 } // end namespace rtt_c4
 
 //---------------------------------------------------------------------------//

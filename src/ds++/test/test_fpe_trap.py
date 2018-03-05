@@ -66,20 +66,17 @@ try:
     if any(platform.win32_ver()):
       # Signaling error: A SIGFPE was detected!
       string_found = tFpeTrap.output_contains("A SIGFPE was detected!")
-    else:
+    if( not string_found ):
       # Signaling error: SIGFPE (Floating point divide by zero)
       string_found = tFpeTrap.output_contains("Floating point divide by zero")
+    if( not string_found ):
+      # Signaling error: runtime error: division by zero
+      string_found = tFpeTrap.output_contains("runtime error: division by zero")
 
     if( string_found ):
       tFpeTrap.passmsg("Caught SIGFPE (Floating point divide by zero)")
     else:
-      # 2nd chance: try the error stream
-      string_found = tFpeTrap.error_contains("Floating point divide by zero")
-      if( string_found):
-        tFpeTrap.passmsg("Caught SIGFPE (Floating point divide by zero)")
-      else:
-        tFpeTrap.failmsg("Failed to catch SIGFPE (Floating point divide by zero)")
-
+      tFpeTrap.failmsg("Failed to catch SIGFPE (Floating point divide by zero)")
 
       print("Standard out:")
       with open(tFpeTrap.outfile) as f:

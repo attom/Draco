@@ -58,6 +58,8 @@ public:
 
   virtual void report(const string &message);
 
+  virtual void comment(std::string const &message);
+
 protected:
   // IMPLEMENTATION
 

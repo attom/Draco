@@ -446,7 +446,7 @@ macro( setupMPILibrariesWindows )
 
       message(STATUS "Looking for MPI...")
       find_package( MPI QUIET )
-      
+
       # For MS-MPI 5, mpifptr.h is architecture dependent. Figure out
       # what arch this is and save this path to MPI_Fortran_INCLUDE_PATH
       list( GET MPI_CXX_LIBRARIES 0 first_cxx_mpi_library )
@@ -480,7 +480,7 @@ macro( setupMPILibrariesWindows )
       else()
          set(DBS_MPI_VER "5.0")
       endif()
-      
+
       set_package_properties( MPI PROPERTIES
         URL "https://msdn.microsoft.com/en-us/library/bb524831%28v=vs.85%29.aspx"
         DESCRIPTION "Microsoft MPI"
@@ -549,8 +549,8 @@ macro( setupMPILibrariesWindows )
          IMPORTED_CONFIGURATIONS           Release
          IMPORTED_LINK_INTERFACE_LANGUAGES "CXX" )
 
-   endif()   
-   
+   endif()
+
    # Don't link to the C++ MS-MPI library when compiling with MinGW gfortran.
    # Instead, link to libmsmpi.a that was created via gendef.exe and
    # dlltool.exe from msmpi.dll.  Ref:
@@ -572,30 +572,37 @@ macro( setupMPILibrariesWindows )
    #     del msmpi.def
    #     copy libmsmpi.a %MSMPI_LIB32%/libmsmpi.a
 
-   if( EXISTS ${CMAKE_Fortran_COMPILER} )
-   # only do this if we are in a CMakeAddFortranSubdirectory directive when the
-   # main Generator is Visual Studio and the Fortran subdirectory uses gfortran
-   # with Makefiles.
-   if( "${MPI_Fortran_LIBRARIES}none" STREQUAL "none" OR
-       "${MPI_Fortran_LIBRARIES}" MATCHES "msmpi.lib" )
-     # should be located in ENV{PATH} at c:/Program Files/Microsoft MPI/Bin/
-     find_library( MPI_gfortran_LIBRARIES msmpi )
-     set( MPI_Fortran_LIBRARIES ${MPI_gfortran_LIBRARIES} CACHE FILEPATH
-          "msmpi for gfortran" FORCE )
-        
-     # Windows systems with dll libraries.
-     add_library( MPI::MPI_Fortran SHARED IMPORTED )
+   if( WIN32 AND EXISTS "${CMAKE_Fortran_COMPILER}" AND
+       TARGET MPI::MPI_Fortran )
 
-     # Windows with dlls, but only Release libraries.
-     set_target_properties(MPI::MPI_Fortran PROPERTIES
-       IMPORTED_LOCATION_RELEASE         "${MPI_gfortran_LIBRARIES}"
-       IMPORTED_IMPLIB                   "${MPI_gfortran_LIBRARIES}"
-       INTERFACE_INCLUDE_DIRECTORIES     "${MPI_C_INCLUDE_DIRS}"
-       IMPORTED_CONFIGURATIONS           Release
-       IMPORTED_LINK_INTERFACE_LANGUAGES "Fortran" )
+     # only do this if we are in a CMakeAddFortranSubdirectory directive
+     # when the main Generator is Visual Studio and the Fortran subdirectory
+     # uses gfortran with Makefiles.
+
+     # MS-MPI has an architecture specific include directory that
+     # FindMPI.cmake doesn't seem to pickup correctly.  Add it here.
+     get_target_property(mpilibdir MPI::MPI_Fortran
+       INTERFACE_LINK_LIBRARIES)
+     get_target_property(mpiincdir MPI::MPI_Fortran
+       INTERFACE_INCLUDE_DIRECTORIES)
+     foreach( arch x86 x64 )
+       string(FIND "${mpilibdir}" "lib/${arch}" found_lib_arch)
+       string(FIND "${mpiincdir}" "include/${arch}" found_inc_arch)
+       if( ${found_lib_arch} GREATER 0 AND
+         ${found_inc_arch} LESS 0 )
+         if( IS_DIRECTORY "${mpiincdir}/${arch}")
+           list(APPEND mpiincdir "${mpiincdir}/${arch}")
+         endif()
+       endif()
+     endforeach()
+
+     # Reset the include directories for MPI::MPI_Fortran to pull in the
+     # extra $arch locations (if any)     
+     set_target_properties(MPI::MPI_Fortran
+       PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${mpiincdir}")
+
    endif()
-   endif()
-   
+
    if( ${MPI_C_FOUND} )
       message(STATUS "Looking for MPI...${MPIEXEC}")
    else()

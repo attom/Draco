@@ -49,7 +49,8 @@ case ${-} in
      echo "knownaccounts  - Table of known accounts."
      echo "jobpriorities  - List of all jobs and their priorities."
      echo "backfill       - Maximum job size to allow immediate start?"
-}
+     echo "usercpuhrs [moniker] [start date (mm/dd/yy)] [end date (mm/dd/yy)] - Print total cpu-hr usage by account."
+   }
 
    alias hluser="egrep --color -E '.*${USER}.*|$'"
    boldface=$(tput bold)
@@ -129,7 +130,18 @@ case ${-} in
    function sreason () {
      squeue -o "%.7i %.10u %.10T %r" -t PD,S,CG,CD,CF,CA,F,TO,PR,NF -j $1
    }
-
+   function usercpuhrs () {	 
+     if [[ $1 =~ [a-z].* ]]; then
+       user=$1
+       fday=$2
+       lday=$3
+     elif [[ $1 =~ [0-9].* ]]; then
+       fday=$1
+       lday=$2
+     fi
+     [ -z "$user" ] && user=${USER}
+     sreport -t Hours cluster AccountUtilizationByUser user=$user start=$fday end=$lday
+   }
    ;; # end case 'interactive'
 
 ##---------------------------------------------------------------------------##

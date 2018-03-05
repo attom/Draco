@@ -108,6 +108,10 @@ public:
   DLL_PUBLIC_dsxx bool passes(std::string const &passmsg);
   DLL_PUBLIC_dsxx bool check(bool, std::string const &checkmsg,
                              bool fatal = false);
+  DLL_PUBLIC_dsxx virtual bool check_all(bool good, std::string const &checkmsg,
+                                         bool fatal = false) {
+    return check(good, checkmsg, fatal);
+  }
   /*!
    * \brief Provide a summary of the test status
    *

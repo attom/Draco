@@ -63,6 +63,8 @@ unsigned get_debug_option(string const &option_name) {
     return DEBUG_MEMORY;
   } else if (option_name == "RESET_TIMING") {
     return DEBUG_RESET_TIMING;
+  } else if (option_name == "PROBLEM") {
+    return DEBUG_PROBLEM;
   } else {
     // parse extension to debug options
     if (extended_debug_option.find(option_name) ==
@@ -147,10 +149,14 @@ string debug_options_as_text(unsigned debug_options) {
   if (debug_options & DEBUG_RESET_TIMING) {
     Result += ", RESET_TIMING";
   }
+  if (debug_options & DEBUG_PROBLEM) {
+    Result += ", PROBLEM";
+  }
   // Mask out standard options and see if any extensions are active
-  debug_options = debug_options &
-                  ~(DEBUG_ALGORITHM | DEBUG_TIMESTEP | DEBUG_TIMING |
-                    DEBUG_RESET_TIMING | DEBUG_BALANCE | DEBUG_MEMORY);
+  debug_options =
+      debug_options &
+      ~(DEBUG_ALGORITHM | DEBUG_TIMESTEP | DEBUG_TIMING | DEBUG_RESET_TIMING |
+        DEBUG_BALANCE | DEBUG_MEMORY | DEBUG_PROBLEM);
 
   if (debug_options) {
     for (const auto &i : extended_debug_option) {

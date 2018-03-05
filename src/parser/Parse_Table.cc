@@ -268,6 +268,16 @@ Token Parse_Table::parse(Token_Stream &tokens) const {
 
           tokens.report_semantic_error(token, ": unrecognized keyword: " +
                                                   token.text());
+
+          // Give the user the possibilities.
+          tokens.comment("Perhaps you meant one of:");
+          for (auto const &i : vec) {
+            tokens.comment(i.moniker);
+            if (i.description != nullptr) {
+              tokens.comment(string("  ") + i.description);
+            }
+          }
+
           is_recovering = true;
         }
         // else we are in recovery mode, and additional diagnostics

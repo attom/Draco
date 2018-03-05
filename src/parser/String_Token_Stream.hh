@@ -54,6 +54,9 @@ public:
   //! Report a condition.
   virtual void report(string const &message);
 
+  //! Report a comment.
+  virtual void comment(std::string const &message);
+
   // ACCESSORS
 
   //! Return the text to be tokenized.
