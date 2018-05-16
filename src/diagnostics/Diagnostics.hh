@@ -5,13 +5,7 @@
  * \date   Fri Dec  9 10:52:38 2005
  * \brief  Diagnostics class for runtime info.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- *
- * 2010-11-29 This component was moved from clubimc/utils to
- * draco/diagnostics. 
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef diagnostics_Diagnostics_hh
@@ -39,18 +33,17 @@ namespace rtt_diagnostics {
  * The key for each map is a std::string.
  *
  * These maps can be used to store diagnostic quantities.  Because they have
- * global, file scope they can be accessed from any routine.  The general
- * usage is as follows:
+ * global, file scope they can be accessed from any routine.  The general usage
+ * is as follows:
+ *
  * \code
  *   rtt_diagnostics::Diagnostics::integers["Num_part_per_proc"] = 1011;
  * \endcode
+ *
  * A compile-time switching mechanism for using these maps is provided by the
  * macros DIAGNOSTICS_ONE, DIAGNOSTICS_TWO, and DIAGNOSTICS_THREE.
- */
-/*! 
- * \example diagnostics/test/tstDiagnostics.cc 
- * 
- * description of example
+ *
+ * \example diagnostics/test/tstDiagnostics.cc
  */
 //===========================================================================//
 
@@ -83,7 +76,7 @@ extern DLL_PUBLIC_diagnostics std::map<std::string, std::vector<double>>
  * - Bit 0, (001), activates Level 1 (negligible performance impact)
  * - Bit 1, (010), activates Level 2 (some performance impact and possible
  *                                    intrusive output, rtt_memory trackin is
- *                                    activated.) 
+ *                                    activated.)
  * - Bit 2, (100), activates Level 3 (includes fpe_trap diagnostics)
  * .
  * The following integer settings activate Levels in the following way:
@@ -114,8 +107,7 @@ extern DLL_PUBLIC_diagnostics std::map<std::string, std::vector<double>>
  * \code
  *     DIAGNOSTICS_ONE(integers["Variable"] = 1);
  * \endcode
- * On when DRACO_DIAGNOSTICS & 1 is true.  Defines
- * DRACO_DIAGNOSTICS_LEVEL_1. 
+ * On when DRACO_DIAGNOSTICS & 1 is true.  Defines DRACO_DIAGNOSTICS_LEVEL_1.
  */
 /*!
  * \def DIAGNOSTICS_TWO(Diagnostics::member)
@@ -124,8 +116,7 @@ extern DLL_PUBLIC_diagnostics std::map<std::string, std::vector<double>>
  * \code
  *     DIAGNOSTICS_TWO(integers["Variable"] = 1);
  * \endcode
- * On when DRACO_DIAGNOSTICS & 2 is true.  Defines
- * DRACO_DIAGNOSTICS_LEVEL_2.
+ * On when DRACO_DIAGNOSTICS & 2 is true.  Defines DRACO_DIAGNOSTICS_LEVEL_2.
  */
 /*!
  * \def DIAGNOSTICS_THREE(Diagnostics::member)
@@ -134,8 +125,7 @@ extern DLL_PUBLIC_diagnostics std::map<std::string, std::vector<double>>
  * \code
  *     DIAGNOSTICS_THREE(integers["Variable"] = 1);
  * \endcode
- * On when DRACO_DIAGNOSTICS & 4 is true.  Defines
- * DRACO_DIAGNOSTICS_LEVEL_3.
+ * On when DRACO_DIAGNOSTICS & 4 is true.  Defines DRACO_DIAGNOSTICS_LEVEL_3.
  */
 //---------------------------------------------------------------------------//
 #ifdef DRACO_DIAGNOSTICS_LEVEL_1

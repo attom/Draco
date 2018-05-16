@@ -164,6 +164,21 @@ public:
   virtual void report(std::string const &message) = 0;
 
   //-----------------------------------------------------------------------//
+  /*!
+     * \brief Send a comment, without location information, to the user.
+     *
+     * This function sends a message to the user in a stream-specific manner.
+     * This differs from the report() functions chiefly in that the message
+     * is not preceded by any location information. This is useful for
+     * extended comments, e.g., listing available keywords when the stream
+     * contains an unrecognized keyword.
+     *
+     * \param message
+     * Message to be passed to the user.
+     */
+  virtual void comment(std::string const &message) = 0;
+
+  //-----------------------------------------------------------------------//
   /*! Check a syntax condition.
      *
      * By putting the check branch here, we improve coverage statistics for

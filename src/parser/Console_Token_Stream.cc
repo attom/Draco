@@ -113,6 +113,18 @@ void Console_Token_Stream::report(string const &message) {
 
 //-------------------------------------------------------------------------------------//
 /*!
+ * This function sends a message by writing it to the error console stream.
+ * This version prints no location information.
+ */
+
+void Console_Token_Stream::comment(string const &message) {
+  std::cerr << message << std::endl;
+
+  Ensure(check_class_invariants());
+}
+
+//-------------------------------------------------------------------------------------//
+/*!
  * \author Kent G. Budge
  * \date Wed Jan 22 15:35:42 MST 2003
  * \brief Rewind the token stream.

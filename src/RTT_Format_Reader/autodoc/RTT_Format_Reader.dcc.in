@@ -12,7 +12,7 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_rtt_format_reader Overview of the RTT_Format_Reader package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author Todd Adams
 
 \section Introduction
@@ -34,7 +34,7 @@ data classes:
 <ul>
  <li> rtt_RTT_Format_Reader::Header
  <li> rtt_RTT_Format_Reader::Dims (dimensions)
- <li> rtt_RTT_Format_Reader::Flags (member data class of NodeFlags, 
+ <li> rtt_RTT_Format_Reader::Flags (member data class of NodeFlags,
                                     SideFlags, and CellFlags)
  <li> rtt_RTT_Format_Reader::NodeFlags
  <li> rtt_RTT_Format_Reader::SideFlags
@@ -51,7 +51,7 @@ data classes:
  <li> rtt_RTT_Format_Reader::SideData
  <li> rtt_RTT_Format_Reader::CellData
  <li> rtt_RTT_Format_Reader::Connectivity
-</ul> 
+</ul>
 
 These classes provide a convenient grouping of the mesh data, and the
 RTT_Format_Reader public accessor member functions reflect the name of

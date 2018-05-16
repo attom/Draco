@@ -47,6 +47,7 @@ char *convert_string_to_char_ptr(std::string const &s) {
 void tstOne(UnitTest &unitTest) {
   unitTest.passes("Looks like the passes member function is working.");
   unitTest.check(true, "Also for check version.");
+  unitTest.check_all(true, "Also for check_all version.");
   PASSMSG("Looks like the PASSMSG macro is working as a member function.");
   UT_CHECK(unitTest, true);
   return;
@@ -56,6 +57,7 @@ void tstOne(UnitTest &unitTest) {
 void tstTwo(UnitTest &unitTest) {
   unitTest.failure("Looks like the failure member function is working.");
   unitTest.check(false, "Also for check version.");
+  unitTest.check_all(false, "Also for check_all version.");
   FAILMSG("Looks like the FAILMSG macro is working.");
   ITFAILS;
   FAILURE;
@@ -75,13 +77,13 @@ void tstTwoCheck(UnitTest &unitTest, ostringstream &msg) {
   map<string, unsigned> word_list(rtt_dsxx::get_word_count(msg, verbose));
 
   // Check the list of occurrences against the expected values
-  if (word_list[string("Test")] == 8)
-    unitTest.passes("Found 7 occurrences of \"Test\"");
+  if (word_list[string("Test")] == 9)
+    unitTest.passes("Found 9 occurrences of \"Test\"");
   else
     unitTest.failure("Did not find expected number of occurrences of \"Test\"");
 
-  if (word_list[string("failed")] != 6)
-    unitTest.failure("Did not find 5 occurrences of failure.");
+  if (word_list[string("failed")] != 7)
+    unitTest.failure("Did not find 7 occurrences of failure.");
   if (word_list[string("FAILMSG")] != 1)
     unitTest.failure("Found 1 occurrence of \"FAILMSG\"");
   if (word_list[string("failure")] != 1)
@@ -220,7 +222,7 @@ void tstdbcsettersandgetters(UnitTest &unitTest, int argc, char *argv[]) {
   return;
 }
 
-//---------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 void tstVersion(UnitTest &unitTest, char *test) {
   // Check version construction
 
@@ -259,7 +261,7 @@ void tstVersion(UnitTest &unitTest, char *test) {
   return;
 }
 
-//---------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 void tstPaths(UnitTest &unitTest, char *test) {
   // Checkpoint
   size_t const nf = unitTest.numFails;
@@ -292,8 +294,17 @@ void tstPaths(UnitTest &unitTest, char *test) {
     ITFAILS;
   if (testName != std::string("tstScalarUnitTest") + rtt_dsxx::exeExtension)
     ITFAILS;
-  if (thisFile != testSourceDir + testName_wo_suffix + std::string(".cc"))
-    ITFAILS;
+  if (thisFile != testSourceDir + testName_wo_suffix + std::string(".cc")) {
+    // 2nd chance for case-insensitive file systems
+    std::string lc_thisFile = thisFile;
+    std::transform(lc_thisFile.begin(), lc_thisFile.end(), lc_thisFile.begin(),
+                   ::tolower);
+    std::string lc_gold =
+        testSourceDir + testName_wo_suffix + std::string(".cc");
+    std::transform(lc_gold.begin(), lc_gold.end(), lc_gold.begin(), ::tolower);
+    if (lc_thisFile != lc_gold)
+      ITFAILS;
+  }
 
   // CMake should provide cmake_install.cmake at testBinaryInputDir.
   if (!rtt_dsxx::fileExists(testBinaryInputDir +

@@ -209,6 +209,18 @@ void File_Token_Stream::report(string const &message) {
 
 //-------------------------------------------------------------------------------------//
 /*!
+ * This function sends a message by writing it to the error console stream.
+ * This version prints no location information.
+ */
+
+void File_Token_Stream::comment(string const &message) {
+  cerr << message << endl;
+
+  Ensure(check_class_invariants());
+}
+
+//-------------------------------------------------------------------------------------//
+/*!
  * This function rewinds the file stream associated with the file token
  * stream and flushes its internal buffers, so that scanning resumes at
  * the beginning of the file stream. The error count is also reset.

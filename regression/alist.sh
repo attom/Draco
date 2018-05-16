@@ -81,7 +81,7 @@ for entry in "${entries[@]}"; do
 
   case $current_author in
     along | Alex*  ) current_author="Alex R. Long" ;;
-    clevelam | *Cleveland) current_author="Matt A. Cleveland" ;;
+    clevelam | cleveland | *Cleveland) current_author="Matt A. Cleveland" ;;
     gaber) current_author="Gabe M. Rockefeller" ;;
     hkpark) current_author="HyeongKae Park" ;;
     jdd) current_author="Jeff D. Densmore" ;;
@@ -96,6 +96,7 @@ for entry in "${entries[@]}"; do
     ntmyers) current_author="Nick Meyers" ;;
     pahrens) current_author="Peter Ahrens" ;;
     talbotp) current_author="Paul Talbot" ;;
+    tkelley | Tim*) current_author="Tim Kelley" ;;
     tmonster) current_author="Todd J. Urbatsch" ;;
     warsa | *Warsa) current_author="James S. Warsa" ;;
     wollaber) current_author="Allan B. Wollaber" ;;

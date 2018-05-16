@@ -12,11 +12,11 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_dsxx Overview of the ds++ package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author Kelly G. Thompson, Thomas M. Evans, Rob Lowrie, Mike Buksas,
 Geoffrey Furnish, Paul Henning, Randy Roberts, and Todd Urbatsch
 
-\section abstract Abstract 
+\section abstract Abstract
 
 This package provides data structures and other miscellaneous support
 for the Draco system. Classes for matrices, design-by-contract,
@@ -27,9 +27,9 @@ The significant services provided in ds++ are:
 - \b Packer \b Unpacker (rtt_dsxx::Packer, rtt_dsxx::Unpacker) utilities that
 pack data types into a char *
 - \b soft_equiv (rtt_dsxx::soft_equiv()) a soft equivalence function for
-floating point comparisons 
+floating point comparisons
 - \b ScalarUnitTest (rtt_dsxx::ScalarUnitTest) provides a unit test
-framework for scalar code.  
+framework for scalar code.
 .
 
 Additionally, a usefull Design-by-Contract implementation can be found in
@@ -38,7 +38,7 @@ Assert.hh.
 <!--------------------------------------------------------------------------->
 \section sp Smart Pointer
 
-The smart pointer is used exhaustively by Draco and codes build on top of the DBS. 
+The smart pointer is used exhaustively by Draco and codes build on top of the DBS.
 
 <!--------------------------------------------------------------------------->
 \section assert Design-by-Contract Assertions

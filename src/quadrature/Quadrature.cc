@@ -13,6 +13,7 @@
 #include <algorithm>
 
 namespace rtt_quadrature {
+using std::make_shared;
 typedef Ordinate_Set::Ordering Ordering;
 
 //---------------------------------------------------------------------------//
@@ -306,13 +307,13 @@ std::shared_ptr<Ordinate_Space> Quadrature::create_ordinate_space(
 
   std::shared_ptr<Ordinate_Space> Result;
   if (qim == SN)
-    Result.reset(new Sn_Ordinate_Space(dimension, geometry, ordinates,
-                                       moment_expansion_order,
-                                       include_extra_directions, ordering));
+    Result = make_shared<Sn_Ordinate_Space>(dimension, geometry, ordinates,
+                                            moment_expansion_order,
+                                            include_extra_directions, ordering);
   else
-    Result.reset(new Galerkin_Ordinate_Space(
+    Result = make_shared<Galerkin_Ordinate_Space>(
         dimension, geometry, ordinates, quadrature_class(), number_of_levels(),
-        moment_expansion_order, qim, include_extra_directions, ordering));
+        moment_expansion_order, qim, include_extra_directions, ordering);
 
   return Result;
 }

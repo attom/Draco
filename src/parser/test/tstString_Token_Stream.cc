@@ -41,6 +41,7 @@ void tstString_Token_Stream(UnitTest &ut) {
 
   {
     String_Token_Stream tokens(contents);
+    tokens.comment("begin test of String_Token_Stream");
     if (tokens.whitespace() != Text_Token_Stream::default_whitespace)
       FAILMSG("whitespace characters are NOT correct defaults");
     else

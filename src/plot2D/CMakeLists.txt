@@ -27,11 +27,6 @@ file( GLOB sources *.cc )
 file( GLOB headers *.hh *.h )
 list( APPEND headers ${PROJECT_BINARY_DIR}/plot2D/config.h )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} ${template_implementations} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -41,12 +36,11 @@ add_component_library(
    TARGET_DEPS  Lib_dsxx
    LIBRARY_NAME plot2D
    SOURCES      "${sources}"
-   )
+   HEADERS      "${headers}" )
  target_include_directories( Lib_plot2D
    PUBLIC
      ${Grace_INCLUDE_DIR}
-     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-   )
+     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> )
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions

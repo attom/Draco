@@ -194,19 +194,21 @@ esac
 
 # Extra parameters valid for this machine?
 if [[ ${extra_params} ]]; then
-  case $extra_params in
-    none)
-      extra_params=""; epdash=""
+  for ep in $extra_params; do
+    case $ep in
+      none) extra_params=""; epdash="" ;;
+      @($pem_match) )
+      # known, continue
       ;;
-    @($pem_match) )
-    # known, continue
-    ;;
-    *)
-      echo "" ;echo "FATAL ERROR: unknown extra params (-e) = ${extra_params}"
-      print_use; exit 1
-      ;;
-  esac
+      *)
+        echo "" ;echo "FATAL ERROR: unknown extra params (-e) = ${extra_params}"
+        print_use; exit 1
+        ;;
+    esac
+  done
 fi
+# sort entries alphebetically to avoid knl_perfbench != perfbench_knl
+extra_params_sort_safe=`echo $extra_params | xargs -n 1 | sort -u | xargs | sed -e 's/ /_/g'`
 
 ##---------------------------------------------------------------------------##
 ## Main
@@ -228,8 +230,8 @@ exec 2>&1
 ## Export environment
 ##---------------------------------------------------------------------------##
 export build_autodoc build_type dashboard_type epdash extra_params
-export featurebranches logdir prdash machine_name_short regdir regress_mode
-export scratchdir
+export extra_params_sort_safe featurebranches logdir prdash machine_name_short
+export regdir regress_mode scratchdir
 
 ##---------------------------------------------------------------------------##
 # Banner
@@ -248,7 +250,7 @@ echo "   build_autodoc  = $build_autodoc"
 echo "   build_type     = ${build_type}"
 echo "   dashboard_type = ${dashboard_type}"
 echo "   epdash         = $epdash"
-echo "   extra_params   = ${extra_params}"
+echo "   extra_params   = \"${extra_params}\" (${extra_params_sort_safe})"
 echo "   featurebranches= \"${featurebranches}\""
 echo "   logdir         = ${logdir}"
 echo "   logfile        = ${logfile}"
@@ -295,7 +297,7 @@ export subproj=draco
 if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   export featurebranch=${fb[$ifb]}
   cmd="${rscriptdir}/${machine_class}-job-launch.sh"
-  cmd+=" &> ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-joblaunch.log"
+  cmd+=" &> ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-joblaunch.log"
   echo "${subproj}: $cmd"
   eval "${cmd} &"
   sleep 1s
@@ -312,7 +314,7 @@ if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   # built and installed)
   cmd+=" ${draco_jobid}"
   # Log all output.
-  cmd+=" &> ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-joblaunch.log"
+  cmd+=" &> ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-joblaunch.log"
   echo "${subproj}: $cmd"
   eval "${cmd} &"
   sleep 1s
@@ -325,15 +327,15 @@ if [[ `echo $projects | grep -c $subproj` -gt 0 ]]; then
   export featurebranch=${fb[$ifb]}
   cmd="${rscriptdir}/${machine_class}-job-launch.sh"
   # Wait for draco regressions to finish
-  case $extra_params in
-  coverage)
+  case $extra_params_sort_safe in
+  *coverage*)
      # We can only run one instance of bullseye at a time - so wait
      # for jayenne to finish before starting capsaicin.
      cmd+=" ${draco_jobid} ${jayenne_jobid}" ;;
   *)
      cmd+=" ${draco_jobid}" ;;
   esac
-  cmd+=" &> ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-joblaunch.log"
+  cmd+=" &> ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-joblaunch.log"
   echo "${subproj}: $cmd"
   eval "${cmd} &"
   sleep 1s

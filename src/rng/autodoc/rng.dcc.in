@@ -12,7 +12,7 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_rng Overview of the rng package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author Thomas M. Evans and Todd Urbatsch
 
 The rng package is an object oriented random number generation package

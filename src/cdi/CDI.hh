@@ -776,7 +776,7 @@ void CDI::integrate_planck_rosseland(double const scaled_freq,
   Require(rtt_dsxx::soft_equiv(exp_scaled_freq, std::exp(-scaled_freq)));
 
   // Calculate the Planckian integral
-  planck = integrate_planck(scaled_freq);
+  planck = integrate_planck(scaled_freq, exp_scaled_freq);
 
   Require(planck >= 0.0);
   Require(planck <= 1.0);

@@ -32,31 +32,12 @@ file( GLOB headers   *.hh *.h )
 file( GLOB ui_files  *.ui )
 #file( GLOB resources *.qrc )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} )
-endif()
-
 # Use moc to convert *.ui files into ui_*.h files:
 qt5_wrap_ui( ui_headers ${ui_files} )
-list( APPEND sources ${ui_headers} )
 
 # use rcc to convert *.qrc files into qrc_*.cpp files:
 qt5_add_resources( qrc_sources ${resources} )
 list( APPEND sources ${qrc_sources} )
-
-# ---------------------------------------------------------------------------- #
-# Directories to search for include directives
-# ---------------------------------------------------------------------------- #
-
-include_directories(
-   ${PROJECT_SOURCE_DIR}  # sources
-   ${PROJECT_BINARY_DIR}  # qt generated .h files
-   ${draco_src_dir_SOURCE_DIR} # ds++ and c4 headers
-   ${dsxx_BINARY_DIR}     # ds++/config.h
-   ${c4_BINARY_DIR}       # c4/config.h
-   ${MPI_CXX_INCLUDE_PATH}
-   )
 
 # ---------------------------------------------------------------------------- #
 # Build package library

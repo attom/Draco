@@ -5,13 +5,7 @@
  * \date   Fri Dec  9 10:52:38 2005
  * \brief  Member definitions for Diagnostics class.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- *
- * 2010-11-29 This component was moved from clubimc/utils to
- * draco/diagnostics. 
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "Diagnostics.hh"

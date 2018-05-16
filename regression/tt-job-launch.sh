@@ -27,10 +27,6 @@ nargs=${#args[@]}
 scriptname=${0##*/}
 host=`uname -n`
 
-# import some bash functions
-export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $rscriptdir/scripts/common.sh
-
 export SHOWQ=`which squeue`
 export MSUB=`which sbatch`
 
@@ -40,8 +36,32 @@ for (( i=0; i < $nargs ; ++i )); do
    dep_jobids="${dep_jobids} ${args[$i]} "
 done
 
+# load some common bash functions
+export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [[ -f $rscriptdir/scripts/common.sh ]]; then
+  source $rscriptdir/scripts/common.sh
+else
+  echo " "
+  echo "FATAL ERROR: Unable to locate Draco's bash functions: "
+  echo "   looking for .../regression/scripts/common.sh"
+  echo "   searched rscriptdir = $rscriptdir"
+  exit 1
+fi
+
 # sanity checks
 job_launch_sanity_checks
+
+# available_queues=`sacctmgr -np list assoc user=$LOGNAME | sed -e 's/.*|\(.*dev.*\)|.*/\1/' | sed -e 's/|.*//'`
+available_account=`sacctmgr -np list assoc user=$LOGNAME format=Account | sed -e 's/|//' | sed -e 's/,/ /g' | xargs -n 1 | sort -u | xargs`
+available_partition=`sacctmgr -np list assoc user=$LOGNAME format=Partition | sed -e 's/|//' | sed -e 's/,/ /g' | xargs -n 1 | sort -u | xargs`
+available_qos=`sacctmgr -np list assoc user=$LOGNAME format=Qos | sed -e 's/|//' | sed -e 's/,/ /g' | xargs -n 1 | sort -u | xargs`
+# not sure how to detect access to
+# pm="--reservation=PreventMaint"
+case $available_qos in
+#  *access*) access_queue="-A access --qos=access" ;;
+  *dev*)    access_queue="--qos=dev ${pm}" ;;
+# *interactive*
+esac
 
 # Banner
 print_job_launch_banner
@@ -55,6 +75,13 @@ for jobid in ${dep_jobids}; do
        sleep 5m
     done
 done
+
+if ! [[ -d $logdir ]]; then
+  mkdir -p $logdir
+  chgrp draco $logdir
+  chmod g+rwX $logdir
+  chmod g+s $logdir
+fi
 
   # srun options: (also see config/setupMPI.cmake)
   # -------------------------------------------------
@@ -74,18 +101,22 @@ done
 # sinfo -o "%45n %30b %65f" | cut -b 47-120 | sort | uniq -c
 
 # Note that we build on the haswell back-end (even when building code for knl):
-build_partition_options="-N 1 -t 8:00:00 --gres=craynetwork:0"
-case $extra_params in
-knl) partition_options="-N 1 -t 8:00:00 --gres=craynetwork:0 -p knl" ;;
-*)   partition_options="-N 1 -t 8:00:00 --gres=craynetwork:0" ;;
+build_partition_options="-N 1 -t 1:00:00"
+test_partition_options="-N 1 -t 8:00:00 --gres=craynetwork:0"
+case $extra_params_sort_safe in
+  *knl*) test_partition_options="-N 1 -t 8:00:00 --gres=craynetwork:0 -p knl" ;;
 esac
+
+# When on DST use
+#build_partition_options+=" ${pm}"
+#partition_options+=" ${pm}"
 
 # Configure on front end
 # Only the front-end can see the github and gitlab repositories.
 echo "Configure on the front end..."
 export REGRESSION_PHASE=c
 echo " "
-cmd="${rscriptdir}/tt-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
+cmd="${rscriptdir}/tt-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
 echo "${cmd}"
 eval "${cmd}"
 
@@ -96,7 +127,7 @@ echo " "
 export REGRESSION_PHASE=b
 echo "Build from the back end..."
 echo " "
-logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
+logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
 cmd="$MSUB -o ${logfile} -J ${subproj:0:5}-${featurebranch} ${build_partition_options} ${rscriptdir}/tt-regress.msub"
 echo "${cmd}"
 jobid=`eval ${cmd}`
@@ -107,6 +138,7 @@ echo "jobid = ${jobid}"
 sleep 1m
 while test "`${SHOWQ} | grep $jobid`" != ""; do
    ${SHOWQ} | grep $jobid
+   echo "   ${subproj}: waiting for jobid = $jobid to finish (sleeping 5 minutes)."
    sleep 5m
 done
 
@@ -118,8 +150,8 @@ echo " "
 export REGRESSION_PHASE=t
 echo "Test from the back end..."
 echo " "
-logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
-cmd="$MSUB -o ${logfile} -J ${subproj:0:5}-${featurebranch} ${partition_options} ${rscriptdir}/tt-regress.msub"
+logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
+cmd="$MSUB -o ${logfile} -J ${subproj:0:5}-${featurebranch} ${test_partition_options} ${rscriptdir}/tt-regress.msub"
 echo "${cmd}"
 jobid=`eval ${cmd}`
 # delete blank lines
@@ -140,7 +172,7 @@ echo " "
 echo "Submit:"
 export REGRESSION_PHASE=s
 echo "- jobs done, now submitting ${build_type} results from tt-fey."
-cmd="${rscriptdir}/tt-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
+cmd="${rscriptdir}/tt-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
 echo "${cmd}"
 eval "${cmd}"
 

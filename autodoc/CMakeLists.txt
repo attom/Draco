@@ -7,26 +7,30 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
-# Doxygen
-find_package( Doxygen QUIET )
+# 2018-03-10 (KT): As of cmake-3.9.0, we have the option of using the cmake
+# function doxygen_add_docs() instead of the complex logic below.  We would
+# lose a few features, but wouldn't need to maintain this file.
+# Ref. https://cmake.org/cmake/help/v3.10/module/FindDoxygen.html
+
+# config/vendor_libraries.cmake is responsible for detecting if doxygen is
+# available.
 
 if( DOXYGEN_FOUND )
 
    # if AUTODOCDIR is set in environment (or make command line), create a CMake
    # variable with this value.
-   if( NOT "$ENV{AUTODOCDIR}x" STREQUAL "x" )
+   if( ENV{AUTODOCDIR} )
       set( AUTODOCDIR "$ENV{AUTODOCDIR}" )
    endif()
    # if AUTODOCDIR is set, use it, otherwise, default to CMAKE_INSTALL_PREFIX.
-   if( "${AUTODOCDIR}x" STREQUAL "x" )
-      set( DOXYGEN_OUTPUT_DIR ${CMAKE_INSTALL_PREFIX}/autodoc )
-   else()
+   if( AUTODOCDIR )
       set( DOXYGEN_OUTPUT_DIR "${AUTODOCDIR}" )
+    else()
+      set( DOXYGEN_OUTPUT_DIR ${CMAKE_INSTALL_PREFIX}/autodoc )
    endif()
 
-  # Source directories that should be examined by doxygen Sets
-  # ${DOXYGEN_INPUT}.  This value is embedded in the doxygen_config
-  # file below.
+  # Source directories that should be examined by doxygen Sets ${DOXYGEN_INPUT}.
+  # This value is embedded in the doxygen_config file below.
   set( DOXYGEN_INPUT
      "${PROJECT_SOURCE_DIR}/autodoc ${PROJECT_BINARY_DIR}/autodoc" )
 
@@ -76,8 +80,8 @@ if( DOXYGEN_FOUND )
             -DOUTFILE="${PROJECT_BINARY_DIR}/autodoc/doxygen_config"
             -DPROJECT_NAME=${PROJECT_NAME}
             -Dpackage=${PROJECT_NAME}
-            -DPROJECT_NUMBER="${DRACO_VERSION_FULL}"
-            -Dnumber="${DRACO_VERSION_FULL}"
+            -DPROJECT_NUMBER="${Draco_VERSION_FULL}"
+            -Dnumber="${Draco_VERSION_FULL}"
             -DOUTPUT_DIRECTORY="${DOXYGEN_OUTPUT_DIR}"
             -Ddoxygen_output_top="${DOXYGEN_OUTPUT_DIR}"
             -DINPUT=${DOXYGEN_INPUT}

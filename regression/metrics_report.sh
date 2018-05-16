@@ -20,6 +20,37 @@
 # ./metrics_report.sh -e "jsbrock@lanl.gov jomc@lanl.gov gshipman@lanl.gov draco@lanl.gov" -p "draco"
 
 ##---------------------------------------------------------------------------##
+## Environment
+##---------------------------------------------------------------------------##
+
+# switch to group 'ccsrad' and set umask
+if [[ $(id -gn) != ccsrad ]]; then
+  exec sg ccsrad "$0 $*"
+fi
+umask 0007
+
+# Enable job control
+set -m
+
+# Allow variable as case condition
+shopt -s extglob
+
+# load some common bash functions
+export rscriptdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" )
+if ! [[ -d $rscriptdir ]]; then
+  export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
+if [[ -f $rscriptdir/scripts/common.sh ]]; then
+  source $rscriptdir/scripts/common.sh
+else
+  echo " "
+  echo "FATAL ERROR: Unable to locate Draco's bash functions: "
+  echo "   looking for .../regression/scripts/common.sh"
+  echo "   searched rscriptdir = $rscriptdir"
+  exit 1
+fi
+
+##---------------------------------------------------------------------------##
 ## Support functions
 ##---------------------------------------------------------------------------##
 print_use()
@@ -81,72 +112,37 @@ if ! test -x $CLOC; then
    exit 1
 fi
 
-
 if ! test -d $work_dir/cdash; then
    echo "FATAL ERROR: Regression work directory (work_dir=$work_dir/cdash) not found.  Contact Kelly Thompson <kgt@lanl.gov>."
    exit 1
 fi
 
-
-##---------------------------------------------------------------------------##
-# Environment setup
-##---------------------------------------------------------------------------##
-
-# load some common bash functions
-export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [[ -f $rscriptdir/scripts/common.sh ]]; then
-  source $rscriptdir/scripts/common.sh
-else
-  echo " "
-  echo "FATAL ERROR: Unable to locate Draco's bash functions: "
-  echo "   looking for .../regression/scripts/common.sh"
-  echo "   searched rscriptdir = $rscriptdir"
-  exit 1
-fi
-
-
-
 # Modules
 # ----------------------------------------
+
+function init_lmod_env()
+{
+  echo "Initializing the Lmod modulefile system..."
+  export MODULE_HOME=/usr/share
+  source $MODULE_HOME/lmod/lmod/init/bash || die "Can't find $MODULE_HOME/lmod/lmod/init/bash"
+  run "module use /scratch/vendors/Modules.core"
+}
 
 if [[ `fn_exists module` == 1 ]]; then
   echo " "
   if [[ `declare -f module | grep -c LMOD` == 0 ]]; then
     # we have tcl modules
-    echo "Found Tcl modules:"
-    run "module list"
-    echo "unloading"
+    echo -e "\nFound the Tcl module system. Unloading..."
     run "module purge"
-    run "module list"
-    unset dracomodules
-    unset NoModules
-    unset _LMFILES_
-    unset MODULEPATH
-    unset LOADEDMODULES
-    unset MODULESHOME
-
-    # If TCL modulefiles, switch to Lmod
-    echo " "
-    echo "Switching to Lmod modulefiles..."
-    export MODULE_HOME=/scratch/vendors/spack.20170502/opt/spack/linux-rhel7-x86_64/gcc-4.8.5/lmod-7.4.8-oytncsoih2sa4jdogz2ojvwly6mwle4n
-    source $MODULE_HOME/lmod/lmod/init/bash || die "Can't find /mod/init/bash"
-    run "module use /scratch/vendors/spack.20170502/share/spack/lmod/linux-rhel7-x86_64/Core" || die "Can't find Lmod Core modulefiles."
-
+    unset dracomodules NoModules _LMFILES_ MODULEPATH LOADEDMODULES MODULESHOME
+    init_lmod_env
   else
-    # we have Lmod modules
     echo "Found Lmod modules:"
-#    run "module avail"
-#    run "module list"
-#    run "module purge"
-#    run "module list"
   fi
+
 else
-  echo " "
-  echo "No modules available"
-  echo "Loading Lmod modulefiles..."
-  export MODULE_HOME=/scratch/vendors/spack.20170502/opt/spack/linux-rhel7-x86_64/gcc-4.8.5/lmod-7.4.8-oytncsoih2sa4jdogz2ojvwly6mwle4n
-  source $MODULE_HOME/lmod/lmod/init/bash || die "Can't find /mod/init/bash"
-  run "module use /scratch/vendors/spack.20170502/share/spack/lmod/linux-rhel7-x86_64/Core" || die "Can't find Lmod Core modulefiles."
+  echo -e "\nNo modules available"
+  init_lmod_env
 fi
 
 # Establish environment via Lmod...
@@ -242,15 +238,16 @@ echo "--------------------"
 echo " "
 # Lines of code report for $projects
 
+buildflavor=Nightly_gcc-coverage-develop
+
 echo "Lines of code"
 echo "-------------"
-cmd="${CLOC} --sum-reports --force-lang-def=/scratch/regress/draco/regression/cloc-lang.defs"
+cmd="${CLOC} --sum-reports --force-lang-def=$work_dir/draco/regression/cloc-lang.defs"
 for proj in $projects; do
-   if test -f ${work_dir}/cdash/${proj}/Nightly_gcc/Coverage/build/lines-of-code.log; then
-     cmd="$cmd ${work_dir}/cdash/${proj}/Nightly_gcc/Coverage/build/lines-of-code.log"
-   else
-     cmd="$cmd ${work_dir}/cdash/${proj}/Nightly_gcc-develop/Coverage/build/lines-of-code.log"
-   fi
+  locfile=${work_dir}/cdash/${proj}/$buildflavor/Coverage/build/lines-of-code.log
+  if [[ -f $locfile ]]; then
+    cmd="$cmd ${locfile} "
+  fi
 done
 # Use grep and head to clean up the output:
 cmd="$cmd | grep -v sourceforge | grep -v AlDanial | head -n $ntrim_lines"
@@ -265,13 +262,19 @@ if test -f $COVFILE; then
    rm -f $COVFILE
 fi
 cmd="covmerge -q --mp --no-banner -c -f $COVFILE "
+filefound=no
 for proj in $projects; do
-   if test -f ${work_dir}/cdash/${proj}/Nightly_gcc/Coverage/build/CMake.cov.bak; then
-     cmd="$cmd ${work_dir}/cdash/${proj}/Nightly_gcc/Coverage/build/CMake.cov.bak "
-   else
-     cmd="$cmd ${work_dir}/cdash/${proj}/Nightly_gcc-develop/Coverage/build/CMake.cov.bak "
-   fi
+  cfile=${work_dir}/cdash/${proj}/$buildflavor/Coverage/build/CMake.cov.bak
+  if [[ -f ${cfile} ]]; then
+    cmd="$cmd ${cfile} "
+    filefound=yes
+  fi
 done
+
+if [[ $filefound = no ]]; then
+  echo -e "\nWARNING: No coverage files found. Skipping coverage report\n"
+else
+
 # create the new coverage file via covmerge
 # echo $cmd
 eval $cmd
@@ -297,6 +300,8 @@ covdir -w120 \
 echo " "
 echo "* C/D Coverage is condition/decision coverage"
 echo "  http://www.bullseye.com/coverage.html#basic_conditionDecision"
+
+fi
 
 cd $olddir
 

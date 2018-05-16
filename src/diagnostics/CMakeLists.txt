@@ -43,20 +43,13 @@ configure_file( config.h.in ${PROJECT_BINARY_DIR}/diagnostics/config.h )
 # Source files
 # ---------------------------------------------------------------------------- #
 
-file( GLOB template_implementations *.t.hh *.i.hh )
 file( GLOB sources *.cc )
-file( GLOB explicit_instantiations *_pt.cc )
 file( GLOB headers *.hh )
 list( APPEND headers ${PROJECT_BINARY_DIR}/diagnostics/config.h )
-list( REMOVE_ITEM headers
-   ${template_implementations}
-   ${PROJECT_SOURCE_DIR}/draco_info_main.cc
-   )
 
 # Make the header files available in the IDE.
 if( CMAKE_CONFIGURATION_TYPES )
-   list( APPEND sources ${headers} )
-   add_definitions(-DCMAKE_BUILD_TYPE=\"${CMAKE_CFG_INTDIR}\")
+  add_definitions(-DCMAKE_BUILD_TYPE=\"${CMAKE_CFG_INTDIR}\")
 endif()
 
 # ---------------------------------------------------------------------------- #
@@ -68,6 +61,7 @@ add_component_library(
   TARGET_DEPS  "Lib_c4"
   LIBRARY_NAME ${PROJECT_NAME}
   SOURCES      "${sources}"
+  HEADERS      "${headers}"
   PREFIX       Draco
   )
 target_include_directories( Lib_diagnostics
@@ -78,6 +72,7 @@ add_component_executable(
   TARGET_DEPS Lib_diagnostics
   EXE_NAME    draco_info
   SOURCES     ${PROJECT_SOURCE_DIR}/draco_info_main.cc
+  HEADERS     ${PROJECT_SOURCE_DIR}/draco_info.hh
   PREFIX       Draco
   )
 

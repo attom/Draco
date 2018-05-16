@@ -15,12 +15,6 @@ file( GLOB sources *.cc )
 file( GLOB headers *.hh )
 file( GLOB f90sources *.f90 )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} )
-   list( APPEND sources ${f90sources} )
- endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -30,6 +24,7 @@ add_component_library(
    TARGET_DEPS  "Lib_special_functions;Lib_parser;Lib_mesh_element;GSL::gsl"
    LIBRARY_NAME ${PROJECT_NAME}
    SOURCES      "${sources}"
+   HEADERS      "${headers};${f90sources}"
 )
 
 # ---------------------------------------------------------------------------- #

@@ -31,7 +31,7 @@ ddir=draco-6_18_0
 pdir=$ddir
 
 # CMake options that will be included in the configuration step
-export CONFIG_BASE="-DDRACO_VERSION_PATCH=0 -DUSE_CUDA=OFF"
+export CONFIG_BASE="-DDraco_VERSION_PATCH=0 -DUSE_CUDA=OFF"
 
 # environment (use draco modules)
 # release for each module set

@@ -73,11 +73,6 @@ list( APPEND headers
    ${PROJECT_BINARY_DIR}/ds++/dll_declspec.h )
 list( REMOVE_ITEM headers ${template_implementations} )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} ${template_implementations} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -86,6 +81,7 @@ add_component_library(
    TARGET       Lib_dsxx
    LIBRARY_NAME ds++
    SOURCES      "${sources}"
+   HEADERS      "${headers}"
    )
 target_link_libraries( Lib_dsxx ${Lib_win_winsock} )
 target_include_directories( Lib_dsxx

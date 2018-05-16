@@ -43,7 +43,7 @@ case ${-} in
    shopt -s cdspell # autocorrect spelling errors on cd command line.
 
    # Prevent creation of core files (ulimit -a to see all limits).
-   ulimit -c 0
+   # ulimit -c 0
 
    ##------------------------------------------------------------------------##
    ## Common aliases
@@ -74,6 +74,8 @@ case ${-} in
    alias ma='module avail'
    alias mls='module list'
    alias mld='module load'
+   alias mul='module unload'
+   alias msh='module show'
 
    # Provide special ls commands if this is a color-xterm or compatible terminal.
    if test "${TERM}" != emacs &&
@@ -114,6 +116,11 @@ if [[ ${INTERACTIVE} ]]; then
   # Common bash functions and alias definitions
   source ${DRACO_ENV_DIR}/bin/bash_functions.sh
   source ${DRACO_ENV_DIR}/../regression/scripts/common.sh
+
+  # aliases and bash functions for working with slurm
+  if !  [[ `which squeue 2>&1 | grep -c "no squeue"` == 1 ]]; then
+    source ${DRACO_ENV_DIR}/bashrc/.bashrc_slurm
+  fi
 fi
 
 ##---------------------------------------------------------------------------##
@@ -147,8 +154,10 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
   # Tell wget to use LANL's www proxy (see
   # trac.lanl.gov/cgi-bin/ctn/trac.cgi/wiki/SelfHelpCenter/ProxyUsage)
   # export http_proxy=http://wpad.lanl.gov/wpad.dat
-  found=`nslookup proxyout.lanl.gov | grep -c Name`
-  if test ${found} == 1; then
+  current_domain=`awk '/^domain/ {print $2}' /etc/resolv.conf`
+#  found=`nslookup proxyout.lanl.gov | grep -c Name`
+  #  if test ${found} == 1; then
+  if [[ ${current_domain} == "lanl.gov" ]]; then
     export http_proxy=http://proxyout.lanl.gov:8080
     export https_proxy=$http_proxy
     export HTTP_PROXY=$http_proxy
@@ -230,11 +239,9 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
 
 fi
 
-if ! [[ ${INTERACTIVE} ]]; then
-  # provide some bash functions (dracoenv, rmdracoenv) for non-interactive
-  # sessions.
-  source ${DRACO_ENV_DIR}/bashrc/bash_functions2.sh
-fi
+# provide some bash functions (dracoenv, rmdracoenv) for non-interactive
+# sessions.
+source ${DRACO_ENV_DIR}/bashrc/bash_functions2.sh
 
 ##---------------------------------------------------------------------------##
 ## end of .bashrc

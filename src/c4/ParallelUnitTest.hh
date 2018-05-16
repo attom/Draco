@@ -91,6 +91,9 @@ public:
 
   //! Provide a report of the number of unit test passes and fails.
   DLL_PUBLIC_c4 void status(void);
+
+  DLL_PUBLIC_c4 virtual bool check_all(bool good, std::string const &checkmsg,
+                                       bool fatal = false);
 };
 
 } // end namespace rtt_c4

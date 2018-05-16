@@ -37,6 +37,7 @@ void tstConsole_Token_Stream(rtt_dsxx::UnitTest &ut) {
 
   {
     Console_Token_Stream tokens;
+    tokens.comment("begin Console_Token_Stream tests");
     if (tokens.whitespace() != Text_Token_Stream::default_whitespace)
       FAILMSG("whitespace characters are NOT correct defaults");
     else

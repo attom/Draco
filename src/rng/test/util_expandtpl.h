@@ -37,13 +37,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * being the number of rounds.
  */
 
-#define GNUC_VERSION                                                           \
-  (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-
 #ifdef __GNUC__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wfloat-equal"
-#if (GNUC_VERSION >= 70000)
+#if (RNG_GNUC_VERSION >= 70000)
 #pragma GCC diagnostic ignored "-Wexpansion-to-defined"
 #endif
 #endif

@@ -28,6 +28,26 @@ using namespace rtt_c4;
  * Demonstrate that the normal access functions work as indended.
  */
 void tstMemberFunctions(ParallelUnitTest &ut, stringstream &output) {
+  // test check_all function for failing case. We put this first so we can
+  // flush output afterwards.
+  {
+    string const msg("Testing the check_all member function for failing case.");
+    ut.check_all(rtt_c4::node() == 0, msg);
+
+    string const data(output.str());
+    size_t const found = data.find(msg);
+    if (ut.numPasses == 0 && found != string::npos) {
+      cout << "Test: passed\n\t check_all member function works for failing "
+              "case ."
+           << endl;
+      ut.reset();
+      output.clear();
+    } else {
+      cout << "Test: failed\n\t passes member function failed for failing case."
+           << endl;
+    }
+  }
+
   // test pass functions
   {
     string const msg("Testing the passes member function.");
@@ -39,6 +59,20 @@ void tstMemberFunctions(ParallelUnitTest &ut, stringstream &output) {
       cout << "Test: passed\n\t passes member function works." << endl;
     else
       cout << "Test: failed\n\t passes member function failed." << endl;
+  }
+
+  // test check_all function
+  {
+    string const msg("Testing the check_all member function for passing case.");
+    ut.check_all(true, msg);
+
+    string const data(output.str());
+    size_t const found = data.find(msg);
+    if (ut.numPasses == 1 && found != string::npos)
+      cout << "Test: passed\n\t check_all member function works for pass."
+           << endl;
+    else
+      cout << "Test: failed\n\t check_all member function failed." << endl;
   }
 
   // Test the PASSMSG macro

@@ -250,8 +250,12 @@ case $target in
   # CCS-NET: Release, vtest, coverage
   ccscs2*)
     startCI ${project} Release na $pr
-    startCI ${project} Release vtest $pr
-    startCI ${project} Debug coverage $pr ;;
+    if ! [[ ${project} == "draco" ]]; then
+      startCI ${project} Release vtest $pr
+    fi
+    startCI ${project} Debug coverage $pr
+    startCI ${project} Debug clang $pr
+    ;;
 
   # CCS-NET: Valgrind (Debug)
   ccscs6*) startCI ${project} Debug valgrind $pr ;;
@@ -259,14 +263,18 @@ case $target in
   # Snow: Debug
   sn-fe*)
     startCI ${project} Release na $pr
-    startCI ${project} Release vtest $pr
+    if ! [[ ${project} == "draco" ]]; then
+      startCI ${project} Release vtest $pr
+    fi
     startCI ${project} Debug fulldiagnostics $pr
     ;;
 
   # Trinitite: Release
   tt-fe*)
     startCI ${project} Release na $pr
-    startCI ${project} Release vtest $pr
+    if ! [[ ${project} == "draco" ]]; then
+      startCI ${project} Release vtest $pr;
+    fi
     startCI ${project} Release knl $pr
     ;;
 

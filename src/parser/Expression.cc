@@ -1120,7 +1120,7 @@ static pE parse_or(unsigned const number_of_variables,
   while (tokens.lookahead().text() == "||") {
     tokens.shift();
     Result.reset(new Or_Expression(
-        Result, parse_relational(number_of_variables, variable_map, tokens)));
+        Result, parse_and(number_of_variables, variable_map, tokens)));
   }
   return Result;
 }

@@ -36,16 +36,7 @@ set_package_properties( draco PROPERTIES
 ## Compilers used by Draco build (also: see ds++/config.h)
 ## ---------------------------------------------------------------------------
 
-#set( Draco_CXX_COMPILER     "@CMAKE_CXX_COMPILER@" )
-#set( Draco_C_COMPILER       "@CMAKE_C_COMPILER@" )
-#set( Draco_Fortran_COMPILER       "@CMAKE_Fortran_COMPILER@" )
-#set( Draco_Fortran_COMPILER        "@CMAKE_Fortran_COMPILER@" )
-#set( Draco_CXX_COMPILER_FLAGS      "@Draco_CXX_COMPILER_FLAGS@" )
-#set( Draco_C_COMPILER_FLAGS        "@Draco_C_COMPILER_FLAGS@" )
-#set( Draco_Fortran_COMPILER_FLAGS  "@Draco_Fortran_COMPILER_FLAGS@" )
-
 set( DRACO_LIBRARY_TYPE @DRACO_LIBRARY_TYPE@ )
-# set( CXX11_FEATURE_LIST "@CXX11_FEATURE_LIST@" )
 set( GCC_ENABLE_GLIBCXX_DEBUG "@GCC_ENABLE_GLIBCXX_DEBUG@" )
 set( CRAY_PE "@CRAY_PE@" )
 
@@ -54,22 +45,13 @@ set( CRAY_PE "@CRAY_PE@" )
 ## ---------------------------------------------------------------------------
 
 ## The project version number
-set(Draco_VERSION "@DRACO_VERSION@")
-
-## The project include file directories.
-#set(Draco_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
-
-## The project library directories.
-#set(Draco_LIBRARY_DIRS "@CMAKE_INSTALL_PREFIX@/lib")
+set(Draco_VERSION "@Draco_VERSION@")
 
 ## The project libraries.
 set(Draco_LIBRARIES "@Draco_LIBRARIES@" )
 
 ## The project tpl include paths
 set(Draco_TPL_INCLUDE_DIRS "@Draco_TPL_INCLUDE_DIRS@" )
-
-## The project tpl library paths (not currently implemented)
-#  set(Draco_TPL_LIBRARY_DIRS "")
 
 ## The project tpl libraries
 set(Draco_TPL_LIBRARIES "@Draco_TPL_LIBRARIES@" )

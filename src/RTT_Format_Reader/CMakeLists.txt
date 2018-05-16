@@ -16,11 +16,6 @@ project( RTT_Format_Reader CXX )
 file( GLOB sources *.cc )
 file( GLOB headers *.hh )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -30,6 +25,7 @@ add_component_library(
    TARGET_DEPS  Lib_meshReaders
    LIBRARY_NAME RTT_Format_Reader
    SOURCES      "${sources}"
+   HEADERS      "${headers}"
    LIBRARY_NAME_PREFIX "rtt_" )
 
 # ---------------------------------------------------------------------------- #

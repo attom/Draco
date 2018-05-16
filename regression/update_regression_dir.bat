@@ -9,6 +9,7 @@ rem ---------------------------------------------------------------------------
 
 set LOGDIR=e:\regress\logs
 set GIT="c:\\Program Files\\Git\\bin\\git.exe"
+set PATH="c:\\Program Files\\Git\\bin";%PATH%
 echo cd e:\regress\draco
 cd /d e:\regress\draco
 echo %GIT% pull

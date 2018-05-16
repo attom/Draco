@@ -18,7 +18,7 @@ if( UNIX )
        endif()
     endforeach()
     list( LENGTH proc_ids DRACO_NUM_CORES )
-    set( MPIEXEC_MAX_NUMPROCS ${DRACO_NUM_CORES} CACHE STRING 
+    set( MPIEXEC_MAX_NUMPROCS ${DRACO_NUM_CORES} CACHE STRING
        "Number of cores on the local machine." )
   endif()
 endif()
@@ -42,5 +42,5 @@ if( BUILD_TESTING )
     add_custom_target( check
       COMMAND "${CMAKE_COMMAND}" --build "${Draco_BINARY_DIR}" -- ${pbuildtestflags}
       COMMAND ${CMAKE_CTEST_COMMAND} ${pbuildtestflags} $(ARGS) )
-  endif() 
-endif() 
+  endif()
+endif()

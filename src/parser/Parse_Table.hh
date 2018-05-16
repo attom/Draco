@@ -89,6 +89,25 @@ struct Keyword {
      * moniker in the same Parse_Table.
      */
   char const *module;
+
+  /*! Explanation of keyword.
+   *
+   * This optional member is a brief description of the keyword. If the
+   * parser sees a keyword in the Token_Stream that it does not recognize,
+   * it will list the recognized keywords and, if a keyword has a non-null
+   * description, it will print that description.
+   */
+  char const *description;
+
+  Keyword()
+      : moniker(nullptr), func(nullptr), index(0), module(nullptr),
+        description(nullptr) {}
+
+  Keyword(char const *moniker, void (*func)(Token_Stream &, int),
+          int const index, char const *module,
+          char const *description = nullptr)
+      : moniker(moniker), func(func), index(index), module(module),
+        description(description) {}
 };
 
 //-------------------------------------------------------------------------//

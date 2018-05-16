@@ -16,11 +16,6 @@ project( parser CXX )
 file( GLOB sources *.cc )
 file( GLOB headers *.hh )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -29,6 +24,7 @@ add_component_library(
    TARGET       Lib_parser
    TARGET_DEPS  "Lib_c4;Lib_units"
    LIBRARY_NAME ${PROJECT_NAME}
+   HEADERS      "${headers}"
    SOURCES      "${sources}" )
 
 # ---------------------------------------------------------------------------- #

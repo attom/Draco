@@ -26,28 +26,17 @@
 
 # Draco install directory name (/usr/projects/draco/draco-NN_NN_NN)
 export package=draco
-ddir=draco-6_23_0
+ddir=draco-6_24_0
 pdir=$ddir
 
 # environment (use draco modules)
 # release for each module set
-environments="intel1701env intel1704env gcc640env"
-function intel1701env()
-{
-  run "module purge"
-  run "module load friendly-testing user_contrib"
-  run "module load cmake/3.9.0 git numdiff"
-  run "module load intel/17.0.1 openmpi/1.10.5"
-  run "module load random123 eospac/6.2.4 gsl"
-  run "module load mkl metis ndi csk"
-  run "module load parmetis superlu-dist trilinos"
-  run "module list"
-}
+environments="intel1704env gcc640env"
 function intel1704env()
 {
   run "module purge"
   run "module load friendly-testing user_contrib"
-  run "module load cmake/3.9.0 git numdiff"
+  run "module load cmake git numdiff"
   run "module load intel/17.0.4 openmpi/2.1.2"
   run "module load random123 eospac/6.2.4 gsl"
   run "module load mkl metis ndi csk"
@@ -58,7 +47,7 @@ function gcc640env()
 {
   run "module purge"
   run "module load friendly-testing user_contrib"
-  run "module load cmake/3.9.0 git numdiff"
+  run "module load cmake git numdiff"
   run "module load gcc/6.4.0 openmpi/2.1.2"
   run "module load random123 eospac/6.2.4 gsl"
   run "module load mkl metis ndi"
@@ -74,12 +63,15 @@ function gcc640env()
 ## Generic setup (do not edit)
 ##---------------------------------------------------------------------------##
 
-export script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export script_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" )
+if ! [[ -d $script_dir ]]; then
+  export script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
 export draco_script_dir=`readlink -f $script_dir`
 source $draco_script_dir/common.sh
 
 # CMake options that will be included in the configuration step
-CONFIG_BASE="-DDRACO_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
+CONFIG_BASE="-DDraco_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
 CONFIG_BASE+=" -DCMAKE_VERBOSE_MAKEFILE=ON"
 export CONFIG_BASE
 
@@ -188,7 +180,7 @@ for env in $environments; do
 
     # export dry_run=1
     export steps="config build test"
-    cmd="sbatch -J release_draco $access_queue -t 1:00:00 -N 1 \
+    cmd="sbatch -J rel-draco-$buildflavor-$version $access_queue -t 1:00:00 -N 1 \
 -o $source_prefix/logs/release-$buildflavor-$version.log \
 $script_dir/release.msub"
     echo -e "\nConfigure, Build and Test $buildflavor-$version version of $package."

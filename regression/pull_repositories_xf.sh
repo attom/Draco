@@ -9,12 +9,15 @@
 # Pull Git repositories from Yellow
 #
 # Assumptions:
-# 1. Tar'ed repository names
+# 1. Tar'ed repository names (listed at repository_lsit.sh)
 #    repo             tar file
 #    ---             ---------
-#    draco           draco.git.tar
-#    jayenne         jayenne.git.tar
-#    capsaicin       capsaicin.git.tar
+#    Draco           lanl_Draco.git.tar
+#    branson         lanl_branson.git.tar
+#    jayenne         jayenne_jayenne.git.tar
+#    imcdoc          jayenne_imcdoc.git.tar
+#    capsaicin       capsaicin_capsaicin.git.tar
+#    capsaicin/docs  capsaicin_docs.git.tar
 # 2. Git repositories live at /usr/projects/draco/git
 # 3. Kerberos keytab files is at $HOME/.ssh/xfkeytab and is signed
 #    with principal transfer/${USER}push@lanl.gov
@@ -28,108 +31,87 @@
 # dry_run=1
 
 # load some common bash functions
-export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [[ -f $rscriptdir/scripts/common.sh ]]; then
-  source $rscriptdir/scripts/common.sh
+export scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [[ -f $scriptdir/scripts/common.sh ]]; then
+  source $scriptdir/scripts/common.sh
 else
   echo " "
   echo "FATAL ERROR: Unable to locate Draco's bash functions: "
   echo "   looking for .../regression/scripts/common.sh"
-  echo "   searched rscriptdir = $rscriptdir"
+  echo "   searched scriptdir = $scriptdir"
   exit 1
-   fi
+fi
 
 #------------------------------------------------------------------------------#
 function xfpull()
 {
-    wantfile=$1
-    filesavailable=`ssh red@transfer.lanl.gov myfiles`
-    # sanity check: is the requested file in the list?
-    fileready=`echo $filesavailable | grep $wantfile`
-    if [[ ! ${fileready} ]]; then
-        echo "ERROR: File '${wantfile}' is not available (yet?) to pull."
-        echo "       Run 'xfstatus' to see list of available files."
+  wantfile=$1
+  filesavailable=`ssh red@transfer.lanl.gov myfiles`
+  # sanity check: is the requested file in the list?
+  fileready=`echo $filesavailable | grep $wantfile`
+  if [[ ! ${fileready} ]]; then
+    echo "ERROR: File '${wantfile}' is not available (yet?) to pull."
+    echo "       Run 'xfstatus' to see list of available files."
+    return
+  fi
+  # Find the file identifier for the requested file.  The variable
+  # filesavailable contains a list of pairs:
+  # { (id1, file1), (id2, file2), ... }.  Load each pair and if the
+  # filename matches the requested filename then pull that file id.
+  # Once pulled, remove the file from transfer.lanl.gov.
+  is_file_id=1
+  for entry in $filesavailable; do
+    if test $is_file_id = 1; then
+      fileid=$entry
+      is_file_id=0
+    else
+      if test $entry = $wantfile; then
+        echo "scp red@transfer.lanl.gov:${fileid} ."
+        scp red@transfer.lanl.gov:${fileid} .
+        echo "ssh red@transfer.lanl.gov delete ${fileid}"
+        ssh red@transfer.lanl.gov delete ${fileid}
         return
+      fi
+      is_file_id=1
     fi
-    # Find the file identifier for the requested file.  The variable
-    # filesavailable contains a list of pairs:
-    # { (id1, file1), (id2, file2), ... }.  Load each pair and if the
-    # filename matches the requested filename then pull that file id.
-    # Once pulled, remove the file from transfer.lanl.gov.
-    is_file_id=1
-    for entry in $filesavailable; do
-        if test $is_file_id = 1; then
-            fileid=$entry
-            is_file_id=0
-        else
-            if test $entry = $wantfile; then
-                echo "scp red@transfer.lanl.gov:${fileid} ."
-                scp red@transfer.lanl.gov:${fileid} .
-                echo "ssh red@transfer.lanl.gov delete ${fileid}"
-                ssh red@transfer.lanl.gov delete ${fileid}
-                return
-            fi
-            is_file_id=1
-        fi
-    done
-}
-
-#------------------------------------------------------------------------------#
-unpack_repo() {
-   pkg=$1
-   echo "Remove old files..."
-   if test -f ${pkg}.hotcopy.tar; then
-      run "rm -f ${pkg}.hotcopy.tar"
-   fi
-   if test -d ${pkg}.hotcopy; then
-      run "rm -rf ${pkg}.hotcopy"
-   fi
-   if test -d ${pkg}; then
-     if test -d ${pkg}.old; then
-        run "rm -rf ${pkg}.old"
-     fi
-   fi
-
-   echo "Unpacking SVN repository for $pkg ..."
-   run "xfpull ${pkg}.hotcopy.tar"
-   run "tar -xvf ${pkg}.hotcopy.tar"
-   if test -d ${pkg}.hotcopy; then
-      run "mv ${pkg} ${pkg}.old"
-      run "mv ${pkg}.hotcopy ${pkg}"
-   fi
-   echo " "
+  done
 }
 
 #------------------------------------------------------------------------------#
 unpack_repo_git() {
-  pkg=$1
-  echo "Remove old files..."
-  if test -f ${pkg}.tar; then
-    run "rm -f ${pkg}.tar"
+  if [[ $# != 2 ]]; then
+    die "wrong number of parameters given to 'unpack_repo_git'. Expecting two arguments".
   fi
-  if test -d ${pkg}; then
-    if test -d ${pkg}.old; then
-      run "rm -rf ${pkg}.old"
+  namespace=$1
+  repo=$2
+  # pkg should have the form ${namespace}_${repo}.git.tar
+
+  echo -e "\nRemove old files/directories...\n"
+  if [[ -f ${namespace}_${repo}.git.tar ]]; then
+    run "rm -f ${namespace}_${repo}.git.tar"
+  fi
+  if [[ -d ${namespace}/${repo}.git ]]; then
+    if [[ -d ${namespace}/${repo}.git.old ]]; then
+      run "rm -rf ${namespace}/${repo}.git.old"
     fi
   fi
 
-  echo "Unpacking GIT repository for $pkg ..."
-  run "xfpull ${pkg}.tar"
-  if test -d ${pkg}; then
-    run "mv ${pkg} ${pkg}.old"
+  echo -e "\nUnpacking GIT repository for ${namespace}/${repo}.git...\n"
+  run "xfpull ${namespace}_${repo}.git.tar"
+  if [[ -d ${namespace}/${repo}.git ]]; then
+    run "mv ${namespace}/${repo}.git ${namespace}/${repo}.git.old"
    fi
-  run "tar -xvf ${pkg}.tar"
-  echo " "
+  run "tar -xvf ${namespace}_${repo}.git.tar"
 }
 
 #------------------------------------------------------------------------------#
 # working directory
 start_dir=`pwd`
-work_dir=/usr/projects/draco/git
-if test -d $work_dir; then
-   run "cd $work_dir"
+gitroot=/usr/projects/draco/git
+if test -d $gitroot; then
+   run "cd $gitroot"
 else
-   die "could not cd to $work_dir"
+   die "could not cd to $gitroot"
 fi
 
 # Ensure we have a kerberos ticket
@@ -138,29 +120,42 @@ run "kinit -f -l 1h -kt $HOME/.ssh/xfkeytab transfer/${USER}push@lanl.gov"
 # Ask Mercury if there are any items available for pulling from Yellow
 possible_items_to_pull=`ssh red@transfer.lanl.gov myfiles | awk '{print $2}'`
 
-# Loop over all items that mercury listed, if 'draco.repo' is found,
-# then mark it for unpacking.
+# List of repositories (also used by sync_repositories.sh and
+# pull_repositories_xf.sh).  It defines $git_projects.
+source ${scriptdir}/repository_list.sh
 
-capsaicin_ready=0
-jayenne_ready=0
-draco_git_ready=0
+# Loop over each known repository.  If a new tar file is found in the transfer
+# system, pull it and unpack it at $gitroot.
+for project in ${git_projects[@]}; do
 
-for item in $possible_items_to_pull; do
-   if test ${item} = "capsaicin.git.tar"; then capsaicin_ready=1; fi
-   if test ${item} = "Draco.git.tar";     then draco_git_ready=1; fi
-   if test ${item} = "jayenne.git.tar";   then jayenne_ready=1;   fi
+  echo -e "\nProcessing $project...\n"
+
+  namespace=`echo $project | sed -e 's%/.*%%'`
+  repo=`echo $project | sed -e 's%.*/%%'`
+  xf_file=${namespace}_${repo}.git.tar
+
+  # keep track of how many files transfer knows about.  Sometimes there are
+  # extra files because a machine was down when the cronjob normally runs.
+  num_avail=`echo ${possible_items_to_pull} | grep -c ${xf_file}`
+  while [[ $num_avail -gt 0 ]]; do
+    let "num_avail -= 1"
+    unpack_repo_git "${namespace}" "${repo}"
+    # sometimes it takes some time before the file is removed from transfer.
+    # So, if we need to unpack the tar file again, then pause first to ensure we
+    # are unpacking the 2nd file in the list instead of repeating what we just
+    # did.
+    if [[ $num_avail -gt 0 ]]; then sleep 30; fi
+  done
+
 done
 
-# If found, pull the files
-run "cd ${work_dir}"
-if test ${draco_git_ready} = 1; then unpack_repo_git "Draco.git"; fi
-if test ${jayenne_ready} = 1; then unpack_repo_git "jayenne.git"; fi
-if test ${capsaicin_ready} = 1; then unpack_repo_git "capsaicin.git"; fi
-
 # Update permisssions as needed
-run "cd ${work_dir}/.."
+run "cd ${gitroot}/.."
 run "chgrp -R draco git"
 run "chmod -R g+rwX,o-rwX git"
+run "cd $start_dir"
+
+echo -e "\nAll done.\n"
 
 #------------------------------------------------------------------------------#
 # End pull_repositories_xf.sh

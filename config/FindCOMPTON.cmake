@@ -59,6 +59,11 @@
 # Include these modules to handle the QUIETLY and REQUIRED arguments.
 include(FindPackageHandleStandardArgs)
 
+# Use OpenMP version if OpenMP is available.
+if( NOT OPENMP_FOUND )
+  find_package(OpenMP QUIET)
+endif()
+
 #=============================================================================
 # If the user has provided ``COMPTON_ROOT_DIR``, use it!  Choose items found
 # at this location over system locations.

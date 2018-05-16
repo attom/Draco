@@ -18,11 +18,6 @@ file( GLOB sources *.cc )
 file( GLOB explicit_instantiations *_pt.cc )
 file( GLOB headers *.hh )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -31,6 +26,7 @@ add_component_library(
    TARGET       Lib_memory
    TARGET_DEPS  Lib_dsxx
    LIBRARY_NAME ${PROJECT_NAME}
+   HEADERS      "${headers}"
    SOURCES      "${sources}" )
 
 # ---------------------------------------------------------------------------- #

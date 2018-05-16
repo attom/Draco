@@ -32,6 +32,7 @@ void tstParallel_File_Token_Stream(rtt_dsxx::UnitTest &ut) {
 
   {
     Parallel_File_Token_Stream tokens(inputFile);
+    tokens.comment("begin test of Parallel_File_Token_Stream");
     if (tokens.whitespace() != Text_Token_Stream::default_whitespace)
       FAILMSG("Whitespace not set correctly");
     else

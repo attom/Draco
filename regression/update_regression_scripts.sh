@@ -53,6 +53,10 @@ case ${target} in
     VENDOR_DIR=/scratch/vendors
     keychain=keychain-2.8.2
     ;;
+  sn-* | ba-* | tt-* )
+    REGDIR=/usr/projects/jayenne/regress
+    VENDOR_DIR=/usr/projects/draco/vendors
+    ;;
   *)
     REGDIR=/scratch/regress
     ;;
@@ -93,7 +97,7 @@ if ! [[ -d $REGDIR ]]; then
 fi
 
 # Draco/Jayenne/Capsaicin
-projects="draco jayenne capsaicin"
+projects="draco jayenne capsaicin CSK"
 for p in $projects; do
   echo -e "\nUpdating $REGDIR/$p..."
   if test -d ${REGDIR}/$p; then

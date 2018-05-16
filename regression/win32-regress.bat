@@ -18,7 +18,8 @@ rem can be captured in a log file.
 
 :setupvs17commenv
 rem 32-bit builds ==> x86
-@call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 %*
+rem @call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 %*
+@call "C:\Program Files (x86)\Microsoft Visual Studio\Preview\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 %*
 
 rem -------------------------------------------------------------------------------------------
 rem The main regression script starts here.
@@ -41,7 +42,11 @@ set > %logdir%\environment.log 2>&1
 rem echo .
 rem echo -----     -----     -----     -----     -----
 
+rem goto :done
 rem goto :jayennedebug
+rem goto :jayennerelease
+rem goto :dracodebug
+rem goto :dracorelease
 
 rem -------------------------------------------------------------------------------------------
 :dracodebug

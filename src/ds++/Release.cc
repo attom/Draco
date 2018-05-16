@@ -61,8 +61,8 @@ std::string print_devs(size_t const maxlinelen, std::string const &line_name,
 const std::string release() {
   std::ostringstream pkg_release;
   // Name and version
-  pkg_release << "Draco-" << DRACO_VERSION_MAJOR << "_" << DRACO_VERSION_MINOR
-              << "_" << DRACO_VERSION_PATCH;
+  pkg_release << "Draco-" << Draco_VERSION_MAJOR << "_" << Draco_VERSION_MINOR
+              << "_" << Draco_VERSION_PATCH;
 
   // build date and type
   std::string const build_date(DRACO_BUILD_DATE);
@@ -100,15 +100,14 @@ const std::string author_list() {
   mmdevs current_developers;
   // not totally fair... KT got credit for LOC when svn repository was converted
   // to git.
-  current_developers.insert(fomdev(224492, "Kelly G. Thompson"));
-  current_developers.insert(fomdev(11403, "Kent G. Budge"));
+  current_developers.insert(fomdev(223653, "Kelly G. Thompson"));
+  current_developers.insert(fomdev(11611, "Kent G. Budge"));
   current_developers.insert(fomdev(3299, "James S. Warsa"));
-  current_developers.insert(fomdev(2791, "Alex R. Long"));
-  current_developers.insert(fomdev(1464, "Rob B. Lowrie"));
-  current_developers.insert(fomdev(995, "Kendra P. Keady"));
-  current_developers.insert(fomdev(402, "Jae H. Chang"));
+  current_developers.insert(fomdev(2833, "Alex R. Long"));
+  current_developers.insert(fomdev(970, "Kendra P. Keady"));
+  current_developers.insert(fomdev(399, "Jae H. Chang"));
   current_developers.insert(fomdev(245, "Matt A. Cleveland"));
-  current_developers.insert(fomdev(86, "Ryan T. Wollaeger"));
+  current_developers.insert(fomdev(130, "Ryan T. Wollaeger"));
   current_developers.insert(fomdev(85, "Andrew T. Till"));
   current_developers.insert(fomdev(25, "Daniel Holladay"));
   current_developers.insert(fomdev(9, "Massimiliano Rosa"));
@@ -116,11 +115,12 @@ const std::string author_list() {
 
   mmdevs prior_developers;
 
-  prior_developers.insert(fomdev(4886, "Jeff D. Densmore"));
-  prior_developers.insert(fomdev(4413, "Gabriel M. Rockefeller"));
-  prior_developers.insert(fomdev(2424, "Allan B. Wollaber"));
+  prior_developers.insert(fomdev(4876, "Jeff D. Densmore"));
+  prior_developers.insert(fomdev(4368, "Gabriel M. Rockefeller"));
+  prior_developers.insert(fomdev(2361, "Allan B. Wollaber"));
+  prior_developers.insert(fomdev(1458, "Rob B. Lowrie"));
   prior_developers.insert(fomdev(995, "Lori A. Pritchett-Sheats"));
-  prior_developers.insert(fomdev(315, "Paul W. Talbot"));
+  prior_developers.insert(fomdev(314, "Paul W. Talbot"));
   prior_developers.insert(fomdev(265, "Katherine J. Wang"));
   // < 100 lines
   // prior_developers.insert(fomdev(82, "Peter Ahrens"));

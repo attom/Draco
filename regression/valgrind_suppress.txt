@@ -292,6 +292,17 @@
    fun:eos_CreateTablesEosDataMap
    ...
 }
+# after moving to eospac/6.3.1...
+{
+  eospac/6.3.1/e001
+   Memcheck:Cond
+   fun:eos_SearchIndices_XF
+   ...
+   fun:eos_InterpolateRecordType1
+   fun:eos_InterpolateEosInterpolation
+   fun:eos_Interpolate
+   ...
+}
 
 ## ---------------------------------------------------------------------- ##
 ## Numdiff
@@ -319,7 +330,7 @@
 # ==18912==    by 0x40ABB6: init_mpa_support (in /ccs/codes/radtran/vendors/numdiff-5.2.1/bin/numdiff)
 # ==18912==    by 0x40BC6F: main (in /ccs/codes/radtran/vendors/numdiff-5.2.1/bin/numdiff)
 {
-   <insert_a_suppression_name_here>
+   numdiff/e002
    Memcheck:Cond
    ...
    fun:__gmpf_set_str
@@ -328,43 +339,42 @@
    fun:main
 }
 {
-   <insert_a_suppression_name_here>
+   numdiff/e003
    Memcheck:Value8
    fun:__gmpn_mul_basecase
    ...
 }
 {
-   <insert_a_suppression_name_here>
+   numdiff/e004
    Memcheck:Cond
    fun:__gmpn_mul_basecase
    ...
 }
 {
-   <insert_a_suppression_name_here>
+   numdiff/e005
    Memcheck:Cond
    ...
    fun:init_mpa_support
    ...
 }
 {
-   <insert_a_suppression_name_here>
+   numdiff/e006
    Memcheck:Value8
    fun:__gmpn_sqr_basecase
    ...
 }
 {
-   <insert_a_suppression_name_here>
+   numdiff/e007
    Memcheck:Value8
    fun:__gmpn_sqr_n
 }
 {
-   <insert_a_suppression_name_here>
+   numdiff/e008
    Memcheck:Cond
    ...
    fun:__gmpn_divrem
    ...
 }
-
 {
    numdiff/lost/04
    Memcheck:Leak
@@ -1227,16 +1237,9 @@
    match-leak-kinds: possible
    fun:calloc
    fun:pmix1_server_register_nspace
-   fun:orte_pmix_server_register_nspace
-   fun:orte_odls_base_default_construct_child_list
-   fun:orte_odls_default_launch_local_procs
-   fun:orte_daemon_recv
-   fun:orte_rml_base_process_msg
-   fun:event_process_active_single_queue
-   fun:event_process_active
-   fun:opal_libevent2022_event_base_loop
+   ...
    fun:orterun
-   fun:main
+   ...
 }
 {
    openmpi/211/e0001
@@ -1294,7 +1297,140 @@
    fun:PMPI_Init
    ...
 }
-
+{
+   openmpi211/e0007
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:strdup
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0008
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:pmix_start_listening
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0009
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:mca_base_component_find
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0010
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:mca_oob_usock_component_set_module
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0011
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   fun:vasprintf
+   ...
+}
+{
+   openmpi211/e0012
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:prq_cons
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0013
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:orte_dt_unpack_sig
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0014
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:orte_rml_oob_recv_cancel
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0015
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:mca_oob_usock_peer_recv_connect_ack
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0016
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:orte_daemon
+   fun:main
+}
+{
+   openmpi211/e0017
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   fun:pmix1_server_register_nspace
+   ...
+   fun:orte_daemon
+   ...
+}
+{
+   openmpi211/e0018
+   Memcheck:Addr8
+   fun:opal_libevent2022_event_del
+   ...
+   fun:ompi_mpi_finalize
+   ...
+}
+{
+   openmpi211/e0019
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:opal_argv_join
+   ...
+   fun:orte_init
+   ...
+}
+{
+   openmpi/301/e0001
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:pmix_server_commit
+   ...
+   fun:opal_libevent2022_event_base_loop
+   ...
+}
 
 #------------------------------------------------------------------------------#
 # Python 2.7
@@ -1420,6 +1556,34 @@
    python/e011
    Memcheck:Cond
    fun:PyObject_Realloc
+   ...
+}
+{
+   python/e012
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:/usr/lib64/libpython2.7.so.1.0
+   ...
+}
+{
+   python/e013
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:PyObject_Malloc
+   ...
+   obj:/usr/lib64/libpython2.7.so.1.0
+   ...
+}
+{
+   python/e014
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:PyObject_Malloc
+   ...
+   fun:PyEval_EvalFrameEx
    ...
 }
 

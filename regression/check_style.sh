@@ -20,7 +20,7 @@ print_use()
     echo "Usage: ${0##*/} -d -n -t"
     echo " "
     echo "All arguments are optional."
-    echo "  -d Diff mode only. Do not modifty files."
+    echo "  -d Diff mode only. Do not modify files."
     echo "  -n Alias for -d."
     echo "  -t Run as a pre-commit check, print list of non-conformant files and return"
     echo "     with exit code = 1."

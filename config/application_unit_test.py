@@ -555,8 +555,8 @@ class UnitTest:
       diff_name="numdiff", diff_args=""):
 
     try:
-      if (not self.cmake_args.has_key(cmake_dir_1)) or \
-          (not self.cmake_args.has_key(cmake_dir_2)):
+      if (cmake_dir_1 not in self.cmake_args) or \
+          (cmake_dir_2 not in self.cmake_args):
         self.fatal_error("CMake arguments not speficied in command line")
 
       path_1 = "{0}/{1}".format(self.cmake_args[cmake_dir_1], sub_path_1)

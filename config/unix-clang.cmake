@@ -30,30 +30,27 @@ query_openmp_availability()
 #
 
 if( NOT CXX_FLAGS_INITIALIZED )
-   set( CXX_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using draco settings." )
+  set( CXX_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using draco settings." )
 
-   set( CMAKE_C_FLAGS                "-Wcast-align -Wpointer-arith -Wall -Wno-long-long -pedantic" )
-   if (NOT ${CMAKE_GENERATOR} MATCHES Xcode AND HAS_MARCH_NATIVE)
-      set( CMAKE_C_FLAGS             "${CMAKE_C_FLAGS} -march=native" )
-   endif()
-   set( CMAKE_C_FLAGS_DEBUG          "-g -fno-inline -O0 -Wextra -DDEBUG")
-   set( CMAKE_C_FLAGS_RELEASE        "-O3 -funroll-loops -DNDEBUG" )
-   set( CMAKE_C_FLAGS_MINSIZEREL     "${CMAKE_C_FLAGS_RELEASE}" )
-   set( CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -g -Wextra -funroll-loops" )
+  set( CMAKE_C_FLAGS                "-Wcast-align -Wpointer-arith -Wall -Wno-long-long -pedantic" )
+  if (NOT ${CMAKE_GENERATOR} MATCHES Xcode AND HAS_MARCH_NATIVE)
+    set( CMAKE_C_FLAGS             "${CMAKE_C_FLAGS} -march=native" )
+  endif()
+  set( CMAKE_C_FLAGS_DEBUG          "-g -fno-inline -O0 -Wextra -DDEBUG")
+  set( CMAKE_C_FLAGS_RELEASE        "-O3 -funroll-loops -DNDEBUG" )
+  set( CMAKE_C_FLAGS_MINSIZEREL     "${CMAKE_C_FLAGS_RELEASE}" )
+  set( CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -g -Wextra -funroll-loops" )
 
-# Suppress warnings about typeid() called with function as an argument. In this
-# case, the function might not be called if the type can be deduced.
-   set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS} -stdlib=libc++ -Wno-potentially-evaluated-expression" )
-   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3.8 )
-     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
-   endif()
-   set( CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_C_FLAGS_DEBUG} -Woverloaded-virtual")
-   set( CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_C_FLAGS_RELEASE}")
-   set( CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_RELEASE}")
-   set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}" )
-
-   # Use C99 standard.
-   set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
+  # Suppress warnings about typeid() called with function as an argument. In this
+  # case, the function might not be called if the type can be deduced.
+  set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS} -stdlib=libc++ -Wno-potentially-evaluated-expression" )
+  if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3.8 )
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
+  endif()
+  set( CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_C_FLAGS_DEBUG} -Woverloaded-virtual")
+  set( CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_C_FLAGS_RELEASE}")
+  set( CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_RELEASE}")
+  set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}" )
 
 endif()
 
@@ -72,10 +69,15 @@ set( CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}"        CACHE ST
 set( CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_MINSIZEREL}"     CACHE STRING "compiler flags" FORCE )
 set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" CACHE STRING "compiler flags" FORCE )
 
-# Toggle for C++11 support
+# Toggle for OpenMP support
 if( OpenMP_C_FLAGS )
-  toggle_compiler_flag( OPENMP_FOUND "${OpenMP_C_FLAGS}" "C;CXX;EXE_LINKER" "" )
+  toggle_compiler_flag( OPENMP_FOUND "${OpenMP_C_FLAGS}" "C" "" )
 endif()
+if( OpenMP_CXX_FLAGS )
+  toggle_compiler_flag( OPENMP_FOUND "${OpenMP_CXX_FLAGS}" "CXX" "" )
+endif()
+# adding openmp option to EXE_LINKER will break MPI detection for gfortran when
+# running with clang++/clang/gfortran.
 
 #------------------------------------------------------------------------------#
 # End config/unix-clang.cmake

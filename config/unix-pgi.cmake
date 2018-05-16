@@ -53,11 +53,6 @@ if( NOT CXX_FLAGS_INITIALIZED )
   #              option appears to break our exception handling model resulting
   #              in SEGV.
   # This may be related to PGI bug 1858 (http://www.pgroup.com/support/release_tprs.htm).
-#  if( "${DBS_CXX_COMPILER_VER_MAJOR}.${DBS_CXX_COMPILER_VER_MINOR}" GREATER 10 )
-#    if( NOT "${CMAKE_CXX_FLAGS}" MATCHES "--nozc_eh" )
-#      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --nozc_eh" )
-#    endif()
-#  endif()
 
   set( CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_C_FLAGS_DEBUG}")
   set( CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_C_FLAGS_RELEASE} -Munroll=c:10 -Mautoinline=levels:10 -Mvect=sse -Mflushz -Mlre")

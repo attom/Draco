@@ -12,7 +12,7 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_norms Overview of the norms package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author Rob Lowrie
 
 Provides classes that compute various norms, including across
@@ -30,7 +30,7 @@ Norms_Index<Index_Proc>.  The location of the max norm not only
 reports the "index" (type size_t), but also the processor number that
 the maximum occurred at.
 - rtt_norms::Norms_Labeled.  This is equivalent to
-Norms_Index<Index_Labeled>.  The location of the max norm reports the 
+Norms_Index<Index_Labeled>.  The location of the max norm reports the
 index, the processor number, and a string label.
 
 <!---------------------------------------------------------------------------->

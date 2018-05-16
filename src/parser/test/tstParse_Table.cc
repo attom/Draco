@@ -60,7 +60,7 @@ const Keyword raw_table[] = {
     {"BLACK", Parse_Color, 0, "main"},
     {"BLUE GREEN", Parse_Color, 2, "main"},
     {"BLUISH GREEN", Parse_Color, 2, "main"},
-    {"lower blue", Parse_Color, 2, "main"},
+    {"lower blue", Parse_Color, 2, "main", "keyword to test case sensitivity"},
     {"COLOR", Parse_Any_Color, 0, "main"},
 };
 const size_t raw_table_size = sizeof(raw_table) / sizeof(Keyword);
@@ -73,6 +73,10 @@ const size_t raw_table_2_size = sizeof(raw_table_2) / sizeof(Keyword);
 class Error_Token_Stream : public Token_Stream {
 public:
   void rewind() {}
+
+  void comment(string const & /*err*/) {
+    cout << "comment reported to Error_Token_Stream" << endl;
+  }
 
 protected:
   void report(Token const &, string const & /*err*/) {
@@ -91,6 +95,10 @@ public:
   Colon_Token_Stream() : count_(0) {}
 
   void rewind() {}
+
+  void comment(string const & /*err*/) {
+    cout << "comment reported to Colon_Token_Stream" << endl;
+  }
 
 protected:
   void report(Token const &, string const & /*err*/) {
@@ -334,6 +342,7 @@ void tstParse_Table(UnitTest &ut) {
   }
   {
     Colon_Token_Stream tokens;
+    tokens.comment("dummy test");
     if (table.parse(tokens).type() != END) {
       FAILMSG("END detection FAILED");
     }
@@ -344,6 +353,7 @@ void tstParse_Table(UnitTest &ut) {
   // Error handling
   {
     Error_Token_Stream tokens;
+    tokens.comment("dummy comment");
     if (table.parse(tokens).type() != rtt_parser::ERROR) {
       FAILMSG("error detection FAILED");
     }

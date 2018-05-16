@@ -31,6 +31,7 @@ void tstFile_Token_Stream(rtt_dsxx::UnitTest &ut) {
 
   {
     File_Token_Stream tokens(inputFile);
+    tokens.comment("begin tests of File_Token_Stream");
     if (tokens.whitespace() != Text_Token_Stream::default_whitespace)
       FAILMSG("whitespace characters are NOT correct defaults");
     else

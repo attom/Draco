@@ -69,7 +69,8 @@ macro( query_have_gethostname )
        unset( HAVE_GETHOSTNAME )
     endif()
 
-    check_symbol_exists( _POSIX_HOST_NAME_MAX "posix1_lim.h" HAVE_POSIX_HOST_NAME_MAX )
+    check_symbol_exists( _POSIX_HOST_NAME_MAX "posix1_lim.h"
+      HAVE_POSIX_HOST_NAME_MAX )
 
     # HOST_NAME_MAX
     check_symbol_exists( MAXHOSTNAMELEN "sys/param.h" HAVE_MAXHOSTNAMELEN )
@@ -166,7 +167,8 @@ macro( query_have_restrict_keyword )
 
       if( HAVE_RESTRICT )
         set( RESTRICT_KEYWORD ${ac_kw} )
-        message(STATUS "Looking for the C99 restrict keyword - found ${RESTRICT_KEYWORD}")
+        message(STATUS
+          "Looking for the C99 restrict keyword - found ${RESTRICT_KEYWORD}")
         break()
       endif()
     endforeach()
@@ -192,7 +194,8 @@ macro( query_openmp_availability )
     find_package(OpenMP QUIET)
     if( OPENMP_FOUND )
       message( STATUS "Looking for OpenMP... ${OpenMP_C_FLAGS}")
-      set( OPENMP_FOUND ${OPENMP_FOUND} CACHE BOOL "Is OpenMP availalable?" FORCE )
+      set( OPENMP_FOUND ${OPENMP_FOUND} CACHE BOOL "Is OpenMP availalable?"
+        FORCE )
     else()
       message(STATUS "Looking for OpenMP... not found")
     endif()
@@ -208,53 +211,63 @@ endmacro()
 macro( query_fma_on_hardware )
 
   if( NOT PLATFORM_CHECK_FMA_DONE )
+
     set( PLATFORM_CHECK_FMA_DONE TRUE CACHE BOOL
       "Is the check for hardware FMA done?")
     mark_as_advanced( PLATFORM_CHECK_FMA_DONE )
     message( STATUS "Looking for hardware FMA support...")
-    unset(HAVE_HARDWARE_FMA)
-    try_run(
-      HAVE_HARDWARE_FMA
-      HAVE_HARDWARE_FMA_COMPILE
-      ${CMAKE_CURRENT_BINARY_DIR}/config
-      ${CMAKE_CURRENT_SOURCE_DIR}/config/query_fma.cc
-      )
-    if( NOT HAVE_HARDWARE_FMA_COMPILE )
-      message( FATAL_ERROR "Unable to compile config/query_fma.cc.")
+
+    if( "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "ppc64le" )
+      # power8/9 have FMA and the check below fails for power architectures, so
+      # we hard code the result here.
+      set(HAVE_HARDWARE_FMA TRUE)
+
+    else()
+      unset(HAVE_HARDWARE_FMA)
+      try_run(
+        HAVE_HARDWARE_FMA
+        HAVE_HARDWARE_FMA_COMPILE
+        ${CMAKE_CURRENT_BINARY_DIR}/config
+        ${CMAKE_CURRENT_SOURCE_DIR}/config/query_fma.cc
+        )
+      if( NOT HAVE_HARDWARE_FMA_COMPILE )
+        message( FATAL_ERROR "Unable to compile config/query_fma.cc.")
+      endif()
     endif()
+
     if( HAVE_HARDWARE_FMA )
       message( STATUS "Looking for hardware FMA support...found fma.")
     else()
       message( STATUS "Looking for hardware FMA support...fma not found.")
     endif()
 
-  # Other things to look at (might be able to avoid the try-compile):
+    # Other things to look at (might be able to avoid the try-compile):
 
-  # if (WIN32)
-  #   # Not sure what to do here. Consider:
-  #   # - looking at $ENV{PROCESSOR_IDENTIFIER}. This will be something like:
-  #   #   "Intel64 Family 6 Model 45 Stepping 7, GenuineIntel" This string would
-  #   #   need to be decoded to know if the processor supports FMA.
-  #   # - running 'wmic cpu get * /fomrat:list'. This lists a lot of information
-  #   #   about the cpu, but it does not itemize features like fma. Optionally,
-  #   #   'wmic cpu get name'
-  #   # - run a 3rd party application like cpuz64.
-  # elseif (APPLE)
-  #   execute_process( COMMAND /usr/sbin/sysctl -n hw.optional.fma
-  #     OUTPUT_VARIABLE found_fma
-  #     OUTPUT_QUIET )
-  #   if( ${found_fma} GREATER 0 )
-  #     set(HAS_HARDWARE_FMA ON)
-  #   endif()
-  # else()
-  #   if( EXISTS /proc/cpuinfo )
-  #     execute_process( COMMAND /bin/cat /proc/cpuinfo
-  #       OUTPUT_VARIABLE cpuinfo-output )
-  #   string( FIND "${cpuinfo-output}" fma found_fma )
-  #   if( ${found_fma} GREATER 0 )
-  #     set(HAS_HARDWARE_FMA ON)
-  #   endif()
-  # endif()
+    # if (WIN32)
+    #   # Not sure what to do here. Consider:
+    #   # - looking at $ENV{PROCESSOR_IDENTIFIER}. This will be something like:
+    #   #   "Intel64 Family 6 Model 45 Stepping 7, GenuineIntel" This string
+    #   #   would need to be decoded to know if the processor supports FMA.
+    #   # - running 'wmic cpu get * /fomrat:list'. This lists a lot of
+    #   #   information about the cpu, but it does not itemize features like
+    #   #   fma. Optionally, 'wmic cpu get name'
+    #   # - run a 3rd party application like cpuz64.
+    # elseif (APPLE)
+    #   execute_process( COMMAND /usr/sbin/sysctl -n hw.optional.fma
+    #     OUTPUT_VARIABLE found_fma
+    #     OUTPUT_QUIET )
+    #   if( ${found_fma} GREATER 0 )
+    #     set(HAS_HARDWARE_FMA ON)
+    #   endif()
+    # else()
+    #   if( EXISTS /proc/cpuinfo )
+    #     execute_process( COMMAND /bin/cat /proc/cpuinfo
+    #       OUTPUT_VARIABLE cpuinfo-output )
+    #   string( FIND "${cpuinfo-output}" fma found_fma )
+    #   if( ${found_fma} GREATER 0 )
+    #     set(HAS_HARDWARE_FMA ON)
+    #   endif()
+    # endif()
 
   endif()
 

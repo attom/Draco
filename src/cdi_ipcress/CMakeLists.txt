@@ -30,11 +30,6 @@ set( headers
    IpcressOdfmgOpacity.hh
 )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -43,7 +38,9 @@ add_component_library(
   TARGET       Lib_cdi_ipcress
   TARGET_DEPS  "Lib_cdi"
   LIBRARY_NAME ${PROJECT_NAME}
+  HEADERS      "${headers}"
   SOURCES      "${sources}" )
+
 
 add_component_executable(
   TARGET      Exe_Ipcress_Interpreter

@@ -20,6 +20,12 @@
 #endif
 #endif
 
+/* If GNU, then define GNU_VERSION */
+#ifdef __GNUC__
+#define RNG_GNUC_VERSION                                                           \
+  (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#endif
+
 /* Use a unique name for this Remember macro */
 #ifdef NDEBUG
 #define rngRemember(c)

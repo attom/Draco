@@ -324,6 +324,25 @@ void Parallel_File_Token_Stream::report(string const &message) {
 
 //-------------------------------------------------------------------------//
 /*!
+ * This function sends a message by writing it to the error console stream.
+ * Only processor 0 writes the message, to avoid many (possibly thousands) of
+ * duplicate messages.
+ *
+ * This version prints no location information.
+ */
+
+void Parallel_File_Token_Stream::comment(string const &message) {
+  Require(check_class_invariants());
+
+  if (rtt_c4::node() == 0) {
+    cerr << message << endl;
+  }
+
+  Ensure(check_class_invariants());
+}
+
+//-------------------------------------------------------------------------//
+/*!
  *
  * This function rewinds the file stream associated with the file token
  * stream and flushes its internal buffers, so that scanning resumes at

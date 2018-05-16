@@ -5,10 +5,7 @@
  * \date   Wednesday, Nov 07, 2012, 18:49 pm
  * \brief  Small executable that prints the version and copyright strings.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-// $Id: tstScalarUnitTest.cc 6864 2012-11-08 01:34:45Z kellyt $
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "draco_info.hh"
