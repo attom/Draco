@@ -5,10 +5,7 @@
  * \date   Wed Jun 7 10:33:26 2000
  * \brief  Implementation file for RTT_Format_Reader library.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "RTT_Format_Reader.hh"
@@ -57,7 +54,7 @@ void RTT_Format_Reader::readMesh(const string &RTT_File) {
     spSideData->readSideData(meshfile);
     spCellData->readCellData(meshfile);
     readEndKeyword(meshfile);
-  } catch (rtt_dsxx::assertion as) {
+  } catch (rtt_dsxx::assertion &as) {
     std::cout << "Assertion thrown: " << as.what() << std::endl;
     Insist(false, as.what());
   }

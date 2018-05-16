@@ -10,6 +10,48 @@
 include( FeatureSummary )
 include( setupMPI ) # defines the macros setupMPILibrariesUnix|Windows
 
+#------------------------------------------------------------------------------#
+# Helper macros for Python
+#------------------------------------------------------------------------------#
+macro( setupPython )
+
+  message( STATUS "Looking for Python...." )
+  find_package(PythonInterp QUIET REQUIRED)
+  #  PYTHONINTERP_FOUND - Was the Python executable found
+  #  PYTHON_EXECUTABLE  - path to the Python interpreter
+  set_package_properties( PythonInterp PROPERTIES
+    URL "https://www.python.org"
+    DESCRIPTION "Python interpreter"
+    TYPE REQUIRED
+    PURPOSE "Required for running tests and accessing features that rely on matplotlib."
+    )
+  if( PYTHONINTERP_FOUND )
+    message( STATUS "Looking for Python....found ${PYTHON_EXECUTABLE}" )
+  else()
+    message( STATUS "Looking for Python....not found" )
+  endif()
+
+endmacro()
+
+#------------------------------------------------------------------------------#
+# Helper macros for Random123
+#------------------------------------------------------------------------------#
+macro( setupRandom123 )
+
+ message( STATUS "Looking for Random123...")
+  find_package( Random123 REQUIRED QUIET )
+  if( RANDOM123_FOUND )
+    message( STATUS "Looking for Random123.found ${RANDOM123_INCLUDE_DIR}")
+  else()
+    message( STATUS "Looking for Random123.not found")
+  endif()
+  set_package_properties( Random123 PROPERTIES
+    URL "http://www.deshawresearch.com/resources_random123.html"
+    DESCRIPTION "a library of counter-based random number generators"
+    TYPE REQUIRED
+    PURPOSE "Required for building the rng component."  )
+endmacro()
+
 #------------------------------------------------------------------------------
 # Helper macros for LAPACK/Unix
 #
@@ -19,7 +61,7 @@ include( setupMPI ) # defines the macros setupMPILibrariesUnix|Windows
 # lapack_VERSION - '3.4.1'
 # provides targets: lapack, blas
 #------------------------------------------------------------------------------
-macro( setupLAPACKLibrariesUnix )
+macro( setupLAPACKLibraries )
 
   # There are several flavors of LAPACK.
   # 1. look for netlib-lapack
@@ -41,13 +83,14 @@ macro( setupLAPACKLibrariesUnix )
 
   if( lapack_FOUND )
     set( lapack_flavor "netlib")
+    set( lapack_url "http://www.netlib.org/lapack" )
     foreach( config NOCONFIG DEBUG RELEASE RELWITHDEBINFO )
       get_target_property(tmp lapack IMPORTED_LOCATION_${config} )
       if( EXISTS ${tmp} )
         set( lapack_FOUND TRUE )
       endif()
     endforeach()
-    message( STATUS "Looking for lapack (netlib)....found ${LAPACK_LIB_DIR}")
+    message( STATUS "Looking for lapack (netlib)....found ${tmp}")
     set( lapack_FOUND ${lapack_FOUND} CACHE BOOL "Did we find LAPACK." FORCE )
 
     # The above might define blas, or it might not. Double check:
@@ -61,6 +104,13 @@ macro( setupLAPACKLibrariesUnix )
       else()
         message( FATAL_ERROR "Looking for lapack (netlib)....blas not found")
       endif()
+    else()
+      # ensure lapack --> blas?
+      get_target_property( ilil lapack IMPORTED_LINK_INTERFACE_LIBRARIES )
+      if( NOT "${ilil}" MATCHES "blas" )
+        set_target_properties( lapack PROPERTIES
+          IMPORTED_LINK_INTERFACE_LIBRARIES blas )
+      endif()
     endif()
 
   else()
@@ -68,6 +118,10 @@ macro( setupLAPACKLibrariesUnix )
   endif()
 
   mark_as_advanced( lapack_DIR lapack_FOUND )
+
+  # Debug targets:
+  # include(print_target_properties)
+  # print_targets_properties("lapack;blas")
 
   # Above we tried to find lapack-config.cmake at $LAPACK_LIB_DIR/cmake/lapack.
   # This is a draco supplied version of lapack.  If that search failed, then try
@@ -111,6 +165,7 @@ macro( setupLAPACKLibrariesUnix )
         set( lapack_FOUND TRUE CACHE BOOL "lapack (MKL) found?" FORCE)
         set( lapack_DIR "$ENV{MKLROOT}" CACHE PATH "MKLROOT PATH?" FORCE)
         set( lapack_flavor "mkl")
+        set( lapack_url "https://software.intel.com/en-us/intel-mkl")
         add_library( lapack ${MKL_LIBRARY_TYPE} IMPORTED)
         add_library( blas   ${MKL_LIBRARY_TYPE} IMPORTED)
         add_library( blas::mkl_thread  ${MKL_LIBRARY_TYPE} IMPORTED)
@@ -156,6 +211,7 @@ macro( setupLAPACKLibrariesUnix )
         set( LAPACK_FOUND TRUE CACHE BOOL "lapack (OpenBlas) found?")
         set( lapack_FOUND TRUE CACHE BOOL "lapack (OpenBlas) found?")
         set( lapack_flavor "openblas")
+        set( lapack_url "http://www.openblas.net")
         add_library( lapack SHARED IMPORTED)
         add_library( blas   SHARED IMPORTED)
         set_target_properties( blas PROPERTIES
@@ -168,7 +224,6 @@ macro( setupLAPACKLibrariesUnix )
       else()
         message(STATUS "Looking for lapack (OpenBLAS)...NOTFOUND")
       endif()
-
   endif()
 
   # If the above searches for LAPACK failed, then try to find netlib-lapack and
@@ -193,8 +248,18 @@ macro( setupLAPACKLibrariesUnix )
       else()
         message(STATUS "Looking for lapack(no cmake config)...NOTFOUND")
       endif()
-
   endif()
+
+  set_package_properties( BLAS PROPERTIES
+    URL "${lapack_url}"
+    DESCRIPTION "Basic Linear Algebra Subprograms"
+    TYPE OPTIONAL
+    PURPOSE "Required for building the lapack_wrap component." )
+  set_package_properties( lapack PROPERTIES
+    URL "${lapack_url}"
+    DESCRIPTION "Linear Algebra PACKage"
+    TYPE OPTIONAL
+    PURPOSE "Required for building the lapack_wrap component." )
 
 endmacro()
 
@@ -314,6 +379,13 @@ macro( setupQt )
     mark_as_advanced( Qt5Core_DIR Qt5Gui_DIR Qt5Gui_EGL_LIBRARY
       Qt5Widgets_DIR )
   endif()
+
+  set_package_properties( Qt PROPERTIES
+    URL "http://qt.io"
+    DESCRIPTION "Qt is a comprehensive cross-platform C++ application framework."
+    TYPE OPTIONAL
+    PURPOSE "Only needed to demo qt version of draco_diagnostics." )
+
 endmacro()
 
 #------------------------------------------------------------------------------
@@ -347,10 +419,11 @@ macro( setupGSL )
     #=============================================================================
     # Include some information that can be printed by the build system.
     set_package_properties( GSL PROPERTIES
-      DESCRIPTION "Gnu Scientific Library"
-      URL "www.gnu.org/software/gsl"
-      PURPOSE "The GNU Scientific Library (GSL) is a numerical library for C and C++ programmers."
-      )
+      URL "https://www.gnu.org/software/gsl"
+      DESCRIPTION "The GNU Scientific Library (GSL) is a numerical library for C and C++
+   programmers."
+      TYPE REQUIRED
+      PURPOSE "Required for rng and quadrature components." )
 
   endif()
 
@@ -375,6 +448,7 @@ macro( setupParMETIS )
     # Include some information that can be printed by the build system.
     set_package_properties( METIS PROPERTIES
       DESCRIPTION "METIS"
+      TYPE OPTIONAL
       URL "http://glaros.dtc.umn.edu/gkhome/metis/metis/overview"
       PURPOSE "METIS is a set of serial programs for partitioning graphs, partitioning finite
    element meshes, and producing fill reducing orderings for sparse matrices."
@@ -397,6 +471,7 @@ macro( setupParMETIS )
     # Include some information that can be printed by the build system.
     set_package_properties( ParMETIS PROPERTIES
       DESCRIPTION "MPI Parallel METIS"
+      TYPE OPTIONAL
       URL "http://glaros.dtc.umn.edu/gkhome/metis/parmetis/overview"
       PURPOSE "ParMETIS is an MPI-based parallel library that implements a
    variety of algorithms for partitioning unstructured graphs, meshes, and for
@@ -424,12 +499,40 @@ macro( setupSuperLU_DIST )
     #===========================================================================
     # Include some information that can be printed by the build system.
     set_package_properties( SuperLU_DIST PROPERTIES
-      DESCRIPTION "SuperLU_DIST"
       URL " http://crd-legacy.lbl.gov/~xiaoye/SuperLU/"
+      DESCRIPTION "SuperLU_DIST"
+      TYPE OPTIONAL
       PURPOSE "SuperLU is a general purpose library for the direct solution of
    large, sparse, nonsymmetric systems of linear equations on high performance
    machines."  )
 
+  endif()
+
+endmacro()
+
+#------------------------------------------------------------------------------
+# Setup Eospac (https://laws.lanl.gov/projects/data/eos.html)
+#------------------------------------------------------------------------------
+macro( setupEOSPAC )
+
+  if( NOT TARGET EOSPAC::eospac )
+    message( STATUS "Looking for EOSPAC..." )
+
+    find_package( EOSPAC QUIET )
+
+    if( EOSPAC_FOUND )
+      message( STATUS "Looking for EOSPAC.....found ${EOSPAC_LIBRARY}" )
+    else()
+      message( STATUS "Looking for EOSPAC.....not found" )
+    endif()
+
+    #===========================================================================
+    # Include some information that can be printed by the build system.
+    set_package_properties( EOSPAC PROPERTIES
+      URL "https://laws.lanl.gov/projects/data/eos.html"
+      DESCRIPTION "Access SESAME thermodynamic and transport data."
+      TYPE OPTIONAL
+      PURPOSE "Required for bulding the cdi_eospac component." )
   endif()
 
 endmacro()
@@ -453,6 +556,7 @@ macro( setupCOMPTON )
     #===========================================================================
     # Include some information that can be printed by the build system.
     set_package_properties( COMPTON PROPERTIES
+      URL "https://gitlab.lanl.gov/CSK/CSK"
       DESCRIPTION "Access multigroup Compton scattering data."
       TYPE OPTIONAL
       PURPOSE "Required for bulding the compton component." )
@@ -465,20 +569,15 @@ endmacro()
 #------------------------------------------------------------------------------
 macro( SetupVendorLibrariesUnix )
 
-  # GSL, METIS, ParMETIS and SuperLU_DIST ------------------------------------
   setupGSL()
   setupParMETIS()
   setupSuperLU_DIST()
   setupCOMPTON()
-
-  # Random123 ----------------------------------------------------------------
-  message( STATUS "Looking for Random123...")
-  find_package( Random123 REQUIRED QUIET )
-  if( RANDOM123_FOUND )
-    message( STATUS "Looking for Random123.found ${RANDOM123_INCLUDE_DIR}")
-  else()
-    message( STATUS "Looking for Random123.not found")
-  endif()
+  setupEospac()
+  setupRandom123()
+  setupCudaEnv()
+  setupPython()
+  setupQt()
 
   # Grace ------------------------------------------------------------------
   message( STATUS "Looking for Grace...")
@@ -494,28 +593,16 @@ macro( SetupVendorLibrariesUnix )
     message( STATUS "Looking for Grace.....not found")
   endif()
 
-  # CUDA ------------------------------------------------------------------
-  setupCudaEnv()
+  # Doxygen ------------------------------------------------------------------
 
-  # PYTHON ----------------------------------------------------------------
-
-  message( STATUS "Looking for Python...." )
-  find_package(PythonInterp QUIET)
-  #  PYTHONINTERP_FOUND - Was the Python executable found
-  #  PYTHON_EXECUTABLE  - path to the Python interpreter
-  set_package_properties( PythonInterp PROPERTIES
-    DESCRIPTION "Python interpreter"
+  message( STATUS "Looking for Doxygen..." )
+  find_package( Doxygen QUIET  OPTIONAL_COMPONENTS dot mscgen dia )
+  set_package_properties( Doxygen PROPERTIES
+    URL "http://www.stack.nl/~dimitri/doxygen"
+    DESCRIPTION "Doxygen autodoc generator"
     TYPE OPTIONAL
-    PURPOSE "Required for running the fpe_trap tests."
+    PURPOSE "Required for building develop HTML documentation."
     )
-  if( PYTHONINTERP_FOUND )
-    message( STATUS "Looking for Python....found ${PYTHON_EXECUTABLE}" )
-  else()
-    message( STATUS "Looking for Python....not found" )
-  endif()
-
-  # Qt -----------------------------------------------------------------------
-  setupQt()
 
 endmacro()
 
@@ -525,30 +612,10 @@ endmacro()
 
 macro( SetupVendorLibrariesWindows )
 
-  # GSL ---------------------------------------------------------------------
   setupGSL()
   setupParMETIS()
-
-  # Random123 ---------------------------------------------------------------
-  message( STATUS "Looking for Random123...")
-  find_package( Random123 REQUIRED QUIET )
-  if( RANDOM123_FOUND )
-    message( STATUS "Looking for Random123.found ${RANDOM123_INCLUDE_DIR}")
-  else()
-    message( STATUS "Looking for Random123.not found")
-  endif()
-
-  # PYTHON ----------------------------------------------------------------
-  find_package(PythonInterp QUIET)
-  #  PYTHONINTERP_FOUND - Was the Python executable found
-  #  PYTHON_EXECUTABLE  - path to the Python interpreter
-  set_package_properties( PythonInterp PROPERTIES
-    DESCRIPTION "Python interpreter"
-    TYPE OPTIONAL
-    PURPOSE "Required for running the fpe_trap tests."
-    )
-
-  # Qt -----------------------------------------------------------------------
+  setupRandom123()
+  setupPython()
   setupQt()
 
 endmacro()
@@ -621,27 +688,10 @@ macro( setVendorVersionDefaults )
   if( NOT RANDOM123_INC_DIR AND IS_DIRECTORY $ENV{RANDOM123_INC_DIR}  )
     set( RANDOM123_INC_DIR $ENV{RANDOM123_INC_DIR} )
   endif()
-  if( NOT RANDOM123_INC_DIR AND IS_DIRECTORY ${VENDOR_DIR}/Random123-1.08/include )
+  if( NOT RANDOM123_INC_DIR AND
+      IS_DIRECTORY ${VENDOR_DIR}/Random123-1.08/include )
     set( RANDOM123_INC_DIR "${VENDOR_DIR}/Random123-1.08/include" )
   endif()
-
-  set_package_properties( BLAS PROPERTIES
-    DESCRIPTION "Basic Linear Algebra Subprograms"
-    TYPE OPTIONAL
-    PURPOSE "Required for building the lapack_wrap component."
-    )
-  set_package_properties( lapack PROPERTIES
-    DESCRIPTION "Linear Algebra PACKage"
-    TYPE OPTIONAL
-    PURPOSE "Required for building the lapack_wrap component."
-    )
-  set_package_properties( Random123 PROPERTIES
-    URL "http://www.deshawresearch.com/resources_random123.html"
-    DESCRIPTION "a library of counter-based random number generators
-"
-    TYPE REQUIRED
-    PURPOSE "Required for building rng component."
-    )
 
 endmacro()
 
@@ -658,7 +708,7 @@ macro( setupVendorLibraries )
   #
   setVendorVersionDefaults()
   if( NOT TARGET lapack )
-    setupLAPACKLibrariesUnix()
+    setupLAPACKLibraries()
   endif()
 
   # System specific settings
@@ -679,8 +729,21 @@ CMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}" )
   # projects), to setup Draco's vendors
   set( Draco_EXPORT_TARGET_PROPERTIES "${Draco_EXPORT_TARGET_PROPERTIES}
 
+message(\"Looking for Draco...\")
+message(\"Looking for Draco...\${draco_DIR}\")
+
 # Provide helper functions used by component CMakeLists.txt files
+# This block of code generated by draco/config/vendor_libraries.cmake.
+
+# CMake macros that check the system for features like 'gethostname', etc.
+include( platform_checks )
+# We need to know if OpenMP is available before looking for TPLs like CSK.
+query_openmp_availability()
+
+# CMake macros like 'add_component_library' and 'add_component_executable'
 include( component_macros )
+
+# CMake macros to query the availability of TPLs.
 include( vendor_libraries )
 # Provide targets for MPI, Metis, etc.
 setupVendorLibraries()

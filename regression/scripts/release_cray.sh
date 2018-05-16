@@ -26,7 +26,7 @@
 
 # Draco install directory name (/usr/projects/draco/draco-NN_NN_NN)
 export package=draco
-ddir=draco-6_23_0
+ddir=draco-6_24_0
 pdir=$ddir
 
 # environment (use draco modules)
@@ -34,7 +34,7 @@ pdir=$ddir
 target="`uname -n | sed -e s/[.].*//`"
 case $target in
   t[rt]-fe* | t[rt]-login* )
-    environments="intel17env intel1701env intel17env-knl" ;;
+    environments="intel17env intel17env-knl" ;;
 esac
 
 function intel17env()
@@ -49,33 +49,7 @@ run "module unload papi perftools"
 run "module load PrgEnv-intel"
 run "module unload xt-libsci xt-totalview"
 run "module unload intel cray-mpich"
-run "module load intel/17.0.4 cray-mpich/7.6.2"
-run "module load gsl"
-run "module load cmake/3.9.0 numdiff"
-run "module load trilinos/12.10.1 superlu-dist metis parmetis"
-run "module load ndi random123 eospac/6.2.4 csk"
-run "module list"
-CC=`which cc`
-CXX=`which CC`
-FC=`which ftn`
-export CRAYPE_LINK_TYPE=dynamic
-export OMP_NUM_THREADS=16
-export TARGET=haswell
-}
-
-function intel1701env()
-{
-run "module load user_contrib friendly-testing"
-run "module unload ndi metis parmetis superlu-dist trilinos csk"
-run "module unload lapack gsl intel"
-run "module unload cmake"
-run "module unload intel gcc"
-run "module unload PrgEnv-intel PrgEnv-cray PrgEnv-gnu"
-run "module unload papi perftools"
-run "module load PrgEnv-intel"
-run "module unload xt-libsci xt-totalview"
-run "module unload intel cray-mpich"
-run "module load intel/17.0.1 cray-mpich/7.5.2"
+run "module load intel/17.0.4 cray-mpich/7.7.0"
 run "module load gsl"
 run "module load cmake/3.9.0 numdiff"
 run "module load trilinos/12.10.1 superlu-dist metis parmetis"
@@ -101,7 +75,7 @@ run "module unload papi perftools"
 run "module load PrgEnv-intel"
 run "module unload xt-libsci xt-totalview"
 run "module unload intel cray-mpich"
-run "module load intel/17.0.4 cray-mpich/7.6.2"
+run "module load intel/17.0.4 cray-mpich/7.7.0"
 run "module swap craype-haswell craype-mic-knl"
 run "module load gsl"
 run "module load cmake/3.9.0 numdiff"
@@ -124,13 +98,16 @@ export TARGET=knl
 ## Generic setup
 ##---------------------------------------------------------------------------##
 
-export script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export script_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" )
+if ! [[ -d $script_dir ]]; then
+  export script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
 export draco_script_dir=`readlink -f $script_dir | head -n 1`
 echo "source ${draco_script_dir}/common.sh"
 source ${draco_script_dir}/common.sh
 
 # CMake options that will be included in the configuration step
-export CONFIG_BASE="-DDRACO_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
+export CONFIG_BASE="-DDraco_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
 
 # sets umask 0002
 # sets $install_group, $install_permissions, $build_permissions
@@ -143,6 +120,7 @@ if [[ -d /netscratch/$USER ]]; then
   scratchdir=/netscratch/$USER/scratch
 else
   scratchdir=/usr/projects/ccsrad/scratch
+  mkdir -p $scratchdir
 fi
 ppn=`lookupppn`
 
@@ -237,7 +215,7 @@ for env in $environments; do
     # Run the tests on the back-end.
     export steps="test"
     logfile="$source_prefix/logs/release-$buildflavor-$version-t${knlext}.log"
-    cmd="sbatch -J release_draco -t 8:00:00 -N 1 $partition \
+    cmd="sbatch -J rel-draco-$buildflavor-$version -t 8:00:00 -N 1 $partition \
  --gres=craynetwork:0 -o $logfile $draco_script_dir/release.msub"
     echo -e "\nTest $package for $buildflavor-$version."
     echo "$cmd"

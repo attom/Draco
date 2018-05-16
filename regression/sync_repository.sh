@@ -18,7 +18,10 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 target="`uname -n | sed -e s/[.].*//`"
 
 # Prevent multiple copies of this script from running at the same time:
-lockfile=/var/tmp/sync_repository_$target.lock
+if ! [[ -d /var/tmp/$USER ]]; then
+  mkdir -p /var/tmp/$USER || exit 2
+fi
+lockfile=/var/tmp/$USER/sync_repository_$target.lock
 [ "${FLOCKER}" != "${lockfile}" ] && exec env FLOCKER="${lockfile}" flock -en "${lockfile}" "${0}" "$@" || :
 
 
@@ -100,7 +103,7 @@ fi
 case ${target} in
   ccscs*)
     run "module use /usr/share/lmod/lmod/modulefiles/Core"
-    run "module load user_contrib subversion git"
+    run "module load user_contrib git"
     regdir=/scratch/regress
     gitroot=/ccs/codes/radtran/git.${target}
     VENDOR_DIR=/scratch/vendors
@@ -118,7 +121,7 @@ case ${target} in
     run "module use --append /usr/projects/hpcsoft/toss3/modulefiles/snow/misc"
     run "module use --append /usr/projects/hpcsoft/toss3/modulefiles/snow/mpi"
     run "module use --append /usr/projects/hpcsoft/toss3/modulefiles/snow/tools"
-    run "module load user_contrib subversion git"
+    run "module load user_contrib git"
     regdir=/usr/projects/jayenne/regress
     gitroot=$regdir/git.sn
     VENDOR_DIR=/usr/projects/draco/vendors
@@ -127,7 +130,7 @@ case ${target} in
   tt-fey*)
     run "module use /usr/projects/hpcsoft/cle6.0/modulefiles/trinitite/misc"
     run "module use /usr/projects/hpcsoft/cle6.0/modulefiles/trinitite/tools"
-    run "module load user_contrib subversion git"
+    run "module load user_contrib git"
     regdir=/usr/projects/jayenne/regress
     gitroot=$regdir/git.tt
     VENDOR_DIR=/usr/projects/draco/vendors
@@ -169,77 +172,73 @@ fi
 # datase (GUI repository, wiki/ticket references to commits).
 # ---------------------------------------------------------------------------- #
 
-# DRACO: For all machines running this script, copy all of the git repositories
-# to the local file system.
+# associative array to keep track of the TMPFILES
+declare -A tmpfiles=()
 
-# Store some output into a local file to simplify parsing.
-TMPFILE_DRACO_HEAD=$(mktemp /var/tmp/draco_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
-TMPFILE_DRACO_PULL=$(mktemp /var/tmp/draco_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
+# List of repositories (also used by push_repositories_xf.sh and
+# pull_repositories_xf.sh).  It defines $github_projects and $gitlab_projects.
+source ${scriptdir}/repository_list.sh
 
-echo " "
-echo "Copy Draco git repository to the local file system..."
-if [[ -d $gitroot/Draco.git ]]; then
-  run "cd $gitroot/Draco.git"
-  run "git fetch origin +refs/heads/*:refs/heads/*" &> $TMPFILE_DRACO_HEAD
-  run "cat $TMPFILE_DRACO_HEAD"
-  run "git fetch origin +refs/pull/*:refs/pull/*" &> $TMPFILE_DRACO_PULL
-  run "cat $TMPFILE_DRACO_PULL"
-  run "git reset --soft"
-  run "chgrp -R draco $gitroot/Draco.git"
-  run "chmod -R g+rwX $gitroot/Draco.git"
-else
-  run "mkdir -p $gitroot"
-  run "cd $gitroot"
-  run "git clone --bare git@github.com:lanl/Draco.git Draco.git"
-  run "cd Draco.git"
-  run "git fetch origin +refs/heads/*:refs/heads/*"
-  run "git fetch origin +refs/pull/*:refs/pull/*"
-fi
+# Github.com/lanl repositories:
 
-# JAYENNE: For all machines running this scirpt, copy all of the git repositories
-# to the local file system.
+for project in ${github_projects[@]}; do
 
-# Store some output into a local file to simplify parsing.
-TMPFILE_JAYENNE=$(mktemp /var/tmp/jayenne_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
-echo " "
-echo "Copy Jayenne git repository to the local file system..."
-if [[ -d $gitroot/jayenne.git ]]; then
-  run "cd $gitroot/jayenne.git"
-  run "git fetch origin +refs/heads/*:refs/heads/*"
-  run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*" &> $TMPFILE_JAYENNE
-  run "cat $TMPFILE_JAYENNE"
-  run "git reset --soft"
-  run "chgrp ccsrad $gitroot/jayenne.git"
-  run "chmod -R g+rwX,o-rwX $gitroot/jayenne.git"
-else
-  run "mkdir -p $gitroot; cd $gitroot"
-  run "git clone --bare git@gitlab.lanl.gov:jayenne/jayenne.git jayenne.git"
-  run "cd jayenne.git"
-  run "git fetch origin +refs/heads/*:refs/heads/*"
-  run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*"
-fi
+  namespace=`echo $project | sed -e 's%/.*%%'`
+  repo=`echo $project | sed -e 's%.*/%%'`
 
-# CAPSAICIN: For all machines running this scirpt, copy all of the git repositories
-# to the local file system.
+  # Store some output into a local file to simplify parsing.
+  tmpfiles[${project}]=$(mktemp /var/tmp/$USER/${namespace}_${repo}_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
 
-# Store some output into a local file to simplify parsing.
-TMPFILE_CAPSAICIN=$(mktemp /var/tmp/capsaicin_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
-echo " "
-echo "Copy Capsaicin git repository to the local file system..."
-if [[ -d $gitroot/capsaicin.git ]]; then
-  run "cd $gitroot/capsaicin.git"
-  run "git fetch origin +refs/heads/*:refs/heads/*"
-  run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*" &> $TMPFILE_CAPSAICIN
-  run "cat $TMPFILE_CAPSAICIN"
-  run "git reset --soft"
-  run "chgrp ccsrad $gitroot/capsaicin.git"
-else
-  run "mkdir -p $gitroot; cd $gitroot"
-  run "git clone --bare git@gitlab.lanl.gov:capsaicin/capsaicin.git capsaicin.git"
-  run "cd capsaicin.git"
-  run "git fetch origin +refs/heads/*:refs/heads/*"
-  run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*"
-fi
+  echo -e "\nCopy ${project}'s git repository to the local file system...\n"
+  if [[ -d $gitroot/${project}.git ]]; then
+    run "cd $gitroot/${project}.git"
+    run "git fetch origin +refs/heads/*:refs/heads/* &> ${tmpfiles[${project}]}"
+    run "git fetch origin +refs/pull/*:refs/pull/* >> ${tmpfiles[${project}]} 2>&1"
+    run "cat ${tmpfiles[${project}]}"
+    run "git reset --soft"
+  else
+    run "mkdir -p $gitroot/$namespace; cd $gitroot/$namespace"
+    run "git clone --mirror git@github.com:${project}.git ${repo}.git"
+    run "cd ${repo}.git"
+    run "git fetch origin +refs/heads/*:refs/heads/*"
+    run "git fetch origin +refs/pull/*:refs/pull/*"
+    # if this is a brand new checkout, then do not run any ci (there might be hundreds).
+    no_ci=yes
+  fi
+  run "chgrp -R draco $gitroot/${namespace}"
+  run "chmod -R g+rwX,o=g-w $gitroot/${namespace}"
+done
+
+# Gitlab.lanl.gov repositories:
+
+for project in ${gitlab_projects[@]}; do
+
+  namespace=`echo $project | sed -e 's%/.*%%'`
+  repo=`echo $project | sed -e 's%.*/%%'`
+
+  # Store some output into a local file to simplify parsing.
+  tmpfiles[${project}]=$(mktemp /var/tmp/$USER/${namespace}_${repo}_repo_sync.XXXXXXXXXX) || die "Failed to create temporary file"
+
+  echo -e "\nCopy ${project}'s git repository to the local file system...\n"
+  if [[ -d $gitroot/${project}.git ]]; then
+    run "cd $gitroot/${project}.git"
+    run "git fetch origin +refs/heads/*:refs/heads/*"
+    run "git fetch origin +refs/merge-requests/*:refs/merge-requests/* &> ${tmpfiles[${project}]}"
+    run "cat ${tmpfiles[${project}]}"
+    run "git reset --soft"
+  else
+    run "mkdir -p $gitroot/$namespace; cd $gitroot/$namespace"
+    run "git clone --mirror git@gitlab.lanl.gov:${project}.git ${repo}.git"
+    run "cd ${repo}.git"
+    run "git fetch origin +refs/heads/*:refs/heads/*"
+    run "git fetch origin +refs/merge-requests/*:refs/merge-requests/*"
+    # if this is a brand new checkout, then do not run any ci (there might be hundreds).
+    no_ci=yes
+  fi
+  run "chgrp -R ccsrad $gitroot/${namespace}"
+  run "chmod -R g+rwX,o-rwX $gitroot/${namespace}"
+
+done
 
 #------------------------------------------------------------------------------#
 # Mirror git repository for redmine integration
@@ -249,8 +248,8 @@ if [[ ${target} == "ccscs7" ]]; then
 
   # Keep a copy of the bare repo for Redmine.  This version doesn't have the
   # PRs since this seems to confuse Redmine.
-  projects="jayenne capsaicin"
-  for p in $projects; do
+  redmine_projects="jayenne capsaicin"
+  for p in $redmine_projects; do
     echo -e "\n(Redmine) Copy ${p} git repository to the local file system..."
     if [[ -d $gitroot/${p}-redmine.git ]]; then
       run "cd $gitroot/${p}-redmine.git"
@@ -292,45 +291,64 @@ fi
 # Extract a list of PRs that are new and optionally start regression run
 # ------------------------------------------------------------------------------#
 
-echo " "
-echo "========================================================================"
-echo "Starting CI regressions (if any)"
+echo -e "\n========================================================================"
+echo -e "Starting CI regressions (if any)"
 date
-echo "========================================================================"
-echo " "
-# Draco CI ------------------------------------------------------------
+echo -e "========================================================================"
 
-# Did we find 'merge' in the repo sync?  If so, then we should reset the
-# last-draco tagfile.
-unset rmlastdracotag
-draco_merge=`cat $TMPFILE_DRACO_HEAD | grep -c "develop    -> develop"`
-if [[ $draco_merge -gt 0 ]]; then
-  rmlastdracotag="-t"
+# if this is a brand new checkout, then do not run any ci (there might be hundreds).
+if [[ ${no_ci:-no} == yes ]]; then
+  dry_run=yes
+  echo "Enable dry_run=yes mode."
 fi
-draco_prs=`cat $TMPFILE_DRACO_PULL | grep -e 'refs/pull/[0-9]*/\(head\|merge\)' | sed -e 's%.*/\([0-9][0-9]*\)/.*%\1%'`
-# remove any duplicates
-draco_prs=`echo $draco_prs | xargs -n1 | sort -u | xargs`
-for pr in $draco_prs; do
-  run "$scriptdir/checkpr.sh -r -p draco -f $pr $rmlastdracotag"
+
+# CI ------------------------------------------------------------
+
+for project in ${git_projects[@]}; do
+
+  namespace=`echo $project | sed -e 's%/.*%%'`
+  repo=`echo $project | sed -e 's%.*/%%'`
+
+  # Did we find 'merge' in the repo sync?  If so, then we should reset the
+  # last-draco tagfile.
+  unset rm_last_build
+
+  echo -e "\n----- ${project} -----\n"
+
+  case $repo in
+    Draco)
+      if [[ `cat ${tmpfiles[${project}]} | grep -c "develop    -> develop"` -gt 0 ]]; then
+        rm_last_build="-t"
+      fi
+      # Extract PR number (if any)
+      prs=`cat ${tmpfiles[${project}]} | grep -e 'refs/pull/[0-9]*/\(head\|merge\)' | sed -e 's%.*/\([0-9][0-9]*\)/.*%\1%'`
+      ;;
+
+    jayenne | capsaicin)
+      # Extract PR number (if any)
+      prs=`cat ${tmpfiles[${project}]} | grep -e 'refs/merge-requests/[0-9]*/\(head\|merge\)' | sed -e 's%.*/\([0-9][0-9]*\)/.*%\1%'`
+      ;;
+  esac
+
+  case $repo in
+    Draco | jayenne | capsaicin )
+      repo_lc=`echo $repo | tr '[:upper:]' '[:lower:]'`
+      # remove any duplicates
+      prs=`echo $prs | xargs -n1 | sort -u | xargs`
+      for pr in $prs; do
+        run "$scriptdir/checkpr.sh -r -p ${repo_lc} -f $pr $rm_last_build"
+      done
+      ;;
+    *)
+      echo " - No CI defined."
+      ;;
+  esac
+
 done
 
-# Jayenne CI ----------------------------------------------------------
-
-jayenne_prs=`cat $TMPFILE_JAYENNE | grep -e 'refs/merge-requests/[0-9]*/\(head\|merge\)' | sed -e 's%.*/\([0-9][0-9]*\)/.*%\1%'`
-# remove any duplicates
-jayenne_prs=`echo $jayenne_prs | xargs -n1 | sort -u | xargs`
-for pr in $jayenne_prs; do
-  run "$scriptdir/checkpr.sh -r -p jayenne -f $pr"
-done
-
-# Capsaicin CI ----------------------------------------------------------
-
-capsaicin_prs=`cat $TMPFILE_CAPSAICIN | grep -e 'refs/merge-requests/[0-9]*/\(head\|merge\)' | sed -e 's%.*/\([0-9][0-9]*\)/.*%\1%'`
-# remove any duplicates
-capsaicin_prs=`echo $capsaicin_prs | xargs -n1 | sort -u | xargs`
-for pr in $capsaicin_prs; do
-  run "$scriptdir/checkpr.sh -r -p capsaicin -f $pr"
-done
+#------------------------------------------------------------------------------#
+# Wait, cleanup, done
+#------------------------------------------------------------------------------#
 
 # Wait for all subprocesses to finish before exiting this script
 if [[ `jobs -p | wc -l` -gt 0 ]]; then
@@ -346,7 +364,12 @@ fi
 # Cleanup
 echo " "
 echo "Cleaning up..."
-run "rm $TMPFILE_DRACO_PULL $TMPFILE_DRACO_HEAD $TMPFILE_JAYENNE $TMPFILE_CAPSAICIN"
+
+unset dry_run
+
+for file in "${tmpfiles[@]}"; do
+  run "rm $file"
+done
 run "rm $lockfile"
 
 echo " "

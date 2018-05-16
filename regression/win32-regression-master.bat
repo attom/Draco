@@ -17,6 +17,9 @@ rem c:\myscript.%date:~-4%%date:~4,2%%date:~7,2%.%time::=%.log 2>&1
 
 set logdir=e:\regress\logs
 
+rem Ensure Git/bin/sh.exe is not in the PATH.  It interferes with mingw operations.
+set PATH=%PATH:c:\Program Files\Git\bin;=%
+
 rem Change '/c' to '/k' to keep the command window open after these commands 
 rem finish.
 

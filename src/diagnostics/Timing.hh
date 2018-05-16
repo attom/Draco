@@ -5,10 +5,7 @@
  * \date   Tue Dec 13 10:44:29 2005
  * \brief  Timing class and macros definition.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef diagnostics_Timing_hh
@@ -46,8 +43,6 @@ namespace rtt_diagnostics {
  */
 /*!
  * \example diagnostics/test/tstTiming.cc
- *
- * description of example
  */
 //===========================================================================//
 

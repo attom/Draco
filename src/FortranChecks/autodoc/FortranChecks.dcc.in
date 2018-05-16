@@ -12,10 +12,10 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_FortranChecks Overview of the FortranChecks package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author Kelly G. Thompson
 
-\section abstract Abstract 
+\section abstract Abstract
 
 This component provides some simple tests for creating a F90 main that calls
 C++ functions found in C++ libraries and a C++ main that calls Fortran
@@ -48,7 +48,7 @@ consider using the FortranCInterface feature found in CMake.
 \section cf_interop_c_calls_fortran Example of C Calling Fortran
 
 The following example calls a Fortran subroutine called \c SIMULATION. This
-subroutine corresponds to the C void function simulation. 
+subroutine corresponds to the C void function simulation.
 
 Fortran Code:
 

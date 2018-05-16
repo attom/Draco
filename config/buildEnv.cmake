@@ -234,7 +234,7 @@ macro( dbsConfigInfo )
          OUTPUT_QUIET
          )
       string( REGEX REPLACE ".*for ([0-9x]+)" "\\1"
-         tmp "${DBS_CXX_COMPILER_VER}" )
+         tmp "${CMAKE_CXX_COMPILER_VER}" )
       if( ${tmp} MATCHES "80x86" )
          set( DBS_ISA_MODE "32-bit" )
       elseif( ${tmp} MATCHES "x64" )

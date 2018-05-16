@@ -80,6 +80,10 @@ endmacro()
 # ------------------------------------------------------------
 macro( set_defaults )
 
+  message("\n----------------------------------------
+Setting defaults
+----------------------------------------\n")
+
   # Prerequisits:
   #
   # This setup assumes that the project work_dir will contain 3 subdirectories:
@@ -251,6 +255,10 @@ endmacro( set_defaults )
 # ------------------------------------------------------------
 macro( parse_args )
 
+  message("\n----------------------------------------
+Parsing arguments
+----------------------------------------\n")
+
   # Default is "Experimental." Special builds are "Nightly" or "Continuous"
   if( ${CTEST_SCRIPT_ARG} MATCHES Nightly )
     set( CTEST_MODEL "Nightly" )
@@ -353,28 +361,33 @@ macro( parse_args )
 
   # append the compiler_short_name with the extra_params string (if any) and set
   # some variables based on extra_param's value.
-  if( NOT "$ENV{extra_params}x" STREQUAL "x" )
-    set( compiler_short_name "${compiler_short_name}-$ENV{extra_params}" )
-    if( $ENV{extra_params} MATCHES "cuda" )
+  if( DEFINED ENV{extra_params_sort_safe} )
+
+    if( NOT "$ENV{extra_params_sort_safe}empty" STREQUAL "empty" )
+      set( compiler_short_name
+        "${compiler_short_name}-$ENV{extra_params_sort_safe}" )
+    endif()
+
+    if( $ENV{extra_params_sort_safe} MATCHES "cuda" )
       set(USE_CUDA ON)
     endif()
-    if( $ENV{extra_params} MATCHES "fulldiagnostics" )
+    if( $ENV{extra_params_sort_safe} MATCHES "fulldiagnostics" )
       set( FULLDIAGNOSTICS "DRACO_DIAGNOSTICS:STRING=7")
       # Note 'DRACO_TIMING:STRING=2' will break milagro tests (python cannot
       # parse output).
     endif()
-    if( $ENV{extra_params} MATCHES "nr" )
+    if( $ENV{extra_params_sort_safe} MATCHES "nr" )
       set( RNG_NR "ENABLE_RNG_NR:BOOL=ON" )
     endif()
-    if( $ENV{extra_params} MATCHES "scalar" )
+    if( $ENV{extra_params_sort_safe} MATCHES "scalar" )
       set( DRACO_C4 "DRACO_C4:STRING=SCALAR" )
-    elseif( $ENV{extra_params} MATCHES "static" )
+    elseif( $ENV{extra_params_sort_safe} MATCHES "static" )
       set( DRACO_LIBRARY_TYPE "DRACO_LIBRARY_TYPE:STRING=STATIC" )
     endif()
-    if( $ENV{extra_params} MATCHES "vtest" )
+    if( $ENV{extra_params_sort_safe} MATCHES "vtest" )
       list( APPEND CUSTOM_VARS "RUN_VERIFICATION_TESTS:BOOL=ON" )
     endif()
-    if( $ENV{extra_params} MATCHES "perfbench" )
+    if( $ENV{extra_params_sort_safe} MATCHES "perfbench" )
       list( APPEND CUSTOM_VARS "ENABLE_PERFBENCH:BOOL=ON" )
     endif()
   endif()
@@ -451,6 +464,10 @@ endmacro( parse_args )
 # ------------------------------------------------------------
 macro( find_tools )
 
+  message("\n----------------------------------------
+Finding tools...
+----------------------------------------\n")
+
   find_program( CTEST_CMD
     NAMES ctest
     HINTS
@@ -459,18 +476,6 @@ macro( find_tools )
     )
   if( NOT EXISTS ${CTEST_CMD} )
     message( FATAL_ERROR "Cound not find ctest executable.(CTEST_CMD = ${CTEST_CMD})" )
-  endif()
-
-  find_program( CTEST_SVN_COMMAND
-     NAMES svn
-     HINTS
-        "C:/Program Files (x86)/CollabNet Subversion"
-        "C:/Program Files (x86)/CollabNet/Subversion Client"
-        # NO_DEFAULT_PATH
-     )
-  set( CTEST_CVS_COMMAND ${CTEST_SVN_COMMAND} )
-  if( NOT EXISTS "${CTEST_CVS_COMMAND}" )
-    message( FATAL_ERROR "Cound not find cvs executable." )
   endif()
 
   find_program( CTEST_GIT_COMMAND
@@ -806,12 +811,13 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
   # *-nr-*              *-*
   # *-vtest-*           *-*
   # *-perfbench-*       *-*
+  # *-knl-perfbench-*   *-knl-*
 
   if( "${dep_pkg}" MATCHES "draco" )
     # not any ${extraparam} since many map to draco builds that have the same
     # ${extraparam}.  For example: *-newtools-*.
     foreach( extraparam nr perfbench vtest )
-      string( REPLACE "-${extraparam}-" "-" ${dep_pkg}_work_dir
+      string( REGEX REPLACE "[-_]${extraparam}[-_]" "-" ${dep_pkg}_work_dir
         ${${dep_pkg}_work_dir} )
     endforeach()
 

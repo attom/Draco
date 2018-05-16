@@ -8,7 +8,7 @@ if test -n "$verbose"; then
   echo "In .bashrc_darwin_fe"
 fi
 
-# sfeatures | grep <feature:=knl>
+# sfeatures | grep <feature:=knl> <-- look for "idle" (not "down" and not "drain")
 # salloc -N 1 -p power8+
 # salloc -N 1 -p knl-quad_flat
 
@@ -16,55 +16,64 @@ fi
 ## ENVIRONMENTS
 ##---------------------------------------------------------------------------##
 
-# aliases and bash functions for working with slurm
-source ${DRACO_ENV_DIR}/bashrc/.bashrc_slurm
-
-# unlimit stack and core dump sizes.
-ulimit -s unlimited
-
 if [[ ! ${VENDOR_DIR} ]]; then
   export VENDOR_DIR=/usr/projects/draco/vendors
   export PATH=$PATH:$VENDOR_DIR/bin
+  export DRACO_ARCH=`/usr/projects/draco/vendors/bin/target_arch`
 fi
 
 # modules
 if test -n "$MODULESHOME"; then
 
-  # Nodes that have MIC capability use different modules...
-  # if [[ `echo $SLURM_JOB_PARTITION | grep -c knl` = 1 ]]; then
-  #   mic_status=1 ;;
-  # else
-  #   mic_status=0
-  # fi
-
-  #if test ${mic_status} -gt 0; then
-  #  mic_status=1
-    # module unuse ${VENDOR_DIR}/Modules
-    # module use --append ${VENDOR_DIR}/Modules_knc
-
-    # # unload module that might conflict.
-    # module purge
-    # module load subversion
-    # # setup for draco
-    # module load intel/15.0.3 impi/5.1.1.109-mic
-    # module load random123 cmake/3.5.1 numdiff/5.8.1
-    # module load mkl/11.2 gsl/1.16
-    # # additional setup for capsaicin
-    # module load ParMetis/4.0.3 SuperLU_DIST/3.3 trilinos/11.10.2
-  # else
     module use --append ${VENDOR_DIR}/user_contrib
-    module use --append ${VENDOR_DIR}-ec/Modules
+    module use --append ${VENDOR_DIR}-ec/Modules/$DRACO_ARCH
     module load user_contrib
-    cflavor="gcc-7.1.0"
-    mflavor="$cflavor-openmpi@2.1.0"
-    noflavor="emacs subversion git random123 numdiff/5.9.0-gcc-4.8.5 \
-cmake/3.9.4-gcc-4.8.5"
-    compflavor="gcc/7.1.0 gsl/2.4-$cflavor metis/5.1.0-$cflavor"
-    mpiflavor="openmpi/2.1.0-$cflavor parmetis/4.0.3-$mflavor \
+
+    echo -e "\nLoading modules for architecture type $DRACO_ARCH. \n"
+
+    case $DRACO_ARCH in
+      x86_64)
+        cflavor="gcc-7.1.0"
+        mflavor="$cflavor-openmpi@2.1.0"
+        noflavor="emacs subversion git random123 numdiff/5.9.0 cmake/3.9.4"
+        compflavor="gcc/7.1.0 gsl/2.4-$cflavor metis/5.1.0-$cflavor"
+        mpiflavor="openmpi/2.1.0-gcc_7.1.0 parmetis/4.0.3-$mflavor \
 superlu-dist/5.2.2-$mflavor trilinos/12.12.1-$mflavor"
-    ec_mf="ndi eospac/6.2.4"
+        ec_mf="ndi eospac/6.3.0"
+      ;;
+
+      knl)
+        cflavor="gcc-7.1.0"
+        mflavor="$cflavor-openmpi@2.1.0"
+        noflavor="emacs subversion git random123 cmake/3.9.4"
+        compflavor="gcc/7.1.0 gsl/2.4-$cflavor metis/5.1.0-$cflavor \
+numdiff/5.9.0"
+        mpiflavor="openmpi/2.1.0-gcc_7.1.0 parmetis/4.0.3-$mflavor \
+superlu-dist/5.2.2-$mflavor trilinos/12.12.1-$mflavor"
+        ec_mf="ndi eospac/6.3.0"
+        ;;
+      power8*)
+        cflavor="gcc-7.1.0"
+        mflavor="$cflavor-openmpi@2.1.0"
+        noflavor="subversion git random123 numdiff/5.9.0 cmake/3.9.4"
+        compflavor="gcc/7.1.0 gsl/2.4-$cflavor metis/5.1.0-$cflavor"
+        mpiflavor="openmpi/2.1.0-gcc_7.1.0 parmetis/4.0.3-$mflavor \
+superlu-dist/5.2.2-$mflavor trilinos/12.12.1-$mflavor"
+        # These aren't built for power architectures?
+        # ec_mf="ndi eospac/6.3.0"
+        ;;
+      power9*)
+        cflavor="gcc-7.1.0"
+        mflavor="$cflavor-openmpi@2.1.0"
+        noflavor="subversion git random123 numdiff/5.9.0 cmake/3.9.4"
+        compflavor="gcc/7.1.0 gsl/2.4-$cflavor metis/5.1.0-$cflavor"
+        mpiflavor="openmpi/2.1.0-gcc_7.1.0 parmetis/4.0.3-$mflavor \
+superlu-dist/5.2.2-$mflavor trilinos/12.12.1-$mflavor"
+        # These aren't built for power architectures?
+        # ec_mf="ndi eospac/6.3.0"
+        ;;
+    esac
     export dracomodules="$noflavor $compflavor $mpiflavor $ec_mf"
-  # fi
 
   function dracoenv ()
   {

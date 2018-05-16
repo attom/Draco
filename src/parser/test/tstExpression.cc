@@ -131,7 +131,7 @@ void tstExpression(UnitTest &ut) {
 #pragma warning(pop)
 #endif
 
-  tokens = string("20*(r>=1.1*m && z<=1.5*m || r>=2.0*m)");
+  tokens = string("20*(r>=1.1*m && z<=1.5*m || r>=2.0*m && r<=7.0*m)");
 
   expression = Expression::parse(4, variable_map, tokens);
 
@@ -141,7 +141,8 @@ void tstExpression(UnitTest &ut) {
     FAILMSG("expression NOT successfully parsed");
 
   if (soft_equiv((*expression)(xs),
-                 20.0 * ((r >= 1.1) && ((z <= 1.5) || (r >= 2.0))))) {
+                 20.0 *
+                     ((r >= 1.1) && ((z <= 1.5) || (r >= 2.0 && r <= 7.0))))) {
     PASSMSG("expression successfully evaluated");
   } else {
     FAILMSG("expression NOT successfully evaluated");
@@ -151,7 +152,7 @@ void tstExpression(UnitTest &ut) {
     ostringstream expression_text_copy;
     expression->write(vars, expression_text_copy);
 
-    char const *expression_text_raw = "20*(r>=1.1*m&&z<=1.5*m||r>=2*m)";
+    char const *expression_text_raw = "20*(r>=1.1*m&&z<=1.5*m||r>=2*m&&r<=7*m)";
     // changes slightly due to stripping of extraneous whitespace, parentheses,
     // and positive prefix
     if (expression_text_copy.str() == expression_text_raw) {

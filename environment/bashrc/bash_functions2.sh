@@ -17,7 +17,11 @@ if test $fn_exists = 0; then
   function dracoenv ()
   {
     echo $dracomodules
-    module load $dracomodules
+    # doesn't work b/c of CSK:
+    #module load $dracomodules
+    for m in $dracomodules; do
+      module load $m
+    done
   }
   function rmdracoenv ()
   {

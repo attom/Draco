@@ -12,11 +12,11 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_meshreaders Overview of the meshReaders package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author John McGhee, Todd Adams
 
 \section intro Introduction
- 
+
 The classes contained in the rtt_meshReaders name space are designed
 to provide a capability to read a variety for mesh file formats.
 Access to the various mesh formats is provided via a
@@ -27,7 +27,7 @@ used to discover details of the computational mesh such as node
 coordinates, element connectivity, mesh regions, etc. The
 rtt_meshReaders::Element_Definition class provides descriptive
 information on the mesh elements which are used to consruct a mesh.
- 
+
   <h3> Supported Mesh Formats </h3>
   The following formats are supported in the initial release:
 
@@ -53,12 +53,12 @@ information on the mesh elements which are used to consruct a mesh.
   </dl>
 
 <!---------------------------------------------------------------------------->
- 
+
 \section future Future Plans
 
 The following formats are under consideration for possible support in
 the future:
- 
+
   <dl>
      <dt> CGNS Format
      <dd> <a href="http://www.cgns.org/" > CGNS </a> is an emerging
@@ -72,7 +72,7 @@ the future:
           National Laboratory. Many LANL codes provide output links in
           the GMV file format
      <dt> Ensight Format
-     <dd> <a href="http://www.ceintl.com/" > Ensight </a> is a 
+     <dd> <a href="http://www.ceintl.com/" > Ensight </a> is a
           popular commercial visualization tool marketed by
           Computational Engineering International. Many RTT and other
           LANL codes provide output links to this file format.

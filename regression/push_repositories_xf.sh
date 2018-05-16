@@ -34,7 +34,7 @@ echo -e "umask: `umask` \n"
 #------------------------------------------------------------------------------#
 # Q: How do I create a keytab that works with transfer 2.0
 # A: See
-#    https://rtt.lanl.gov/redmine/projects/draco/wiki/Kelly_Thompson#Generating-keytab-file-that-works-with-transfer-20
+#    https://rtt.lanl.gov/redmine/projects/draco/wiki/Kelly_Thompson
 #    or see the comments at the end of this file.
 
 # When kellyt runs this as a crontab, a special kerberos key must be used.
@@ -55,37 +55,42 @@ fi
 #------------------------------------------------------------------------------#
 # Clone the github and gitlab repositories and push them to the red.
 
-gitdir=/ccs/codes/radtran/git.${target}
+gitroot=/ccs/codes/radtran/git.${target}
 
-if [[ -d $gitdir ]]; then
-  run "cd $gitdir"
+if [[ -d $gitroot ]]; then
+  run "cd $gitroot"
 else
-  die "GIT root directory not found. Expected to find $gitdir."
+  die "GIT root directory not found. Expected to find $gitroot."
 fi
 
-repos="Draco.git jayenne.git capsaicin.git"
+# List of repositories (also used by sync_repositories.sh and
+# pull_repositories_xf.sh).  It defines $git_projects.
+source ${scriptdir}/repository_list.sh
 
-for repo in $repos; do
+for project in ${git_projects[@]}; do
+
+  namespace=`echo $project | sed -e 's%/.*%%'`
+  repo=`echo $project | sed -e 's%.*/%%'`
 
   # Remove the old tar file.
-  if [[ -f $repo.tar ]]; then
-    run "rm -f $repo.tar"
+  if [[ -f ${namespace}_${repo}.git.tar ]]; then
+    run "rm -f {namespace}_${repo}.git.tar"
   fi
 
-  if [[ -d $gitdir/$repo ]]; then
+  if [[ -d ${gitroot}/${namespace}/${repo}.git ]]; then
 
     # Tar it up
-    run "tar -cvf $repo.tar $repo"
+    run "tar -cvf ${namespace}_${repo}.git.tar ${namespace}/${repo}.git"
 
     # Ensure the new files have group rwX permissions.
-    run "chgrp -R ccsrad $repo.tar"
-    run "chmod -R g+rwX,o-rwX  $repo.tar"
+    run "chgrp ccsrad ${namespace}_${repo}.git.tar"
+    run "chmod g+rwX,o-rwX ${namespace}_${repo}.git.tar"
 
     # Transfer the file via transfer.lanl.gov
-    run "scp $repo.tar red@transfer.lanl.gov:"
+    run "scp ${namespace}_${repo}.git.tar red@transfer.lanl.gov:"
 
   else
-    echo "Warning: git mirror repository $gitdir/$repo was not found."
+    echo "Warning: git mirror repository $gitroot/${project}.git was not found."
     echo "         Skipping to the next repository..."
   fi
 
@@ -106,13 +111,6 @@ echo "--------------------------------------------------------------------------
 # % kinit -kt ~/.ssh/xfkeytab transfer/${USER}push@lanl.gov
 # % ssh yellow@transfer.lanl.gov myfiles
 # % scp /ccs/codes/radtran/svn/draco.kt.tar red@transfer.lanl.gov:
-# </pre>
-
-# * Using the transfer.sh script:
-
-# <pre>
-# draco/tools/transfer.sh push2r --recipients=kgt@lanl.gov -q `pwd`/<file>
-# draco/tools/transfer.sh pullname <file>
 # </pre>
 
 # h3. Generating keytab file that works with transfer 2.0.

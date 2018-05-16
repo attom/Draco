@@ -52,6 +52,10 @@ umask 0002
 # Set a variable to avoid errors of the form "Assertion failure at psm_ep.c:835:
 # ep->epid !=0". This was suggested by Howard Pritchard via email on 2018 Jan 18.
 export OMPI_MCA_PML=ob1
+# export OMPI_MCA_pml_base_verbose=100
+# email from Howard Pritchard, 2018-03-22
+# export PSM2_TRACEMASK=0x1c3
+# Ref PSM2 user guide (https://www.intel.com/content/dam/support/us/en/documents/network/omni-adptr/sb/Intel_PSM2_PG_H76473_v1_0.pdf )
 
 export http_proxy=http://proxyout.lanl.gov:8080
 export HTTP_PROXY=$http_proxy
@@ -93,7 +97,7 @@ source $rscriptdir/cts1-options.sh
 # ----------------------------------------
 echo "==========================================================================="
 echo "${machine_name_long} regression: ${ctestparts} from ${machine}."
-echo "                      ${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}"
+echo "                      ${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}"
 echo "==========================================================================="
 if [[ ${SLURM_JOB_PARTITION} ]]; then
   echo " "
@@ -122,7 +126,7 @@ run "module load user_contrib"
 run "module load intel/17.0.4 openmpi/2.1.2"
 run "module load trilinos/12.10.1 superlu-dist metis parmetis"
 run "module load cmake/3.9.0 ndi numdiff git"
-run "module load mkl random123 eospac/6.2.4"
+run "module load mkl random123 eospac/6.3.0"
 run "module use --append ${VENDOR_DIR}-ec/modulefiles"
 run "module load csk"
 
@@ -132,74 +136,91 @@ if [[ "${comp}" == "icpc" ]]; then
   comp="intel"
 fi
 
+# sanity checks
+compiler_set=no
+
 # Extra parameters
-case $extra_params in
-"")
-    # no-op
-    ;;
-fulldiagnostics)
-    # no-op
-    ;;
-gcc610)
-    run "module purge &> /dev/null"
-    run "module list"
-    run "module load user_contrib friendly-testing"
-    run "module load gcc/6.1.0 openmpi/1.10.5"
-    run "module load trilinos/12.8.1 superlu-dist metis parmetis"
-    run "module load cmake/3.9.0 ndi numdiff git"
-    run "module load random123 eospac/6.2.4 lapack/3.6.1"
-    comp="${LCOMPILER}"
-    echo "comp = $comp"
-    ;;
-gcc640)
-    run "module purge &> /dev/null"
-    run "module list"
-    run "module load user_contrib friendly-testing"
-    run "module load gcc/6.4.0 openmpi/2.1.2 mkl"
-    run "module load trilinos/12.10.1 superlu-dist metis parmetis"
-    run "module load cmake/3.9.0 ndi numdiff git"
-    run "module load random123 eospac/6.2.4"
-    comp="${LCOMPILER}"
-    echo "comp = $comp"
-    ;;
-newtools)
-    run "module purge &> /dev/null"
-    run "module list"
-    run "module load user_contrib friendly-testing"
-    run "module load intel/18.0.1 openmpi/2.1.2 mkl"
-    run "module load superlu-dist metis parmetis"
-    run "module load trilinos/12.10.1 superlu-dist metis parmetis"
-    run "module load cmake/3.9.0 ndi numdiff git"
-    run "module load mkl random123 eospac/6.2.4 csk"
-    ;;
-nr)
-    # no-op
-    ;;
-perfbench)
-    # no-op
-    ;;
-vtest)
-    # no-op
-    ;;
-@($pem_match) )
+for ep in $extra_params; do
+  case $ep in
+    "")
+      # no-op
+      ;;
+    fulldiagnostics)
+      # no-op
+      ;;
+    gcc610)
+      if [[ $compiler_set == yes ]]; then
+        die "You cannot select multiple compilers with the '-e' argument."
+      fi
+      compiler_set=yes
+      run "module purge &> /dev/null"
+      run "module list"
+      run "module load user_contrib friendly-testing"
+      run "module load gcc/6.1.0 openmpi/1.10.5"
+      run "module load trilinos/12.8.1 superlu-dist metis parmetis"
+      run "module load cmake/3.9.0 ndi numdiff git"
+      run "module load random123 eospac/6.3.0 lapack/3.6.1"
+      comp="${LCOMPILER}"
+      echo "comp = $comp"
+      ;;
+    gcc640)
+      if [[ $compiler_set == yes ]]; then
+        die "You cannot select multiple compilers with the '-e' argument."
+      fi
+      compiler_set=yes
+      run "module purge &> /dev/null"
+      run "module list"
+      run "module load user_contrib friendly-testing"
+      run "module load gcc/6.4.0 openmpi/2.1.2 mkl"
+      run "module load trilinos/12.10.1 superlu-dist metis parmetis"
+      run "module load cmake/3.9.0 ndi numdiff git"
+      run "module load random123 eospac/6.3.0"
+      comp="${LCOMPILER}"
+      echo "comp = $comp"
+      ;;
+    newtools)
+      if [[ $compiler_set == yes ]]; then
+        die "You cannot select multiple compilers with the '-e' argument."
+      fi
+      compiler_set=yes
+      run "module purge &> /dev/null"
+      run "module list"
+      run "module load user_contrib friendly-testing"
+      run "module load intel/18.0.1 openmpi/2.1.2 mkl"
+      run "module load superlu-dist metis parmetis"
+      run "module load trilinos/12.10.1 superlu-dist metis parmetis"
+      run "module load cmake/3.9.0 ndi numdiff git"
+      run "module load mkl random123 eospac/6.3.0 csk"
+      ;;
+    nr)
+      # no-op
+      ;;
+    perfbench)
+      # no-op
+      ;;
+    vtest)
+      # no-op
+      ;;
+    @($pem_match) )
     # found in tt-options.sh but no rule found here
     echo "FATAL ERROR"
-    echo "Extra parameter = ${extra_param} requested and known by ${machine_name_short}-options.sh,"
+    echo "Extra parameter = ${ep} requested and known by ${machine_name_short}-options.sh,"
     echo "but ${0##*/} doesn't know about this option."
     exit 1
     ;;
-*)
-    echo "FATAL ERROR"
-    echo "Extra parameter = ${extra_param} requested but is unknown to"
-    echo "the regression system (edit ${0##*/})."
-    exit 1
-    ;;
-esac
+    *)
+      echo "FATAL ERROR"
+      echo "Extra parameter = ${ep} requested but is unknown to"
+      echo "the regression system (edit ${0##*/})."
+      exit 1
+      ;;
+  esac
+done
 run "module list"
 
 # Use a unique regression folder for each github branch
-if [[ $extra_params ]]; then
-  comp=$comp-$extra_params
+if [[ $extra_params_sort_safe ]]; then
+  comp=$comp-$extra_params_sort_safe
 fi
 comp=$comp-$featurebranch
 
@@ -250,6 +271,7 @@ echo "${0##*/}: comp           = $comp"
 echo "${0##*/}: machine        = $machine"
 echo "${0##*/}: subproj        = $subproj"
 echo "${0##*/}: regdir         = $regdir"
+echo "${0##*/}: extra_params_sort_safe = $extra_params_sort_safe"
 
 #----------------------------------------------------------------------#
 # CTest

@@ -12,7 +12,7 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_timestep Overview of the timestep package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author John McGhee
 
 \section Introduction
@@ -37,8 +37,8 @@ step for the next time cycle.  Capabilities are provided to:
  <li> limit the rate of change in the time step
  <li> control the time step based on estimated rate of change in
       a user selected physical parameter,
- <li> attempt to hit a "target" time. 
-</ul> 
+ <li> attempt to hit a "target" time.
+</ul>
 
 \section Intended Usage
 

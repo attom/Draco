@@ -13,8 +13,7 @@ file( GLOB CMake_src *.cmake )
 file( GLOB Python_src *.py )
 set( CMake_in
    cmake_uninstall.cmake.in
-   doxygen_config.in
-   )
+   doxygen_config.in )
 set( CMake_AFSD CMakeAddFortranSubdirectory/config_cafs_proj.cmake.in  )
 
 # include(debug_macros)
@@ -27,26 +26,6 @@ set( Draco_C_COMPILER_FLAGS
    "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${upper_build_type}}" )
 set( Draco_Fortran_COMPILER_FLAGS
    "${CMAKE_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS_${upper_build_type}}" )
-
-# sanity checks
-# 'src' directory must be processed before the 'config' directory.
-if( "${Draco_PACKAGE_LIST}" STREQUAL "" )
-   message( FATAL_ERROR
-"Something is wrong with the build system.  Draco_PACKAGE_LIST is empty." )
-endif()
-# if( "${Draco_TPL_LIST}" STREQUAL "" )
-   # message( FATAL_ERROR
-# "Something is wrong with the build system.  Draco_TPL_LIST is empty." )
-# endif()
-# if( "${Draco_LIBRARIES}" STREQUAL "" )
-   # message( FATAL_ERROR
-# "Something is wrong with the build system.  Draco_LIBRARIES is empty." )
-# endif()
-# An empty Draco_TPL_LIBRARIES is now a valid configuration.
-#if( "${Draco_TPL_LIBRARIES}" STREQUAL "" )
-#   message( FATAL_ERROR
-#"Something is wrong with the build system.  Draco_TPL_LIBRARIES is empty." )
-#endif()
 
 # Publish the active build_types (A subset of CMAKE_CONFIGURATION_TYPES)
 if( CMAKE_CONFIGURATION_TYPES )
@@ -69,10 +48,15 @@ configure_file( draco-config-install.cmake.in
    ${Draco_BINARY_DIR}/CMakeFiles/draco-config.cmake @ONLY)
 
 # Install scripts and macros to make them available by other projects.
-set( file_list ${CMake_src} ${CMake_in} ${Python_src} ${Draco_BINARY_DIR}/CMakeFiles/draco-config.cmake )
+set( file_list
+  ${CMake_src}
+  ${CMake_in}
+  ${Python_src}
+  ${Draco_BINARY_DIR}/CMakeFiles/draco-config.cmake )
 
 install( FILES ${file_list}  DESTINATION cmake/draco )
-install( FILES ${CMake_AFSD} DESTINATION cmake/draco/CMakeAddFortranSubdirectory )
+install( FILES ${CMake_AFSD}
+  DESTINATION cmake/draco/CMakeAddFortranSubdirectory )
 
 ##---------------------------------------------------------------------------##
 ## End of config/CMakeLists.txt

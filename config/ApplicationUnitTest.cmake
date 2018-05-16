@@ -268,7 +268,6 @@ macro( aut_register_test )
       -DWORKDIR=${aut_WORKDIR}
       -DTESTNAME=${ctestname_base}${argname}
       -DDRACO_CONFIG_DIR=${DRACO_CONFIG_DIR}
-      -DDRACO_INFO=$<TARGET_FILE_DIR:Exe_draco_info>/$<TARGET_FILE_NAME:Exe_draco_info>
       -DSTDINFILE=${aut_STDINFILE}
       -DGOLDFILE=${aut_GOLDFILE}
       -DRUN_CMD=${RUN_CMD}
@@ -280,6 +279,10 @@ macro( aut_register_test )
       -DPROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
       ${BUILDENV}
       )
+  if( TARGET Exe_draco_info )
+    list(APPEND SHARED_ARGUMENTS
+      -DDRACO_INFO=$<TARGET_FILE_DIR:Exe_draco_info>/$<TARGET_FILE_NAME:Exe_draco_info> )
+  endif()
 
   # Add python version if python driver file is specified
 

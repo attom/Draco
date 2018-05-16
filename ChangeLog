@@ -1,3 +1,181 @@
+2018-03-19  Kelly (KT) Thompson  <kgt@lanl.gov>
+
+	* "Release draco-6_24_0":https://rtt.lanl.gov/redmine/versions/60.
+	  This is a minor Draco release.
+
+	* This release was required by Jayenne and Capsaicin.  It is
+	  linked to:
+	  - "Jayenne-7_17_0":https://rtt.lanl.gov/redmine/versions/59
+	  - "Capsaicin-4_13_0":https://rtt.lanl.gov/redmine/projects/capsaicin
+
+	* Platforms:
+	  PI/WF              Intel 17.0.4    OpenMPI-2.1.2
+	                     (GCC 6.4.0)     (OpenMPI-2.1.2)
+	  SN/BA/FI/IC        Intel 17.0.4    OpenMPI-2.1.2
+	                     (GCC 6.4.0)     (OpenMPI-2.1.2)
+	  TT/TR              Intel 17.0.4    Cray_MPICH2-7.7.0
+
+	* Summary of changes:
+
+	- 921 files changed, added or removed in 72 commits.
+	- Copyright dates updated for 2018.
+	- Improve ipcress plot, "PR343":https://github.com/lanl/Draco/pull/343
+
+	* Developer Environment:
+	- No longer support Moonlight or Luna (machines
+	  retired). Regressions moved to Snow.
+	- Begin supporting Badger and Darwin (x86_64, knl, power8+,
+	  power9).
+	- Add slurm function to print total cpu-hr
+	  usage. "PR374":https://github.com/lanl/Draco/pull/374
+	- Move special Xcode/VS code into
+	  add_component_library. "PR369":https://github.com/lanl/Draco/pull/369
+	- Start requiring C++14 and C-11 language
+	  standards. "PR344":https://github.com/lanl/Draco/pull/344,
+	  "PR345":https://github.com/lanl/Draco/pull/345
+
+	* Test Envirotnment:
+	- Add a check_all function to the UnitTest class
+	  tree. "PR373":https://github.com/lanl/Draco/pull/373
+	- Improve error diagnostics for
+	  @Parse_Table@. "PR370":https://github.com/lanl/Draco/pull/370
+	- Extend Debug_Options for
+	  Parser. "PR366":https://github.com/lanl/Draco/pull/366
+	- Minor cleanup for the fpe-trap
+	  feature. "PR361":https://github.com/lanl/Draco/pull/361
+	- Tweaks to fix broken builds for
+	  C4_SCALAR. "PR359":https://github.com/lanl/Draco/pull/359
+	- Split RUN_VERIFICATION_TESTS away from Release regressions.
+	  "PR346":https://github.com/lanl/Draco/pull/346
+
+	* Performance:
+	- Tweak some code related to @shared_ptr@ for
+	  efficiency. "PR371"https://github.com/lanl/Draco/pull/371
+	- Build System:
+	- Update environments to support Darwin KNL and Power8
+	  nodes. "PR368":https://github.com/lanl/Draco/pull/368
+	- Fix MPI logic for CAFS (Visual Studio +
+	  gfortran). "PR365":https://github.com/lanl/Draco/pull/365
+	- Rework include directive mechanism for all of
+	  Draco. "PR362":https://github.com/lanl/Draco/pull/362
+	- Make cpu warm-up function static void to avoid gcc6.4
+	  warning. "PR354":https://github.com/lanl/Draco/pull/354
+	- Minor tweak to support new Capsaicin perfbench
+	  regression. "PR348":https://github.com/lanl/Draco/pull/348
+
+	Corrected defects:
+
+	- Bug #1010 Review, reset file permissions
+	- Bug #1038 Valgrind CDash reports fail to post
+	- Bug #1045 cassio run_job_old_version failing on moonlight
+	- Bug #1052 Make verification regressions separate from Release
+	- Bug #1053 ccscs1: checkpr.sh not working
+	- Bug #1056 Move trinitite compiles to back-end
+	- Bug #1061 Provide development environment on Badger
+	- Bug #1064 Update copyright header/banners for 2018
+	- Bug #1067 After machine upgrade, tests fail on ccscs7
+	- Bug #1069 vtest regressions run all tests instead of only 'vtest' marked tests
+	- Bug #1076 Darwin: Create /usr/projects/user_contrib
+	- Bug #1077 Darwin: Propose directories for modules and TPL installs
+	- Bug #1079 Are PR checks running automatically?
+	- Bug #1091 Darwin: Demo code build, test for knl nodes
+	- Bug #1095 After pr362, cannot configure on trinitite
+	- Bug #1096 After pr362, scalar builds are broken
+	- Bug #1104 Win32 builds broken by latest Symantec software
+
+	New Features:
+
+	- Feature #393 Explore option for GUI driver code
+	- Feature #1046 Consider adopting C++14, C-11 standards as minimum required
+	- Feature #1093 CMake: Move code block that adds sources to headers for Xcode
+	- Task #1054 Update 'newtools' regression to use intel/18.0.1
+	- Task #1065 Remove references to moonlight and luna
+
+	Known Defects:
+
+	- Bug #1048 Capsaicin builds broken for clang
+	- Bug #1049 Visit install not working on ccs-net machines
+	- Bug #1062 Prepare Darwin as sierra-proxy machine
+	- Bug #1083 Darwin: demo power9+volta nodes
+	- Bug #1090 Regressions on trinitite occasionally fail with "address in use" errors
+
+	* Statistics:
+
+Contributers (updated Release.cc and README.md with this ordering).
+
+CCS-2 Draco Team: Kelly G. Thompson, Kent G. Budge, James S. Warsa,
+     Alex R. Long, Kendra P. Keady, Jae H. Chang, Matt A. Cleveland,
+     Ryan T. Wollaeger, Andrew T. Till, Daniel Holladay,  Massimiliano Rosa,
+     and Kris C. Garrett.
+Prior Contributers: Jeff D. Densmore, Gabriel M. Rockefeller,
+     Allan B. Wollaber, Rob B. Lowrie, Lori A. Pritchett-Sheats,
+     Paul W. Talbot, and Katherine J. Wang.
+
+Lines of code
+-------------
+
+--------------------------------------------------------------------------------
+Language                      files          blank        comment           code
+--------------------------------------------------------------------------------
+C++                             421          12622          21845          52061
+C/C++ Header                    335           6930          20764          16598
+Lisp                             17           2027           2898          13062
+CMake                           121           2086           5473           8470
+Bourne Shell                     32            667           1489           3076
+Python                           14            402            681           1374
+Bourne Again Shell               13            245            537           1347
+CSS                               1            113             37            395
+Fortran 90                        8            113            218            380
+C                                 4             51            116            261
+C Shell                           2             32             36            163
+DOS Batch                         4             55             83             95
+YAML                              2             18             94             76
+HTML                              2              6             47             65
+CUDA                              3             19             59             40
+make                              2             22             13             39
+--------------------------------------------------------------------------------
+SUM:                            981          25408          54390          97502
+--------------------------------------------------------------------------------
+
+Code coverage
+-------------
+
+Directory                             Function Coverage           C/D Coverage
+--------------------------------  ---------------------  ---------------------
+FortranChecks/                        1 /     1 = 100%       7 /    14 =  50%
+RTT_Format_Reader/                  323 /   323 = 100%     373 /   434 =  85%
+c4/                                 167 /   176 =  94%     404 /   467 =  86%
+c4/bin/                               2 /     2 = 100%       8 /    10 =  80%
+cdi/                                 46 /    46 = 100%      73 /    86 =  84%
+cdi_analytic/                       146 /   165 =  88%     172 /   224 =  76%
+cdi_eospac/                          52 /    52 = 100%      65 /   127 =  51%
+cdi_ipcress/                        106 /   106 = 100%     188 /   247 =  76%
+compton/                             10 /    10 = 100%       2 /     4 =  50%
+diagnostics/                         15 /    20 =  75%      28 /    42 =  66%
+ds++/                               328 /   332 =  98%     481 /   552 =  87%
+fit/                                  1 /     1 = 100%      15 /    16 =  93%
+lapack_wrap/                         12 /    12 = 100%       0 /     0
+linear/                              16 /    16 = 100%     335 /   392 =  85%
+memory/                               4 /     6 =  66%       0 /     2 =   0%
+meshReaders/                         15 /    15 = 100%     127 /   172 =  73%
+mesh_element/                        23 /    24 =  95%     154 /   201 =  76%
+min/                                  9 /     9 = 100%     137 /   154 =  88%
+norms/                               27 /    28 =  96%      23 /    36 =  63%
+ode/                                  5 /     5 = 100%      29 /    32 =  90%
+parser/                             302 /   308 =  98%    1222 /  1561 =  78%
+quadrature/                         222 /   228 =  97%     577 /   738 =  78%
+rng/                                 57 /    57 = 100%      23 /    24 =  95%
+roots/                                8 /     8 = 100%     258 /   310 =  83%
+special_functions/                   30 /    33 =  90%     192 /   218 =  88%
+timestep/                            62 /    63 =  98%     104 /   178 =  58%
+units/                               81 /    82 =  98%      58 /    58 = 100%
+viz/                                 32 /    32 = 100%     131 /   174 =  75%
+--------------------------------  ---------------------  ---------------------
+Total                               2100 /  2158 =  97%    5178 /  6463 =  80%
+
+* C/D Coverage is condition/decision coverage
+  http://www.bullseye.com/coverage.html#basic_conditionDecision
+
 2017-10-16  Kelly (KT) Thompson  <kgt@lanl.gov>
 
 	* "Release draco-6_23_0":https://rtt.lanl.gov/redmine/versions/55.

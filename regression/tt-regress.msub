@@ -92,7 +92,7 @@ source $rscriptdir/tt-options.sh
 # ----------------------------------------
 echo "==========================================================================="
 echo "${machine_name_long} regression: ${ctestparts} from ${machine}."
-echo "                      ${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}"
+echo "                      ${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}"
 echo "==========================================================================="
 if [[ ${SLURM_JOB_PARTITION} ]]; then
   echo " "
@@ -131,7 +131,7 @@ run "module load PrgEnv-intel"
 run "module unload cray-libsci gcc/6.1.0"
 #run "module load craype-hugepages4M"
 run "module load cmake/3.9.0 numdiff git"
-run "module load gsl random123 eospac/6.2.4 ndi"
+run "module load gsl random123 eospac/6.3.0 ndi"
 run "module load trilinos/12.10.1 ndi metis parmetis/4.0.3 superlu-dist"
 run "module use --append ${VENDOR_DIR}-ec/modulefiles"
 run "module load csk"
@@ -144,36 +144,38 @@ export OMP_NUM_THREADS=16
 comp=CC
 
 # Extra parameters
-case $extra_params in
-"")
-    # no-op
-    ;;
-knl)
-    run "module swap craype-haswell craype-mic-knl"
-    export OMP_NUM_THREADS=17
-    ;;
-vtest)
-    # no-op
-    ;;
-@($pem_match) )
+for ep in $extra_params; do
+  case $ep in
+    "")
+      # no-op
+      ;;
+    knl)
+      run "module swap craype-haswell craype-mic-knl"
+      export OMP_NUM_THREADS=17
+      ;;
+    vtest | perfbench)
+      # no-op
+      ;;
+    @($pem_match) )
     # found in tt-options.sh but no rule found here
     echo "FATAL ERROR"
-    echo "Extra parameter = ${extra_param} requested and known by ${machine_name_short}-options.sh,"
+    echo "Extra parameter = ${ep} requested and known by ${machine_name_short}-options.sh,"
     echo "but ${0##*/} doesn't know about this option."
     exit 1
     ;;
-*)
-    echo "FATAL ERROR"
-    echo "Extra parameter = ${extra_param} requested but is unknown to"
-    echo "the regression system (edit ${0##*/})."
-    exit 1
-    ;;
-esac
+    *)
+      echo "FATAL ERROR"
+      echo "Extra parameter = ${ep} requested but is unknown to"
+      echo "the regression system (edit ${0##*/})."
+      exit 1
+      ;;
+  esac
+done
 run "module list"
 
 # Use a unique regression folder for each github branch
-if [[ $extra_params ]]; then
-  comp=$comp-$extra_params
+if [[ ${extra_params_sort_safe} ]]; then
+  comp=$comp-$extra_params_sort_safe
 fi
 comp=$comp-$featurebranch
 
@@ -224,6 +226,7 @@ echo "${0##*/}: comp           = $comp"
 echo "${0##*/}: machine        = $machine"
 echo "${0##*/}: subproj        = $subproj"
 echo "${0##*/}: regdir         = $regdir"
+echo "${0##*/}: extra_params_sort_safe = $extra_params_sort_safe"
 
 #----------------------------------------------------------------------#
 # CTest
@@ -253,42 +256,47 @@ echo "${0##*/}: scratch_dir    = ${scratch_dir}"
 echo " "
 setup_dirs=`echo $ctestparts | grep Configure`
 if [[ ${setup_dirs} ]]; then
-   if ! test -d ${work_dir}/source; then
+   if ! [[ -d ${work_dir}/source ]]; then
       run "mkdir -p ${work_dir}/source"
    fi
    # See notes above where scratch_dir is set concerning why these are soft
    # links.
-   if test "${regress_mode}" = "on"; then
-     if ! test -d ${scratch_dir}/build; then
+   if [[ "${regress_mode}" == "on" ]]; then
+     if ! [[ -d ${scratch_dir}/build ]]; then
        run "mkdir -p ${scratch_dir}/build"
      fi
      # remove symlinks
-     rm ${work_dir}/build ${work_dir}/target
-     if ! test -d ${work_dir}/build; then
+     if [[ -L ${work_dir}/build ]]; then
+       rm ${work_dir}/build
+     fi
+     if [[ -L ${work_dir}/target ]]; then
+       rm ${work_dir}/target
+     fi
+     if ! [[ -d ${work_dir}/build ]]; then
        run "ln -s ${scratch_dir}/build ${work_dir}/build"
      fi
-     if ! test -d ${scratch_dir}/target; then
+     if ! [[ -d ${scratch_dir}/target ]]; then
        run "mkdir -p ${scratch_dir}/target"
      fi
-     if ! test -d ${work_dir}/target; then
+     if ! [[ -d ${work_dir}/target ]]; then
        run "ln -s ${scratch_dir}/target ${work_dir}/target"
      fi
    else
      # $work_dir is $scratchdir/$USER/cdash/$machine/$build_name
-     if ! test -d ${work_dir}/build; then
+     if ! [[ -d ${work_dir}/build ]]; then
        run "mkdir -p ${work_dir}/build"
      fi
-     if ! test -d ${work_dir}/target; then
+     if ! [[ -d ${work_dir}/target ]]; then
        run "mkdir -p ${work_dir}/target"
      fi
    fi
 
    # clean the installation directory to remove any files that might no longer
    # be generated.
-   if test -d ${work_dir}/target/lib; then
+   if [[ -d ${work_dir}/target/lib ]]; then
        run "rm -rf ${work_dir}/target/*"
    fi
-   if test -f ${work_dir}/build/CMakeCache.txt; then
+   if [[ -f ${work_dir}/build/CMakeCache.txt ]]; then
        run "rm -rf ${work_dir}/build/*"
    fi
 fi

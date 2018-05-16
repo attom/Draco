@@ -74,7 +74,7 @@ cd $initial_working_dir
 source $draco_script_dir/common.sh
 
 # CMake options that will be included in the configuration step
-export CONFIG_BASE="-DDRACO_LIBRARY_TYPE=STATIC -DDRACO_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
+export CONFIG_BASE="-DDRACO_LIBRARY_TYPE=STATIC -DDraco_VERSION_PATCH=`echo $ddir | sed -e 's/.*_//'`"
 
 # sets umask 0002
 # sets $install_group, $install_permissions, $build_permissions

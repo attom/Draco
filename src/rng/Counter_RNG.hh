@@ -26,17 +26,15 @@
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__)
-#define GNUC_VERSION                                                           \
-  (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
 /*
-#if (GNUC_VERSION >= 40204) && !defined(__ICC) && !defined(NVCC)
+#if (RNG_GNUC_VERSION >= 40204) && !defined(__ICC) && !defined(NVCC)
 // Suppress GCC's "unused parameter" warning, about lhs and rhs in sse.h, and an
 // "unused local typedef" warning, from a pre-C++11 implementation of a static
 // assertion in compilerfeatures.h.
 */
 #pragma GCC diagnostic push
-#if (GNUC_VERSION >= 70000)
+#if (RNG_GNUC_VERSION >= 70000)
 #pragma GCC diagnostic ignored "-Wexpansion-to-defined"
 #endif
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -58,9 +56,9 @@
 #pragma clang diagnostic pop
 #endif
 
-/* #if (GNUC_VERSION >= 40600) */
+/* #if (RNG_GNUC_VERSION >= 40600) */
 #if defined(__GNUC__) && !defined(__clang__)
-/* && (GNUC_VERSION >= 70000) */
+/* && (RNG_GNUC_VERSION >= 70000) */
 // Restore GCC diagnostics to previous state.
 #pragma GCC diagnostic pop
 #endif

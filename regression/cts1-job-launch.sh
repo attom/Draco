@@ -16,6 +16,11 @@
 #    $build_type - 'Debug', 'Release'
 #    $extra_params - '', 'intel13', 'pgi', 'coverage'
 
+# Under cron, a basic environment might not be loaded yet.
+if [[ `which sbatch 2>/dev/null | grep -c sbatch` == 0 ]]; then
+  source /etc/bash.bashrc.local
+fi
+
 # command line arguments
 args=( "$@" )
 nargs=${#args[@]}
@@ -47,6 +52,11 @@ fi
 job_launch_sanity_checks
 
 available_queues=`sacctmgr -np list assoc user=$LOGNAME | sed -e 's/.*|\(.*dev.*\)|.*/\1/' | sed -e 's/|.*//'`
+available_account=`sacctmgr -np list assoc user=$LOGNAME format=Account | sed -e 's/|//' | sed -e 's/,/ /g' | xargs -n 1 | sort -u | xargs`
+available_partition=`sacctmgr -np list assoc user=$LOGNAME format=Partition | sed -e 's/|//' | sed -e 's/,/ /g' | xargs -n 1 | sort -u | xargs`
+available_qos=`sacctmgr -np list assoc user=$LOGNAME format=Qos | sed -e 's/|//' | sed -e 's/,/ /g' | xargs -n 1 | sort -u | xargs`
+# not sure how to detect access to
+# pm="--reservation=PreventMaint"
 case $available_queues in
   *access*) access_queue="-A access --qos=access" ;;
   *dev*)    access_queue="--qos=dev" ;;
@@ -65,17 +75,25 @@ for jobid in ${dep_jobids}; do
     done
 done
 
-if ! test -d $logdir; then
+if ! [[ -d $logdir ]]; then
   mkdir -p $logdir
   chgrp draco $logdir
   chmod g+rwX $logdir
   chmod g+s $logdir
 fi
 
+build_partition_options="-N 1 -t 4:00:00"
+partition_options="-N 1 -t 4:00:00"
+
+
+
+
+
+
 # Configure on the front end
 echo "Configure:"
 export REGRESSION_PHASE=c
-cmd="${rscriptdir}/cts1-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
+cmd="${rscriptdir}/cts1-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-${REGRESSION_PHASE}.log"
 echo "${cmd}"
 eval "${cmd}"
 
@@ -83,11 +101,11 @@ eval "${cmd}"
 echo " "
 echo "Build, Test:"
 export REGRESSION_PHASE=bt
-logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
+logfile=${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-${REGRESSION_PHASE}.log
 if [[ -f $logfile ]]; then
   rm $logfile
 fi
-cmd="$MSUB ${access_queue} -o ${logfile} -J ${subproj:0:5}-${featurebranch} -t 4:00:00 ${rscriptdir}/${machine_class}-regress.msub"
+cmd="$MSUB ${access_queue} -o ${logfile} -J ${subproj:0:5}-${featurebranch} ${build_partition_options} ${rscriptdir}/${machine_class}-regress.msub"
 echo "${cmd}"
 jobid=`eval ${cmd}`
 # trim extra whitespace from number
@@ -106,7 +124,7 @@ echo " "
 echo "Submit:"
 export REGRESSION_PHASE=s
 echo "Jobs done, now submitting ${build_type} results from ${host}."
-cmd="${rscriptdir}/cts1-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params}${prdash}${featurebranch}-s.log"
+cmd="${rscriptdir}/cts1-regress.msub >& ${logdir}/${machine_name_short}-${subproj}-${build_type}${epdash}${extra_params_sort_safe}${prdash}${featurebranch}-s.log"
 echo "${cmd}"
 eval "${cmd}"
 

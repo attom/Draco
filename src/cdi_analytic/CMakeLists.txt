@@ -16,11 +16,6 @@ project( cdi_analytic CXX )
 file( GLOB sources *.cc )
 file( GLOB headers *.hh )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -29,7 +24,8 @@ add_component_library(
    TARGET       Lib_cdi_analytic
    TARGET_DEPS  "Lib_parser;Lib_roots;Lib_cdi"
    LIBRARY_NAME cdi_analytic
-   SOURCES      "${sources}"  )
+   HEADERS      "${headers}"
+   SOURCES      "${sources}" )
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions

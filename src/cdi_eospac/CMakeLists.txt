@@ -7,17 +7,8 @@
 cmake_minimum_required(VERSION 3.9.0)
 project( cdi_eospac CXX )
 
-##---------------------------------------------------------------------------##
-# Requires EOSPAC
-##---------------------------------------------------------------------------##
-find_package( EOSPAC QUIET )
-set_package_properties( EOSPAC PROPERTIES
-   DESCRIPTION "Access SESAME thermodynamic and transport data."
-   TYPE OPTIONAL
-   PURPOSE "Required for bulding the cdi_eospac component."
-   )
-
 if( EOSPAC_FOUND )
+
 # ---------------------------------------------------------------------------- #
 # Source files
 # ---------------------------------------------------------------------------- #
@@ -26,30 +17,23 @@ file( GLOB sources *.cc )
 file( GLOB headers *.hh )
 list( REMOVE_ITEM sources ${PROJECT_SOURCE_DIR}/QueryEospac.cc )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
 
 add_component_library(
    TARGET       Lib_cdi_eospac
-   TARGET_DEPS  Lib_cdi
+   TARGET_DEPS  "Lib_cdi;EOSPAC::eospac"
    LIBRARY_NAME cdi_eospac
    SOURCES      "${sources}"
-   VENDOR_LIST "EOSPAC"
-   VENDOR_LIBS "${EOSPAC_LIBRARY}" )
+   HEADERS      "${headers}" )
 target_include_directories( Lib_cdi_eospac PUBLIC ${EOSPAC_INCLUDE_DIR} )
 
 add_component_executable(
   TARGET      Exe_QueryEospac
   TARGET_DEPS Lib_cdi_eospac
   SOURCES     ${PROJECT_SOURCE_DIR}/QueryEospac.cc
-  PREFIX       Draco
-  )
+  PREFIX       Draco )
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions

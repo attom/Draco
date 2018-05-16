@@ -25,11 +25,6 @@ file( GLOB headers *.hh *.h)
 list( APPEND headers ${PROJECT_BINARY_DIR}/c4/config.h )
 list( REMOVE_ITEM headers ${template_implementations} )
 
-# Make the header files available in the IDE.
-if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-   list( APPEND sources ${headers} ${template_implementations} )
-endif()
-
 # ---------------------------------------------------------------------------- #
 # Build package library
 # ---------------------------------------------------------------------------- #
@@ -50,6 +45,7 @@ add_component_library(
    TARGET_DEPS  ${target_deps}
    LIBRARY_NAME c4
    SOURCES      "${sources}"
+   HEADERS      "${headers};${template_implementations}"
    ${c4_extra_VENDORS}
    )
 target_include_directories( Lib_c4

@@ -12,7 +12,7 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_c4 Overview of the c4 package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author Thomas M. Evans, Geoff Furnish, Kent G. Budge, Kelly G. Thompson
 
 <!---------------------------------------------------------------------------->
@@ -32,7 +32,7 @@ The basic functions provided by c4 sit in the C4_Functions.hh header.
 These are canonical forms of message passing functions.  c4 is set to
 either serial or mpi (as determined by the C4_MPI or C4_SCALAR
 macros). To use c4 include the following:
-\code                                                                   
+\code
 #include "c4/global.hh"
 
 int main( int argc, char *argv[] )

@@ -12,7 +12,10 @@
 #   https://rtt.lanl.gov/redmine/projects/draco/wiki/Common_Configure_Options
 
 cmake_minimum_required(VERSION 3.9.0 FATAL_ERROR)
-project( Draco CXX C )
+project( Draco
+  VERSION 6.24
+  DESCRIPTION "An object-oriented component library supporting radiation transport applications."
+  LANGUAGES CXX C )
 
 # Do not look for Fortran for
 # 1. XCode based Generators, or
@@ -41,11 +44,8 @@ set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/config )
 #
 # The Draco version number.
 #
-set(DRACO_VERSION_MAJOR 6)
-set(DRACO_VERSION_MINOR 23)
-# set(DRACO_VERSION_PATCH 0) # only set this for a release
 include(dracoVersion)
-set_ccs2_software_version( DRACO )
+set_ccs2_software_version( Draco )
 
 #
 # Unit Test Setup
@@ -92,7 +92,6 @@ setupVendorLibraries()
 #
 # Build Draco components:
 #
-# add_subdirectory( doc ) Now at svnroot/draco/dracodoc.
 add_subdirectory( src )
 add_subdirectory( autodoc ) # This must be processed after 'src'
 add_subdirectory( config )  # This must be processed after 'src'
@@ -119,13 +118,6 @@ configure_file(
 add_custom_target( uninstall
   COMMAND "${CMAKE_COMMAND}" -P
           "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" )
-# Sometimes CMake does not install the correct RPATH.  This target
-# usually fixes the issue
-add_custom_target( update_rpaths
-  COMMAND "${CMAKE_MAKE_PROGRAM}" rebuild_cache
-  COMMAND "${CMAKE_MAKE_PROGRAM}" ${MAKE_ARGS} install
-  COMMENT "Reparsing to try to update RPATH values..."
-  )
 
 # Export targets
 install(

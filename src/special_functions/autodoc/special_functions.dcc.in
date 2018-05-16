@@ -12,7 +12,7 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_sf Overview of the sf package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author Kelly Thompson
 
 \section abstract Abstract
@@ -74,7 +74,7 @@ In general, any arbitrary function, \f$ f_{surface}(\theta, \phi) \f$, can be ex
  * \f[
  * f_{surface} (\theta ,\phi ) = \sum\limits_{l = 0}^\infty  {\sum\limits_{k =  - l}^l {c_{l,k} Y_{l,k} } } (\theta ,\phi ),
  * \f]
- * 
+ *
  * where the \f$ c_{l,k} \f$ are real, constant coefficients associated with a
  * specific, complex spherical harmonic \f$ Y_{l,k} \f$.  The coefficients
  * must be defined so that the following orthonormal condition is obeyed.
@@ -86,9 +86,9 @@ In general, any arbitrary function, \f$ f_{surface}(\theta, \phi) \f$, can be ex
  *
  * In this expression \f$ Y^* \f$ represents the complex conjugate of the
  * function.
- * 
+ *
  * For our uses, we define the spherical harmonic function to have the
- * following form, 
+ * following form,
  *
  * \f[
  * Y_{\ell,k}(\mathbf\Omega_m) = Y_{\ell,k}(\theta_m,\omega_m)
@@ -121,7 +121,7 @@ coordinate system">
  *
  * Our software can provide either the real (rtt_sf::realYlk) or the
  * imaginary part (rtt_sf::complexYlk) of the spherical harmonic
- * expression. 
+ * expression.
  *
  * We define the azimuthal angle, \f$\omega_m\f$, in terms of quadrature
  * ordinates, as:
@@ -174,7 +174,7 @@ coordinate system">
  *
  *
  * \section norm_sph Normalized Spherical Harmonics
- *       
+ *
  * In practice, we are only concerned with real surface quantities, so it is
  * more convenient to work with real spherical harmonics, \f$
  * y_{l,k}(\theta,\phi) \f$.  We define the following approximations (common
@@ -195,9 +195,9 @@ remains.  This is the value provided by the function rtt_sf::normalizedYlk.
  *
 \f[
 \begin{array}{l}
- k > 0:\;\;y_{l,k} (\theta _m ,\phi _m ) = \sqrt {\frac{{2(2l + 1)}}{{\sum\limits_{m'} {w_{m'} } }}\frac{{(l - k)!}}{{(l + k)!}}} P_{l,k} (\mu _m )\sin (k\phi _m ), \\ 
- k = 0:\;\;y_{l,0} (\theta _m ,\phi _m ) = \sqrt {\frac{{2l + 1}}{{4\pi }}} P_{l,k} (\mu _m ),\;\;\;\;\;\;{\rm{and}} \\ 
- k < 0:\;\;y_{l,k} (\theta _m ,\phi _m ) = \sqrt {\frac{{2(2l + 1)}}{{\sum\limits_{m'} {w_{m'} } }}\frac{{(l - \left| k \right|)!}}{{(l + \left| k \right|)!}}} P_{l,\left| k \right|} (\mu _m )\cos (\left| k \right|\phi _m ). \\ 
+ k > 0:\;\;y_{l,k} (\theta _m ,\phi _m ) = \sqrt {\frac{{2(2l + 1)}}{{\sum\limits_{m'} {w_{m'} } }}\frac{{(l - k)!}}{{(l + k)!}}} P_{l,k} (\mu _m )\sin (k\phi _m ), \\
+ k = 0:\;\;y_{l,0} (\theta _m ,\phi _m ) = \sqrt {\frac{{2l + 1}}{{4\pi }}} P_{l,k} (\mu _m ),\;\;\;\;\;\;{\rm{and}} \\
+ k < 0:\;\;y_{l,k} (\theta _m ,\phi _m ) = \sqrt {\frac{{2(2l + 1)}}{{\sum\limits_{m'} {w_{m'} } }}\frac{{(l - \left| k \right|)!}}{{(l + \left| k \right|)!}}} P_{l,\left| k \right|} (\mu _m )\cos (\left| k \right|\phi _m ). \\
  \end{array}
 \f]
  *
@@ -243,9 +243,9 @@ remains.  This is the value provided by the function rtt_sf::normalizedYlk.
  *
  * \section assoc_leg_poly Associated Legendre Polynomials
  *
- * The associated Legendre function, \f$ P_{\ell,k}(\mu) \f$ is defined for 
+ * The associated Legendre function, \f$ P_{\ell,k}(\mu) \f$ is defined for
  * integer values \f$ k = 0, 1, 2, \ldots, \ell \f$ by the formula
- * 
+ *
  * \f[
  * P_{\ell,k}(\mu) = (-1)^k(1-\mu^2)^{k/2}\frac{d^k}{d\mu^k}P_\ell(\mu),
  * \f]
@@ -271,10 +271,10 @@ remains.  This is the value provided by the function rtt_sf::normalizedYlk.
  * For more information, see <a
  * href="http://mathworld.wolfram.com/LegendrePolynomial.html">Wolfram
  * Research's MathWorld</a>.
- * 
- * 
+ *
+ *
  * \section galerkin_sph Galerkin Spherical Harmonics
- 
+
  We use a special form of spherical harmonics for creating the
  moment-to-discrete and discrete-to-moment matrixes.  Morel describes
  the functional form in his paper \e A \e Hybrid \e
@@ -290,9 +290,9 @@ formulation is
 
 \f[
 \begin{array}{l}
- k > 0:\;\;Y_{l,k} (\theta ,\phi ) = \frac{{2l + 1}}{{\sum\limits_m {w_m } }}\sqrt {2\frac{{(l - k)!}}{{(l - k)!}}} P_{l,k} (\cos \theta )\cos (\phi ) \\ 
- k = 0:\;\;Y_{l,0} (\theta ,\phi ) = \frac{{2l + 1}}{{\sum\limits_m {w_m } }}P_l (\cos \theta ) \\ 
- k < 0:\;\;Y_{l,k} (\theta ,\phi ) = \frac{{2l + 1}}{{\sum\limits_m {w_m } }}\sqrt {2\frac{{(l - \left| k \right|)!}}{{(l - \left| k \right|)!}}} P_{l,\left| k \right|} (\cos \theta )\sin (\phi ) \\ 
+ k > 0:\;\;Y_{l,k} (\theta ,\phi ) = \frac{{2l + 1}}{{\sum\limits_m {w_m } }}\sqrt {2\frac{{(l - k)!}}{{(l - k)!}}} P_{l,k} (\cos \theta )\cos (\phi ) \\
+ k = 0:\;\;Y_{l,0} (\theta ,\phi ) = \frac{{2l + 1}}{{\sum\limits_m {w_m } }}P_l (\cos \theta ) \\
+ k < 0:\;\;Y_{l,k} (\theta ,\phi ) = \frac{{2l + 1}}{{\sum\limits_m {w_m } }}\sqrt {2\frac{{(l - \left| k \right|)!}}{{(l - \left| k \right|)!}}} P_{l,\left| k \right|} (\cos \theta )\sin (\phi ) \\
  \end{array}
 \f]
 

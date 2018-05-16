@@ -3,9 +3,8 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2016 Feb 13
 # brief  Generate dll_declspec.h used to define DLL_PUBLIC_<pkg> definitions.
-# note   Copyright (C) 2016, Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 #        All rights reserved.
-#------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------#
 
 function( generate_dll_declspec dir components )

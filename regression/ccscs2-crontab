@@ -10,9 +10,7 @@
 */20 * * * * /scratch/regress/draco/regression/sync_repository.sh
 
 # Run the metrics report on the first Monday of each month.
-00 05 1-7 * 1 /scratch/regress/draco/regression/metrics_report.sh -e kgt@lanl.gov -p draco
-02 05 1-7 * 1 /scratch/regress/draco/regression/metrics_report.sh -e kgt@lanl.gov -p jayenne
-04 05 1-7 * 1 /scratch/regress/draco/regression/metrics_report.sh -e kgt@lanl.gov -p capsaicin
+00 05 1-7 * * /home/kellyt/bin/first_monday_of_month_report.sh &> /home/kellyt/logs/first_monday_of_month_report.log
 
 #------------------------------------------------------------------------------#
 # Regressions with system default compiler (gcc-4.8.5)
@@ -40,17 +38,17 @@
 
 00 02 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne capsaicin\" -e coverage
 
-00 04 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne capsaicin\" -e valgrind
+30 04 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne capsaicin\" -e valgrind
 
-00 05 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne\" -e scalar
+30 05 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne\" -e scalar
 
-15 05 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne\" -e static
+45 05 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne\" -e static
 
 #------------------------------------------------------------------------------#
 # Clang-4.0.1, openmpi-2.1.1
 #------------------------------------------------------------------------------#
 
-00 06 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne capsaicin\" -e clang
+30 06 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne\" -e clang
 
 # |    |    |    |    |   |
 # |    |    |    |    |   +- command

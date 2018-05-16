@@ -26,11 +26,6 @@ set( headers
 
 if( TARGET COMPTON::compton )
 
-  # Make the header files available in the IDE.
-  if( MSVC_IDE OR ${CMAKE_GENERATOR} MATCHES Xcode )
-    list( APPEND sources ${headers} )
-  endif()
-
   # -------------------------------------------------------------------------- #
   # Build package library
   # -------------------------------------------------------------------------- #
@@ -39,7 +34,8 @@ if( TARGET COMPTON::compton )
     TARGET       Lib_compton
     TARGET_DEPS  "Lib_c4;Lib_dsxx;COMPTON::compton"
     LIBRARY_NAME compton
-    SOURCES      "${sources}" )
+    SOURCES      "${sources}"
+    HEADERS      "${headers}" )
   # generated include directive files (config.h)
   target_include_directories( Lib_compton
     PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> )

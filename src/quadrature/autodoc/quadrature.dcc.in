@@ -12,7 +12,7 @@
 <!---------------------------------------------------------------------------->
 
 \page overview_quadrature Overview of the quadrature package
-\version Draco-@DRACO_VERSION@
+\version Draco-@Draco_VERSION@
 \author Kelly Thompson
 
 \section abstract Abstract
@@ -67,7 +67,7 @@ This set assumes 90 degree rotational symmetry.
 
 \section usage Usage
 
-The QuadCreator object is an \e abstract \e factory for creating Quadrature objects. 
+The QuadCreator object is an \e abstract \e factory for creating Quadrature objects.
 
 \code
 using rtt_dsxx::SP;
@@ -78,7 +78,7 @@ using rtt_quadrature::QuadCreator;
 SP< const Quadrature > spQuad = QuadCreator().quadCreate( QuadCreator::LevelSym, 4 );
 \endcode
 
-The QuadServices object provides moment-to-discrete and discrete-to-moment transformations. 
+The QuadServices object provides moment-to-discrete and discrete-to-moment transformations.
 
 \code
 using rtt_dsxx::SP;
@@ -96,7 +96,7 @@ std::vector< double > phi( 20, 1.0 );
 std::vector< double > psi( 20 );
 
 // transform from moment-space to discrete-angle-space.
-psi = qs.applyM( phi ); 
+psi = qs.applyM( phi );
 \endcode
 
 <!---------------------------------------------------------------------------->
