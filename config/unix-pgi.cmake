@@ -31,8 +31,6 @@ endif()
 #
 # Compiler Flags
 #
-include(platform_checks)
-query_openmp_availability()
 
 # [2015-03-09 KT] Random123 has a lot of code that produces the warning:
 #    "warning #111-D:  statement is unreachable."

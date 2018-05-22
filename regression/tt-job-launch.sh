@@ -108,8 +108,10 @@ case $extra_params_sort_safe in
 esac
 
 # When on DST use
-#build_partition_options+=" ${pm}"
-#partition_options+=" ${pm}"
+if [[ ${pm} ]]; then
+  build_partition_options+=" ${pm}"
+  test_partition_options+=" ${pm}"
+fi
 
 # Configure on front end
 # Only the front-end can see the github and gitlab repositories.

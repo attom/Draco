@@ -266,6 +266,10 @@ function(cmake_add_fortran_subdirectory subdir)
         )
     endif()
     if( WIN32 )
+      if( ARGS_VERBOSE )
+        message("    set_target_properties(${tgt} PROPERTIES
+        IMPORTED_IMPLIB \"${library_dir}/lib${lib}${CMAKE_STATIC_LIBRARY_SUFFIX}\" )" )
+      endif()
       set_target_properties(${tgt} PROPERTIES
         IMPORTED_IMPLIB "${library_dir}/lib${lib}${CMAKE_STATIC_LIBRARY_SUFFIX}" )
     endif()

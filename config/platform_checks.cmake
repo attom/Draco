@@ -5,6 +5,114 @@
 #          All rights reserved
 ##---------------------------------------------------------------------------##
 
+if( NOT DEFINED CRAY_PE )
+  message("
+Platform Checks...
+")
+
+  # ----------------------------------------------------------------------------
+  # Identify machine and save name in ds++/config.h
+  # ----------------------------------------------------------------------------
+  site_name( SITENAME )
+  string( REGEX REPLACE "([A-z0-9]+).*" "\\1" SITENAME ${SITENAME} )
+  if( ${SITENAME} MATCHES "ba")
+    set( SITENAME "Badger" )
+  elseif( ${SITENAME} MATCHES "ccscs[0-9]+" )
+    # do nothing (keep the fullname)
+  elseif( ${SITENAME} MATCHES "fi")
+    set( SITENAME "Fire" )
+  elseif( ${SITENAME} MATCHES "ic")
+    set( SITENAME "Ice" )
+  elseif( ${SITENAME} MATCHES "nid")
+    if( "$ENV{SLURM_CLUSTER_NAME}" MATCHES "trinity" )
+      set( SITENAME "Trinity" )
+    else()
+      set( SITENAME "Trinitite" )
+    endif()
+  elseif( ${SITENAME} MATCHES "sn")
+    set( SITENAME "Snow" )
+  elseif( ${SITENAME} MATCHES "tr")
+    set( SITENAME "Trinity" )
+  elseif( ${SITENAME} MATCHES "tt")
+    set( SITENAME "Trinitite" )
+  endif()
+  set( SITENAME ${SITENAME} CACHE "STRING" "Name of the current machine" FORCE)
+
+endif()
+
+#------------------------------------------------------------------------------#
+# Sanity checks for Cray Programming Environments
+#
+# If this is a Cray PE,
+# - Set CRAY_PE = TRUE
+# - Ensure CMAKE_EXE_LINKER_FLAGS contains "-dynamic"
+# - Ensure that the compilers given to cmake are actually Cray compiler
+#   wrappers.
+#------------------------------------------------------------------------------#
+macro( query_craype )
+
+  if( NOT DEFINED CRAY_PE )
+
+    # Is this a Cray machine?
+    message( STATUS "Looking to see if we are building in a Cray Environment...")
+    if( DEFINED ENV{CRAYPE_VERSION} )
+      set( CRAY_PE ON CACHE BOOL
+        "Are we building in a Cray Programming Environment?")
+
+      # override default compiler wrapper flags for linking so that dynamic
+      # libraries are allowed.  This does not prevent us from generating static
+      # libraries if requested with DRACO_LIBRARY_TYPE=STATIC.
+      # if( DEFINED ENV{CMAKE_EXE_LINKER_FLAGS} )
+      #   set( CMAKE_EXE_LINKER_FLAGS "$ENV{CMAKE_EXE_LINKER_FLAGS}")
+      # else()
+      #   if( DEFINED CMAKE_EXE_LINKER_FLAGS )
+      #     string( APPEND CMAKE_EXE_LINKER_FLAGS " -dynamic" )
+      #   else()
+      #     set( CMAKE_EXE_LINKER_FLAGS "-dynamic" )
+      #   endif()
+      # endif()
+      # set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}" CACHE STRING
+      #   "Extra flags for linking executables")
+
+      # We expect developers to use the Cray compiler wrappers (especially in
+      # setupMPI.cmake). See also
+      # https://cmake.org/cmake/help/latest/module/FindMPI.html
+      if( NOT "$ENV{CXX}" MATCHES "CC$" OR
+          NOT "$ENV{CC}" MATCHES "cc$" OR
+          NOT "$ENV{FC}" MATCHES "ftn$" OR
+          NOT "$ENV{CRAYPE_LINK_TYPE}" MATCHES "dynamic$" )
+        message( FATAL_ERROR
+"The build system requires that the Cray compiler wrappers (CC, cc, ftn) be "
+" used when configuring this product on a Cray system (CRAY_PE=${CRAY_PE}). The"
+" development environment must also support dynamic linking.  The build system "
+" thinks you are trying to use:\n"
+"  CMAKE_CXX_COMPILER     = ${CMAKE_CXX_COMPILER}\n"
+"  CMAKE_C_COMPILER       = ${CMAKE_C_COMPILER}\n"
+"  CMAKE_Fortran_COMPILER = ${CMAKE_Fortran_COMPILER}\n"
+"  CRAYPE_LINK_TYPE       = $ENV{CRAYPE_LINK_TYPE}\n"
+"If you are working on a system that runs the Cray Programming Environment, try"
+" setting the following variables and rerunning cmake from a clean build"
+" directory:\n"
+"   export CXX=`which CC`\n"
+"   export CC=`which cc`\n"
+"   export FC=`which ftn`\n"
+"   export CRAYPE_LINK_TYPE=dynamic\n"
+"Otherwise please email this error message and other related information to"
+" draco@lanl.gov.\n" )
+      endif()
+      message( STATUS
+        "Looking to see if we are building in a Cray Environment..."
+        "found version $ENV{CRAYPE_VERSION}.")
+    else()
+      set( CRAY_PE OFF CACHE BOOL
+        "Are we building in a Cray Programming Environment?")
+      message( STATUS
+        "Looking to see if we are building in a Cray Environment...no.")
+    endif()
+
+  endif()
+endmacro()
+
 ##---------------------------------------------------------------------------##
 ## Determine System Type and System Names
 ##
@@ -177,29 +285,6 @@ macro( query_have_restrict_keyword )
     endif()
   endif()
 
-endmacro()
-
-##---------------------------------------------------------------------------##
-## Query OpenMP availability
-##
-## This feature is usually compiler specific and a compile flag must be
-## added.  For this to work the <platform>-<compiler>.cmake files (eg.
-## unix-g++.cmake) call this macro.
-##---------------------------------------------------------------------------##
-macro( query_openmp_availability )
-  if( NOT PLATFORM_CHECK_OPENMP_DONE )
-    set( PLATFORM_CHECK_OPENMP_DONE TRUE CACHE BOOL "Is check for OpenMP done?")
-    mark_as_advanced( PLATFORM_CHECK_OPENMP_DONE )
-    message( STATUS "Looking for OpenMP...")
-    find_package(OpenMP QUIET)
-    if( OPENMP_FOUND )
-      message( STATUS "Looking for OpenMP... ${OpenMP_C_FLAGS}")
-      set( OPENMP_FOUND ${OPENMP_FOUND} CACHE BOOL "Is OpenMP availalable?"
-        FORCE )
-    else()
-      message(STATUS "Looking for OpenMP... not found")
-    endif()
-  endif()
 endmacro()
 
 #------------------------------------------------------------------------------#

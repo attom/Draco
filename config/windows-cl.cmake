@@ -20,10 +20,9 @@ endif()
 #
 # Compiler flag checks
 #
-include(platform_checks)
-query_openmp_availability()
 
-# This is required to provide compatibility between MSVC and MinGW generated libraries.
+# This is required to provide compatibility between MSVC and MinGW generated
+# libraries.
 if( DRACO_SHARED_LIBS )
   set( CMAKE_GNUtoMS ON CACHE BOOL "Compatibility flag for MinGW/MSVC." FORCE)
 endif()
@@ -54,8 +53,8 @@ if( NOT CXX_FLAGS_INITIALIZED )
   # Notes on options:
   # - /wd 4251 disable warning #4251: 'identifier' : class 'type' needs to have
   #   dll-interface to be used by clients of class 'type2'
-  # - /arch:[SSE|SSE2|AVX|AVX2|IA32] 
-  #   AVX2 - at least for NMake Makefiles, CMake doesn't populate the 
+  # - /arch:[SSE|SSE2|AVX|AVX2|IA32]
+  #   AVX2 - at least for NMake Makefiles, CMake doesn't populate the
   #          correct project property. Also, this option causes 'illegal
   #          instruction' for rng on KT's desktop (2017-02-14).
   # - /W[1234] Warning levels.

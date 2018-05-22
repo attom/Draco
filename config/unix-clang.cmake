@@ -12,8 +12,6 @@
 #
 # Compiler flag checks
 #
-include(platform_checks)
-query_openmp_availability()
 
 # Debug flags to consider adding:
 # http://clang.llvm.org/docs/UsersManual.html#options-to-control-error-and-warning-messages

@@ -16,9 +16,6 @@
 #
 # Compiler flag checks
 #
-include(platform_checks)
-query_openmp_availability()
-
 if( CMAKE_CXX_COMPILER_VERSION LESS "8.4" )
   message( FATAL_ERROR "Cray C++ prior to 8.4 does not support C++11.
 Try: module use --append ~mrberry/modulefiles

@@ -13,12 +13,6 @@
 #              (CMAKE_INTERPROCEDURAL_OPTIMIZATION=ON).
 
 #
-# Compiler flag checks
-#
-include(platform_checks)
-query_openmp_availability()
-
-#
 # Compiler Flags
 #
 

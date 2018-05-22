@@ -320,16 +320,18 @@ macro( setupMPILibrariesUnix )
       # MPI_<LANG>_COMPILER and MPI_<LANG>_NO_INTERROGATE forces FindMPI to skip
       # it's bad logic and just rely on the MPI compiler wrapper to do the right
       # thing. see Bug #467.
-      foreach( lang C CXX Fortran )
-        get_filename_component( CMAKE_${lang}_COMPILER_NOPATH
-          "${CMAKE_${lang}_COMPILER}" NAME )
-        if( "${CMAKE_${lang}_COMPILER_NOPATH}" MATCHES "^mpi[A-z+]+" )
-          get_filename_component( compiler_wo_path "${CMAKE_${lang}_COMPILER}"
-            NAME )
-          set( MPI_${lang}_COMPILER ${CMAKE_${lang}_COMPILER} )
-          set( MPI_${lang}_NO_INTERROGATE ${CMAKE_${lang}_COMPILER} )
-        endif()
-      endforeach()
+      #
+      # After cmake-3.9.0, this logic probably isn't needed.
+      # foreach( lang C CXX Fortran )
+      #    get_filename_component( CMAKE_${lang}_COMPILER_NOPATH
+      #      "${CMAKE_${lang}_COMPILER}" NAME )
+      #    if( "${CMAKE_${lang}_COMPILER_NOPATH}" MATCHES "^mpi[A-z+]+" )
+      #      get_filename_component( compiler_wo_path "${CMAKE_${lang}_COMPILER}"
+      #        NAME )
+      #      set( MPI_${lang}_COMPILER ${CMAKE_${lang}_COMPILER} )
+      #      set( MPI_${lang}_NO_INTERROGATE ${CMAKE_${lang}_COMPILER} )
+      #    endif()
+      #  endforeach()
 
       # Call the standard CMake FindMPI macro.
       find_package( MPI QUIET )
@@ -374,7 +376,6 @@ macro( setupMPILibrariesUnix )
 
         endif()
       endif()
-
 
       # Set DRACO_C4 and other variables
       setupDracoMPIVars()

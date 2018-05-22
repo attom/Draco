@@ -61,7 +61,6 @@ if(NOT TARGET Lib_dsxx)
       CACHE PATH "Build runtime objects at this location.")
   endif()
   include( platform_checks )
-  #query_openmp_availability()
   include( compilerEnv )
   dbsSetupFortran()
   # Vendors are not needed here, but I'm trying to follow the model found in

@@ -36,8 +36,6 @@ check_cxx_compiler_flag( "-Wsuggest-attribute=const" HAS_WSUGGEST_ATTRIBUTE )
 check_cxx_compiler_flag( "-Wunused-local-typedefs"   HAS_WUNUSED_LOCAL_TYPEDEFS )
 #check_cxx_compiler_flag( "-Wunused-macros"           HAS_WUNUSED_MACROS )
 check_cxx_compiler_flag( "-Wzero-as-null-pointer-constant" HAS_WZER0_AS_NULL_POINTER_CONSTANT )
-include(platform_checks)
-query_openmp_availability()
 
 # is this bullseye?
 execute_process(
@@ -76,7 +74,7 @@ if( NOT CXX_FLAGS_INITIALIZED )
 
   set( CMAKE_C_FLAGS                "-Wcast-align -Wpointer-arith -Wall -pedantic" )
   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0 )
-    string( APPEND CMAKE_C_FLAGS    " -Wno-expansion-to-defined" )
+    string( APPEND CMAKE_C_FLAGS    " -Wno-expansion-to-defined -Wnarrowing" )
   endif()
   set( CMAKE_C_FLAGS_DEBUG          "-g -gdwarf-3 -fno-inline -fno-eliminate-unused-debug-types -O0 -Wextra -Wundef -Wunreachable-code -DDEBUG")
   # -Wfloat-equal
@@ -95,8 +93,6 @@ if( NOT CXX_FLAGS_INITIALIZED )
     #  -fsanitize=float-divide-by-zero: detect floating-point division by 0
     #  -fsanitize=float-cast-overflow: check that the result of floating-point
     #             type to integer conversions do not overflow;
-    #  -fsanitize=bounds: enable instrumentation of array bounds and detect
-    #             out-of-bounds accesses;
     #  -fsanitize=alignment: enable alignment checking, detect various
     #             misaligned objects;
     #  -fsanitize=object-size: enable object size checking, detect various
@@ -111,8 +107,10 @@ if( NOT CXX_FLAGS_INITIALIZED )
 #    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=vptr")
 #    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=object-size")
 #    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=alignment")
-#    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=bounds")
 #    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=address")
+    # - The '-fsanitize=leak' option sounds great but it finds too many issues in
+    #   OpenMPI.
+    # string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=leak")
     # GCC_COLORS="error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01"
   endif()
   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0 )
@@ -129,7 +127,15 @@ if( NOT CXX_FLAGS_INITIALIZED )
     # -fsanitize=signed-integer-overflow
     # -Wduplicated-branches warns when an if-else has identical branches.
     string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=signed-integer-overflow")
-
+  endif()
+  if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 8.0 )
+    # See https://gcc.gnu.org/gcc-8/changes.html
+    # -Wold-style-cast diagnostic can now emit fix-it hints telling you when you
+    #                  can use a static_cast, const_cast, or reinterpret_cast.
+    # -fdiagnostics-show-template-tree visualizes such mismatching templates in
+    #                  a hierarchical form:
+    string( APPEND CMAKE_CXX_FLAGS_DEBUG " -Wold-style-cast")
+    string( APPEND CMAKE_CXX_FLAGS_DEBUG " -fdiagnostics-show-template-tree")
   endif()
 
   # [2017-04-15 KT] -march=native doesn't seem to work correctly on toolbox
