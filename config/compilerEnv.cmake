@@ -156,12 +156,12 @@ macro(dbsSetupCxx)
   set( CMAKE_C_EXTENSIONS   OFF )
 
   # Setup compiler flags
-  get_filename_component( my_cxx_compiler ${my_cxx_compiler} NAME )
+  get_filename_component( my_cxx_compiler "${my_cxx_compiler}" NAME )
 
   # If the CMake_<LANG>_COMPILER is a MPI wrapper...
-  if( ${my_cxx_compiler} MATCHES "mpicxx" )
+  if( "${my_cxx_compiler}" MATCHES "mpicxx" )
     # MPI wrapper
-    execute_process( COMMAND ${my_cxx_compiler} --version
+    execute_process( COMMAND "${my_cxx_compiler}" --version
       OUTPUT_VARIABLE mpicxx_version_output
       OUTPUT_STRIP_TRAILING_WHITESPACE )
     # make output safe for regex matching
@@ -172,46 +172,52 @@ macro(dbsSetupCxx)
   endif()
 
   # setup flags based on COMPILER_ID...
-  if( "${CMAKE_CXX_COMPILER_ID}" MATCHES "PGI" )
+  if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "PGI" OR 
+      "${CMAKE_C_COMPILER_ID}"   STREQUAL "PGI" )
     include( unix-pgi )
-  elseif( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel" )
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel" OR 
+          "${CMAKE_C_COMPILER_ID}"   STREQUAL "Intel")
     include( unix-intel )
-  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Cray" )
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Cray" OR 
+          "${CMAKE_C_COMPILER_ID}"   STREQUAL "Cray")
     include( unix-crayCC )
-  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR 
+          "${CMAKE_C_COMPILER_ID}"   STREQUAL "Clang")
     if( APPLE )
       include( apple-clang )
     else()
       include( unix-clang )
     endif()
-  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+          "${CMAKE_C_COMPILER_ID}"   STREQUAL "GNU")
     include( unix-g++ )  
-  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" OR 
+          "${CMAKE_C_COMPILER_ID}"   STREQUAL "MSVC" )
     include( windows-cl )
   else()
     # missing CMAKE_CXX_COMPILER_ID? - try to match the the compiler path+name
     # to a string.
-    if( ${my_cxx_compiler} MATCHES "pgCC" OR
-        ${my_cxx_compiler} MATCHES "pgc[+][+]" )
+    if( "${my_cxx_compiler}" MATCHES "pgCC" OR
+        "${my_cxx_compiler}" MATCHES "pgc[+][+]" )
       include( unix-pgi )
-    elseif( ${my_cxx_compiler} MATCHES "CC" )
+    elseif( "${my_cxx_compiler}" MATCHES "CC" )
       message( FATAL_ERROR
 "I think the C++ compiler is a Cray compiler wrapper, but I don't know what "
 "compiler is wrapped.  CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
-    elseif( ${my_cxx_compiler} MATCHES "cl" )
+    elseif( "${my_cxx_compiler}" MATCHES "cl" )
       include( windows-cl )
-    elseif( ${my_cxx_compiler} MATCHES "icpc" )
+    elseif( "${my_cxx_compiler}" MATCHES "icpc" )
       include( unix-intel )
-    elseif( ${my_cxx_compiler} MATCHES "xl" )
+    elseif( "${my_cxx_compiler}" MATCHES "xl" )
       include( unix-xl )
-    elseif( ${my_cxx_compiler} MATCHES "clang" OR
-        ${my_cxx_compiler} MATCHES "llvm" )
+    elseif( "${my_cxx_compiler}" MATCHES "clang" OR
+        "${my_cxx_compiler}" MATCHES "llvm" )
       if( APPLE )
         include( apple-clang )
       else()
         include( unix-clang )
       endif()
-    elseif( ${my_cxx_compiler} MATCHES "[cg][+x]+" )
+    elseif( "${my_cxx_compiler}" MATCHES "[cg][+x]+" )
       include( unix-g++ )
     else()
       message(FATAL_ERROR "Build system does not support CXX=${my_cxx_compiler}")
@@ -472,6 +478,7 @@ macro( dbsSetupProfilerTools )
       set( MEMORYCHECK_SUPPRESSIONS_FILE "${msf}" CACHE FILEPATH
       "valgrind warning suppression file." FORCE )
     endif()
+    mark_as_advanced( msf )
   endif()
 
 endmacro()

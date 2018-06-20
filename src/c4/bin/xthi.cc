@@ -8,12 +8,6 @@
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-// #define _GNU_SOURCE
-// #include <cstdio>
-// #include <cstring>
-// #include <sched.h>
-// #include <unistd.h>
-
 #include "c4_omp.h"
 #include "c4/C4_Functions.hh"
 #include "ds++/SystemCall.hh"

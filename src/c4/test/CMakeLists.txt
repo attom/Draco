@@ -102,8 +102,11 @@ if( NOT WIN32 AND NOT APPLE )
   add_app_unit_test(
     DRIVER    ${CMAKE_CURRENT_SOURCE_DIR}/tstXthi.py
     APP       $<TARGET_FILE_DIR:Exe_xthi>/$<TARGET_FILE_NAME:Exe_xthi>
-    PE_LIST   "1;2"
-    )
+    PE_LIST   "1;2" )
+  add_app_unit_test(
+    DRIVER    ${CMAKE_CURRENT_SOURCE_DIR}/tstYthi.py
+    APP       $<TARGET_FILE_DIR:Exe_ythi>/$<TARGET_FILE_NAME:Exe_ythi>
+    PE_LIST   "1;2" )
 endif()
 
 #------------------------------------------------------------------------------#

@@ -1,9 +1,9 @@
 #-----------------------------*-python-*---------------------------------------#
-# file   c4/test/tstXthi.py
+# file   c4/test/tstYthi.py
 # author Kelly Thompson <kgt@lanl.gov>
-# date   Saturday, Sep 09, 2017, 14:17 pm
-# brief  This is a Python script that is used to test c4/bin/xthi
-# note   Copyright (C) 2017-2018, Los Alamos National Security, LLC.
+# date   Tuesday, Jun 05, 2018, 17:10 pm
+# brief  This is a Python script that is used to test c4/bin/ythi
+# note   Copyright (C) 2018, Los Alamos National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 import sys
@@ -28,12 +28,12 @@ try:
   #----------------------------------------------------------------------------#
 
   ##---------------------------------------------------------------------------##
-  ## Test Xthi
+  ## Test Ythi
   ##---------------------------------------------------------------------------##
 
   # Setup test using sys.argv and run:
-  tstXthi = UnitTest()
-  tstXthi.aut_runTests()
+  tstYthi = UnitTest()
+  tstYthi.aut_runTests()
 
   ##---------------------------------------------------------------------------##
   ## Check the output
@@ -44,26 +44,26 @@ try:
   # These strings should be found:
 
   string_found = \
-    tstXthi.output_contains("Thread 000, core affinity = ")
+    tstYthi.output_contains("Thread 000, core affinity = ")
   if(string_found):
-    tstXthi.passmsg("Found thread 0.report")
+    tstYthi.passmsg("Found thread 0.report")
   else:
-    tstXthi.failmsg("Did not find thread 0 report.")
+    tstYthi.failmsg("Did not find thread 0 report.")
 
   string_found = \
-    tstXthi.output_contains("Rank 00000, Thread")
+    tstYthi.output_contains("Rank 00000, Thread")
   if(string_found):
-    tstXthi.passmsg("Found MPI rank 0.")
+    tstYthi.passmsg("Found MPI rank 0.")
   else:
-    tstXthi.failmsg("Did not find MPI rank 0.")
+    tstYthi.failmsg("Did not find MPI rank 0.")
 
   # Diff the output vs a gold file.
-  # tstXthi.aut_numdiff()
+  # tstYthi.aut_numdiff()
 
   ##---------------------------------------------------------------------------##
   ## Final report
   ##---------------------------------------------------------------------------##
-  tstXthi.aut_report()
+  tstYthi.aut_report()
 
 ##----------------------------------------------------------------------------##
 ## Handle outstanding exceptions

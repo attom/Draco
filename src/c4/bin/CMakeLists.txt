@@ -29,6 +29,13 @@ add_component_executable(
   PREFIX       Draco
   )
 
+add_component_executable(
+  TARGET      Exe_ythi
+  TARGET_DEPS Lib_c4
+  SOURCES     ${PROJECT_SOURCE_DIR}/ythi.cc
+  PREFIX       Draco
+  )
+
 # ---------------------------------------------------------------------------- #
 # Installation instructions
 # ---------------------------------------------------------------------------- #

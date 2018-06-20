@@ -83,6 +83,7 @@ macro( set_ccs2_software_version PROJNAME )
     CACHE STRING "${PROJNAME} version information" FORCE)
   set( ${PROJNAME}_VERSION_FULL  "${${PROJNAME}_VERSION}.${${PROJNAME}_VERSION_PATCH}"
     CACHE STRING "${PROJNAME} version information" FORCE)
+  mark_as_advanced( ${PROJNAME}_VERSION )
 
   message( "\n======================================================\n"
     "This is ${PROJNAME} version ${${PROJNAME}_VERSION_FULL}.\n"

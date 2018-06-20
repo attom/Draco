@@ -37,21 +37,36 @@ if [[ ${CLANG_FORMAT_VER} ]]; then
 else
   cfver=""
 fi
+# Assume applications have version postfix.
 gcf=`which git-clang-format${cfver}`
 cf=`which clang-format${cfver}`
+# if not found, try to find applications w/o version postfix.
+if ! [[ -f ${gcf} ]]; then
+  gcf=`which git-clang-format`
+fi
+if ! [[ -f ${cf} ]]; then
+  gcf=`which clang-format`
+fi
+# if still not found, abort.
 if [[ ! ${gcf} ]]; then
    echo "ERROR: git-clang-format${cfver} was not found in your PATH."
    echo "pwd="
    pwd
    echo "which git-clang-format${cfver}"
    echo $gcf
+   exit 1
+else
+  echo "Using $gcf --binary $cf"
+fi
+if [[ ! ${cf} ]]; then
+   echo "ERROR: clang-format${cfver} was not found in your PATH."
+   echo "pwd="
+   pwd
    echo "which clang-format${cfver}"
    echo $cf
    echo "which git"
    which git
    exit 1
-else
-  echo "Using $gcf --binary $cf"
 fi
 
 ver=`${cf} --version`

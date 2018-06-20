@@ -40,6 +40,7 @@ macro( setupRandom123 )
 
  message( STATUS "Looking for Random123...")
   find_package( Random123 REQUIRED QUIET )
+  mark_as_advanced( RANDOM123_FOUND )
   if( RANDOM123_FOUND )
     message( STATUS "Looking for Random123.found ${RANDOM123_INCLUDE_DIR}")
   else()
@@ -377,7 +378,7 @@ macro( setupQt )
 
   if( QT_FOUND )
     mark_as_advanced( Qt5Core_DIR Qt5Gui_DIR Qt5Gui_EGL_LIBRARY
-      Qt5Widgets_DIR )
+      Qt5Widgets_DIR QTDIR)
   endif()
 
   set_package_properties( Qt PROPERTIES

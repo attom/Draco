@@ -56,6 +56,7 @@ add_dir_if_exists( VendorChecks ) # needs c4
 add_dir_if_exists( cdi_ipcress )
 add_dir_if_exists( diagnostics )  # needs c4
 add_dir_if_exists( fit )          # needs linear
+add_dir_if_exists( mesh )         # needs c4, ds++, mesh_element
 add_dir_if_exists( meshReaders )  # needs c4
 add_dir_if_exists( min )          # needs linear
 add_dir_if_exists( norms )        # needs c4
