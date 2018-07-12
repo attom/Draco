@@ -103,8 +103,11 @@ if( NOT CXX_FLAGS_INITIALIZED )
     #             accesses and some conversions between pointers to base and
     #             derived classes, detect if the referenced object does not have
     #             the correct dynamic type.
-    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=float-divide-by-zero")
-    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=float-cast-overflow")
+    if( NOT DEFINED ENV{TRAVIS} )
+      # Some options (including these) seem to confuse Travis.
+      string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=float-divide-by-zero")
+      string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=float-cast-overflow")
+    endif()
     string( APPEND CMAKE_C_FLAGS_DEBUG " -fdiagnostics-color=auto")
 #    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=vptr")
 #    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=object-size")
@@ -128,7 +131,9 @@ if( NOT CXX_FLAGS_INITIALIZED )
     #            defined. On by default when -fsanitize=address.
     # -fsanitize=signed-integer-overflow
     # -Wduplicated-branches warns when an if-else has identical branches.
-    string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=signed-integer-overflow")
+    if( NOT DEFINED ENV{TRAVIS} )
+      string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=signed-integer-overflow")
+    endif()
   endif()
   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 8.0 )
     # See https://gcc.gnu.org/gcc-8/changes.html
@@ -173,26 +178,26 @@ endif()
 ##---------------------------------------------------------------------------##
 # Ensure cache values always match current selection
 ##---------------------------------------------------------------------------##
-set( CMAKE_C_FLAGS                "${CMAKE_C_FLAGS}"                CACHE 
+set( CMAKE_C_FLAGS                "${CMAKE_C_FLAGS}"                CACHE
      STRING "compiler flags" FORCE )
-set( CMAKE_C_FLAGS_DEBUG          "${CMAKE_C_FLAGS_DEBUG}"          CACHE 
+set( CMAKE_C_FLAGS_DEBUG          "${CMAKE_C_FLAGS_DEBUG}"          CACHE
      STRING "compiler flags" FORCE )
-set( CMAKE_C_FLAGS_RELEASE        "${CMAKE_C_FLAGS_RELEASE}"        CACHE 
+set( CMAKE_C_FLAGS_RELEASE        "${CMAKE_C_FLAGS_RELEASE}"        CACHE
      STRING "compiler flags" FORCE )
-set( CMAKE_C_FLAGS_MINSIZEREL     "${CMAKE_C_FLAGS_MINSIZEREL}"     CACHE 
+set( CMAKE_C_FLAGS_MINSIZEREL     "${CMAKE_C_FLAGS_MINSIZEREL}"     CACHE
      STRING "compiler flags" FORCE )
-set( CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}" CACHE 
+set( CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}" CACHE
      STRING "compiler flags" FORCE )
 
-set( CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS}"                CACHE 
+set( CMAKE_CXX_FLAGS                "${CMAKE_CXX_FLAGS}"                CACHE
      STRING "compiler flags" FORCE )
-set( CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG}"          CACHE 
+set( CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG}"          CACHE
      STRING "compiler flags" FORCE )
-set( CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}"        CACHE 
+set( CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}"        CACHE
      STRING "compiler flags" FORCE )
-set( CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_MINSIZEREL}"     CACHE 
+set( CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_MINSIZEREL}"     CACHE
      STRING "compiler flags" FORCE )
-set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" CACHE 
+set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" CACHE
      STRING "compiler flags" FORCE )
 
 #
@@ -201,7 +206,7 @@ set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" CACHE
 toggle_compiler_flag( GCC_ENABLE_ALL_WARNINGS "-Weffc++" "CXX" "DEBUG")
 toggle_compiler_flag( GCC_ENABLE_GLIBCXX_DEBUG
   "-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC" "CXX" "DEBUG" )
-toggle_compiler_flag( OPENMP_FOUND ${OpenMP_C_FLAGS} "C;CXX;EXE_LINKER" "" )
+toggle_compiler_flag( OPENMP_FOUND ${OpenMP_C_FLAGS} "C;CXX" "" )
 
 # Issues with tstFMA[12].cc:
 # toggle_compiler_flag( HAS_WUNUSED_MACROS "-Wunused-macros" "C;CXX" "" )

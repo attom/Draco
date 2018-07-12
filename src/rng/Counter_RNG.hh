@@ -135,7 +135,7 @@ static inline double _ran(ctr_type::value_type *const data) {
   return r123::u01fixedpt<double, ctr_type::value_type>(result[0]);
 }
 
-} // end anonymous
+} // namespace
 
 //===========================================================================//
 /*!

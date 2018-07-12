@@ -8,11 +8,13 @@
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-#include <c4/config.h>
+#include "c4/config.h"
 
 #ifdef C4_MPI
-
 #include "C4_MPI.t.hh"
+#else
+#include "C4_Serial.t.hh"
+#endif
 
 namespace rtt_c4 {
 
@@ -121,9 +123,8 @@ template DLL_PUBLIC_c4 void prefix_sum(int64_t *buffer, int32_t n);
 template DLL_PUBLIC_c4 void prefix_sum(uint64_t *buffer, int32_t n);
 template DLL_PUBLIC_c4 void prefix_sum(float *buffer, int32_t n);
 template DLL_PUBLIC_c4 void prefix_sum(double *buffer, int32_t n);
-} // end namespace rtt_c4
 
-#endif // C4_MPI
+} // end namespace rtt_c4
 
 //---------------------------------------------------------------------------//
 // end of C4_MPI_blocking_pt.cc

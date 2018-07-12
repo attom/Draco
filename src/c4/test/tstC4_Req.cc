@@ -5,8 +5,7 @@
  * \date   Tue Nov  1 15:49:44 2005
  * \brief  Unit test for C4_Req class.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"
@@ -46,7 +45,6 @@ void tstCopyConstructor(rtt_dsxx::UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 void tstTraits(rtt_dsxx::UnitTest &ut) {
   using rtt_c4::C4_Traits;
 
@@ -85,7 +83,7 @@ void tstTraits(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 void tstWait(rtt_dsxx::UnitTest &ut) {
   using namespace rtt_c4;
 

@@ -23,7 +23,7 @@ file( GLOB headers *.hh )
 
 add_component_library(
    TARGET       Lib_mesh
-   TARGET_DEPS  "Lib_dsxx;Lib_mesh_element"
+   TARGET_DEPS  "Lib_dsxx;Lib_mesh_element;Lib_RTT_Format_Reader"
    LIBRARY_NAME ${PROJECT_NAME}
    SOURCES      "${sources}"
    HEADERS      "${headers}"

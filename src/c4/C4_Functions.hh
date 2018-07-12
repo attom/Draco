@@ -19,12 +19,20 @@
 #define c4_C4_Functions_hh
 
 #include "C4_Datatype.hh"
-#include "C4_Req.hh"
 #include "C4_Status.hh"
 #include "C4_Traits.hh"
 #include "C4_sys_times.h"
 
 namespace rtt_c4 {
+
+//----------------------------------------------------------------------------//
+/*! Forward declarations
+ *
+ * We postpone including C4_Req.hh until C4_MPI.i.hh is loaded. This allows the
+ * 'friend' declarations found in class C4_Req to be seen after the 'official'
+ * function declartions (with optional default arguments) are loaded.
+ */
+class C4_Req;
 
 //---------------------------------------------------------------------------//
 /*!
@@ -75,7 +83,7 @@ DLL_PUBLIC_c4 void finalize();
 /*!
  * \brief Inherit a communicator from another application.
  */
-template <class Comm> void inherit(const Comm &);
+template <typename Comm> void inherit(const Comm &);
 
 //---------------------------------------------------------------------------//
 /*!
@@ -181,24 +189,7 @@ DLL_PUBLIC_c4 int receive_udt(T *buffer, int size, int source, C4_Datatype &,
  */
 template <typename T>
 DLL_PUBLIC_c4 C4_Req send_async(T const *buffer, int size, int destination,
-                                int tag);
-
-template <typename T>
-C4_Req send_async(T const *buffer, int size, int destination) {
-  int tag = C4_Traits<T *>::tag;
-  return send_async(buffer, size, destination, tag);
-}
-
-// [2010-07-22 KT] This declaration should replace the two preceeding ones.
-// However, PGI-10 doesn't like this syntax and issues the warning:
-//    error: specifying a default argument when redeclaring an unreferenced
-//    function template is nonstandard
-
-// template<typename T>
-// C4_Req send_async( T const * buffer,
-//                    int       size,
-//                    int       destination,
-//                    int       tag = C4_Traits<T*>::tag );
+                                int tag = C4_Traits<T *>::tag);
 
 //---------------------------------------------------------------------------//
 /*!
@@ -206,25 +197,7 @@ C4_Req send_async(T const *buffer, int size, int destination) {
  */
 template <typename T>
 DLL_PUBLIC_c4 void send_async(C4_Req &request, T const *buffer, int size,
-                              int destination, int tag);
-template <typename T>
-void send_async(C4_Req &request, T const *buffer, int size, int destination) {
-  int tag = C4_Traits<T *>::tag;
-  send_async(request, buffer, size, destination, tag);
-  return;
-}
-
-// [2010-07-22 KT] This declaration should replace the two preceeding ones.
-// However, PGI-10 doesn't like this syntax and issues the warning:
-//    error: specifying a default argument when redeclaring an unreferenced
-//    function template is nonstandard
-
-// template<typename T>
-// void send_async( C4_Req       & request,
-//                  T      const * buffer,
-//                  int            size,
-//                  int            destination,
-//                  int            tag = C4_Traits<T*>::tag );
+                              int destination, int tag = C4_Traits<T *>::tag);
 
 //---------------------------------------------------------------------------//
 /*!
@@ -254,26 +227,15 @@ int message_size_custom(C4_Status status, const T &mpi_type);
 /*!
  * \brief Do a point-to-point, non-blocking send with a MPI custom type
  *
- * \param[in|out] request C4_Req object that will hold MPI request
- * \param[in|out] buffer array of data of type T that has an MPI type
+ * \param[in,out] request C4_Req object that will hold MPI request
+ * \param[in,out] buffer array of data of type T that has an MPI type
  * \param[in] size size of buffer
  * \param[in] destination rank that will receive this message
  * \param[in] tag message tag
  */
 template <typename T>
-void send_is_custom(C4_Req &request, T const *buffer, int size, int destination,
-                    int tag);
-
-// [2011-05-11 GMR] This declaration should replace the two preceeding ones.
-// However, I expect that PGI-10 doesn't like this syntax for the same reason
-// that it doesn't like the syntax for send_async above.
-
-// template<typename T>
-// void send_is(C4_Req       & request,
-//              T      const * buffer,
-//              int            size,
-//              int            destination,
-//              int            tag = C4_Traits<T*>::tag);
+void send_is_custom(C4_Req &request, const T *buffer, int size, int destination,
+                    int tag = C4_Traits<T *>::tag);
 
 //---------------------------------------------------------------------------//
 /*!
@@ -281,24 +243,9 @@ void send_is_custom(C4_Req &request, T const *buffer, int size, int destination,
  *
  * \return C4_Req object to handle communciation requests
  */
-
 template <typename T>
-C4_Req receive_async(T *buffer, int size, int source, int tag);
-template <typename T> C4_Req receive_async(T *buffer, int size, int source) {
-  int tag = C4_Traits<T *>::tag;
-  return receive_async<T>(buffer, size, source, tag);
-}
-
-// [2010-07-22 KT] This declaration should replace the two preceeding ones.
-// However, PGI-10 doesn't like this syntax and issues the warning:
-//    error: specifying a default argument when redeclaring an unreferenced
-//    function template is nonstandard
-
-// template<typename T>
-// C4_Req receive_async( T   * buffer,
-//                       int   size,
-//                       int   source,
-//                       int   tag = C4_Traits<T*>::tag );
+DLL_PUBLIC_c4 C4_Req receive_async(T *buffer, int size, int source,
+                                   int tag = C4_Traits<T *>::tag);
 
 //---------------------------------------------------------------------------//
 /*!
@@ -306,53 +253,45 @@ template <typename T> C4_Req receive_async(T *buffer, int size, int source) {
  */
 template <typename T>
 DLL_PUBLIC_c4 void receive_async(C4_Req &request, T *buffer, int size,
-                                 int source, int tag);
-template <typename T>
-void receive_async(C4_Req &request, T *buffer, int size, int source) {
-  int tag = C4_Traits<T *>::tag;
-  receive_async(request, buffer, size, source, tag);
-  return;
-}
+                                 int source, int tag = C4_Traits<T *>::tag);
 
 //---------------------------------------------------------------------------//
 /*!
  * \brief Post a non-blocking receive for a message of custom MPI type data
  *
- * \param[in|out] request C4_Req object that will hold MPI request
- * \param[in|out] buffer array of data of type T that has a registered MPI type
+ * \param[in,out] request C4_Req object that will hold MPI request
+ * \param[in,out] buffer array of data of type T that has a registered MPI type
  * \param[in] size size of buffer
  * \param[in] source remote rank sending message to this rank
  * \param[in] tag message tag
  */
 template <typename T>
 void receive_async_custom(C4_Req &request, T *buffer, int size, int source,
-                          int tag);
+                          int tag = C4_Traits<T *>::tag);
 
-// [2010-07-22 KT] This declaration should replace the two preceeding ones.
-// However, PGI-10 doesn't like this syntax and issues the warning:
-//    error: specifying a default argument when redeclaring an unreferenced
-//    function template is nonstandard
-
-// template<typename T>
-// void receive_async( C4_Req & request,
-//                     T      * buffer,
-//                     int      size,
-//                     int      source,
-//                     int      tag = C4_Traits<T*>::tag );
 //---------------------------------------------------------------------------//
 // BROADCAST
 //---------------------------------------------------------------------------//
 
-template <typename T>
-DLL_PUBLIC_c4 int broadcast(T *buffer, int size, int root);
-
 /*---------------------------------------------------------------------------*/
 /*!
  * \brief Send data from processor 0 to all other processors.
- */
+ *
+ * These are declared and defined in C4_MPI.hh and in C4_Serial.hh.  KT is
+ * having trouble with getting the DLL_PUBLIC_c4 to be correct, so delay
+ * declaration until the C4_MPI.hh or C4_Serial.hh files are included.
+
+template <typename T>
+DLL_PUBLIC_c4 int broadcast(T *buffer, int size, int root);
+
 template <typename ForwardIterator, typename OutputIterator>
-void broadcast(ForwardIterator first, ForwardIterator last,
-               OutputIterator result);
+DLL_PUBLIC_c4 void broadcast(ForwardIterator first, ForwardIterator last,
+                             OutputIterator result);
+
+template <typename ForwardIterator, typename OutputIterator>
+DLL_PUBLIC_c4 void broadcast(ForwardIterator first, ForwardIterator last,
+                             OutputIterator result, OutputIterator result_end);
+*/
 
 //---------------------------------------------------------------------------//
 // GATHER/SCATTER
@@ -387,9 +326,9 @@ template <typename T> DLL_PUBLIC_c4 void global_sum(T &x);
 /*!
  * \brief Do a non-blocking global sum of a scalar variable.
  *
- * \param[in|out] send_buffer scalar value on this processing element
- * \param[in|out] recv_buffer scalar value summed across all ranks
- * \param[in|out] request C4_Requst handle for testing completed message
+ * \param[in,out] send_buffer scalar value on this processing element
+ * \param[in,out] recv_buffer scalar value summed across all ranks
+ * \param[in,out] request C4_Requst handle for testing completed message
  */
 template <typename T>
 DLL_PUBLIC_c4 void global_isum(T &send_buffer, T &recv_buffer, C4_Req &request);
@@ -443,7 +382,7 @@ template <typename T> DLL_PUBLIC_c4 void global_max(T *x, int n);
  * \brief Return the wall-clock time in seconds.
  */
 DLL_PUBLIC_c4 double wall_clock_time();
-double wall_clock_time(DRACO_TIME_TYPE &now);
+DLL_PUBLIC_c4 double wall_clock_time(DRACO_TIME_TYPE &now);
 
 //---------------------------------------------------------------------------//
 /*!

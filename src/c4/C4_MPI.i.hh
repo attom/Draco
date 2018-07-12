@@ -11,6 +11,8 @@
 #ifndef c4_C4_MPI_i_hh
 #define c4_C4_MPI_i_hh
 
+#include "C4_Req.hh"
+
 #ifdef C4_MPI
 
 namespace rtt_c4 {
@@ -18,7 +20,7 @@ namespace rtt_c4 {
 //---------------------------------------------------------------------------//
 template <typename T>
 void send_is_custom(C4_Req &request, const T *buffer, int size, int destination,
-                    int tag) {
+                    int tag /* = C4_Traits<T *>::tag */) {
   Require(!request.inuse());
   Require(buffer != nullptr);
 

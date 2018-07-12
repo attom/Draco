@@ -32,7 +32,8 @@ namespace rtt_mesh {
  * Two important features for a fully realized Draco_Mesh are the following:
  * 1) Layout, which stores cell connectivity and hence the mesh topology.
  *    a) It has an internal layout containing local cell-to-cell linkage,
- *    b) and a boundary layout with side and off-process linkage.
+ *    b) and a boundary layout with side off-process linkage, and
+ *    c) a ghost layout containing cell-to-ghostd-cell linkage.
  * 2) Geometry, which implies a metric for distance between points.
  *
  * Possibly temporary features:
@@ -47,12 +48,10 @@ class Draco_Mesh {
 public:
   // >>> TYPEDEFS
   typedef rtt_mesh_element::Geometry Geometry;
+  // \todo: update this to a full layout class?
   typedef std::map<unsigned,
                    std::vector<std::pair<unsigned, std::vector<unsigned>>>>
       Layout;
-  typedef std::map<unsigned,
-                   std::vector<std::pair<unsigned, std::vector<unsigned>>>>
-      Boundary_Layout;
 
 private:
   // >>> DATA
@@ -72,27 +71,41 @@ private:
   // Side set flag (can be used for mapping BCs to sides)
   const std::vector<unsigned> side_set_flag;
 
-  // vector subscripted with node index with coordinate vector
+  // Ghost cell indices local to a different node, subscripted with a local
+  // ghost cell index
+  const std::vector<unsigned> ghost_cell_number;
+
+  // Node index for each ghost cell, subscripted with local ghost cell index
+  const std::vector<unsigned> ghost_cell_rank;
+
+  // Vector subscripted with node index with coordinate vector
   const std::vector<std::vector<double>> node_coord_vec;
 
   // Layout of mesh: vector index is cell index, vector element is
   // description of cell's adjacency to other cells in the mesh.
   Layout cell_to_cell_linkage;
-  // TODO: update this to a full layout class.
 
-  // Boundary layout of mesh
-  Boundary_Layout cell_to_side_linkage;
+  // Side layout of mesh
+  Layout cell_to_side_linkage;
+
+  // Ghost cell layout of mesh
+  Layout cell_to_ghost_cell_linkage;
 
 public:
   //! Constructor.
-  DLL_PUBLIC_mesh Draco_Mesh(unsigned dimension_, Geometry geometry_,
-                             const std::vector<unsigned> &cell_type_,
-                             const std::vector<unsigned> &cell_to_node_linkage_,
-                             const std::vector<unsigned> &side_set_flag_,
-                             const std::vector<unsigned> &side_node_count_,
-                             const std::vector<unsigned> &side_to_node_linkage_,
-                             const std::vector<double> &coordinates_,
-                             const std::vector<unsigned> &global_node_number_);
+  DLL_PUBLIC_mesh
+  Draco_Mesh(unsigned dimension_, Geometry geometry_,
+             const std::vector<unsigned> &cell_type_,
+             const std::vector<unsigned> &cell_to_node_linkage_,
+             const std::vector<unsigned> &side_set_flag_,
+             const std::vector<unsigned> &side_node_count_,
+             const std::vector<unsigned> &side_to_node_linkage_,
+             const std::vector<double> &coordinates_,
+             const std::vector<unsigned> &global_node_number_,
+             const std::vector<unsigned> &ghost_cell_type_ = {},
+             const std::vector<unsigned> &ghost_cell_to_node_linkage_ = {},
+             const std::vector<unsigned> &ghost_cell_number_ = {},
+             const std::vector<unsigned> &ghost_cell_rank_ = {});
 
   // >>> ACCESSORS
 
@@ -100,8 +113,21 @@ public:
   Geometry get_geometry() const { return geometry; }
   unsigned get_num_cells() const { return num_cells; }
   unsigned get_num_nodes() const { return num_nodes; }
+  const std::vector<unsigned> &get_side_set_flag() const {
+    return side_set_flag;
+  }
+  const std::vector<unsigned> &get_ghost_cell_numbers() const {
+    return ghost_cell_number;
+  }
+  const std::vector<unsigned> &get_ghost_cell_ranks() const {
+    return ghost_cell_rank;
+  }
+  const std::vector<std::vector<double>> &get_node_coord_vec() const {
+    return node_coord_vec;
+  }
   const Layout &get_cc_linkage() const { return cell_to_cell_linkage; }
-  const Boundary_Layout &get_cs_linkage() const { return cell_to_side_linkage; }
+  const Layout &get_cs_linkage() const { return cell_to_side_linkage; }
+  const Layout &get_cg_linkage() const { return cell_to_ghost_cell_linkage; }
 
   // >>> SERVICES
 
@@ -113,12 +139,19 @@ private:
   compute_node_coord_vec(const std::vector<double> &coordinates) const;
 
   //! Calculate the cell-to-cell linkage (layout)
-  // TODO: add layout class and complete temporary version of this function.
+  // \todo: add layout class and complete temporary version of this function.
   void compute_cell_to_cell_linkage(
       const std::vector<unsigned> &cell_type,
       const std::vector<unsigned> &cell_to_node_linkage,
       const std::vector<unsigned> &side_node_count,
-      const std::vector<unsigned> &side_to_node_linkage);
+      const std::vector<unsigned> &side_to_node_linkage,
+      const std::vector<unsigned> &ghost_cell_type,
+      const std::vector<unsigned> &ghost_cell_to_node_linkage);
+
+  //! Calculate a map of node to vectors of indices (cells, sides, ghost cells)
+  std::map<unsigned, std::vector<unsigned>> compute_node_indx_map(
+      const std::vector<unsigned> &indx_type,
+      const std::vector<unsigned> &indx_to_node_linkage) const;
 };
 
 } // end namespace rtt_mesh

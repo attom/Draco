@@ -15,14 +15,6 @@ set -e
 source regression/scripts/common.sh
 
 topdir=`pwd` # /home/travis/build/lanl/Draco
-# HOME = /home/travis
-# USER = travis
-# GROUP = travis
-RANDOM123_VER=1.09
-CMAKE_VERSION=3.9.0-Linux-x86_64
-NUMDIFF_VER=5.8.1
-CLANG_FORMAT_VER=3.9
-OPENMPI_VER=1.10.5
 
 # Return integer > 0 if 'develop' branch is found.
 function find_dev_branch
@@ -52,15 +44,20 @@ if [[ ${STYLE} ]]; then
   fi
 
   # clang-format and git-clang-format
+  # https://blog.kowalczyk.info/article/k/how-to-install-latest-clang-6.0-on-ubuntu-16.04-xenial-wsl.html
   echo " "
   echo "Clang-format"
-  run "sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-${CLANG_FORMAT_VER} main'"
-  run "wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -"
-  run "sudo apt-get update -qq"
-  run "sudo apt-get install -qq -y clang-format-${CLANG_FORMAT_VER}"
+  run "wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -"
+  run "sudo add-apt-repository 'deb http://apt.llvm.org/${DISTRO}/ llvm-toolchain-${DISTRO}-${CLANG_FORMAT_VER} main'"
+  run "sudo apt-get update"
+  run "sudo apt-get install -y clang-format-${CLANG_FORMAT_VER}"
   run "cd ${VENDOR_DIR}/bin"
-  run "ln -s /usr/bin/clang-format-${CLANG_FORMAT_VER} clang-format"
-  run "ln -s /usr/bin/git-clang-format-${CLANG_FORMAT_VER} git-clang-format"
+  if [[ -x /usr/bin/clang-format-${CLANG_FORMAT_VER} ]]; then
+    run "sudo ln -s /usr/bin/clang-format-${CLANG_FORMAT_VER} clang-format"
+    run "sudo ln -s /usr/bin/git-clang-format-${CLANG_FORMAT_VER} git-clang-format"
+  else
+    die "Didn't find /usr/bin/clang-format-${CLANG_FORMAT_VER}"
+  fi
   run "cd $topdir"
 
 else
@@ -68,43 +65,59 @@ else
   # Random123
   echo " "
   echo "Random123"
-  cd $HOME
-  run "wget http://www.deshawresearch.com/downloads/download_random123.cgi/Random123-${RANDOM123_VER}.tar.gz"
+  run "cd $VENDOR_DIR"
+  run "wget -q http://www.deshawresearch.com/downloads/download_random123.cgi/Random123-${RANDOM123_VER}.tar.gz"
   run "tar -xvf Random123-${RANDOM123_VER}.tar.gz &> build-r123.log"
-  echo "Please set RANDOM123_INC_DIR=$HOME/Random123-${RANDOM123_VER}/include"
-  run "ls $HOME/Random123-${RANDOM123_VER}/include"
+  echo "Please set RANDOM123_INC_DIR=$VENDOR_DIR/Random123-${RANDOM123_VER}/include"
+  run "ls $VENDOR_DIR/Random123-${RANDOM123_VER}/include"
 
   # CMake
   echo " "
   echo "CMake"
-  run "cd $HOME"
-  run "wget --no-check-certificate http://www.cmake.org/files/v${CMAKE_VERSION:0:3}/cmake-${CMAKE_VERSION}.tar.gz"
-  run "tar -xzf cmake-${CMAKE_VERSION}.tar.gz &> build-cmake.log"
-  run "cd $topdir"
+  run "cd $VENDOR_DIR"
+  run "wget -q --no-check-certificate http://www.cmake.org/files/v${CMAKE_VER:0:3}/cmake-${CMAKE_VER}.tar.gz"
+  run "tar -xzf cmake-${CMAKE_VER}.tar.gz &> build-cmake.log"
 
   # Numdiff
   echo " "
   echo "Numdiff"
-  run "wget http://mirror.lihnidos.org/GNU/savannah/numdiff/numdiff-${NUMDIFF_VER}.tar.gz"
+  run "cd $VENDOR_DIR"
+  run "wget -q http://mirror.lihnidos.org/GNU/savannah/numdiff/numdiff-${NUMDIFF_VER}.tar.gz"
   run "tar -xvf numdiff-${NUMDIFF_VER}.tar.gz >& build-numdiff.log"
-  run "cd numdiff-${NUMDIFF_VER}"
-  run "./configure --prefix=/usr && make >> build-numdiff.log 2>&1"
-  run "sudo make install"
+  run "mkdir numdiff-build"
+  run "cd numdiff-build"
+  run "../numdiff-${NUMDIFF_VER}/configure --prefix=${VENDOR_DIR}/numdiff-${NUMDIFF_VER} && make >> build-numdiff.log 2>&1"
+  run "make -j 4 install"
   run "cd $topdir"
 
-  # OpenMPI
+  # GSL
   echo " "
-  echo "OpenMPI"
-  run "wget --no-check-certificate https://www.open-mpi.org/software/ompi/v1.10/downloads/openmpi-${OPENMPI_VER}.tar.gz"
-  run "tar -zxf openmpi-${OPENMPI_VER}.tar.gz > build-openmpi.log"
-  run "cd openmpi-${OPENMPI_VER}"
-  run "./configure --enable-mpi-thread-multiple --quiet >> build-openmpi.log 2>&1"
-  # run "travis_wait 20 make"
-  run "make >> build-openmpi.log 2>&1"
-  run "sudo make install"
-  run "sudo sh -c 'echo \"/usr/local/lib\n/usr/local/lib/openmpi\" > /etc/ld.so.conf.d/openmpi.conf'"
-  run "sudo ldconfig"
+  echo "GSL"
+  run "cd $VENDOR_DIR"
+  run "wget -q http://mirror.switch.ch/ftp/mirror/gnu/gsl/gsl-${GSL_VER}.tar.gz"
+  run "tar -xvf gsl-${GSL_VER}.tar.gz &> build-gsl.log"
+  run "mkdir -p gsl-build"
+  run "cd gsl-build"
+  run "CC=gcc-${GCCVER} CFLAGS=-fPIC ../gsl-${GSL_VER}/configure --with-pic --enable-static --disable-shared --prefix=${VENDOR_DIR}/gsl-${GSL_VER} >> build-gsl.log 2>&1"
+  run "make -j 4"
+  run "make install"
   run "cd $topdir"
+
+  # # OpenMPI
+  # echo " "
+  # echo "OpenMPI"
+  # run "wget -q --no-check-certificate https://www.open-mpi.org/software/ompi/v1.10/downloads/openmpi-${OPENMPI_VER}.tar.gz"
+  # run "tar -zxf openmpi-${OPENMPI_VER}.tar.gz > build-openmpi.log"
+  # run "cd openmpi-${OPENMPI_VER}"
+  # run "./configure --enable-mpi-thread-multiple --quiet >> build-openmpi.log 2>&1"
+  # # run "travis_wait 20 make"
+  # run "make >> build-openmpi.log 2>&1"
+  # run "sudo make install"
+  # run "sudo sh -c 'echo \"/usr/local/lib\n/usr/local/lib/openmpi\" > /etc/ld.so.conf.d/openmpi.conf'"
+  # run "sudo ldconfig"
+  # run "cd $topdir"
+
+  echo "Done building and/or installing TPLs"
 
 fi
 

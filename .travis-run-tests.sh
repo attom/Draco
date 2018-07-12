@@ -14,15 +14,6 @@ set -e
 source regression/scripts/common.sh
 
 topdir=`pwd` # /home/travis/build/lanl/Draco
-# HOME = /home/travis
-# USER = travis
-# GROUP = travis
-RANDOM123_VER=1.09
-CMAKE_VERSION=3.9.0-Linux-x86_64
-NUMDIFF_VER=5.8.1
-CLANG_FORMAT_VER=3.9
-OPENMPI_VER=1.10.5
-GCCVER=6
 export CXX=`which g++-${GCCVER}`
 export CC=`which gcc-${GCCVER}`
 export FC=`which gfortran-${GCCVER}`
@@ -35,8 +26,13 @@ else
   # configure
   # -Wl,--no-as-needed is a workaround for bugs.debian.org/457284 .
   echo " "
-  echo "${CMAKE} -DCMAKE_EXE_LINKER_FLAGS=\"-Wl,--no-as-needed\" .."
-  ${CMAKE} -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-as-needed" ..
+  if [[ -f CMakeCache.txt ]]; then
+    echo "===== CMakeCache.txt ====="
+    cat CMakeCache.txt
+  fi
+  echo "========"
+  echo "${CMAKE} -DDRACO_C4=SCALAR .."
+  ${CMAKE} -DDRACO_C4=SCALAR ..
   error_code=$?
   # if configure was successful, the start the build, otherwise abort.
   if [[ $error_code -eq 0 ]]; then
@@ -51,8 +47,8 @@ else
   # if the build was successful, then run the tests, otherwise abort.
   if [[ $error_code -eq 0 ]]; then
     echo " "
-    echo "${CTEST} -VV -E \(c4_tstOMP_2\)"
-    ${CTEST} -VV -E \(c4_tstOMP_2\)
+    echo "${CTEST} -E \(c4_tstOMP_2\)"
+    ${CTEST} -E \(c4_tstOMP_2\)
     error_code=$?
   else
     echo "build failed, errorcode=$error_code"

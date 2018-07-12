@@ -23,7 +23,7 @@ namespace rtt_c4 {
  * \param y, the second operand
  * \return the greater value of x or y
  */
-template <class T> struct max {
+template <typename T> struct max {
   T operator()(const T &x, const T &y) const { return (x > y) ? x : y; }
 };
 
@@ -34,7 +34,7 @@ template <class T> struct max {
  * \param y, the second operand
  * \return the lesser value of x or y
  */
-template <class T> struct min {
+template <typename T> struct min {
   T operator()(const T &x, const T &y) const { return (x < y) ? x : y; }
 };
 

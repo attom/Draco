@@ -9,8 +9,7 @@
 //---------------------------------------------------------------------------//
 
 #include "C4_Req.hh"
-#include "ds++/Assert.hh"
-#include <iostream>
+// #include <iostream>
 
 namespace rtt_c4 {
 

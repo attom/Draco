@@ -5,8 +5,7 @@
  * \date   Thu Mar 21 16:56:17 2002
  * \brief  C4 MPI implementation.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "c4/config.h"
@@ -15,7 +14,6 @@
 #ifdef C4_MPI
 
 #include "C4_Functions.hh"
-#include "C4_MPI.hh"
 #include "C4_Req.hh"
 #include "C4_sys_times.h"
 
@@ -104,11 +102,10 @@ void global_barrier() {
 double wall_clock_time() { return MPI_Wtime(); }
 // overloaded function (provide POSIX timer information).
 double wall_clock_time(DRACO_TIME_TYPE &now) {
-// obtain posix timer information and return it to the user via the
-// reference value argument "now".
+// obtain posix timer information and return it to the user via the reference
+// value argument "now".
 #ifdef WIN32
-  // now = time( NULL );
-  time(&now);
+  now = std::chrono::high_resolution_clock::now();
 #else
   times(&now);
 #endif
@@ -117,7 +114,6 @@ double wall_clock_time(DRACO_TIME_TYPE &now) {
 }
 
 //---------------------------------------------------------------------------//
-
 double wall_clock_resolution() { return MPI_Wtick(); }
 
 //---------------------------------------------------------------------------//

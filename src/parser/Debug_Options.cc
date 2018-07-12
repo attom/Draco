@@ -49,22 +49,24 @@ using std::string;
  *      recognized.
  */
 unsigned get_debug_option(string const &option_name) {
-  if (option_name == "ALGORITHM") {
-    return DEBUG_ALGORITHM;
+  if (option_name == "SUMMARY") {
+    return DEBUG_SUMMARY;
+  } else if (option_name == "BALANCE") {
+    return DEBUG_BALANCE;
   } else if (option_name == "TIMESTEP") {
     return DEBUG_TIMESTEP;
   } else if (option_name == "TIMING") {
     return DEBUG_TIMING;
-  } else if (option_name == "BALANCE") {
-    return DEBUG_BALANCE;
-  } else if (option_name == "GMV_DUMP") {
-    return DEBUG_GMV_DUMP;
+  } else if (option_name == "ALGORITHM") {
+    return DEBUG_ALGORITHM;
   } else if (option_name == "MEMORY") {
     return DEBUG_MEMORY;
-  } else if (option_name == "RESET_TIMING") {
-    return DEBUG_RESET_TIMING;
   } else if (option_name == "PROBLEM") {
     return DEBUG_PROBLEM;
+  } else if (option_name == "GMV_DUMP") {
+    return DEBUG_GMV_DUMP;
+  } else if (option_name == "RESET_TIMING") {
+    return DEBUG_RESET_TIMING;
   } else {
     // parse extension to debug options
     if (extended_debug_option.find(option_name) ==
@@ -128,8 +130,11 @@ unsigned parse_debug_options(Token_Stream &tokens, unsigned const parent) {
 string debug_options_as_text(unsigned debug_options) {
   string Result;
 
-  if (debug_options & DEBUG_ALGORITHM) {
-    Result += ", ALGORITHM";
+  if (debug_options & DEBUG_SUMMARY) {
+    Result += ", SUMMARY";
+  }
+  if (debug_options & DEBUG_BALANCE) {
+    Result += ", BALANCE";
   }
   if (debug_options & DEBUG_TIMESTEP) {
     Result += ", TIMESTEP";
@@ -137,26 +142,26 @@ string debug_options_as_text(unsigned debug_options) {
   if (debug_options & DEBUG_TIMING) {
     Result += ", TIMING";
   }
-  if (debug_options & DEBUG_BALANCE) {
-    Result += ", BALANCE";
-  }
-  if (debug_options & DEBUG_GMV_DUMP) {
-    Result += ", GMV_DUMP";
+  if (debug_options & DEBUG_ALGORITHM) {
+    Result += ", ALGORITHM";
   }
   if (debug_options & DEBUG_MEMORY) {
     Result += ", MEMORY";
   }
-  if (debug_options & DEBUG_RESET_TIMING) {
-    Result += ", RESET_TIMING";
-  }
   if (debug_options & DEBUG_PROBLEM) {
     Result += ", PROBLEM";
+  }
+  if (debug_options & DEBUG_GMV_DUMP) {
+    Result += ", GMV_DUMP";
+  }
+  if (debug_options & DEBUG_RESET_TIMING) {
+    Result += ", RESET_TIMING";
   }
   // Mask out standard options and see if any extensions are active
   debug_options =
       debug_options &
-      ~(DEBUG_ALGORITHM | DEBUG_TIMESTEP | DEBUG_TIMING | DEBUG_RESET_TIMING |
-        DEBUG_BALANCE | DEBUG_MEMORY | DEBUG_PROBLEM);
+      ~(DEBUG_SUMMARY | DEBUG_BALANCE | DEBUG_TIMESTEP | DEBUG_TIMING |
+        DEBUG_ALGORITHM | DEBUG_MEMORY | DEBUG_PROBLEM | DEBUG_RESET_TIMING);
 
   if (debug_options) {
     for (const auto &i : extended_debug_option) {
@@ -182,9 +187,8 @@ unsigned add_debug_option(string const &option_name) {
     // option already exists; regard as benign
     return extended_debug_option[option_name];
   } else {
-    while (available != 0 &&
-           extended_debug_back_option.find(available) !=
-               extended_debug_back_option.end()) {
+    while (available != 0 && extended_debug_back_option.find(available) !=
+                                 extended_debug_back_option.end()) {
       available <<= 1U;
     }
     if (available == 0) {

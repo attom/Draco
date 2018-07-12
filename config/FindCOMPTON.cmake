@@ -87,10 +87,7 @@ find_path( COMPTON_INCLUDE_DIR
   PATH_SUFFIXES Release Debug
 )
 
-set( COMPTON_LIBRARY_NAME Lib_compton)
-if( OPENMP_FOUND )
-  set( COMPTON_LIBRARY_NAME Lib_compton_omp)
-endif()
+set( COMPTON_LIBRARY_NAME Lib_compton_omp;Lib_compton)
 find_library( COMPTON_LIBRARY
   NAMES ${COMPTON_LIBRARY_NAME}
   HINTS ${COMPTON_ROOT_DIR}/lib ${COMPTON_LIBDIR}
@@ -117,6 +114,8 @@ if( NOT COMPTON_VERSION )
     string( REGEX REPLACE ".*([0-9]+)" "\\1" COMPTON_MAJOR ${compton_h_major} )
     string( REGEX REPLACE ".*([0-9]+)" "\\1" COMPTON_MINOR ${compton_h_minor} )
     string( REGEX REPLACE ".*([0-9]+)" "\\1" COMPTON_SUBMINOR ${compton_h_subminor} )
+    set( COMPTON_VERSION "${COMPTON_MAJOR}.${COMPTON_MINOR}.${COMPTON_SUBMINOR}"
+      CACHE STRING "CSK version" FORCE )
   endif()
   # We might also try scraping the directory name for a regex match
   # "csk-X.X.X"

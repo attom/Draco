@@ -51,10 +51,14 @@ else
   module load friendly-testing
   module use --append ${VENDOR_DIR}-ec/modulefiles
 
-  export dracomodules="ack htop clang-format/3.9.0 \
+  export dracomodules="ack htop clang-format \
 intel/17.0.4 openmpi/2.1.2 mkl \
 subversion cmake/3.9.0 numdiff git totalview trilinos/12.10.1 \
-superlu-dist/5.1.3 metis parmetis ndi random123 eospac/6.3.0 csk"
+superlu-dist/5.1.3 metis parmetis random123 eospac/6.3.0"
+
+  if [[ `groups | grep -c ccsrad` != 0 ]]; then
+    draco_modules="$draco_modules csk ndi"
+  fi
 
 fi
 

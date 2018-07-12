@@ -114,16 +114,29 @@ endif()
 # Extra runtime libraries...
 #
 
-find_library( Lib_win_winsock NAMES wsock32;winsock32;ws2_32 )
-if( EXISTS "${Lib_win_winsock}" AND CMAKE_CL_64 )
-  string(REPLACE "um/x86" "um/x64" Lib_win64_winsock "${Lib_win_winsock}" )
-  if( EXISTS "${Lib_win64_winsock}" )
-    set( Lib_win_winsock "${Lib_win64_winsock}")
+# Locate a Windows sockets library (required!)
+foreach( lib ws2_32;wsock32;winsock32;mswsock32 )
+  if( NOT Lib_win_winsock )
+    find_library( winsock_lib_${lib} ${lib} )
+    find_library( winsock_lib_${lib}
+      NAMES ${lib}
+      HINTS "C:/Windows/System32"
+            "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.17134.0/um/x86" )
+    set( Lib_win_winsock "${winsock_lib_${lib}}" CACHE FILEPATH
+      "Windows sockets library.")
   endif()
-endif()
+endforeach()
 
-if( ${Lib_win_winsock} MATCHES "NOTFOUND" )
-  message( FATAL_ERROR "Could not find library winsock32 or ws2_32!" )
+# Extra logic for 64-bit builds under Visual Studio
+# if( EXISTS "${Lib_win_winsock}" AND CMAKE_CL_64 )
+#   string(REPLACE "um/x86" "um/x64" Lib_win64_winsock "${Lib_win_winsock}" )
+#   if( EXISTS "${Lib_win64_winsock}" )
+#     set( Lib_win_winsock "${Lib_win64_winsock}")
+#   endif()
+# endif()
+
+if( NOT Lib_win_winsock )
+  message( FATAL_ERROR "Could not find library wsock32, mswsock32 or ws2_32!" )
 endif()
 
 #------------------------------------------------------------------------------#

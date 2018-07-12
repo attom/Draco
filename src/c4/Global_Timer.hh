@@ -5,10 +5,7 @@
  * \date   Mon Mar 25 17:35:07 2002
  * \brief  Define class Global_Timer, a POSIX standard timer.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-// $Id: Timer.hh 7075 2013-04-01 22:48:15Z kellyt $
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef __c4_Global_Timer_hh__

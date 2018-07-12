@@ -9,20 +9,30 @@ dist: trusty
 
 env:
   global:
-    - BLAS_blas_LIBRARY=/usr/lib/libblas.a
-    - CC=gcc-6
+    - DISTRO=trusty
     - CCACHE_CPP2=yes
-    - CMAKE=$HOME/cmake-3.9.0-Linux-x86_64/bin/cmake
-    - CTEST=$HOME/cmake-3.9.0-Linux-x86_64/bin/ctest
-    - CXX=g++-6
-    - FC=gfortran-6
-    - LAPACK_LIB_DIR=/usr/lib
+    - GCCVER=7
+    - CC=gcc-${GCCVER}
+    - CXX=g++-${GCCVER}
+    - FC=gfortran-${GCCVER}
+    - VENDOR_DIR=${HOME}/vendors
+    - CLANG_FORMAT_VER=6.0
+    - GSL_VER=2.4
+    - NUMDIFF_VER=5.8.1
+    - OPENMPI_VER=1.10.5
+    - RANDOM123_VER=1.09
+    - CMAKE_VER=3.9.0-Linux-x86_64
+    - CMAKE=$VENDOR_DIR/cmake-${CMAKE_VER}/bin/cmake
+    - CTEST=$VENDOR_DIR/cmake-${CMAKE_VER}/bin/ctest
+    - RANDOM123_INC_DIR=${VENDOR_DIR}/Random123-1.09/include
+    - GSL_ROOT_DIR=${VENDOR_DIR}/gsl-${GSL_VER}
     - OMP_NUM_THREADS=4
-    - RANDOM123_INC_DIR=$HOME/Random123-1.09/include
-    - VENDOR_DIR=${HOME}
     - topdir=/home/travis/build/losalamos/Draco
     - COVERAGE=ON
-  matrix:
+#   - BLAS_blas_LIBRARY=/usr/lib/libblas.a
+#   - LAPACK_LIB_DIR=/usr/lib
+
+matrix:
     - STYLE=ON
     - WERROR=ON
 
@@ -32,62 +42,63 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - ccache
-      - libgsl0-dev
-      - gcc-6
-      - g++-6
-      - gfortran-6
-      - liblapack-dev
+      - gcc-7
+      - g++-7
+      - gfortran-7
+      - environment-modules
+      - graphviz
+      - doxygen
 
 before_install:
   - mkdir -p ${VENDOR_DIR}/bin & export PATH=${VENDOR_DIR}/bin:$PATH
+  - export PATH=${PATH}:${VENDOR_DIR}/numdiff-${NUMDIFF_VER}/bin:${VENDOR_DIR}/gsl-${GSL_VER}/bin:${VENDOR_DIR}/cmake-${CMAKE_VER}/bin
   - pip install --upgrade --user pip
-#  - pip install --upgrade setuptools
   - if [[ ${COVERAGE}  ]]; then pip install --user codecov; fi
 
 install:
   - travis_wait 30 ./.travis-install-dependencies.sh
 
 before_script:
-  - if [[ ${WERROR} ]]; then for i in CC CXX FC; do eval export ${i}_FLAGS=\"-Werror\"; done; fi
-  - if [[ ${COVERAGE} ]]; then for i in CC CXX FC; do eval export ${i}_FLAGS+=\" --coverage\"; done; fi
-#  - if [[ ${WERROR} ]]; then for i in CC CXX FC; do eval export ${i}=\"${!i} -Werror\"; done; fi
+  - if [[ ${WERROR} ]]; then for i in CC CXX Fortran; do eval export ${i}_FLAGS=\"-Werror\"; done; fi
+  - if [[ ${COVERAGE} ]]; then for i in CC CXX Fortran; do eval export ${i}_FLAGS+=\" --coverage\"; done; fi
 
 script:
   - ./.travis-run-tests.sh
 
 after_success:
-  - if [[ ${COVERAGE} ]]; then codecov --gcov-exec gcov-6; fi
+  - if [[ ${COVERAGE} ]]; then codecov --gcov-exec gcov-${GCCVER}; fi
 
 cache:
   - ccache
 
 compiler:
-  - gcc-6
+  - gcc-7
 
 git:
   depth: 3
 
 
-# output from printenv (2018-04-26)
-
-# ACLOCAL_PATH=/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/gsl-2.4-tiedwgv464my5iyqawvpivgj7ef7cdan/share/aclocal
-# BLAS_blas_LIBRARY=/usr/lib/libblas.a
+# output from printenv (2018-06-24)
 # CASHER_DIR=/home/travis/.casher
-# CC=gcc
+# CC=gcc-7
 # CCACHE_CPP2=yes
+# CC_FLAGS=-Werror --coverage
 # CI=true
+# CLANG_FORMAT_VER=6.0
 # CMAKE=/home/travis/cmake-3.9.0-Linux-x86_64/bin/cmake
-# CMAKE_PREFIX_PATH=/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/random123-1.09-ogfpxozngmhyydnrch4tgvqgb5p7rlht/:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/openmpi-3.0.1-y4w4x5l3ya6ncs7ljbyfbniopshj3l6r/:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/numdiff-5.9.0-k2wvng7gd25texjlmphkhyui24rjagik/:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/gsl-2.4-tiedwgv464my5iyqawvpivgj7ef7cdan/
+# CMAKE_VER=3.9.0-Linux-x86_64
 # COMPOSER_NO_INTERACTION=1
 # CONTINUOUS_INTEGRATION=true
 # COVERAGE=ON
-# CPATH=/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/random123-1.09-ogfpxozngmhyydnrch4tgvqgb5p7rlht/include:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/libxml2-2.9.4-dhrbjftk6ct6hqv66rkndzkddwqzxva4/include/libxml2:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/openmpi-3.0.1-y4w4x5l3ya6ncs7ljbyfbniopshj3l6r/include:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/gsl-2.4-tiedwgv464my5iyqawvpivgj7ef7cdan/include
 # CTEST=/home/travis/cmake-3.9.0-Linux-x86_64/bin/ctest
-# CXX=g++
+# CXX=g++-7
+# CXX_FLAGS=-Werror --coverage
 # DEBIAN_FRONTEND=noninteractive
-# DK_NODE=/home/travis/.cache/spack/share/spack/dotkit/linux-ubuntu14.04-x86_64
+# DISTRO=trusty
 # ELIXIR_VERSION=1.4.5
-# FC=gfortran-6
+# FC=gfortran-7
+# Fortran_FLAGS=-Werror --coverage
+# GCCVER=7
 # GEM_HOME=/home/travis/.rvm/gems/ruby-2.4.1
 # GEM_PATH=/home/travis/.rvm/gems/ruby-2.4.1:/home/travis/.rvm/gems/ruby-2.4.1@global
 # GIT_ASKPASS=echo
@@ -104,35 +115,27 @@ git:
 # JDK_SWITCHER_DEFAULT=oraclejdk8
 # JRUBY_OPTS= --client -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false
 # LANG=en_US.UTF-8
-# LAPACK_LIB_DIR=/usr/lib
 # LC_ALL=en_US.UTF-8
 # LC_CTYPE=en_US.UTF-8
-# LD_LIBRARY_PATH=/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/openmpi-3.0.1-y4w4x5l3ya6ncs7ljbyfbniopshj3l6r/lib:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/gsl-2.4-tiedwgv464my5iyqawvpivgj7ef7cdan/lib
-# LIBRARY_PATH=/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/openmpi-3.0.1-y4w4x5l3ya6ncs7ljbyfbniopshj3l6r/lib:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/gsl-2.4-tiedwgv464my5iyqawvpivgj7ef7cdan/lib
-# LOADEDMODULES=gsl-2.4-gcc-6.4.0-tiedwgv:numdiff-5.9.0-gcc-6.4.0-k2wvng7:openmpi-3.0.1-gcc-6.4.0-y4w4x5l:random123-1.09-gcc-6.4.0-ogfpxoz
 # LOGNAME=travis
 # MAIL=/var/mail/travis
-# MALLOC_ARENA_MAX=2
-# MANPATH=/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/openmpi-3.0.1-y4w4x5l3ya6ncs7ljbyfbniopshj3l6r/share/man:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/numdiff-5.9.0-k2wvng7gd25texjlmphkhyui24rjagik/share/man:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/gsl-2.4-tiedwgv464my5iyqawvpivgj7ef7cdan/share/man:/home/travis/.nvm/versions/node/v8.9.1/share/man:/home/travis/.kiex/elixirs/elixir-1.4.5/man:/home/travis/.rvm/rubies/ruby-2.4.1/share/man:/usr/local/man:/usr/local/cmake-3.9.2/man:/usr/local/clang-5.0.0/share/man:/usr/local/share/man:/usr/share/man:/home/travis/.rvm/man
+# MANPATH=/home/travis/.nvm/versions/node/v8.9.1/share/man:/home/travis/.kiex/elixirs/elixir-1.4.5/man:/home/travis/.rvm/rubies/ruby-2.4.1/share/man:/usr/local/man:/usr/local/cmake-3.9.2/man:/usr/local/clang-5.0.0/share/man:/usr/local/share/man:/usr/share/man:/home/travis/.rvm/man
 # MERB_ENV=test
 # MIX_ARCHIVES=/home/travis/.kiex/mix/elixir-1.4.5
-# MODULEPATH=/home/travis/.cache/spack/share/spack/modules/linux-ubuntu14.04-x86_64:/etc/environment-modules/modules:/usr/share/modules/versions:/usr/Modules/3.2.10/modulefiles:/usr/share/modules/modulefiles
-# MODULESHOME=/usr/share/modules
-# MODULE_VERSION=3.2.10
-# MODULE_VERSION_STACK=3.2.10
 # MYSQL_UNIX_PORT=/var/run/mysqld/mysqld.sock
 # MY_RUBY_HOME=/home/travis/.rvm/rubies/ruby-2.4.1
+# NUMDIFF_VER=5.8.1
 # NVM_BIN=/home/travis/.nvm/versions/node/v8.9.1/bin
 # NVM_CD_FLAGS=
 # NVM_DIR=/home/travis/.nvm
 # OLDPWD=/home/travis/build
 # OMP_NUM_THREADS=4
+# OPENMPI_VER=1.10.5
 # PAGER=cat
-# PATH=/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/openmpi-3.0.1-y4w4x5l3ya6ncs7ljbyfbniopshj3l6r/bin:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/numdiff-5.9.0-k2wvng7gd25texjlmphkhyui24rjagik/bin:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/gsl-2.4-tiedwgv464my5iyqawvpivgj7ef7cdan/bin:/home/travis/.gimme/versions/go1.7.4.linux.amd64/bin:/usr/local/phantomjs/bin:/usr/local/phantomjs:/usr/local/neo4j-3.2.7/bin:/usr/local/maven-3.5.2/bin:/usr/local/cmake-3.9.2/bin:/usr/local/clang-5.0.0/bin:/home/travis/bin:/home/travis/.rvm/gems/ruby-2.4.1/bin:/home/travis/.rvm/gems/ruby-2.4.1@global/bin:/home/travis/.rvm/rubies/ruby-2.4.1/bin:/home/travis/.rvm/bin:/home/travis/bin:/home/travis/.local/bin:/opt/pyenv/shims:/home/travis/.phpenv/shims:/home/travis/perl5/perlbrew/bin:/home/travis/.nvm/versions/node/v8.9.1/bin:/home/travis/.kiex/elixirs/elixir-1.4.5/bin:/home/travis/.kiex/bin:/home/travis/gopath/bin:/home/travis/.gimme/versions/go1.7.4.linux.amd64/bin:/usr/local/phantomjs/bin:/usr/local/phantomjs:/usr/local/neo4j-3.2.7/bin:/usr/local/maven-3.5.2/bin:/usr/local/cmake-3.9.2/bin:/usr/local/clang-5.0.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/travis/.phpenv/bin:/opt/pyenv/bin:/home/travis/.yarn/bin:/home/travis/.cache/spack/bin
+# PATH=/home/travis/bin:/home/travis/.rvm/gems/ruby-2.4.1/bin:/home/travis/.rvm/gems/ruby-2.4.1@global/bin:/home/travis/.rvm/rubies/ruby-2.4.1/bin:/home/travis/.rvm/bin:/usr/lib/ccache:/home/travis/bin:/home/travis/.local/bin:/opt/pyenv/shims:/home/travis/.phpenv/shims:/home/travis/perl5/perlbrew/bin:/home/travis/.nvm/versions/node/v8.9.1/bin:/home/travis/.kiex/elixirs/elixir-1.4.5/bin:/home/travis/.kiex/bin:/home/travis/gopath/bin:/home/travis/.gimme/versions/go1.7.4.linux.amd64/bin:/usr/local/phantomjs/bin:/usr/local/phantomjs:/usr/local/neo4j-3.2.7/bin:/usr/local/maven-3.5.2/bin:/usr/local/cmake-3.9.2/bin:/usr/local/clang-5.0.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/travis/.phpenv/bin:/opt/pyenv/bin:/home/travis/.yarn/bin
 # PERLBREW_BASHRC_VERSION=0.80
 # PERLBREW_HOME=/home/travis/.perlbrew
 # PERLBREW_ROOT=/home/travis/perl5/perlbrew
-# PKG_CONFIG_PATH=/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/openmpi-3.0.1-y4w4x5l3ya6ncs7ljbyfbniopshj3l6r/lib/pkgconfig:/home/travis/.cache/spack/opt/spack/linux-ubuntu14.04-x86_64/gcc-6.4.0/gsl-2.4-tiedwgv464my5iyqawvpivgj7ef7cdan/lib/pkgconfig
 # PS1=${debian_chroot:+($debian_chroot)}\u@\h:\w\$
 # PS4=+
 # PWD=/home/travis/build/lanl/Draco
@@ -143,37 +146,38 @@ git:
 # RACK_ENV=test
 # RAILS_ENV=test
 # RANDOM123_INC_DIR=/home/travis/Random123-1.09/include
+# RANDOM123_VER=1.09
 # RBENV_SHELL=bash
 # RUBY_VERSION=ruby-2.4.1
 # SHELL=/bin/bash
 # SHLVL=2
-# SPACK_ROOT=/home/travis/.cache/spack
-# SPACK_SHELL=bash
-# SSH_CLIENT=10.10.4.39 45246 22
-# SSH_CONNECTION=10.10.4.39 45246 10.20.1.5 22
+# SSH_CLIENT=10.10.4.39 44318 22
+# SSH_CONNECTION=10.10.4.39 44318 10.20.1.57 22
 # SSH_TTY=/dev/pts/0
 # TERM=xterm
 # TRAVIS=true
 # TRAVIS_ALLOW_FAILURE=false
-# TRAVIS_BRANCH=develop
+# TRAVIS_BRANCH=test2
 # TRAVIS_BUILD_DIR=/home/travis/build/lanl/Draco
-# TRAVIS_BUILD_ID=371661753
-# TRAVIS_BUILD_NUMBER=1576
+# TRAVIS_BUILD_ID=396642770
+# TRAVIS_BUILD_NUMBER=31
 # TRAVIS_BUILD_STAGE_NAME=
-# TRAVIS_COMMIT=a10ddb267969c08dfe70f2180ffb03b027b6bdbc
-# TRAVIS_COMMIT_MESSAGE=Merge d844383b64b9218561747915b1176d4afdee84e6 into 3a22c0254bb587b00400561b79843cc0165809e3
-# TRAVIS_COMMIT_RANGE=3a22c0254bb587b00400561b79843cc0165809e3...d844383b64b9218561747915b1176d4afdee84e6
-# TRAVIS_EVENT_TYPE=pull_request
-# TRAVIS_JOB_ID=371661755
-# TRAVIS_JOB_NUMBER=1576.2
+# TRAVIS_COMMIT=314ffeb9fc11c75506f348e70aad4fdabc0520a1
+# TRAVIS_COMMIT_MESSAGE=use curl -L; no -fopenmp for linker.
+# TRAVIS_COMMIT_RANGE=5a8eb63932e3...314ffeb9fc11
+# TRAVIS_DIST=trusty
+# TRAVIS_EVENT_TYPE=push
+# TRAVIS_INIT=upstart
+# TRAVIS_JOB_ID=396642772
+# TRAVIS_JOB_NUMBER=31.2
 # TRAVIS_LANGUAGE=cpp
 # TRAVIS_OSX_IMAGE=
 # TRAVIS_OS_NAME=linux
 # TRAVIS_PRE_CHEF_BOOTSTRAP_TIME=2017-12-05T19:32:55
-# TRAVIS_PULL_REQUEST=397
-# TRAVIS_PULL_REQUEST_BRANCH=travis_bug
-# TRAVIS_PULL_REQUEST_SHA=d844383b64b9218561747915b1176d4afdee84e6
-# TRAVIS_PULL_REQUEST_SLUG=KineticTheory/Draco
+# TRAVIS_PULL_REQUEST=false
+# TRAVIS_PULL_REQUEST_BRANCH=
+# TRAVIS_PULL_REQUEST_SHA=
+# TRAVIS_PULL_REQUEST_SLUG=
 # TRAVIS_REPO_SLUG=lanl/Draco
 # TRAVIS_SECURE_ENV_VARS=false
 # TRAVIS_STACK_FEATURES=basic cassandra chromium couchdb disabled-ipv6 docker docker-compose elasticsearch firefox go-toolchain google-chrome jdk memcached mongodb mysql neo4j nodejs_interpreter perl_interpreter perlbrew phantomjs postgresql python_interpreter rabbitmq redis riak ruby_interpreter sqlite xserver
@@ -187,12 +191,11 @@ git:
 # TRAVIS_UID=2000
 # TZ=UTC
 # USER=travis
-# VENDOR_DIR=/home/travis
+# VENDOR_DIR=/home/travis/vendors
 # WERROR=ON
 # XDG_RUNTIME_DIR=/run/user/2000
 # XDG_SESSION_ID=2
-# _JAVA_OPTIONS=-Xmx2048m -Xms512m
-# _LMFILES_=/home/travis/.cache/spack/share/spack/modules/linux-ubuntu14.04-x86_64/gsl-2.4-gcc-6.4.0-tiedwgv:/home/travis/.cache/spack/share/spack/modules/linux-ubuntu14.04-x86_64/numdiff-5.9.0-gcc-6.4.0-k2wvng7:/home/travis/.cache/spack/share/spack/modules/linux-ubuntu14.04-x86_64/openmpi-3.0.1-gcc-6.4.0-y4w4x5l:/home/travis/.cache/spack/share/spack/modules/linux-ubuntu14.04-x86_64/random123-1.09-gcc-6.4.0-ogfpxoz
+# _=/usr/bin/printenv
 # _system_arch=x86_64
 # _system_name=Ubuntu
 # _system_type=Linux
@@ -202,4 +205,4 @@ git:
 # rvm_prefix=/home/travis
 # rvm_pretty_print_flag=auto
 # rvm_version=1.29.3 (latest)
-# topdir=/home/travis/build/losalamos/Draco
+# topdir=/home/travis/build/lanl/Draco

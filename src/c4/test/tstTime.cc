@@ -50,7 +50,7 @@ void wall_clock_test(rtt_dsxx::UnitTest &ut) {
   do_timer.start();
 
   double const wcr(rtt_c4::wall_clock_resolution());
-  if (wcr > 0.0 && wcr <= 100.0) {
+  if (wcr > 0.0 && wcr <= 1000.0) {
     ostringstream msg;
     msg << "The timer has a wall clock resoution of " << wcr << " ticks."
         << endl;

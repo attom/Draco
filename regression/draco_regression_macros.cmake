@@ -830,12 +830,12 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
   endif()
 
   find_file( ${dep_pkg}_target_dir
-    NAMES README.${dep_pkg}
+    NAMES README.${dep_pkg} README.md
     HINTS
-    # if DRACO_DIR is defined, use it.
-    $ENV{DRACO_DIR}
-    # Try a path parallel to the work_dir
-    ${${dep_pkg}_work_dir}/target
+      # if DRACO_DIR is defined, use it.
+      $ENV{DRACO_DIR}
+      # Try a path parallel to the work_dir
+      ${${dep_pkg}_work_dir}/target
   )
 
   if( NOT EXISTS ${${dep_pkg}_target_dir} )

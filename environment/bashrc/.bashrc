@@ -7,96 +7,163 @@
 ## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##
-##  Bash configuration file upon bash shell startup
+## Bash configuration file upon bash shell startup
+##
+## Instructions (customization):
+##
+## 1. Setup
+##    - Copy logic from draco/environment/bashrc/sample.bashrc and
+##      draco/environment/bashrc/sample.bash_profile.
+## 2. Override settings using the code found in the sample.bashrc.
 ##---------------------------------------------------------------------------##
 
 #uncomment to debug this script.
 #export verbose=true
 
-## Instructions (customization)
-##
-## Before sourcing this file, you may wish to set the following
-## variables to customize your environment (ie: set in ~/.bashrc
-## before sourcing this file).
-##
-## $prefered_term - a space delimited list of terminal names.  The
-##           default list is "gnome-terminal knosole xterm".  You can
-##           modify the order of this list or remove items.  If you
-##           add a new terminal you will need to modify this file to
-##           set the optional parameters.
-
 ##---------------------------------------------------------------------------##
 ## ENVIRONMENTS for interactive sessions
 ##---------------------------------------------------------------------------##
 
-# If this is an interactive shell then the environment variable $-
-# should contain an "i":
+# If this is an interactive shell then the environment variable $- should
+# contain an "i":
 case ${-} in
-*i*)
-   export INTERACTIVE=true
-   if test -n "${verbose}"; then
-      echo "in draco/environment/bashrc/.bashrc"
-   fi
+  *i*)
+    export INTERACTIVE=true
+    if test -n "${verbose}"; then echo "in draco/environment/bashrc/.bashrc"; fi
 
-   # Turn on checkwinsize
-   shopt -s checkwinsize # autocorrect window size
-   shopt -s cdspell # autocorrect spelling errors on cd command line.
+    # Turn on checkwinsize
+    shopt -s checkwinsize # autocorrect window size
+    shopt -s cdspell # autocorrect spelling errors on cd command line.
+    shopt -s histappend # append to the history file, don't overwrite it
+    shopt -s direxpand
 
-   # Prevent creation of core files (ulimit -a to see all limits).
-   # ulimit -c 0
+    # don't put duplicate lines or lines starting with space in the history. See
+    # bash(1) for more options
+    HISTCONTROL=ignoreboth
 
-   ##------------------------------------------------------------------------##
-   ## Common aliases
-   ##------------------------------------------------------------------------##
+    # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+    HISTSIZE=1000
+    HISTFILESIZE=2000
 
-   # Generic Settings
+    # Prevent creation of core files (ulimit -a to see all limits).
+    # ulimit -c 0
 
-   alias ll='\ls -Flh'
-   alias lt='\ls -Flth'
-   alias ls='\ls -F'
-   alias l.='\ls -h -d .*'
+    ##------------------------------------------------------------------------##
+    ## Common aliases
+    ##------------------------------------------------------------------------##
 
-   # alias a2ps='a2ps --sides=duplex --medium=letter'
-   alias btar='tar --use-compress-program /usr/bin/bzip2'
-   alias cpuinfo='cat /proc/cpuinfo'
-   alias df='df -h'
-   alias dirs='dirs -v'
-   alias du='du -h --max-depth=1 --exclude=.snapshot'
-   alias less='/usr/bin/less -r'
-   alias mdstat='cat /proc/mdstat'
-   alias meminfo='cat /proc/meminfo'
-   alias mroe='more'
-   nodename=`uname -n | sed -e 's/[.].*//g'`
-   alias resettermtitle='echo -ne "\033]0;${nodename}\007"'
-   alias xload="xload -label `hostname | sed -e 's/[.].*//'`"
+    # Generic Settings
 
-   # Module related:
-   alias ma='module avail'
-   alias mls='module list'
-   alias mld='module load'
-   alias mul='module unload'
-   alias msh='module show'
+    alias ll='\ls -Flh'
+    alias lt='\ls -Flth'
+    alias ls='\ls -F'
+    alias la='\ls -A'
+    alias l.='\ls -hd .*'
+    alias lt.='ls -Flth .*'
 
-   # Provide special ls commands if this is a color-xterm or compatible terminal.
-   if test "${TERM}" != emacs &&
-       test "${TERM}" != dumb; then
-     # replace list aliases with ones that include colorized output.
-     alias ll='\ls --color -Flh'
-     alias l.='\ls --color -hd .*'
-     alias lt='\ls --color -Flth'
-     alias lt.='\ls --color -Flth .*'
-     alias ls='\ls --color -F'
-   fi
+    # alias a2ps='a2ps --sides=duplex --medium=letter'
+    alias btar='tar --use-compress-program /usr/bin/bzip2'
+    alias cpuinfo='cat /proc/cpuinfo'
+    alias df='df -h'
+    alias dirs='dirs -v'
+    alias du='du -h --max-depth=1 --exclude=.snapshot'
+    alias less='/usr/bin/less -r'
+    alias mdstat='cat /proc/mdstat'
+    alias meminfo='cat /proc/meminfo'
+    alias mroe='more'
+    nodename=`uname -n | sed -e 's/[.].*//g'`
+    alias resettermtitle='echo -ne "\033]0;${nodename}\007"'
 
-   ;; # end case 'interactive'
+    # Module related:
+    alias moduel='module'
+    alias ma='module avail'
+    alias mls='module list'
+    alias mld='module load'
+    alias mul='module unload'
+    alias msh='module show'
 
-##---------------------------------------------------------------------------##
-## ENVIRONMENTS for non interactive sessions
-##---------------------------------------------------------------------------##
+    # set variable identifying the chroot you work in (used in the prompt below)
+    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+      debian_chroot=$(cat /etc/debian_chroot)
+    fi
 
-*) # Not an interactive shell (e.g. A PBS shell?)
-   export INTERACTIVE=false
-   ;;
+    # If this is an xterm set the title to user@host:dir
+    case "$TERM" in
+      xterm*|rxvt*)
+        # PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+        echo -ne "\033]0;${nodename}\007"
+        ;;
+      *)
+        ;;
+    esac
+
+    # Provide special ls commands if this is a color-xterm or compatible
+    # terminal.
+
+    # 1. Does the current terminal support color?
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+      # We have color support; assume it's compliant with Ecma-48
+      # (ISO/IEC-6429). (Lack of such support is extremely rare, and such a case
+      # would tend to support setf rather than setaf.)
+      color_prompt=yes
+    fi
+
+    # 2. Override color_prompt for special values of $TERM
+    case "$TERM" in
+      xterm-color|*-256color) color_prompt=yes;;
+      emacs|dumb)
+        color_prompt=no
+        LS_COLORS=''
+        ;;
+    esac
+
+    # if ! [ -x /usr/bin/dircolors ]; then
+    #   color_prompt=no
+    # fi
+
+    if [[ "${color_prompt:-no}" == "yes" ]]; then
+
+      # Use custom colors if provided.
+      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+
+      # append --color option to some aliased commands
+      alias ll='ll --color'
+      alias lt='lt --color'
+      alias ls='ls --color'
+      alias la='la --color'
+      alias l.='\ls --color -hd .*'
+      alias lt.='\ls --color -Flth .*'
+      alias grep='grep --color=auto'
+      alias fgrep='fgrep --color=auto'
+      alias egrep='egrep --color=auto'
+
+      # colored GCC warnings and errors
+      export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+      # Colorized prompt (might need some extra debian_chroot stuff -- see wls
+      # example).
+      if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+        debian_chroot=$(cat /etc/debian_chroot)
+      fi
+
+      if [ "$color_prompt" = yes ]; then
+        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+      else
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+      fi
+
+    fi
+    unset color_prompt
+
+    ;; # end case 'interactive'
+
+  ##---------------------------------------------------------------------------##
+  ## ENVIRONMENTS for non interactive sessions
+  ##---------------------------------------------------------------------------##
+
+  *) # Not an interactive shell (e.g. A PBS shell?)
+    export INTERACTIVE=false
+    ;;
 esac
 
 ##---------------------------------------------------------------------------##
@@ -118,7 +185,8 @@ if [[ ${INTERACTIVE} ]]; then
   source ${DRACO_ENV_DIR}/../regression/scripts/common.sh
 
   # aliases and bash functions for working with slurm
-  if !  [[ `which squeue 2>&1 | grep -c "no squeue"` == 1 ]]; then
+  if !  [[ `which squeue 2>&1 | grep -c "no squeue"` == 1 ]] &&
+    [[ `which squeue | grep -c squeue` -gt 0 ]]; then
     source ${DRACO_ENV_DIR}/bashrc/.bashrc_slurm
   fi
 fi
@@ -155,7 +223,7 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
   # trac.lanl.gov/cgi-bin/ctn/trac.cgi/wiki/SelfHelpCenter/ProxyUsage)
   # export http_proxy=http://wpad.lanl.gov/wpad.dat
   current_domain=`awk '/^domain/ {print $2}' /etc/resolv.conf`
-#  found=`nslookup proxyout.lanl.gov | grep -c Name`
+  #  found=`nslookup proxyout.lanl.gov | grep -c Name`
   #  if test ${found} == 1; then
   if [[ ${current_domain} == "lanl.gov" ]]; then
     export http_proxy=http://proxyout.lanl.gov:8080
@@ -173,6 +241,9 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
   # Possible values: ON, TRUE, OFF, FALSE, DIFF (the default value is ON).
   export DRACO_AUTO_CLANG_FORMAT=ON
 
+  # Silence warnings from GTK/Gnome
+  export NO_AT_BRIDGE=1
+
   ##---------------------------------------------------------------------------##
   ## ENVIRONMENTS - machine specific settings
   ##---------------------------------------------------------------------------##
@@ -188,7 +259,7 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
       ;;
 
     # Pinto | Wolf
-    pi* | wf* )
+    pi* | wf* | lu* )
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss22
       ;;
 
@@ -202,7 +273,7 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_rfta
       ;;
     # trinitite (tt-fey) | trinity (tr-fe)
-    tt-fey* | tt-login* | tr-fe* | tr-login* | nid0* )
+    tt-fey* | tt-login* | tr-fe* | tr-login* | nid* )
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_tt
       ;;
     # rzuseq
@@ -242,6 +313,9 @@ fi
 # provide some bash functions (dracoenv, rmdracoenv) for non-interactive
 # sessions.
 source ${DRACO_ENV_DIR}/bashrc/bash_functions2.sh
+
+
+if test -n "${verbose}"; then echo "done with draco/environment/bashrc/.bashrc"; fi
 
 ##---------------------------------------------------------------------------##
 ## end of .bashrc

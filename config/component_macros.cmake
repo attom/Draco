@@ -436,6 +436,11 @@ endmacro()
 macro( register_scalar_test targetname runcmd command cmd_args )
 
   separate_arguments( cmdargs UNIX_COMMAND ${cmd_args} )
+
+  set(lverbose OFF)
+  if( lverbose)
+    message("add_test( NAME ${targetname} COMMAND ${RUN_CMD} ${command} ${cmdargs} )")
+  endif()
   add_test( NAME ${targetname} COMMAND ${RUN_CMD} ${command} ${cmdargs} )
 
   # Reserve enough threads for application unit tests. Normally we only need 1
@@ -476,6 +481,7 @@ macro( register_scalar_test targetname runcmd command cmd_args )
       PROPERTIES  LABELS "${addscalartest_LABEL}" )
   endif()
   unset( num_procs )
+  unset( lverbose )
 endmacro()
 
 # ------------------------------------------------------------
@@ -485,7 +491,8 @@ endmacro()
 # 2. Register the pass/fail criteria.
 # ------------------------------------------------------------
 macro( register_parallel_test targetname numPE command cmd_args )
-  if( VERBOSE )
+  set( lverbose OFF )
+  if( lverbose )
     message( "      Adding test: ${targetname}" )
   endif()
   unset( RUN_CMD )
@@ -551,7 +558,7 @@ macro( register_parallel_test targetname numPE command cmd_args )
     set_tests_properties( ${targetname} PROPERTIES PROCESSORS "${numPE}" )
 
   endif()
-
+  unset( lverbose )
 endmacro()
 
 #----------------------------------------------------------------------#
@@ -663,7 +670,7 @@ function( copy_dll_link_libraries_to_build_dir target )
       endif()
     endforeach()
     if( lverbose )
-      message("Updated dependencies list: ${link_libs}\n")
+      message("Updated dependencies list: ${target} --> ${link_libs}\n")
     endif()
 
   endwhile()
@@ -674,21 +681,48 @@ function( copy_dll_link_libraries_to_build_dir target )
   # endif()
 
   if( lverbose )
-    message("  Create post build commande for target ${target}")
+    message("Creating post build commands for target = ${target}")
   endif()
 
   # Add a post-build command to copy each dll into the test directory.
   foreach( lib ${link_libs} )
-    # We do not need to the post_build copy command for Draco Lib_* files.  These should already be in the correct location.
+    # We do not need to the post_build copy command for Draco Lib_* files.
+    # These should already be in the correct location.
     if( NOT ${lib} MATCHES "Lib_" )
-
+      if( lverbose )
+        message("  looking at ${lib}")
+      endif()
       unset( target_loc )
       if( NOT TARGET ${lib})
+        if (lverbose )
+          message("  ${lib} is not a target. skip it.")
+        endif()
         continue()
       endif()
-      get_property(is_imported TARGET ${lib} PROPERTY IMPORTED )
-      if( is_imported )
+      # TYPE = {STATIC_LIBRARY, MODULE_LIBRARY, SHARED_LIBRARY, 
+      #         INTERFACE_LIBRARY, EXECUTABLE}
+      # We cannot query INTERFACE_LIBRARY targets.
+      get_target_property(lib_type ${lib} TYPE )
+      if( ${lib_type} STREQUAL "INTERFACE_LIBRARY" )
         continue()
+      endif()
+      get_target_property(is_imported ${lib} IMPORTED )
+      if( is_imported )
+        get_target_property(target_loc ${lib} IMPORTED_LOCATION_RELEASE )
+        if( ${target_loc} MATCHES "NOTFOUND" )
+          get_target_property(target_loc ${lib} IMPORTED_LOCATION_DEBUG )
+        endif()
+        if( ${target_loc} MATCHES "NOTFOUND" )
+          get_target_property(target_loc ${lib} IMPORTED_LOCATION )
+        endif()
+        if( ${target_loc} MATCHES "NOTFOUND" )
+          # path not found, ignore.
+          if (lverbose )
+            message("  ${lib} does not have an IMPORTED_LOCATION value. skip it.")
+          endif()
+          continue()
+        endif()
+        get_target_property(target_gnutoms ${lib} GNUtoMS)
       elseif( EXISTS ${lib} )
         # If $lib is a full path to a library, add it to the list
         set( target_loc ${lib} )
@@ -703,12 +737,12 @@ function( copy_dll_link_libraries_to_build_dir target )
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR} )
 
       if( lverbose )
-	    message("    CMAKE_COMMAND -E copy_if_different ${target_loc} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}")
+	message("  CMAKE_COMMAND -E copy_if_different ${target_loc} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}")
       endif()
 
     endif()
   endforeach()
-
+  unset( lverbose )
 endfunction()
 
 #----------------------------------------------------------------------#
@@ -918,6 +952,8 @@ macro( add_parallel_tests )
     ${ARGV}
     )
 
+  set(lverbose OFF)
+
   # Sanity Check
   if( "${addparalleltest_SOURCES}none" STREQUAL "none" )
     message( FATAL_ERROR "You must provide the keyword SOURCES and a list of sources when using the add_parallel_tests macro.  Please see draco/config/component_macros.cmake::add_parallel_tests() for more information." )
@@ -956,8 +992,17 @@ macro( add_parallel_tests )
 
   foreach( file ${addparalleltest_SOURCES} )
     get_filename_component( testname ${file} NAME_WE )
-    if( VERBOSE )
-      message( "   add_executable( Ut_${compname}_${testname}_exe ${file} )")
+    if( lverbose )
+      message( "   add_executable( Ut_${compname}_${testname}_exe ${file} )
+   set_target_properties(
+      Ut_${compname}_${testname}_exe
+      PROPERTIES
+      OUTPUT_NAME ${testname}
+      VS_KEYWORD  ${testname}
+      FOLDER      ${compname}_test
+      INTERPROCEDURAL_OPTIMIZATION_RELEASE;${USE_IPO}
+      COMPILE_DEFINITIONS \"PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\";PROJECT_BINARY_DIR=\"${PROJECT_BINARY_DIR}\"\"
+      )")
     endif()
     add_executable( Ut_${compname}_${testname}_exe ${file} )
     set_target_properties(
@@ -981,18 +1026,24 @@ macro( add_parallel_tests )
         PROPERTIES LINKER_LANGUAGE Fortran )
     endif()
 
+    if( lverbose )
+      message( "    target_link_libraries(
+      Ut_${compname}_${testname}_exe
+      ${test_lib_target_name}
+      ${addparalleltest_DEPS} )")
+    endif()
     target_link_libraries(
       Ut_${compname}_${testname}_exe
       ${test_lib_target_name}
       ${addparalleltest_DEPS}
       )
     # Extra dependencies for profiling tools
-    if( USE_ALLINEA_MAP AND "${DRACO_LIBRARY_TYPE}" STREQUAL "SHARED")
-      target_link_libraries( Ut_${compname}_${testname}_exe ${map-sampler-pmpi} ${map-sampler} )
-    endif()
-    if( USE_ALLINEA_DMALLOC )
-      target_link_libraries( Ut_${compname}_${testname}_exe ${ddt-dmalloc} )
-    endif()
+    # if( USE_ALLINEA_MAP AND "${DRACO_LIBRARY_TYPE}" STREQUAL "SHARED")
+    #   target_link_libraries( Ut_${compname}_${testname}_exe ${map-sampler-pmpi} ${map-sampler} )
+    # endif()
+    # if( USE_ALLINEA_DMALLOC )
+    #   target_link_libraries( Ut_${compname}_${testname}_exe ${ddt-dmalloc} )
+    # endif()
 
     # Special post-build options for Win32 platforms
     # ------------------------------------------------------------
@@ -1025,8 +1076,8 @@ macro( add_parallel_tests )
         endif()
       endforeach()
     endforeach()
-  else( ${DRACO_C4} MATCHES "MPI" )
-    # SCALAR Mode:
+  else()
+    # DRACO_C4=SCALAR Mode:
     foreach( file ${addparalleltest_SOURCES} )
       set( iarg "0" )
       get_filename_component( testname ${file} NAME_WE )
@@ -1037,22 +1088,30 @@ macro( add_parallel_tests )
       set( addscalartest_RUN_AFTER "${addparalleltest_RUN_AFTER}" )
 
       if( "${addparalleltest_TEST_ARGS}none" STREQUAL "none" )
-
+        if( lverbose )
+          message("   register_scalar_test( ${compname}_${testname}
+          \"${RUN_CMD}\" $<TARGET_FILE:Ut_${compname}_${testname}_exe> \"\" )")
+        endif()
         register_scalar_test( ${compname}_${testname}
-          "${RUN_CMD}" ${testname} "" )
+          "${RUN_CMD}" $<TARGET_FILE:Ut_${compname}_${testname}_exe> "" )
       else()
 
         foreach( cmdarg ${addparalleltest_TEST_ARGS} )
           math( EXPR iarg "${iarg} + 1" )
+          if( lverbose )
+            message("   register_scalar_test( ${compname}_${testname}_arg${iarg}
+            \"${RUN_CMD}\" ${testname} \"${cmdarg}\" ) ")
+            endif()
           register_scalar_test( ${compname}_${testname}_arg${iarg}
-            "${RUN_CMD}" ${testname} "${cmdarg}" )
+            "${RUN_CMD}" $<TARGET_FILE:Ut_${compname}_${testname}_exe> "${cmdarg}" )
         endforeach()
 
       endif()
 
     endforeach()
-  endif( ${DRACO_C4} MATCHES "MPI" )
+  endif()
 
+  unset( lverbose )
 endmacro()
 
 #------------------------------------------------------------------------------#

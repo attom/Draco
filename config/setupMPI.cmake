@@ -410,7 +410,8 @@ macro( setupMPILibrariesUnix )
          message( FATAL_ERROR "
 The Draco build system doesn't know how to configure the build for
   MPIEXEC     = ${MPIEXEC}
-  DBS_MPI_VER = ${DBS_MPI_VER}")
+  DBS_MPI_VER = ${DBS_MPI_VER}
+  CRAY_PE     = ${CRAY_PE}")
       endif()
 
       # Mark some of the variables created by the above logic as 'advanced' so

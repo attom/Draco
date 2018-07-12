@@ -5,8 +5,7 @@
  * \date   Thu Mar 21 16:56:17 2002
  * \brief  C4 MPI template implementation.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef c4_gatherv_t_hh
@@ -25,10 +24,8 @@ namespace rtt_c4 {
 // GATHER
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-DLL_PUBLIC_c4 void
-indeterminate_gatherv(std::string &outgoing_data,
-                      std::vector<std::string> &incoming_data) {
+void indeterminate_gatherv(std::string &outgoing_data,
+                           std::vector<std::string> &incoming_data) {
   // convert from string to vector<char>
   std::vector<char> outgoing_data_vc(outgoing_data.size());
   std::copy(outgoing_data.begin(), outgoing_data.end(),
@@ -56,10 +53,9 @@ indeterminate_gatherv(std::string &outgoing_data,
 }
 
 //---------------------------------------------------------------------------//
-template <class T>
-DLL_PUBLIC_c4 void
-indeterminate_gatherv(std::vector<T> &outgoing_data,
-                      std::vector<std::vector<T>> &incoming_data) {
+template <typename T>
+void indeterminate_gatherv(std::vector<T> &outgoing_data,
+                           std::vector<std::vector<T>> &incoming_data) {
 #ifdef C4_MPI
   { // This block is a no-op for with-c4=scalar
 
@@ -121,10 +117,9 @@ indeterminate_gatherv(std::vector<T> &outgoing_data,
 }
 
 //---------------------------------------------------------------------------//
-template <class T>
-DLL_PUBLIC_c4 void
-determinate_gatherv(std::vector<T> &outgoing_data,
-                    std::vector<std::vector<T>> &incoming_data) {
+template <typename T>
+void determinate_gatherv(std::vector<T> &outgoing_data,
+                         std::vector<std::vector<T>> &incoming_data) {
   Require(static_cast<int>(incoming_data.size()) == rtt_c4::nodes());
 
 #ifdef C4_MPI

@@ -8,7 +8,6 @@
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-#include "c4/C4_Req.hh"
 #include "c4/ParallelUnitTest.hh"
 #include "ds++/Release.hh"
 #include "ds++/Soft_Equivalence.hh"
@@ -17,10 +16,10 @@ using namespace std;
 
 using rtt_c4::C4_Req;
 using rtt_c4::global_isum;
-using rtt_c4::global_sum;
-using rtt_c4::global_prod;
-using rtt_c4::global_min;
 using rtt_c4::global_max;
+using rtt_c4::global_min;
+using rtt_c4::global_prod;
+using rtt_c4::global_sum;
 using rtt_c4::prefix_sum;
 using rtt_dsxx::soft_equiv;
 
@@ -337,8 +336,8 @@ void test_prefix_sum(rtt_dsxx::UnitTest &ut) {
 void test_array_prefix_sum(rtt_dsxx::UnitTest &ut) {
 
   // Calculate prefix sums on rank ID with MPI call and by hand and compare the
-  // output. The prefix sum on a node includes all previous node's value and the
-  // value of the current node
+  // output. The prefix sum on a node includes all previous node's value and
+  // the value of the current node
 
   const int array_size = 12;
 
@@ -410,8 +409,8 @@ void test_array_prefix_sum(rtt_dsxx::UnitTest &ut) {
       ITFAILS;
   }
 
-  // test unsigned long ints (use the maximum int64_t value to make sure all types are
-  // handled correctly in the calls)
+  // test unsigned long ints (use the maximum int64_t value to make sure all
+  // types are handled correctly in the calls)
   vector<uint64_t> xulong(array_size, 0);
   for (int32_t i = 0; i < array_size; ++i)
     xulong[i] = std::numeric_limits<int64_t>::max() + rtt_c4::node() * 10 + i;

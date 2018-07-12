@@ -18,7 +18,7 @@ namespace rtt_rng {
  * global variable that some applications use for holding a stream number.
  */
 DLL_PUBLIC_rng extern uint64_t rn_stream;
-}
+} // namespace rtt_rng
 
 #endif // rtt_rng_Random_Inline_hh
 

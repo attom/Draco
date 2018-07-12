@@ -5,8 +5,7 @@
  * \date   Friday May 19 6:54:21 2017
  * \brief  C4_Status class definition.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef c4_C4_Status_hh

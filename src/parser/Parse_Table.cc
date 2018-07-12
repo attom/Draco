@@ -158,8 +158,8 @@ void Parse_Table::sort_table_() noexcept(
       } else {
         // The keywords are genuinely ambiguous. Throw an exception
         // identifying the duplicate keyword.
-        using std::ostringstream;
         using std::endl;
+        using std::ostringstream;
         ostringstream err;
         err << "An ambiguous keyword was detected in a "
             << "Parse_Table:  " << i->moniker << endl
@@ -272,9 +272,9 @@ Token Parse_Table::parse(Token_Stream &tokens) const {
           // Give the user the possibilities.
           tokens.comment("Perhaps you meant one of:");
           for (auto const &i : vec) {
-            tokens.comment(i.moniker);
+            tokens.comment(string("  ") + i.moniker);
             if (i.description != nullptr) {
-              tokens.comment(string("  ") + i.description);
+              tokens.comment(string("    ") + i.description);
             }
           }
 
@@ -743,7 +743,7 @@ bool Parse_Table::check_class_invariants() const {
   return true;
 }
 
-} // rtt_parser
+} // namespace rtt_parser
 //---------------------------------------------------------------------------------------//
 // end of Parse_Table.cc
 //---------------------------------------------------------------------------------------//

@@ -8,13 +8,10 @@
 //---------------------------------------------------------------------------//
 
 #include "Timer.hh"
-#include "C4_sys_times.h"
 #include "ds++/XGetopt.hh"
 #include <cmath>
 #include <cstdlib>
 #include <iomanip>
-#include <iostream>
-#include <string>
 
 namespace rtt_c4 {
 
@@ -74,8 +71,8 @@ Timer::Timer()
 
 //! Print out a timing report.
 void Timer::print(std::ostream &out, int p) const {
-  using std::setw;
   using std::ios;
+  using std::setw;
 
   out.setf(ios::fixed, ios::floatfield);
   out.precision(p);
@@ -131,8 +128,8 @@ void Timer::print(std::ostream &out, int p) const {
 //! Print out a timing report as a single line summary.
 void Timer::printline(std::ostream &out, unsigned const p,
                       unsigned const w) const {
-  using std::setw;
   using std::ios;
+  using std::setw;
 
   out.setf(ios::fixed, ios::floatfield);
   out.precision(p);
@@ -333,8 +330,8 @@ void Timer::pause(double const pauseSeconds) {
  */
 void Timer::printline_mean(std::ostream &out, unsigned const p,
                            unsigned const w, unsigned const v) const {
-  using std::setw;
   using std::ios;
+  using std::setw;
 
   unsigned const ranks = rtt_c4::nodes();
 
@@ -371,13 +368,13 @@ void Timer::printline_mean(std::ostream &out, unsigned const p,
     // Width of first column (intervals) should be set by client before calling
     // this function.
     out << setw(w) << mni << " +/- " << setw(v)
-        << sqrt((ni2 - 2 * mni * ni + ranks * mni * mni) / ranks) << setw(w)
+        << sqrt(fabs(ni2 - 2 * mni * ni + ranks * mni * mni) / ranks) << setw(w)
         << mu << " +/- " << setw(v)
-        << sqrt((u2 - 2 * mu * u + ranks * mu * mu) / ranks) << setw(w) << ms
-        << " +/- " << setw(v)
-        << sqrt((s2 - 2 * ms * s + ranks * ms * ms) / ranks) << setw(w) << mww
-        << " +/- " << setw(v)
-        << sqrt((ww2 - 2 * mww * ww + ranks * mww * mww) / ranks);
+        << sqrt(fabs(u2 - 2 * mu * u + ranks * mu * mu) / ranks) << setw(w)
+        << ms << " +/- " << setw(v)
+        << sqrt(fabs(s2 - 2 * ms * s + ranks * ms * ms) / ranks) << setw(w)
+        << mww << " +/- " << setw(v)
+        << sqrt(fabs(ww2 - 2 * mww * ww + ranks * mww * mww) / ranks);
 
     // Omit PAPI for now.
 

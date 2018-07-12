@@ -17,18 +17,19 @@ namespace rtt_parser {
 //! Enumeration of debug flag bits
 
 enum Debug_Options {
-  DEBUG_NONE = 0,          // For human readability; No debug options desired.
-  DEBUG_ALGORITHM = 1,     // Report on behavior of the algorithm.
-  DEBUG_TIMESTEP = 2,      // Report on what is limiting the time step.
-  DEBUG_TIMING = 4,        // Report CPU times for various code regions.
-  DEBUG_BALANCE = 8,       // Report on energy balance.
-  DEBUG_GMV_DUMP = 16,     // Produce a GMV dump of the solution.
-  DEBUG_MEMORY = 32,       // Report on memory usage.
-  DEBUG_RESET_TIMING = 64, // Reset all timings to zero.
-  DEBUG_PROBLEM = 128,     // Report on the characteristics of the posed
-                           // problem; e.g. what is its scattering fraction?
+  DEBUG_NONE = 0,           // For human readability; No debug options desired.
+  DEBUG_SUMMARY = 1,        // Report *short* summary of balance/performance.
+  DEBUG_BALANCE = 2,        // Report on energy balance.
+  DEBUG_TIMESTEP = 4,       // Report on what is limiting the time step.
+  DEBUG_TIMING = 8,         // Report CPU times for various code regions.
+  DEBUG_ALGORITHM = 16,     // Report on behavior of the algorithm.
+  DEBUG_MEMORY = 32,        // Report on memory usage.
+  DEBUG_PROBLEM = 64,       // Report on the characteristics of the posed
+                            // problem; e.g. what is its scattering fraction?
+  DEBUG_GMV_DUMP = 128,     // Produce a GMV dump of the solution.
+  DEBUG_RESET_TIMING = 256, // Reset all timings to zero.
 
-  DEBUG_END = 256, // Sentinel value and first available extension.
+  DEBUG_END = 512, // Sentinel value and first available extension.
 
   DEBUG_SILENT_MASK = ~(DEBUG_RESET_TIMING)
   // Options producing no terminal output

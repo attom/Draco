@@ -12,12 +12,10 @@
 #include "c4/Timer.hh"
 #include "c4/c4_omp.h"
 #include "c4/gatherv.hh"
-#include "c4/global.hh"
 #include "ds++/Release.hh"
 #include "ds++/Soft_Equivalence.hh"
 #include <complex>
 #include <numeric>
-#include <vector>
 
 using namespace rtt_c4;
 
@@ -108,14 +106,14 @@ void topo_report(rtt_dsxx::UnitTest &ut, bool &one_mpi_rank_per_node) {
   // if( one_mpi_rank_per_node )
   // {
   maxthreads = omp_get_max_threads();
-// nthreads   = omp_get_num_threads();
-// }
-// else
-// {
-//     // More than 1 MPI rank per node --> turn off OMP.
-//     maxthreads = 1;
-//     omp_set_num_threads( maxthreads );
-// }
+  // nthreads   = omp_get_num_threads();
+  // }
+  // else
+  // {
+  //     // More than 1 MPI rank per node --> turn off OMP.
+  //     maxthreads = 1;
+  //     omp_set_num_threads( maxthreads );
+  // }
 
 #pragma omp parallel private(tid)
   {
@@ -130,9 +128,9 @@ void topo_report(rtt_dsxx::UnitTest &ut, bool &one_mpi_rank_per_node) {
                 << "\n   OMP num threads: " << nthreads
                 << "\n   OMP max threads: " << maxthreads
                 << "\n   procname(IO)   : " << procname
-                << "\n   Dynamic theads : " << (num_dynamic_threads == 0
-                                                    ? std::string("OFF")
-                                                    : std::string("ON"))
+                << "\n   Dynamic theads : "
+                << (num_dynamic_threads == 0 ? std::string("OFF")
+                                             : std::string("ON"))
                 << "\n"
                 << std::endl;
     }

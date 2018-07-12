@@ -21,8 +21,8 @@
 #include <algorithm>
 
 namespace rtt_c4 {
-using std::vector;
 using std::copy;
+using std::vector;
 
 //---------------------------------------------------------------------------//
 // SCATTER

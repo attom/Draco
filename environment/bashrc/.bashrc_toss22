@@ -52,8 +52,12 @@ else
   module use --append ${VENDOR_DIR}-ec/modulefiles
 
   export dracomodules="clang-format/3.9.0 intel/17.0.4 openmpi/2.1.2 mkl \
-trilinos superlu-dist/5.1.3 metis parmetis ndi random123 \
-eospac/6.3.0 subversion cmake/3.9.0 numdiff git totalview emacs grace csk"
+trilinos superlu-dist/5.1.3 metis parmetis random123 eospac/6.3.0 subversion \
+cmake/3.9.0 numdiff git totalview emacs grace"
+
+if [[ `groups | grep -c ccsrad` != 0 ]]; then
+  draco_modules="$draco_modules csk ndi"
+fi
 
 fi
 

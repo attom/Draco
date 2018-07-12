@@ -9,7 +9,6 @@
 //---------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"
-#include "c4/global.hh"
 #include "ds++/Release.hh"
 #include "ds++/Soft_Equivalence.hh"
 #include <sstream>
@@ -161,7 +160,6 @@ void test_loop(rtt_dsxx::UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, rtt_dsxx::release);
   try {

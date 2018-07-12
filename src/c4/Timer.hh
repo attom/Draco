@@ -5,8 +5,7 @@
  * \date   Mon Mar 25 17:35:07 2002
  * \brief  Define class Timer, a POSIX standard timer.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef __c4_Timer_hh__
@@ -104,13 +103,6 @@ namespace rtt_c4 {
  *
  * \example c4/test/tstTime.cc
  */
-// revision history:
-// -----------------
-// 0) original
-// 1) 2003/01/21 Added sum_* member functions (Lowrie).
-// 2) 2010/09/27 Added support for MSVC & CMake (KT).
-// 3) 2011/09/01 Added support for PAPI cache performance monitoring (KGB).
-//
 //===========================================================================//
 
 class DLL_PUBLIC_c4 Timer {
@@ -344,7 +336,9 @@ double Timer::system_cpu() const {
 double Timer::user_cpu() const {
   Require(!timer_on);
 #if defined(WIN32)
-  return difftime(tms_end, tms_begin);
+  using namespace std::chrono;
+  duration<double> diff = tms_end - tms_begin;
+  return duration_cast<nanoseconds>(diff).count() / 1.0e9;
 #else
   return (tms_end.tms_utime - tms_begin.tms_utime) /
          static_cast<double>(posix_clock_ticks_per_second);
@@ -414,5 +408,5 @@ inline std::ostream &operator<<(std::ostream &out, const Timer &t) {
 #endif // __c4_Timer_hh__
 
 //---------------------------------------------------------------------------//
-//                              end of c4/Timer.hh
+// end of c4/Timer.hh
 //---------------------------------------------------------------------------//

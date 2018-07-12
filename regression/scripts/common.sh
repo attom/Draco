@@ -32,6 +32,38 @@
 ## Helpful functions
 ##---------------------------------------------------------------------------##
 
+function dracohelp()
+{
+echo -e "Bash functions defined by Draco:\n\n"
+echo -e "Also try 'slurmhelp'\n"
+echo "allow_file_to_age - pause a program until a file is 'old'"
+echo "cleanemacs    - remove ~ and .elc files."
+echo "die           - exit with a message"
+echo "dracoenv/rmdracoenv - load/unload the draco environment"
+echo "establish_permissions - Change group to othello, dacodes or draco and change permissions to g+rwX,o-rwX"
+echo "flavor        - build a string that looks like fire-openmpi-2.0.2-intel-17.0.1"
+echo "fn_exists     - return true if named bash function is defined"
+echo "install_verions - helper for doing releases (see release_toss2.sh)"
+echo "lookupppn     - return PE's per node."
+echo "machineName   - return a string to represent the current machine."
+echo "npes_build    - return PE's to be used for compiling."
+echo "npes_test     - return PE's to be used for testing."
+echo "osName        - return a string to represent the current machine's OS."
+echo "proxy         - toggle the status of the LANL proxy variables."
+echo "publish_release - helper for doing releases (see release_toss2.sh)"
+echo "qrm           - quick rm for directories located in lustre scratch spaces."
+echo "rdde          - more agressive reset of the draco environment."
+echo "run           - echo a command and then run it."
+echo "selectscratchdir - find a scratch drive"
+echo "whichall      - Find all matchs."
+echo "xfstatus      - print status 'transfered' files."
+echo -e "\nUse 'type <function>' to print the full content of any function.\n"
+}
+
+#------------------------------------------------------------------------------#
+#
+#------------------------------------------------------------------------------#
+
 # Print an error message and exit.
 # e.g.: cd $dir || die "can't change dir to $dir".
 function die () { echo " "; echo "FATAL ERROR: $1"; exit 1;}

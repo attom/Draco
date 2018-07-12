@@ -5,14 +5,11 @@
  * \date   Thu Jul 7 2011
  * \brief  Test the functionality of the class ParallelUnitTest
  * \note   Copyright (C) 2016-2018 Los Alamos National Securities, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
+#include "c4/C4_Functions.hh"
 #include "c4/ParallelUnitTest.hh"
-#include "c4/global.hh"
 #include "ds++/Release.hh"
 #include <sstream>
 

@@ -5,24 +5,20 @@
  * \date   Fri Oct 20 13:49:10 2006
  * \brief  Template method definitions of class Processor_Group
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef c4_Processor_Group_i_hh
 #define c4_Processor_Group_i_hh
 
-#include "Processor_Group.hh"
-
 #include "MPI_Traits.hh"
-#include "c4/config.h"
+#include "Processor_Group.hh"
 #include "ds++/Assert.hh"
 
 #ifdef C4_MPI
 
 namespace rtt_c4 {
+
 //---------------------------------------------------------------------------//
 template <typename RandomAccessContainer>
 void Processor_Group::sum(RandomAccessContainer &x) {
@@ -59,7 +55,6 @@ void Processor_Group::assemble_vector(std::vector<T> const &local,
  * \param global Points to a region of storage of size N*this->size()
  * \param N Number of local quantities to assemble.
  */
-
 template <typename T>
 void Processor_Group::assemble_vector(T const *local, T *global,
                                       unsigned const N) const {

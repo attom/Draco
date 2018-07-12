@@ -473,6 +473,7 @@ auto-mode-alist."
       (abbrev-mode 1)
       (setq f90-font-lock-keywords f90-font-lock-keywords-3)
       (setq f90-beginning-ampersand nil)
+      (setq f90-associate-indent 0)
       (require 'fill-column-indicator)
       (fci-mode))
      ;; let .F denone Fortran and not freeze files

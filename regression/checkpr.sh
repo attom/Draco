@@ -33,6 +33,7 @@ if ! [[ -d $rscriptdir ]]; then
   export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 fi
 if [[ -f $rscriptdir/scripts/common.sh ]]; then
+  echo "source $rscriptdir/scripts/common.sh"
   source $rscriptdir/scripts/common.sh
 else
   echo " "
@@ -102,19 +103,15 @@ case $project in
     print_use; exit 1 ;;
 esac
 
-# Restrict the use of ccscs[27].
-# case $target in
-#   ccscs[27]*)
-#     if ! [[ $LOGNAME == "kellyt" ]]; then
-#       echo ""; echo "FATAL ERROR: Please use ccscs6 for manual use of checkpr.sh."
-#       exit 1
-#     fi
-#     ;;
-# esac
+if [[ $pr =~ "pr" ]]; then
+  echo -e "\nFATAL ERROR, the '-f' option expects a number (i.e.: no 'pr' prefix) or the string 'develop'."
+  print_use;
+  exit 1;
+fi
 
 if [[ $regress_mode == "on" ]]; then
   if ! [[ $LOGNAME == "kellyt" ]]; then
-    echo ""; echo "FATAL ERROR: invalid use of -r"
+    echo ""; echo "FATAL ERROR: invalid use of -r. Please contact kgt@lanl.gov."
     print_use; exit 1
   fi
   # special defaults for regress_mode
@@ -183,9 +180,16 @@ function startCI()
   echo " "
   cmd="$rscriptdir/regression-master.sh ${rflag} -b ${build_type}"
   cmd="$cmd ${eflag} ${extra} -p ${project} -f ${pr}"
-  if ! [[ $project == "draco" ]]; then
-    cmd="$cmd &"
-  fi
+  case $target in
+    ccscs* )  # build one at a time.
+      ;;
+    * )
+      # Run all builds simultaneously (via job submission system)
+      if ! [[ $project == "draco" ]]; then
+        cmd="$cmd &"
+      fi
+      ;;
+  esac
   echo "$cmd"
   eval "$cmd"
 }
@@ -235,6 +239,7 @@ case $project in
 
       # Reset the modified date on the file used to determine when draco was
       # last built.
+      echo "date &> $draco_tag_file"
       date &> $draco_tag_file
     fi
     ;;
@@ -250,10 +255,16 @@ case $target in
   # CCS-NET: Release, vtest, coverage
   ccscs2*)
     startCI ${project} Release na $pr
-    if ! [[ ${project} == "draco" ]]; then
+    startCI ${project} Debug coverage $pr
+    ;;
+
+  # CCS-NET: Release, vtest, coverage
+  ccscs3*)
+    if [[ ${project} == "draco" ]]; then
+      startCI ${project} Release na $pr
+    else
       startCI ${project} Release vtest $pr
     fi
-    startCI ${project} Debug coverage $pr
     startCI ${project} Debug clang $pr
     ;;
 

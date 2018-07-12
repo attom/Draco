@@ -47,9 +47,12 @@ case $target in
       module use --append $HOME/privatemodules
     fi
     dm_core="ack dia doxygen git graphviz htop mscgen numdiff python random123 \
-tk ndi totalview"
+tk totalview"
     dm_gcc="gcc cmake eospac/6.3.1_r20161202150449 gsl metis netlib-lapack qt"
-    dm_openmpi="openmpi csk parmetis superlu-dist trilinos"
+    dm_openmpi="openmpi parmetis superlu-dist trilinos"
+    if [[ `groups | grep -c ccsrad` != 0 ]]; then
+      dm_openmpi="$dm_openmpi csk ndi"
+    fi
     export dracomodules="$dm_core $dm_gcc $dm_openmpi"
     ;;
   ccsnet3*)

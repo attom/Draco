@@ -5,19 +5,15 @@
  * \date   Tue Jun  6 15:03:08 2006
  * \brief  Parallel application used by the unit test for tstApplicationUnitTest.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
-#include "c4/global.hh"
+#include "c4/C4_Functions.hh"
 #include <iostream>
 
 using namespace rtt_c4;
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   initialize(argc, argv);
   if (argc > 1) {

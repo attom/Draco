@@ -81,6 +81,7 @@ echo "                  ${subproj}-${build_type}${epdash}${extra_params}${prdash
 echo "==========================================================================="
 
 run "ulimit -a"
+run "top -n 1 -bc"
 
 # Modules
 # ----------------------------------------

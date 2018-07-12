@@ -13,6 +13,7 @@
 
 // C4 package configure
 #include "C4_Status.hh"
+#include "C4_Traits.hh"
 #include "c4/config.h"
 #include "ds++/Assert.hh"
 
@@ -38,7 +39,7 @@ namespace rtt_c4 {
  */
 //===========================================================================//
 
-class DLL_PUBLIC_c4 C4_ReqRefRep {
+class C4_ReqRefRep {
   friend class C4_Req;
 
   // number of ref counts
@@ -53,19 +54,17 @@ class DLL_PUBLIC_c4 C4_ReqRefRep {
 
 private:
   // Disallowed methods
-
-  C4_ReqRefRep(const C4_ReqRefRep &rep);
-  C4_ReqRefRep &operator=(const C4_ReqRefRep &rep);
+  C4_ReqRefRep(const C4_ReqRefRep &rep) = delete;
+  C4_ReqRefRep &operator=(const C4_ReqRefRep &rep) = delete;
 
   // Private default ctor and dtor for access from C4_Req only.
-
   C4_ReqRefRep();
   ~C4_ReqRefRep();
 
 public:
-  void wait(C4_Status *status = nullptr);
-  bool complete(C4_Status *status = nullptr);
-  void free();
+  DLL_PUBLIC_c4 void wait(C4_Status *status = nullptr);
+  DLL_PUBLIC_c4 bool complete(C4_Status *status = nullptr);
+  DLL_PUBLIC_c4 void free();
 
   bool inuse() const {
 #ifdef C4_MPI
@@ -98,15 +97,15 @@ private:
  */
 //===========================================================================//
 
-class DLL_PUBLIC_c4 C4_Req {
+class C4_Req {
   //! Request handle.
   C4_ReqRefRep *p;
 
 public:
-  C4_Req();
-  C4_Req(const C4_Req &req);
-  ~C4_Req();
-  C4_Req &operator=(const C4_Req &req);
+  DLL_PUBLIC_c4 C4_Req();
+  DLL_PUBLIC_c4 C4_Req(const C4_Req &req);
+  DLL_PUBLIC_c4 ~C4_Req();
+  DLL_PUBLIC_c4 C4_Req &operator=(const C4_Req &req);
 
   //! \brief Equivalence operator
   bool operator==(const C4_Req &right) { return (p == right.p); }
@@ -120,7 +119,7 @@ public:
 private:
   void set() { p->set(); }
 
-// Private access to the C4_ReqRefRep internals.
+  // Private access to the C4_ReqRefRep internals.
 
 #ifdef C4_MPI
   MPI_Request &r() { return p->r; }
@@ -128,43 +127,42 @@ private:
 
   void free_();
 
-// FRIENDSHIP
-
-// Specific friend C4 functions that may need to manipulate the C4_ReqRefRep
-// internals.
-
-#ifdef C4_MPI
-  template <class T>
+  /* FRIENDSHIP
+   *
+   * Specific friend C4 functions that may need to manipulate the C4_ReqRefRep
+   * internals. A friend function of a class is defined outside that class'
+   * scope but it has the right to access all private and protected members of
+   * the class. Even though the prototypes for friend functions appear in the
+   * class definition, friends are not member functions.
+   * \ref https://www.tutorialspoint.com/cplusplus/cpp_friend_functions.htm
+   */
+  template <typename T>
   friend DLL_PUBLIC_c4 C4_Req send_async(const T *buf, int nels, int dest,
                                          int tag);
-
-  template <class T>
-  friend C4_Req receive_async(T *buf, int nels, int source, int tag);
-
-  template <class T>
+  template <typename T>
   friend DLL_PUBLIC_c4 void send_async(C4_Req &r, const T *buf, int nels,
                                        int dest, int tag);
-  template <class T>
-  friend DLL_PUBLIC_c4 void send_is(C4_Req &r, const T *buf, int nels, int dest,
-                                    int tag);
-  template <class T>
+  template <typename T>
+  friend DLL_PUBLIC_c4 C4_Req receive_async(T *buf, int nels, int source,
+                                            int tag);
+  template <typename T>
   friend DLL_PUBLIC_c4 void receive_async(C4_Req &r, T *buf, int nels,
                                           int source, int tag);
-
-  friend DLL_PUBLIC_c4 void wait_all(unsigned count, C4_Req *requests);
-  friend DLL_PUBLIC_c4 unsigned wait_any(unsigned count, C4_Req *requests);
-
-  template <class T>
-  friend DLL_PUBLIC_c4 void global_isum(T &send_buffer, T &recv_buffer,
-                                        C4_Req &request);
-
+#ifdef C4_MPI
   template <typename T>
   friend void send_is_custom(C4_Req &request, T const *buffer, int size,
                              int destination, int tag);
-
   template <typename T>
   friend void receive_async_custom(C4_Req &request, T *buffer, int size,
                                    int source, int tag);
+  template <typename T>
+  friend DLL_PUBLIC_c4 void send_is(C4_Req &r, const T *buf, int nels, int dest,
+                                    int tag);
+  friend DLL_PUBLIC_c4 void wait_all(unsigned count, C4_Req *requests);
+  friend DLL_PUBLIC_c4 unsigned wait_any(unsigned count, C4_Req *requests);
+  template <typename T>
+  friend DLL_PUBLIC_c4 void global_isum(T &send_buffer, T &recv_buffer,
+                                        C4_Req &request);
 
 #endif
 };

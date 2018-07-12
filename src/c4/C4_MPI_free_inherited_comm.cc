@@ -5,20 +5,17 @@
  * \date   Thu Mar 21 16:56:17 2002
  * \brief  C4 MPI implementation.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-// $Id: C4_MPI_free_inherited_comm.cc 7388 2015-01-22 16:02:07Z kellyt $
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
+#include "C4_Functions.hh"
 #include "c4/config.h"
 #include <vector>
 
 #ifdef C4_MPI
 
-#include "C4_MPI.hh"
-
 namespace rtt_c4 {
+
 //---------------------------------------------------------------------------//
 // MPI COMMUNICATOR
 //---------------------------------------------------------------------------//

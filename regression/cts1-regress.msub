@@ -186,9 +186,9 @@ for ep in $extra_params; do
       run "module purge &> /dev/null"
       run "module list"
       run "module load user_contrib friendly-testing"
-      run "module load intel/18.0.1 openmpi/2.1.2 mkl"
+      run "module load intel/18.0.2 openmpi/2.1.2 mkl"
       run "module load superlu-dist metis parmetis"
-      run "module load trilinos/12.10.1 superlu-dist metis parmetis"
+      run "module load trilinos/12.10.1"
       run "module load cmake/3.9.0 ndi numdiff git"
       run "module load mkl random123 eospac/6.3.0 csk"
       ;;
@@ -227,7 +227,7 @@ comp=$comp-$featurebranch
 # When run by crontab, use a special ssh-key to allow authentication to gitlab
 if [[ ${regress_mode} == "on" ]]; then
   run "module load git"
-  keychain=keychain-2.7.1
+  keychain=keychain-2.8.5
   $VENDOR_DIR/$keychain/keychain $HOME/.ssh/regress_rsa
   if test -f $HOME/.keychain/$machine-sh; then
     run "source $HOME/.keychain/$machine-sh"

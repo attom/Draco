@@ -50,7 +50,7 @@ vdir=/scratch/vendors
 # r72v=/ccs/codes/radtran/vendors/rhel72vendors
 # To machines (cccs[234568]:/scratch/vendors)
 # omit ccscs5 (scratch is too full)
-ccs_servers="ccscs1 ccscs2 ccscs3 ccscs4 ccscs6 ccscs8 ccscs9"
+ccs_servers="ccscs1 ccscs2 ccscs3 ccscs6 ccscs8 ccscs9"
 
 # exclude these directories
 exclude_dirs="spack.mirror spack.rasa tmp spack.temporary spack.test spack.ccs.developmental"
@@ -86,12 +86,14 @@ fi
 # Reset permissions (if possible):
 echo " "
 echo "Clean up permissions on source files..."
+run "cd $vdir"
 vdir_subdirs=`\ls -1 $vdir`
 for dir in $vdir_subdirs; do
   run "chgrp -R draco $dir &> /dev/null"
   run "chmod -R g+rX,o+rX $dir &> /dev/null"
 done
 
+run "cd ${vdir}-ec"
 vdir_subdirs=`\ls -1 ${vdir}-ec`
 for dir in $vdir_subdirs; do
   run "chgrp -R ccsrad $dir &> /dev/null"
