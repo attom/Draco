@@ -3,21 +3,21 @@
  * \file   mesh/test/tstDraco_Mesh_Builder.cc
  * \author Ryan Wollaeger <wollaeger@lanl.gov>
  * \date   Sunday, Jul 01, 2018, 18:21 pm
- * \brief  Draco_Mesh class unit test.
+ * \brief  Draco_Mesh_Builder class unit test.
  * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "Test_Mesh_Interface.hh"
 #include "mesh/Draco_Mesh_Builder.hh"
-#include "RTT_Format_Reader/RTT_Format_Reader.hh"
+#include "mesh/RTT_Draco_Mesh_Reader.hh"
 #include "c4/ParallelUnitTest.hh"
 #include "ds++/Release.hh"
 #include "ds++/Soft_Equivalence.hh"
 
 using rtt_mesh::Draco_Mesh;
 using rtt_mesh::Draco_Mesh_Builder;
-using rtt_RTT_Format_Reader::RTT_Format_Reader;
+using rtt_mesh::RTT_Draco_Mesh_Reader;
 
 //---------------------------------------------------------------------------//
 // TESTS
@@ -55,14 +55,15 @@ void build_cartesian_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   // >>> PARSE AND BUILD MESH
 
   const std::string inputpath = ut.getTestSourcePath();
-  const std::string filename = "rttquad_2cell.mesh.in";
+  const std::string filename = inputpath + "rttquad_2cell.mesh.in";
 
-  // create an rtt mesh
-  std::shared_ptr<RTT_Format_Reader> rtt_mesh(
-      new RTT_Format_Reader(inputpath + filename));
+  // create an rtt mesh reader and read the mesh
+  std::shared_ptr<RTT_Draco_Mesh_Reader> rtt_mesh(
+      new RTT_Draco_Mesh_Reader(filename));
+  rtt_mesh->read_mesh();
 
   // instantiate a mesh builder and build the mesh
-  Draco_Mesh_Builder<RTT_Format_Reader> mesh_builder(rtt_mesh);
+  Draco_Mesh_Builder<RTT_Draco_Mesh_Reader> mesh_builder(rtt_mesh);
   std::shared_ptr<Draco_Mesh> mesh = mesh_builder.build_mesh(geometry);
 
   // check that the scalar data is correct

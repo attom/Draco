@@ -93,7 +93,7 @@ endif()
 # Level 5
 message(" ")
 message( STATUS "Configuring Level 5 packages --" )
-add_dir_if_exists( mesh ) # needs c4, ds++, mesh_element
+add_dir_if_exists( mesh ) # needs c4, ds++, mesh_element, parser
 if( NOT DEFINED ENV{APPVEYOR} AND NOT DEFINED ENV{TRAVIS} )
   add_dir_if_exists( quadrature )       # needs mesh_element, parser, special_functions
 endif()

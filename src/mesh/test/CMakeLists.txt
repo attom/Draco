@@ -14,7 +14,8 @@ project( mesh_test CXX )
 
 # create unit test lists
 set( one_pe_tests ${PROJECT_SOURCE_DIR}/tstDraco_Mesh.cc
-  ${PROJECT_SOURCE_DIR}/tstDraco_Mesh_Builder.cc )
+  ${PROJECT_SOURCE_DIR}/tstDraco_Mesh_Builder.cc
+  ${PROJECT_SOURCE_DIR}/tstX3D_Draco_Mesh_Reader.cc )
 set( two_pe_tests ${PROJECT_SOURCE_DIR}/tstDraco_Mesh_DD.cc )
 
 # ---------------------------------------------------------------------------- #

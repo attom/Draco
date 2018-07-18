@@ -9,11 +9,13 @@
 //---------------------------------------------------------------------------//
 
 #include "Draco_Mesh_Builder.t.hh"
-#include "RTT_Format_Reader/RTT_Format_Reader.hh"
+#include "RTT_Draco_Mesh_Reader.hh"
+#include "X3D_Draco_Mesh_Reader.hh"
 
 namespace rtt_mesh {
 
-template class Draco_Mesh_Builder<rtt_RTT_Format_Reader::RTT_Format_Reader>;
+template class Draco_Mesh_Builder<RTT_Draco_Mesh_Reader>;
+template class Draco_Mesh_Builder<X3D_Draco_Mesh_Reader>;
 
 } // end namespace rtt_mesh
 

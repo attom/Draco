@@ -127,12 +127,14 @@ case ${-} in
       test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 
       # append --color option to some aliased commands
-      alias ll='ll --color'
-      alias lt='lt --color'
-      alias ls='ls --color'
-      alias la='la --color'
-      alias l.='\ls --color -hd .*'
-      alias lt.='\ls --color -Flth .*'
+
+      alias ll='\ls -Flh --color'
+      alias lt='\ls -Flth --color'
+      alias ls='\ls -F --color'
+      alias la='\ls -A --color'
+      alias l.='\ls -hd --color .*'
+      alias lt.='ls -Flth --color .*'
+
       alias grep='grep --color=auto'
       alias fgrep='fgrep --color=auto'
       alias egrep='egrep --color=auto'

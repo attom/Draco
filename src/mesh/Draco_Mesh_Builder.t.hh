@@ -12,6 +12,7 @@
 #include "Draco_Mesh_Builder.hh"
 #include "ds++/Assert.hh"
 #include <algorithm>
+#include <iostream>
 
 namespace rtt_mesh {
 
@@ -28,7 +29,7 @@ Draco_Mesh_Builder<FRT>::Draco_Mesh_Builder(std::shared_ptr<FRT> reader_)
     : reader(reader_) {
   Require(reader_ != nullptr);
   // \todo remove constraint of 2 dimensions
-  Insist(reader->get_dims_ndim() == 2, "Mesh must be 2D.");
+  Insist(reader->get_numdim() == 2, "Mesh must be 2D.");
 }
 
 //---------------------------------------------------------------------------//
@@ -55,23 +56,20 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   // >>> GENERATE MESH CONSTRUCTOR ARGUMENTS
 
   // get the number of dimensions
-  unsigned dimension = reader->get_dims_ndim();
+  unsigned dimension = reader->get_numdim();
   // \todo: Eventually allow dim = 1, 3
   Check(dimension == 2);
 
   // get the number of cells
-  size_t num_cells = reader->get_dims_ncells();
+  size_t num_cells = reader->get_numcells();
 
   // generate the cell type vector
   size_t cn_linkage_size = 0;
   std::vector<unsigned> cell_type(num_cells);
   for (size_t cell = 0; cell < num_cells; ++cell) {
 
-    // first obtain a cell definition index
-    size_t cell_def = reader->get_cells_type(cell);
-
     // for Draco_Mesh, cell_type is number of nodes
-    cell_type[cell] = reader->get_cell_defs_nnodes(cell_def);
+    cell_type[cell] = reader->get_celltype(cell);
 
     // increment size of cell-to-node linkage array
     cn_linkage_size += cell_type[cell];
@@ -85,13 +83,13 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   for (size_t cell = 0; cell < num_cells; ++cell) {
 
     // insert the vector of node indices
-    const std::vector<int> cell_nodes = reader->get_cells_nodes(cell);
+    const std::vector<int> cell_nodes = reader->get_cellnodes(cell);
     cell_to_node_linkage.insert(cell_to_node_linkage.end(), cell_nodes.begin(),
                                 cell_nodes.end());
   }
 
   // get the number of sides
-  size_t num_sides = reader->get_dims_nsides();
+  size_t num_sides = reader->get_numsides();
 
   // generate the side node count vector
   size_t sn_linkage_size = 0;
@@ -99,18 +97,15 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   std::vector<unsigned> side_set_flag(num_sides);
   for (size_t side = 0; side < num_sides; ++side) {
 
-    // first obtain a side definition index
-    size_t side_def = reader->get_sides_type(side);
-
     // acquire the number of nodes associated with this side def
-    side_node_count[side] = reader->get_cell_defs_nnodes(side_def);
+    side_node_count[side] = reader->get_sidetype(side);
 
     // this is not required in rtt meshes, but is so in Draco_Mesh
     Check(dimension == 2 ? side_node_count[side] == 2 : true);
 
     // get the 1st side flag associated with this side
     // \todo: What happens when side has no flags?
-    side_set_flag[side] = reader->get_sides_flags(side, 0);
+    side_set_flag[side] = reader->get_sideflag(side);
 
     // increment size of cell-to-node linkage array
     sn_linkage_size += side_node_count[side];
@@ -124,13 +119,13 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   for (size_t side = 0; side < num_sides; ++side) {
 
     // insert the vector of node indices
-    const std::vector<int> side_nodes = reader->get_sides_nodes(side);
+    const std::vector<int> side_nodes = reader->get_sidenodes(side);
     side_to_node_linkage.insert(side_to_node_linkage.end(), side_nodes.begin(),
                                 side_nodes.end());
   }
 
   // get the number of nodes
-  size_t num_nodes = reader->get_dims_nnodes();
+  size_t num_nodes = reader->get_numnodes();
 
   Check(num_nodes >= num_cells);
   Check(num_nodes <= cn_linkage_size);
@@ -148,7 +143,7 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
     global_node_number[node] = node;
 
     // get coordinates for this node
-    const std::vector<double> node_coord = reader->get_nodes_coords(node);
+    const std::vector<double> node_coord = reader->get_nodecoord(node);
 
     // populate coordinate vector
     for (unsigned d = 0; d < dimension; ++d)
@@ -161,8 +156,9 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
                                                 side_to_node_linkage.end()));
   Ensure(*cn_minmax.first >= 0);
   Ensure(*cn_minmax.second < num_nodes);
-  Ensure(*sn_minmax.first >= 0);
-  Ensure(*sn_minmax.second < num_nodes);
+  Ensure(side_to_node_linkage.size() > 0 ? *sn_minmax.first >= 0 : true);
+  Ensure(side_to_node_linkage.size() > 0 ? *sn_minmax.second < num_nodes
+                                         : true);
 
   // >>> CONSTRUCT THE MESH
 
