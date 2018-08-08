@@ -28,8 +28,8 @@ namespace rtt_quadrature {
  */
 double Ordinate_Space::compute_azimuthalAngle(double const mu,
                                               double const eta) {
-  using rtt_units::PI;
   using rtt_dsxx::soft_equiv;
+  using rtt_units::PI;
 
   Require(std::abs(mu) <= 1.0);
   Require(std::abs(eta) <= 1.0);

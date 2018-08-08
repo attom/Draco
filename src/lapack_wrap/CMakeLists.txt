@@ -75,7 +75,7 @@ else()
 
   endif()
 
-  # Omit this package is the mangling was not found by FortranCInterface.cmake
+  # Omit this package if the mangling was not found by FortranCInterface.cmake
   if( EXISTS ${PROJECT_BINARY_DIR}/lapack_wrap/config.h )
 
     # ------------------------------------------------------------------------ #

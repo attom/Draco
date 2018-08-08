@@ -42,6 +42,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma GCC diagnostic ignored "-Wfloat-equal"
 #endif
 
+#ifdef _MSC_FULL_VER
+// 'type cast': pointer truncation from 'char[54]' to 'long'
+#pragma warning(disable : 4311)
+#endif
+
 /* Exercise the GSL_CBRNG macro */
 
 GSL_CBRNG(cbrng, threefry4x64); /* creates gsl_rng_cbrng */

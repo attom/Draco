@@ -382,7 +382,7 @@ void compton_fail_test(rtt_dsxx::UnitTest &ut) {
     FAILMSG("Did not successfully catch a CSK_generator exception.");
   }
 }
-}
+} // namespace rtt_compton_test
 
 //----------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {

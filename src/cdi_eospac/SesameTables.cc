@@ -287,8 +287,8 @@ unsigned SesameTables::matID(EOS_INTEGER returnType) const {
  * map<unsigned,vector<int>> rtMap
  */
 std::vector<char> SesameTables::pack(void) const {
-  using std::vector;
   using std::string;
+  using std::vector;
 
   // Size of packed SesameTables
   size_t packed_SesameTable_size(0);

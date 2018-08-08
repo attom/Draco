@@ -125,8 +125,8 @@ unsigned Lobatto::number_of_levels() const { return sn_order_; }
 
 //----------------------------------------------------------------------------//
 /* virtual */ string Lobatto::as_text(string const &indent) const {
-  string Result = indent + "type = lobatto" + indent + "  order = " +
-                  to_string(sn_order()) + indent + "end";
+  string Result = indent + "type = lobatto" + indent +
+                  "  order = " + to_string(sn_order()) + indent + "end";
 
   return Result;
 }

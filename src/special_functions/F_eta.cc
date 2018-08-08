@@ -148,11 +148,10 @@ double F_eta(double const eta, double const gamma) {
              (1 - (5. / 14.) * x * x + (5. / 24.) * x * x * x * x -
               (25. / 176.) * x * x * x * x * x * x +
               (35. / 1024.) * x * x * x * x * x * x * x * x);
-        dn1 = dx *
-              (5 * n1 / x +
-               0.2 * x * x * x * x * x * x *
-                   (-5. / 7. + (5. / 6.) * x * x - (75. / 88.) * x * x * x * x +
-                    (35. / 128.) * x * x * x * x * x * x));
+        dn1 = dx * (5 * n1 / x + 0.2 * x * x * x * x * x * x *
+                                     (-5. / 7. + (5. / 6.) * x * x -
+                                      (75. / 88.) * x * x * x * x +
+                                      (35. / 128.) * x * x * x * x * x * x));
       } else {
         n1 = (x * (2 * x * x - 3) * rad + 3 * log(rad + x)) / 8;
         dn1 = (dx * (2 * x * x - 3) * rad + 4 * x * x * dx * rad +

@@ -138,7 +138,8 @@ void test_superludist(rtt_c4::ParallelUnitTest &ut) {
        options.Equil             = YES;
        options.ParSymbFact       = NO;
        options.ColPerm           = METIS_AT_PLUS_A;
-       options.RowPerm           = LargeDiag;
+       options.RowPerm           = LargeDiag;      // version < 5.4
+       options.RowPerm           = LargeDiag_MC64; // version > 5.4
        options.ReplaceTinyPivot  = YES;
        options.IterRefine        = DOUBLE;
        options.Trans             = NOTRANS;
@@ -156,8 +157,13 @@ void test_superludist(rtt_c4::ParallelUnitTest &ut) {
     ITFAILS;
   if (options.IterRefine != SLU_DOUBLE)
     ITFAILS;
+#if SUPERLU_DIST_MAJOR_VERSION == 5 && SUPERLU_DIST_MINOR_VERSION >= 4
+  if (options.RowPerm != LargeDiag_MC64)
+    ITFAILS;
+#else
   if (options.RowPerm != LargeDiag)
     ITFAILS;
+#endif
 
   if (!iam) {
     print_sp_ienv_dist(&options);

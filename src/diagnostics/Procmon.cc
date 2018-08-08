@@ -84,9 +84,9 @@ void procmon_resource_print(std::string const &identifier, int const &mynode,
     proc_pid_string = buf.str();
   }
 
-// ----------------------------------------
-// Examine /proc/meminfo for total memory and free memory.
-// ----------------------------------------
+  // ----------------------------------------
+  // Examine /proc/meminfo for total memory and free memory.
+  // ----------------------------------------
 
 #ifdef MSVC
   // struct MEMORYSTATUSEX (all values in bytes)

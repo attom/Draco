@@ -16,17 +16,17 @@
 
 using namespace std;
 
+using rtt_c4::blocking_probe;
 using rtt_c4::C4_Req;
 using rtt_c4::C4_Status;
 using rtt_c4::C4_Traits;
-using rtt_c4::send;
-using rtt_c4::receive;
-using rtt_c4::send_async;
-using rtt_c4::receive_async;
-using rtt_dsxx::soft_equiv;
 using rtt_c4::probe;
-using rtt_c4::blocking_probe;
+using rtt_c4::receive;
+using rtt_c4::receive_async;
+using rtt_c4::send;
+using rtt_c4::send_async;
 using rtt_c4::send_receive;
+using rtt_dsxx::soft_equiv;
 
 //---------------------------------------------------------------------------//
 // TESTS

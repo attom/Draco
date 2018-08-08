@@ -67,7 +67,7 @@ std::shared_ptr<Quadrature> parse_lobatto(Token_Stream &tokens) {
   return Lobatto::parse(tokens);
 }
 
-} // end anonymous
+} // namespace
 
 namespace rtt_parser {
 //---------------------------------------------------------------------------//
@@ -150,7 +150,7 @@ parse_class<Quadrature>(Token_Stream &tokens) {
   return parse_class_from_table<Class_Parse_Table<Quadrature>>(tokens);
 }
 
-} // end namespace rtt_quadrature
+} // namespace rtt_parser
 
 //---------------------------------------------------------------------------//
 // end of quadrature/Quadrature.hh

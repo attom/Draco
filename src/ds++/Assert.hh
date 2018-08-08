@@ -208,7 +208,7 @@ DLL_PUBLIC_dsxx void check_insist_ptr(bool cond, char const *const condstr,
 //! Add hostname and pid to error messages.
 DLL_PUBLIC_dsxx std::string verbose_error(std::string const &message);
 
-} // end of rtt_dsxx
+} // namespace rtt_dsxx
 
 //---------------------------------------------------------------------------//
 /*!

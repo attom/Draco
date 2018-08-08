@@ -25,13 +25,13 @@
 //---------------------------------------------------------------------------//
 
 void test_static_access(rtt_dsxx::UnitTest &ut) {
+  using rtt_dsxx::soft_equiv;
+  using rtt_units::EV2K;
+  using rtt_units::PI;
   using std::cout;
   using std::endl;
-  using std::string;
   using std::ostringstream;
-  using rtt_dsxx::soft_equiv;
-  using rtt_units::PI;
-  using rtt_units::EV2K;
+  using std::string;
 
   // PI
 
@@ -69,13 +69,13 @@ void test_static_access(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void test_ctor(rtt_dsxx::UnitTest &ut) {
-  using std::ostringstream;
-  using std::endl;
   using rtt_dsxx::soft_equiv;
   using rtt_units::PhysicalConstants;
+  using rtt_units::PI;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
-  using rtt_units::PI;
+  using std::endl;
+  using std::ostringstream;
 
   UnitSystem us(UnitSystemType().SI());
   PhysicalConstants pc_def;
@@ -250,14 +250,14 @@ void test_ctor(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void test_scaled_values(rtt_dsxx::UnitTest &ut) {
-  using std::ostringstream;
-  using std::endl;
-  using std::pow;
   using rtt_dsxx::soft_equiv;
   using rtt_units::PhysicalConstants;
+  using rtt_units::PI;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
-  using rtt_units::PI;
+  using std::endl;
+  using std::ostringstream;
+  using std::pow;
 
   // test scaled values against expected values
 

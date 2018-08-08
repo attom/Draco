@@ -56,7 +56,7 @@ private:
   action const action_;
   std::thread t_;
 };
-} // rtt_dsxx::
+} // namespace rtt_dsxx
 
 #endif // include guard
 

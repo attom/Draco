@@ -186,7 +186,7 @@ public:
 //     }
 // };
 
-} // end namespace rtt_traits
+} // namespace rtt_viz
 
 #endif // __viz_Viz_Traits_hh__
 

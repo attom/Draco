@@ -1125,7 +1125,7 @@ bool test_hexa_27(rtt_dsxx::UnitTest &ut,
   }
   return ldum;
 }
-}
+} // namespace rtt_mesh_element_test
 
 //---------------------------------------------------------------------------//
 

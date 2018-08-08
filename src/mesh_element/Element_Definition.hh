@@ -133,17 +133,17 @@ public:
      * CGNS www site.
      */
   enum Element_Type {
-    NODE,       /*!< A dimensionless point in space. */
-    BAR_2,      /*!< The basic one-D, two-node "line" element. */
-    BAR_3,      /*!< Same as "BAR_2" except that a node is added in the
+    NODE,   /*!< A dimensionless point in space. */
+    BAR_2,  /*!< The basic one-D, two-node "line" element. */
+    BAR_3,  /*!< Same as "BAR_2" except that a node is added in the
                      *   center. */
-    TRI_3,      /*!< The basic two-D, three-node, "triangle" element. */
-    TRI_6,      /*!< Same as "TRI_3" except that nodes are added in the *
+    TRI_3,  /*!< The basic two-D, three-node, "triangle" element. */
+    TRI_6,  /*!< Same as "TRI_3" except that nodes are added in the *
                      *   middle of each edge. This is the standard
                      *   quadratic-serendipity finite element triangle.*/
-    QUAD_4,     /*!< The basic two-D, four-node "quadrilateral" element. */
-    QUAD_5,     /*!< A quad with a node in the center of one face. */
-    QUAD_6,     /*!< A quad with nodes in the center of two ADJOINING faces. This is the default QUAD_6. */
+    QUAD_4, /*!< The basic two-D, four-node "quadrilateral" element. */
+    QUAD_5, /*!< A quad with a node in the center of one face. */
+    QUAD_6, /*!< A quad with nodes in the center of two ADJOINING faces. This is the default QUAD_6. */
     QUAD_6a,    /*!< A quad with nodes in the center of two ADJOINING faces. */
     QUAD_6o,    /*!< A quad with nodes in the center of two OPPOSITE faces. */
     QUAD_7,     /*!< A quad with nodes in the center of three faces. */

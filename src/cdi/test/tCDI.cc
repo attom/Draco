@@ -22,15 +22,15 @@
 
 using namespace std;
 
-using rtt_cdi_test::DummyGrayOpacity;
-using rtt_cdi_test::DummyMultigroupOpacity;
-using rtt_cdi_test::DummyOdfmgOpacity;
-using rtt_cdi_test::DummyEoS;
 using rtt_cdi::CDI;
+using rtt_cdi::EoS;
 using rtt_cdi::GrayOpacity;
 using rtt_cdi::MultigroupOpacity;
 using rtt_cdi::OdfmgOpacity;
-using rtt_cdi::EoS;
+using rtt_cdi_test::DummyEoS;
+using rtt_cdi_test::DummyGrayOpacity;
+using rtt_cdi_test::DummyMultigroupOpacity;
+using rtt_cdi_test::DummyOdfmgOpacity;
 using rtt_dsxx::soft_equiv;
 
 //---------------------------------------------------------------------------//

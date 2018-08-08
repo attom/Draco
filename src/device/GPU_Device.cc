@@ -28,9 +28,7 @@ namespace rtt_device {
  * - Query the devices for features.
  */
 GPU_Device::GPU_Device(void) // int /*argc*/, char */*argv*/[] )
-    : deviceCount(0),
-      computeCapability(),
-      deviceName() {
+    : deviceCount(0), computeCapability(), deviceName() {
   // Initialize the library
   cudaError_enum err = cuInit(0); // currently must be 0.
   checkForCudaError(err);

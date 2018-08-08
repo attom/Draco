@@ -7,8 +7,7 @@ rem Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
 rem         All rights are reserved.
 rem ---------------------------------------------------------------------------
 
-rem This file copied from c:\program files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat.  
-rem It establishes a Visual Studio environment in a command prompt.  The 
+rem Establish a Visual Studio environment in a command prompt.  The 
 rem Windows shortcut runs the following command:
 rem
 rem %comspec% /[k|c] @call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 %*
@@ -17,21 +16,19 @@ rem This fill is called from win32-regression-master.bat so that all outpout
 rem can be captured in a log file.
 
 :setupvs17commenv
-rem 32-bit builds ==> x86
-rem @call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 %*
-@call "C:\Program Files (x86)\Microsoft Visual Studio\Preview\Community\VC\Auxiliary\Build\vcvarsall.bat" x86 %*
+@call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat" %*
 
 rem -------------------------------------------------------------------------------------------
 rem The main regression script starts here.
 rem -------------------------------------------------------------------------------------------
 
 :vendorsetup
-call e:\work\vendors\setupvendors.bat
+call c:\work\vendors64\setupvendors.bat
 
 :cdash
 rem set dashboard_type=Experimental
 set dashboard_type=Nightly
-set base_dir=e:\regress
+set base_dir=c:\regress
 set comp=cl
 set ctestparts=Configure,Build,Test,Submit
 
@@ -54,8 +51,9 @@ rem ----------------------------------------------------------------------------
 set subproj=draco
 set build_type=Debug
 set script_name=Draco_Win32.cmake
-set script_dir=e:\regress\draco\regression
+set script_dir=%base_dir%\draco\regression
 set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
+set DRACO_DIR=%work_dir%\target
 
 rem navigate to the workdir
 if not exist %work_dir% mkdir %work_dir%
@@ -71,6 +69,7 @@ echo "ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%cte
 ctest -VV -S %script_dir%\%script_name%,%dashboard_type%,%build_type%,%ctestparts% > %base_dir%\logs\draco-%build_type%-cbts.log 2>&1
 
 rem goto :done
+rem goto :dracorelease
 
 rem -------------------------------------------------------------------------------------------
 :jayennedebug
@@ -78,7 +77,7 @@ rem ----------------------------------------------------------------------------
 set subproj=jayenne
 set build_type=Debug
 set script_name=Jayenne_Win32.cmake
-set script_dir=e:\regress\jayenne\regression
+set script_dir=%base_dir%\jayenne\regression
 set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
 
 rem navigate to the workdir
@@ -104,8 +103,9 @@ REM rem ------------------------------------------------------------------------
 set subproj=draco
 set build_type=Release
 set script_name=Draco_Win32.cmake
-set script_dir=e:\regress\draco\regression
+set script_dir=%base_dir%\draco\regression
 set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
+set DRACO_DIR=%work_dir%\target
 
 rem navigate to the workdir
 if not exist %work_dir% mkdir %work_dir%
@@ -130,7 +130,7 @@ REM rem ------------------------------------------------------------------------
 
 set subproj=jayenne
 set build_type=Release
-set script_dir=e:\regress\jayenne\regression
+set script_dir=%base_dir%\jayenne\regression
 set script_name=Jayenne_Win32.cmake
 set work_dir=%base_dir%\cdash\%subproj%\%dashboard_type%_%comp%\%build_type%
 

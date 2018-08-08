@@ -20,7 +20,7 @@ file( GLOB test_sources *.cc )
 
 add_scalar_tests(
    SOURCES "${test_sources}"
-   DEPS    "Lib_dsxx;lapack" )
+   DEPS    "Lib_dsxx;lapack;blas" )
 
 target_include_directories( Ut_lapack_wrap_tstBlas_Level_1_exe
   PRIVATE $<BUILD_INTERFACE:${lapack_wrap_BINARY_DIR}> )

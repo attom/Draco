@@ -139,7 +139,7 @@ template <typename T> inline T *Data_Table<T>::access() {
   return const_cast<T *>(d_begin);
 }
 
-} //end namespace
+} // namespace rtt_dsxx
 
 #endif // dsxx_Data_Table_hh
 

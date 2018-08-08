@@ -115,7 +115,7 @@ void field_ts_advisor::update_tstep(const ts_manager &tsm, const FT &q_old,
   Ensure(invariant_satisfied());
 }
 
-} // end of rtt_timestep namespace
+} // namespace rtt_timestep
 
 //---------------------------------------------------------------------------//
 // end of field_ts_advisor.t.hh

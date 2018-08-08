@@ -18,11 +18,11 @@
 #include <vector>
 
 namespace rtt_parser {
-using std::vector;
-using std::pair;
-using std::string;
 using std::map;
 using std::ostream;
+using std::pair;
+using std::string;
+using std::vector;
 
 //===========================================================================//
 /*!

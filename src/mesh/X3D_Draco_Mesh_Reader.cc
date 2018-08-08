@@ -23,8 +23,10 @@ namespace rtt_mesh {
  *
  * \param[in] filename_ name of file to be parsed
  */
-X3D_Draco_Mesh_Reader::X3D_Draco_Mesh_Reader(const std::string filename_)
-    : filename(filename_) {
+X3D_Draco_Mesh_Reader::X3D_Draco_Mesh_Reader(
+    const std::string &filename_,
+    const std::vector<std::string> &bdy_filenames_)
+    : filename(filename_), bdy_filenames(bdy_filenames_) {
   // check for valid file name
   Insist(filename_.size() > 0, "No file name supplied.");
 }
@@ -120,6 +122,11 @@ void X3D_Draco_Mesh_Reader::read_mesh() {
   x3d_cellface_map = map_x3d_block<int, int>("cells", dist);
   Check(dist > dist_old);
 
+  // STEP 6: parse side node indices and map to faces
+
+  if (bdy_filenames.size() > 0)
+    read_bdy_files();
+
   Ensure(parsed_pairs.size() > 0);
   Ensure(x3d_header_map.size() > 0);
   Ensure(x3d_coord_map.size() > 0);
@@ -171,19 +178,21 @@ std::vector<int> X3D_Draco_Mesh_Reader::get_cellnodes(size_t cell) const {
     // get the face index, which will by key for face-to-node map
     int face = cell_data[i];
 
-    // number of nodes is first value after face index in x3d file
-    const std::vector<int> &face_data = x3d_facenode_map.at(face);
-    const size_t num_nodes = face_data[0];
+    // get a vector of nodes for this face
+    std::vector<int> tmp_vec = get_facenodes(face);
 
-    // push each node instance onto node vector (subtract 1 to get 0-based node)
-    for (size_t j = 1; j <= num_nodes; ++j)
-      node_indexes.push_back(face_data[j] - 1);
+    // insert into the cell vector
+    node_indexes.insert(node_indexes.end(), tmp_vec.begin(), tmp_vec.end());
   }
 
   // reduce return vector to unique node entries
   std::sort(node_indexes.begin(), node_indexes.end());
   node_indexes.erase(std::unique(node_indexes.begin(), node_indexes.end()),
                      node_indexes.end());
+
+  // substract 1 to get base 0 nodes
+  for (size_t i = 0; i < node_indexes.size(); ++i)
+    node_indexes[i]--;
 
   Ensure(node_indexes.size() > 0);
   return node_indexes;
@@ -224,6 +233,129 @@ std::string
 X3D_Draco_Mesh_Reader::convert_key<std::string>(const std::string &skey) {
   std::string ret_key = skey;
   return ret_key;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Return the vector of node indices for a given face.
+ *
+ * \param[in] face index of face
+ *
+ * \return vector of int node indices
+ */
+std::vector<int> X3D_Draco_Mesh_Reader::get_facenodes(int face) const {
+
+  Require(face <= x3d_header_map.at("faces")[0]);
+
+  // number of nodes is first value after face index in x3d file
+  const std::vector<int> &face_data = x3d_facenode_map.at(face);
+  const size_t num_nodes = face_data[0];
+
+  // return vector
+  std::vector<int> node_indexes(num_nodes);
+
+  // push each node instance onto node vector (subtract 1 to get 0-based node)
+  for (size_t j = 1; j <= num_nodes; ++j)
+    node_indexes[j - 1] = face_data[j];
+
+  Ensure(node_indexes.size() > 0);
+  return node_indexes;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Read side node lists from given bdy files
+ */
+void X3D_Draco_Mesh_Reader::read_bdy_files() {
+
+  Require(bdy_filenames.size() > 0);
+  Require(x3d_header_map.size() > 0);
+  Require(x3d_facenode_map.size() > 0);
+
+  std::vector<int> side_node_vec;
+
+  for (auto bdy_fname : bdy_filenames) {
+
+    // open file
+    std::ifstream bdy_file(bdy_fname.c_str());
+
+    // file must exist and be readable
+    Insist(bdy_file.is_open(),
+           "Failed to find or open specified X3D mesh file.");
+
+    // append entries to vector of side nodes
+    while (!bdy_file.eof()) {
+
+      // get a line from the file
+      std::string data_line;
+      std::getline(bdy_file, data_line);
+
+      // trim outermost white space
+      data_line = rtt_dsxx::trim(data_line);
+
+      // ignore empty lines
+      if (data_line.size() == 0)
+        continue;
+
+      // try converting to integer
+      int side_node;
+      try {
+        side_node = rtt_dsxx::parse_number_impl<int>(data_line);
+      } catch (std::invalid_argument &err) {
+        Insist(false, err.what());
+      }
+
+      // add to side-node vector
+      side_node_vec.push_back(side_node);
+    }
+
+    // close the file
+    bdy_file.close();
+  }
+
+  // reduce side-node vector to unique entries
+  std::sort(side_node_vec.begin(), side_node_vec.end());
+  side_node_vec.erase(std::unique(side_node_vec.begin(), side_node_vec.end()),
+                      side_node_vec.end());
+
+  // Insist that there was at least one side node in all the files
+  Insist(side_node_vec.size() > 0, "Bdy file(s) read, but no side nodes.");
+
+  // treat sides as a subset of cell faces here
+  int num_side = 0;
+  for (auto face_nodes : x3d_facenode_map) {
+
+    // sort vector of nodes associated with this face
+    std::vector<int> fnode_vec = get_facenodes(face_nodes.first);
+    std::sort(fnode_vec.begin(), fnode_vec.end());
+
+    // \todo: check for node index duplicates
+
+    // find commond nodes between side nodes and face
+    std::vector<int> nodes_in_common;
+    std::set_intersection(side_node_vec.begin(), side_node_vec.end(),
+                          fnode_vec.begin(), fnode_vec.end(),
+                          std::back_inserter(nodes_in_common));
+
+    // if the face is entirely composed of side nodes, then it is a side
+    if (nodes_in_common == fnode_vec) {
+
+      // add to the side-node map
+      x3d_sidenode_map.insert(
+          std::pair<int, std::vector<int>>(num_side, fnode_vec));
+
+      // increment side counter
+      num_side++;
+    }
+  }
+
+  // decrement node indices
+  for (int j = 0; j < num_side; ++j) {
+    for (size_t i = 0; i < x3d_sidenode_map.at(j).size(); ++i)
+      x3d_sidenode_map.at(j)[i]--;
+  }
+
+  Ensure(x3d_sidenode_map.size() > 0);
 }
 
 } // end namespace rtt_mesh

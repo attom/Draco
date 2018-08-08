@@ -24,8 +24,8 @@ using namespace rtt_cdi_analytic;
 using namespace rtt_dsxx;
 using rtt_cdi::CDI;
 using rtt_cdi::OdfmgOpacity;
-using rtt_parser::Expression;
 using rtt_parser::Constant_Expression;
+using rtt_parser::Expression;
 
 //---------------------------------------------------------------------------//
 

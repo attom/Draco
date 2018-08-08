@@ -64,7 +64,7 @@ bool validate(const std::pair<IT, IT> &it, IT begin, IT end) {
   return !(it.first == end ||   // v > *(end-1)
            it.second == begin); // v < *begin
 }
-}
+} // namespace
 
 //---------------------------------------------------------------------------//
 template <typename IT>

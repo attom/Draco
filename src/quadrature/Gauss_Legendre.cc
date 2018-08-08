@@ -49,8 +49,8 @@ unsigned Gauss_Legendre::number_of_levels() const { return sn_order_; }
 
 //----------------------------------------------------------------------------//
 /* virtual */ string Gauss_Legendre::as_text(string const &indent) const {
-  string Result = indent + "type = gauss legendre" + indent + "  order = " +
-                  to_string(sn_order_) + indent + "end";
+  string Result = indent + "type = gauss legendre" + indent +
+                  "  order = " + to_string(sn_order_) + indent + "end";
 
   return Result;
 }

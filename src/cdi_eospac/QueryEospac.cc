@@ -23,8 +23,8 @@
 
 //---------------------------------------------------------------------------//
 void query_eospac() {
-  using std::endl;
   using std::cout;
+  using std::endl;
 
   cout << "Starting QueryEospac...\n\n"
        << "Material tables are published at "
@@ -88,7 +88,8 @@ void query_eospac() {
 
     // Result
     cout
-        << "For table " << tableID
+        << "For table "
+        << tableID
         // << " (" << SesameTab.tableName[ SesameTab.returnTypes(tableID) ] << ")"
         << endl;
     if (eosprop == std::string("Uic_DT")) {

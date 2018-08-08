@@ -67,9 +67,9 @@ void svdfit(RandomContainer const &x, RandomContainer const &y,
   Require(x.size() == sig.size());
   Require(a.size() > 0);
 
-  using rtt_linear::svdcmp;
-  using rtt_linear::svbksb;
   using rtt_dsxx::square;
+  using rtt_linear::svbksb;
+  using rtt_linear::svdcmp;
 
   unsigned const ndata = x.size();
   unsigned const ma = a.size();

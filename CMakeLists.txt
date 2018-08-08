@@ -24,7 +24,7 @@ project( Draco
 # 3. Ninja, Codeblocks or Eclipse CDT4 generators.
 # 4. Unix Makefile generators when $ENV{FC} is not set (clang on Linux)
 if( ${CMAKE_GENERATOR} MATCHES "Unix Makefiles" AND
-    ( NOT "$ENV{FC}x" STREQUAL "x" OR CMAKE_Fortran_COMPILER ))
+    (DEFINED ENV{FC} OR DEFINED CMAKE_Fortran_COMPILER ))
   enable_language( Fortran OPTIONAL )
 endif()
 

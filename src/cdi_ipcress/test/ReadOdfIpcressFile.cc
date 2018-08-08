@@ -13,16 +13,16 @@
 #include "ds++/XGetopt.hh"
 #include <cstdlib> // atof
 
-using rtt_cdi_ipcress::IpcressOdfmgOpacity;
 using rtt_cdi_ipcress::IpcressFile;
+using rtt_cdi_ipcress::IpcressOdfmgOpacity;
 
 using std::cerr;
-using std::cout;
 using std::cin;
+using std::cout;
 using std::endl;
-using std::string;
 using std::istringstream;
 using std::ostringstream;
+using std::string;
 
 typedef std::shared_ptr<const IpcressOdfmgOpacity> SP_Goo;
 typedef std::vector<double> vec_d;

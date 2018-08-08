@@ -14,8 +14,8 @@
 #include <vector>
 
 using namespace std;
-using rtt_c4::C4_Status;
 using rtt_c4::C4_Req;
+using rtt_c4::C4_Status;
 
 //---------------------------------------------------------------------------//
 // TESTS

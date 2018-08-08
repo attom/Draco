@@ -14,9 +14,9 @@
 #include "Ordinate_Space.hh"
 
 namespace rtt_quadrature {
+using rtt_mesh_element::Geometry;
 using std::string;
 using std::vector;
-using rtt_mesh_element::Geometry;
 
 //============================================================================//
 /*!

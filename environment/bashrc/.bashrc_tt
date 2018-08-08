@@ -79,8 +79,8 @@ fi
 
 function dracoenv ()
 {
-  # module unload gcc/6.1.0 cray-libsci intel
-  # module load intel/17.0.4
+  module unload gcc cray-libsci intel
+  module load intel/18.0.2
   for m in $dracomodules; do
     module load $m
   done

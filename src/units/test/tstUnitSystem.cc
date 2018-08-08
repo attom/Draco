@@ -19,13 +19,13 @@
 //---------------------------------------------------------------------------//
 
 void test_ctor(rtt_dsxx::UnitTest &ut) {
-  using std::cout;
-  using std::endl;
-  using std::string;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
+  using std::cout;
+  using std::endl;
+  using std::ostringstream;
+  using std::string;
 
   {
     UnitSystem uX4(UnitSystemType().X4());
@@ -97,13 +97,13 @@ void test_ctor(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void test_def_ctor(rtt_dsxx::UnitTest &ut) {
-  using std::cout;
-  using std::endl;
-  using std::string;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
+  using std::cout;
+  using std::endl;
+  using std::ostringstream;
+  using std::string;
 
   {
     UnitSystem uDef;
@@ -177,13 +177,13 @@ void test_def_ctor(rtt_dsxx::UnitTest &ut) {
 //--------------------------------------------------------------------//
 
 void test_more_accessors(rtt_dsxx::UnitTest &ut) {
-  using std::cout;
-  using std::endl;
-  using std::string;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
+  using std::cout;
+  using std::endl;
+  using std::ostringstream;
+  using std::string;
 
   // Create a custom UnitSystem
   UnitSystem myus(UnitSystemType()
@@ -288,13 +288,13 @@ void test_more_accessors(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void test_aux_accessors(rtt_dsxx::UnitTest &ut) {
-  using std::cout;
-  using std::endl;
-  using std::string;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
+  using std::cout;
+  using std::endl;
+  using std::ostringstream;
+  using std::string;
 
   // Create SI and X4 UnitSystem
   UnitSystem uX4(UnitSystemType().X4());
@@ -319,13 +319,13 @@ void test_aux_accessors(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void logic_test(rtt_dsxx::UnitTest &ut) {
-  using std::cout;
-  using std::endl;
-  using std::string;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
+  using std::cout;
+  using std::endl;
+  using std::ostringstream;
+  using std::string;
 
   // Create SI and X4 UnitSystem
   UnitSystem si;
@@ -457,13 +457,13 @@ void logic_test(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void test_eq_op(rtt_dsxx::UnitTest &ut) {
-  using std::cout;
-  using std::endl;
-  using std::string;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
+  using std::cout;
+  using std::endl;
+  using std::ostringstream;
+  using std::string;
 
   // Create SI and X4 UnitSystem
   UnitSystem si;
@@ -613,13 +613,13 @@ void test_eq_op(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void test_valid_units(rtt_dsxx::UnitTest &ut) {
-  using std::cout;
-  using std::endl;
-  using std::string;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystem;
   using rtt_units::UnitSystemType;
+  using std::cout;
+  using std::endl;
+  using std::ostringstream;
+  using std::string;
 
   // Create X4 UnitSystem
   UnitSystem uX4(UnitSystemType().X4());

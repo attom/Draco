@@ -15,9 +15,9 @@
 #include <iostream>
 
 namespace rtt_parser {
+using std::pointer_to_unary_function;
 using std::string;
 using std::vector;
-using std::pointer_to_unary_function;
 
 //===========================================================================//
 /*!

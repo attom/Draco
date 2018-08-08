@@ -208,8 +208,8 @@ IpcressGrayOpacity::getOpacity(double targetTemperature,
  * iterators because they are \b not required to be \c char*.
  */
 std::vector<char> IpcressGrayOpacity::pack() const {
-  using std::vector;
   using std::string;
+  using std::vector;
 
   // pack up the energy policy descriptor
   vector<char> packed_descriptor;

@@ -17,8 +17,8 @@
 #include <fstream>
 
 namespace rtt_parser {
-using std::string;
 using std::set;
+using std::string;
 
 //-------------------------------------------------------------------------//
 /*!
@@ -88,7 +88,7 @@ private:
   string messages_; //!< Collection of diagnostic messages
 };
 
-} // rtt_parser
+} // namespace rtt_parser
 
 #endif // CCS4_String_Token_Stream_HH
 

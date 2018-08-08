@@ -173,7 +173,7 @@ std::string verbose_error(std::string const &message) {
   return errstr.str();
 } // verbose_error
 
-} // end of rtt_dsxx
+} // namespace rtt_dsxx
 
 //---------------------------------------------------------------------------//
 // end of Assert.cc

@@ -249,9 +249,9 @@ macro( aut_register_test )
   endif(VERBOSE_DEBUG)
 
   # Look for python, which is used to drive application unit tests
-  find_program(PYTHON_COMMAND python)
-  if( NOT EXISTS ${PYTHON_COMMAND})
-    message( FATAL_ERROR "Python not found in PATH")
+  if( NOT PYTHONINTERP_FOUND )
+     # python should have been found when vendor_libraries.cmake was run.
+    message( FATAL_ERROR "Draco requires python. Python not found in PATH.")
   endif()
 
   # Check to see if driver file is python or CMake
@@ -289,7 +289,7 @@ macro( aut_register_test )
   if (${PYTHON_TEST})
     add_test(
       NAME ${ctestname_base}${argname}
-      COMMAND ${PYTHON_COMMAND}
+      COMMAND "${PYTHON_EXECUTABLE}"
       ${aut_DRIVER}
       ${SHARED_ARGUMENTS}
       )

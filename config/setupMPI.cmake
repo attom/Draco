@@ -146,8 +146,10 @@ macro( setupOpenMPI )
 
   # Setting mpi_paffinity_alone to 0 allows parallel ctest to work correctly.
   # MPIEXEC_POSTFLAGS only affects MPI-only tests (and not MPI+OpenMP tests).
-  if( "$ENV{GITLAB_CI}" STREQUAL "true" )
-    set(runasroot "--allow-run-as-root")
+  # . --oversubscribe is only available for openmpi version >= 3.0
+  # . -H localhost,localhost,localhost,localhost might work for older versions.
+  if( "$ENV{GITLAB_CI}" STREQUAL "true" OR "$ENV{TRAVIS}" STREQUAL "true")
+    set(runasroot "--allow-run-as-root --oversubscribe")
   endif()
 
   # This flag also shows up in jayenne/pkg_tools/run_milagro_test.py and
@@ -512,19 +514,19 @@ macro( setupMPILibrariesWindows )
             COMMAND wmic cpu get NumberOfCores
             OUTPUT_VARIABLE MPI_CORES_PER_CPU
             OUTPUT_STRIP_TRAILING_WHITESPACE )
-        execute_process(
+         execute_process(
             COMMAND wmic computersystem get NumberOfLogicalProcessors
             OUTPUT_VARIABLE MPIEXEC_MAX_NUMPROCS
             OUTPUT_STRIP_TRAILING_WHITESPACE )
          execute_process(
             COMMAND wmic computersystem get NumberOfProcessors
             OUTPUT_VARIABLE MPI_CPUS_PER_NODE
-            OUTPUT_STRIP_TRAILING_WHITESPACE )
-         string( REGEX REPLACE ".*([0-9]+)" "\\1" MPI_CORES_PER_CPU
+            OUTPUT_STRIP_TRAILING_WHITESPACE ) 
+         string( REGEX REPLACE ".*[\n]([0-9]+$)" "\\1" MPI_CORES_PER_CPU
            ${MPI_CORES_PER_CPU})
-         string( REGEX REPLACE ".*([0-9]+)" "\\1" MPIEXEC_MAX_NUMPROCS
+         string( REGEX REPLACE ".*[\n]([0-9]+$)" "\\1" MPIEXEC_MAX_NUMPROCS
            ${MPIEXEC_MAX_NUMPROCS})
-         string( REGEX REPLACE ".*([0-9]+)" "\\1" MPI_CPUS_PER_NODE
+         string( REGEX REPLACE ".*[\n]([0-9]+$)" "\\1" MPI_CPUS_PER_NODE
            ${MPI_CPUS_PER_NODE})
 
          set( MPI_CPUS_PER_NODE ${MPI_CPUS_PER_NODE} CACHE STRING

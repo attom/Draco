@@ -30,17 +30,18 @@ using rtt_units::PI;
 
 void tstF32(UnitTest &ut) {
   double f1 = F32(-10.0);
-  if (soft_equiv(f1, exp(-10.0 + gsl_sf_lngamma(2.5)) *
-                         (1 - exp(-10.0) / (4 * sqrt(2.))),
+  if (soft_equiv(f1,
+                 exp(-10.0 + gsl_sf_lngamma(2.5)) *
+                     (1 - exp(-10.0) / (4 * sqrt(2.))),
                  2e-6)) {
     ut.passes("correct F32 for -10.0");
   } else {
     ut.failure("NOT correct F32 for -10.0");
   }
   f1 = F32(1000.0);
-  if (soft_equiv(f1, pow(1000.0, 2.5) / 2.5 +
-                         PI * PI * 1.5 * pow(1000.0, 0.5) / 6.0,
-                 1.0e-10)) {
+  if (soft_equiv(
+          f1, pow(1000.0, 2.5) / 2.5 + PI * PI * 1.5 * pow(1000.0, 0.5) / 6.0,
+          1.0e-10)) {
     ut.passes("correct F32 for 1000.0");
   } else {
     ut.failure("NOT correct F32 for 1000.0");

@@ -28,8 +28,8 @@ using namespace rtt_dsxx;
 //---------------------------------------------------------------------------//
 
 void runTest(UnitTest &ut) {
-  using rtt_meshReaders::Hex_Mesh_Reader;
   using rtt_mesh_element::Element_Definition;
+  using rtt_meshReaders::Hex_Mesh_Reader;
 
   cout << "\n******* CIC-19 Hex Mesh Reader Tests *******" << std::endl;
 
@@ -462,7 +462,7 @@ bool check_map(const std::map<std::string, std::set<int>> &elmsets,
     pass = false;
   return pass;
 }
-}
+} // namespace rtt_meshReaders_test
 
 //---------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {

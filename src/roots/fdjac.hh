@@ -47,9 +47,9 @@ void fdjac(const std::vector<Field> &x, const std::vector<Field> &fvec,
            std::vector<Field> &df, const Function_N_to_N &vecfunc) {
   Require(x.size() == fvec.size());
 
+  using std::abs;
   using std::numeric_limits;
   using std::vector;
-  using std::abs;
 
   // Square root of the machine precision
   static const double EPS = sqrt(numeric_limits<Field>::epsilon());

@@ -37,9 +37,9 @@ void tstFM12(UnitTest &ut) {
     ut.failure("NOT correct FM12 for -10.0");
   }
   f1 = FM12(1000.0);
-  if (soft_equiv(f1, pow(1000.0, 0.5) / 0.5 -
-                         PI * PI * 0.5 * pow(1000.0, -1.5) / 6.0,
-                 1.0e-10)) {
+  if (soft_equiv(
+          f1, pow(1000.0, 0.5) / 0.5 - PI * PI * 0.5 * pow(1000.0, -1.5) / 6.0,
+          1.0e-10)) {
     ut.passes("correct FM12 for 1000.0");
   } else {
     ut.failure("NOT correct FM12 for 1000.0");

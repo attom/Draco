@@ -65,9 +65,9 @@ void broydn(std::vector<Field> &x, const double /*STPMX*/,
             const Function_N_to_N &vecfunc, const double alf) {
   Require(x.size() > 0);
 
-  using std::vector;
   using std::numeric_limits;
   using std::range_error;
+  using std::vector;
   using namespace rtt_linear;
   using namespace rtt_roots;
 
@@ -302,9 +302,9 @@ template <class Field, class Function_N_to_N, class Function_N_to_NN>
 void broydn(std::vector<Field> &x, const double /*STPMX*/,
             Function_N_to_N vecfunc, Function_N_to_NN dvecfunc,
             const double alf, double const min_lambda) {
-  using std::vector;
   using std::numeric_limits;
   using std::range_error;
+  using std::vector;
   using namespace rtt_linear;
   using namespace rtt_roots;
 

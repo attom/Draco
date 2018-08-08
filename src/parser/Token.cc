@@ -168,7 +168,7 @@ bool Token::check_class_invariant() const {
          (type_ != OTHER || Is_Other_Text(text_.c_str()));
 }
 
-} // rtt_parser
+} // namespace rtt_parser
 //---------------------------------------------------------------------------//
 //                          end of Token_Stream.cc
 //---------------------------------------------------------------------------//

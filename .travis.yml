@@ -1,208 +1,93 @@
+#------------------------------------------------------------------------------#
+# File:   .travis.yml
+# Author: Kelly Thompson <kgt@lanl.gov>
+# Date:   Friday, Jul 13, 2018, 07:41 am
+# Purpose: Instructions for Travis continuous integration testing on GitHub.
+#         This script wil be run to test pull requests
+# Note:   Copyright (C) 2018 Los Alamos National Security, LLC.
+#         All rights reserved.
+#------------------------------------------------------------------------------#
+
 language: cpp
 sudo: required
-dist: trusty
+services:
+  - docker
 
-# Notes:
-# $HOME -> /home/travis
-# code checked out to (this is $PWD for the script) -> /home/travis/build/lanl/Draco
-# travis will not install numdiff -> use ./.travis-install-dependencies.sh.
+#------------------------------------------------------------------------------#
+# Notes: Build docker container before running this script:
+#
+# 1. cd to direcotry contataining Dockerfile.
+# 2. Build the docker container.  This can take an hour or more.  If you are
+#    starting from scratch, you will need to change the first line of the
+#    Dockerfile so that it starts from 'ubuntu' instead of 'draco-travis-ci'
+#
+#    docker build --rm --pull --tag draco-travis-ci:latest .
+#
+# 3. Commit and upload the updated container:
+#
+#    docker ps -a # find new container name
+#    docker commit -m "updated cmake version" -a <dockerhub moniker> \
+#           <container_name> kinetictheory/draco-travis-ci:latest
+#    docker login -u kinetictheory # must provide password to upload
+#    docker push
+#
+# 4. Optional: test the container with an interactive run (the -l is important!)
+#
+#    docker run -it kinetictheory/draco-travis-ci /bin/bash -l
+#
+#    or possibly
+#
+#    docker run -it -v /path/to/draco:/home/travis/draco -w /home/travis/draco kinetictheory/draco-travis-ci /bin/bash -l -c "./.travis-run-tests.sh"
+#
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+# Travis Environment:
+#
+# HOME=/home/travis
+# PWD=/home/travis/build/lanl/Draco
+#     (starting directory for Travis, sources are here)
+#
+# Docker Environment:
+#
+# - The docker image mounts the PR sources (/home/travis/build/lanl/Draco) as
+#   /home/travis/Draco
+# - The vneodrs are at /vendors/spack
+# - Spack is already in the environment
+#------------------------------------------------------------------------------#
 
 env:
   global:
-    - DISTRO=trusty
-    - CCACHE_CPP2=yes
-    - GCCVER=7
-    - CC=gcc-${GCCVER}
-    - CXX=g++-${GCCVER}
-    - FC=gfortran-${GCCVER}
-    - VENDOR_DIR=${HOME}/vendors
-    - CLANG_FORMAT_VER=6.0
-    - GSL_VER=2.4
-    - NUMDIFF_VER=5.8.1
-    - OPENMPI_VER=1.10.5
-    - RANDOM123_VER=1.09
-    - CMAKE_VER=3.9.0-Linux-x86_64
-    - CMAKE=$VENDOR_DIR/cmake-${CMAKE_VER}/bin/cmake
-    - CTEST=$VENDOR_DIR/cmake-${CMAKE_VER}/bin/ctest
-    - RANDOM123_INC_DIR=${VENDOR_DIR}/Random123-1.09/include
-    - GSL_ROOT_DIR=${VENDOR_DIR}/gsl-${GSL_VER}
-    - OMP_NUM_THREADS=4
-    - topdir=/home/travis/build/losalamos/Draco
-    - COVERAGE=ON
-#   - BLAS_blas_LIBRARY=/usr/lib/libblas.a
-#   - LAPACK_LIB_DIR=/usr/lib
+    - BUILD_DIR=/home/travis/Draco/build
+    - SOURCE_DIR=/home/travis/Draco
+    - T_SOURCE_DIR=/home/travis/build/lanl/Draco
+    - VENDOR_DIR=/vendors
+  matrix:
+  - STYLE=ON
+  - WERROR=ON COVERAGE=ON DRACO_C4=SCALAR
+  - WERROR=ON COVERAGE=ON DRACO_C4=MPI
 
-matrix:
-    - STYLE=ON
-    - WERROR=ON
+# matrix:
+#   allow_failures:
+#     - compiler: gcc
+#       env: DISTRO=ubuntu DRACO_C4=SCALAR WERROR=yes
+#     - compiler: gcc
+#       env: DISTRO=ubuntu STYLE=ON
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - ccache
-      - gcc-7
-      - g++-7
-      - gfortran-7
-      - environment-modules
-      - graphviz
-      - doxygen
+# Coverage with Docker - https://docs.codecov.io/docs/testing-with-docker
 
-before_install:
-  - mkdir -p ${VENDOR_DIR}/bin & export PATH=${VENDOR_DIR}/bin:$PATH
-  - export PATH=${PATH}:${VENDOR_DIR}/numdiff-${NUMDIFF_VER}/bin:${VENDOR_DIR}/gsl-${GSL_VER}/bin:${VENDOR_DIR}/cmake-${CMAKE_VER}/bin
-  - pip install --upgrade --user pip
-  - if [[ ${COVERAGE}  ]]; then pip install --user codecov; fi
+#before_install:
+#  - pip install --upgrade --user pip
+#  - if [[ ${COVERAGE}  ]]; then pip install --user codecov; fi
 
 install:
-  - travis_wait 30 ./.travis-install-dependencies.sh
-
-before_script:
-  - if [[ ${WERROR} ]]; then for i in CC CXX Fortran; do eval export ${i}_FLAGS=\"-Werror\"; done; fi
-  - if [[ ${COVERAGE} ]]; then for i in CC CXX Fortran; do eval export ${i}_FLAGS+=\" --coverage\"; done; fi
+  - travis_retry timeout 540 docker pull kinetictheory/draco-travis-ci
 
 script:
-  - ./.travis-run-tests.sh
+  - if [[ $COVERAGE ]]; then ci_env=`/bin/bash <(curl -s https://codecov.io/env)`; fi
+  - docker run ${ci_env} -v ${T_SOURCE_DIR}:${SOURCE_DIR} -e VENDOR_DIR=${VENDOR_DIR} -e BUILD_DIR=${BUILD_DIR} -e SOURCE_DIR=${SOURCE_DIR} -e STYLE=${STYLE} -e COVERAGE=${COVERAGE} -e WERROR=${WERROR} -e DRACO_C4=${DRACO_C4} kinetictheory/draco-travis-ci /bin/bash -l -c "${SOURCE_DIR}/regression/travis-run-tests.sh"
 
-after_success:
-  - if [[ ${COVERAGE} ]]; then codecov --gcov-exec gcov-${GCCVER}; fi
-
-cache:
-  - ccache
-
-compiler:
-  - gcc-7
-
-git:
-  depth: 3
-
-
-# output from printenv (2018-06-24)
-# CASHER_DIR=/home/travis/.casher
-# CC=gcc-7
-# CCACHE_CPP2=yes
-# CC_FLAGS=-Werror --coverage
-# CI=true
-# CLANG_FORMAT_VER=6.0
-# CMAKE=/home/travis/cmake-3.9.0-Linux-x86_64/bin/cmake
-# CMAKE_VER=3.9.0-Linux-x86_64
-# COMPOSER_NO_INTERACTION=1
-# CONTINUOUS_INTEGRATION=true
-# COVERAGE=ON
-# CTEST=/home/travis/cmake-3.9.0-Linux-x86_64/bin/ctest
-# CXX=g++-7
-# CXX_FLAGS=-Werror --coverage
-# DEBIAN_FRONTEND=noninteractive
-# DISTRO=trusty
-# ELIXIR_VERSION=1.4.5
-# FC=gfortran-7
-# Fortran_FLAGS=-Werror --coverage
-# GCCVER=7
-# GEM_HOME=/home/travis/.rvm/gems/ruby-2.4.1
-# GEM_PATH=/home/travis/.rvm/gems/ruby-2.4.1:/home/travis/.rvm/gems/ruby-2.4.1@global
-# GIT_ASKPASS=echo
-# GOPATH=/home/travis/gopath
-# GOROOT=/home/travis/.gimme/versions/go1.7.4.linux.amd64
-# HAS_ANTARES_THREE_LITTLE_FRONZIES_BADGE=true
-# HAS_JOSH_K_SEAL_OF_APPROVAL=true
-# HISTCONTROL=ignoredups:ignorespace
-# HISTFILESIZE=2000
-# HISTSIZE=1000
-# HOME=/home/travis
-# IRBRC=/home/travis/.rvm/rubies/ruby-2.4.1/.irbrc
-# JAVA_HOME=/usr/lib/jvm/java-8-oracle
-# JDK_SWITCHER_DEFAULT=oraclejdk8
-# JRUBY_OPTS= --client -J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false
-# LANG=en_US.UTF-8
-# LC_ALL=en_US.UTF-8
-# LC_CTYPE=en_US.UTF-8
-# LOGNAME=travis
-# MAIL=/var/mail/travis
-# MANPATH=/home/travis/.nvm/versions/node/v8.9.1/share/man:/home/travis/.kiex/elixirs/elixir-1.4.5/man:/home/travis/.rvm/rubies/ruby-2.4.1/share/man:/usr/local/man:/usr/local/cmake-3.9.2/man:/usr/local/clang-5.0.0/share/man:/usr/local/share/man:/usr/share/man:/home/travis/.rvm/man
-# MERB_ENV=test
-# MIX_ARCHIVES=/home/travis/.kiex/mix/elixir-1.4.5
-# MYSQL_UNIX_PORT=/var/run/mysqld/mysqld.sock
-# MY_RUBY_HOME=/home/travis/.rvm/rubies/ruby-2.4.1
-# NUMDIFF_VER=5.8.1
-# NVM_BIN=/home/travis/.nvm/versions/node/v8.9.1/bin
-# NVM_CD_FLAGS=
-# NVM_DIR=/home/travis/.nvm
-# OLDPWD=/home/travis/build
-# OMP_NUM_THREADS=4
-# OPENMPI_VER=1.10.5
-# PAGER=cat
-# PATH=/home/travis/bin:/home/travis/.rvm/gems/ruby-2.4.1/bin:/home/travis/.rvm/gems/ruby-2.4.1@global/bin:/home/travis/.rvm/rubies/ruby-2.4.1/bin:/home/travis/.rvm/bin:/usr/lib/ccache:/home/travis/bin:/home/travis/.local/bin:/opt/pyenv/shims:/home/travis/.phpenv/shims:/home/travis/perl5/perlbrew/bin:/home/travis/.nvm/versions/node/v8.9.1/bin:/home/travis/.kiex/elixirs/elixir-1.4.5/bin:/home/travis/.kiex/bin:/home/travis/gopath/bin:/home/travis/.gimme/versions/go1.7.4.linux.amd64/bin:/usr/local/phantomjs/bin:/usr/local/phantomjs:/usr/local/neo4j-3.2.7/bin:/usr/local/maven-3.5.2/bin:/usr/local/cmake-3.9.2/bin:/usr/local/clang-5.0.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/travis/.phpenv/bin:/opt/pyenv/bin:/home/travis/.yarn/bin
-# PERLBREW_BASHRC_VERSION=0.80
-# PERLBREW_HOME=/home/travis/.perlbrew
-# PERLBREW_ROOT=/home/travis/perl5/perlbrew
-# PS1=${debian_chroot:+($debian_chroot)}\u@\h:\w\$
-# PS4=+
-# PWD=/home/travis/build/lanl/Draco
-# PYENV_ROOT=/opt/pyenv
-# PYENV_SHELL=bash
-# PYTHON_CFLAGS=-g -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
-# PYTHON_CONFIGURE_OPTS=--enable-unicode=ucs4 --with-wide-unicode --enable-shared --enable-ipv6 --enable-loadable-sqlite-extensions --with-computed-gotos
-# RACK_ENV=test
-# RAILS_ENV=test
-# RANDOM123_INC_DIR=/home/travis/Random123-1.09/include
-# RANDOM123_VER=1.09
-# RBENV_SHELL=bash
-# RUBY_VERSION=ruby-2.4.1
-# SHELL=/bin/bash
-# SHLVL=2
-# SSH_CLIENT=10.10.4.39 44318 22
-# SSH_CONNECTION=10.10.4.39 44318 10.20.1.57 22
-# SSH_TTY=/dev/pts/0
-# TERM=xterm
-# TRAVIS=true
-# TRAVIS_ALLOW_FAILURE=false
-# TRAVIS_BRANCH=test2
-# TRAVIS_BUILD_DIR=/home/travis/build/lanl/Draco
-# TRAVIS_BUILD_ID=396642770
-# TRAVIS_BUILD_NUMBER=31
-# TRAVIS_BUILD_STAGE_NAME=
-# TRAVIS_COMMIT=314ffeb9fc11c75506f348e70aad4fdabc0520a1
-# TRAVIS_COMMIT_MESSAGE=use curl -L; no -fopenmp for linker.
-# TRAVIS_COMMIT_RANGE=5a8eb63932e3...314ffeb9fc11
-# TRAVIS_DIST=trusty
-# TRAVIS_EVENT_TYPE=push
-# TRAVIS_INIT=upstart
-# TRAVIS_JOB_ID=396642772
-# TRAVIS_JOB_NUMBER=31.2
-# TRAVIS_LANGUAGE=cpp
-# TRAVIS_OSX_IMAGE=
-# TRAVIS_OS_NAME=linux
-# TRAVIS_PRE_CHEF_BOOTSTRAP_TIME=2017-12-05T19:32:55
-# TRAVIS_PULL_REQUEST=false
-# TRAVIS_PULL_REQUEST_BRANCH=
-# TRAVIS_PULL_REQUEST_SHA=
-# TRAVIS_PULL_REQUEST_SLUG=
-# TRAVIS_REPO_SLUG=lanl/Draco
-# TRAVIS_SECURE_ENV_VARS=false
-# TRAVIS_STACK_FEATURES=basic cassandra chromium couchdb disabled-ipv6 docker docker-compose elasticsearch firefox go-toolchain google-chrome jdk memcached mongodb mysql neo4j nodejs_interpreter perl_interpreter perlbrew phantomjs postgresql python_interpreter rabbitmq redis riak ruby_interpreter sqlite xserver
-# TRAVIS_STACK_JOB_BOARD_REGISTER=/.job-board-register.yml
-# TRAVIS_STACK_LANGUAGES=__garnet__ c c++ clojure cplusplus cpp default go groovy java node_js php pure_java python ruby scala
-# TRAVIS_STACK_NAME=garnet
-# TRAVIS_STACK_NODE_ATTRIBUTES=/.node-attributes.yml
-# TRAVIS_STACK_TIMESTAMP=2017-12-05 19:33:09 UTC
-# TRAVIS_SUDO=true
-# TRAVIS_TAG=
-# TRAVIS_UID=2000
-# TZ=UTC
-# USER=travis
-# VENDOR_DIR=/home/travis/vendors
-# WERROR=ON
-# XDG_RUNTIME_DIR=/run/user/2000
-# XDG_SESSION_ID=2
-# _=/usr/bin/printenv
-# _system_arch=x86_64
-# _system_name=Ubuntu
-# _system_type=Linux
-# _system_version=14.04
-# rvm_bin_path=/home/travis/.rvm/bin
-# rvm_path=/home/travis/.rvm
-# rvm_prefix=/home/travis
-# rvm_pretty_print_flag=auto
-# rvm_version=1.29.3 (latest)
-# topdir=/home/travis/build/lanl/Draco
+#------------------------------------------------------------------------------#
+# See also:
+# - Advanced used: https://github.com/laristra/flecsi/blob/master/.travis.yml
+#------------------------------------------------------------------------------#

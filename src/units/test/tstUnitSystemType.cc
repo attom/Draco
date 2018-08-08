@@ -22,12 +22,12 @@
 //---------------------------------------------------------------------------//
 
 void test_default_ctor(rtt_dsxx::UnitTest &ut) {
-  using std::endl;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
-  using rtt_units::UnitSystemType;
   using rtt_units::FundUnit;
   using rtt_units::Ltype;
+  using rtt_units::UnitSystemType;
+  using std::endl;
+  using std::ostringstream;
 
   // Create a container with no data...
   UnitSystemType ust;
@@ -261,10 +261,10 @@ void test_default_ctor(rtt_dsxx::UnitTest &ut) {
 //------------------------------------------------------------------------//
 
 void test_qualified_ctor(rtt_dsxx::UnitTest &ut) {
-  using std::endl;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystemType;
+  using std::endl;
+  using std::ostringstream;
 
   UnitSystemType ust(rtt_units::L_cm, rtt_units::M_g, rtt_units::t_us,
                      rtt_units::T_K, rtt_units::I_amp, rtt_units::A_rad,
@@ -395,10 +395,10 @@ void test_qualified_ctor(rtt_dsxx::UnitTest &ut) {
  * \brief Test special unit system types.
  */
 void test_sust_ctor(rtt_dsxx::UnitTest &ut) {
-  using std::endl;
-  using std::ostringstream;
   using rtt_dsxx::soft_equiv;
   using rtt_units::UnitSystemType;
+  using std::endl;
+  using std::ostringstream;
 
   // Create the two "speical" unit system types.
 

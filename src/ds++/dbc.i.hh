@@ -162,7 +162,7 @@ bool is_symmetric_matrix(Random_Access_Container const &A, unsigned const n,
   return true;
 }
 
-} // rtt_dsxx
+} // namespace rtt_dsxx
 
 #endif // rtt_dsxx_dbc_i_hh
 //---------------------------------------------------------------------------//

@@ -56,8 +56,8 @@ namespace rtt_roots {
 template <typename Function, typename Real>
 Real zbrent(Function func, Real x1, Real x2, unsigned itmax, Real &tol,
             Real &ftol) {
-  using std::numeric_limits;
   using std::min;
+  using std::numeric_limits;
 
   double const eps = std::numeric_limits<Real>::epsilon();
   Real a = x1, b = x2, c = x2;

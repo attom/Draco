@@ -17,9 +17,9 @@
 #include <fstream>
 
 namespace rtt_parser {
-using std::string;
-using std::set;
 using std::ifstream;
+using std::set;
+using std::string;
 
 //-------------------------------------------------------------------------//
 /*!
@@ -73,7 +73,7 @@ private:
   ifstream infile_; //!< Stream from which to take token text.
 };
 
-} // rtt_parser
+} // namespace rtt_parser
 
 #endif // CCS4_File_Token_Stream_HH
 

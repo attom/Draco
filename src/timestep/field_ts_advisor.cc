@@ -77,7 +77,7 @@ bool field_ts_advisor::invariant_satisfied() const {
          0. < fc_value && 0 <= update_method && update_method < last_umf;
 }
 
-} // end of rtt_timestep namespace
+} // namespace rtt_timestep
 
 //---------------------------------------------------------------------------//
 // end of field_ts_advisor.cc

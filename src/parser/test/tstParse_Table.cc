@@ -66,7 +66,8 @@ const Keyword raw_table[] = {
 const size_t raw_table_size = sizeof(raw_table) / sizeof(Keyword);
 
 const Keyword raw_table_2[] = {
-    {"BLUE", Parse_Color, 1, "main"}, {"BLACK", Parse_Color, 0, "main"},
+    {"BLUE", Parse_Color, 1, "main"},
+    {"BLACK", Parse_Color, 0, "main"},
 };
 const size_t raw_table_2_size = sizeof(raw_table_2) / sizeof(Keyword);
 

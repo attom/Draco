@@ -105,16 +105,12 @@ macro(dbsSetupCompilers)
   # assigned to individual targets.
 
   #  See https://cmake.org/cmake/help/git-stage/policy/CMP0069.html
-  include(CheckIPOSupported)
-  check_ipo_supported(RESULT USE_IPO)
-
-  # 2017-09-15 KT - eliminate configure warning in Win32 nightly regressions:
-  #                 "CMake doesn't support IPO for current compiler"
-  # 2017-11-13 KT - This also breaks linking MinGW gfortran libraries into
-  #                 MSVC applications, so just disable it for all Win32 builds.
   if( WIN32 )
     set( USE_IPO OFF CACHE BOOL
       "Enable Interprocedureal Optimization for Release builds." FORCE )
+  else()
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT USE_IPO)
   endif()
 
 endmacro()
@@ -172,16 +168,16 @@ macro(dbsSetupCxx)
   endif()
 
   # setup flags based on COMPILER_ID...
-  if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "PGI" OR 
+  if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "PGI" OR
       "${CMAKE_C_COMPILER_ID}"   STREQUAL "PGI" )
     include( unix-pgi )
-  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel" OR 
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel" OR
           "${CMAKE_C_COMPILER_ID}"   STREQUAL "Intel")
     include( unix-intel )
-  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Cray" OR 
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Cray" OR
           "${CMAKE_C_COMPILER_ID}"   STREQUAL "Cray")
     include( unix-crayCC )
-  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR 
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
           "${CMAKE_C_COMPILER_ID}"   STREQUAL "Clang")
     if( APPLE )
       include( apple-clang )
@@ -190,8 +186,8 @@ macro(dbsSetupCxx)
     endif()
   elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
           "${CMAKE_C_COMPILER_ID}"   STREQUAL "GNU")
-    include( unix-g++ )  
-  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" OR 
+    include( unix-g++ )
+  elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" OR
           "${CMAKE_C_COMPILER_ID}"   STREQUAL "MSVC" )
     include( windows-cl )
   else()

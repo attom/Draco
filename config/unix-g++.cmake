@@ -105,6 +105,7 @@ if( NOT CXX_FLAGS_INITIALIZED )
     #             the correct dynamic type.
     if( NOT DEFINED ENV{TRAVIS} )
       # Some options (including these) seem to confuse Travis.
+      # See https://stackoverflow.com/questions/50024731/ld-unrecognized-option-push-state-no-as-needed
       string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=float-divide-by-zero")
       string( APPEND CMAKE_C_FLAGS_DEBUG " -fsanitize=float-cast-overflow")
     endif()

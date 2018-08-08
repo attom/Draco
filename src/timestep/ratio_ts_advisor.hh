@@ -90,7 +90,7 @@ public:
   }
 };
 
-} // end of rtt_timestep namespace
+} // namespace rtt_timestep
 
 #endif // __timestep_ratio_ts_advisor_hh__
 

@@ -42,8 +42,8 @@ namespace rtt_min {
 template <class RandomContainer, class Function>
 void powell(RandomContainer &p, RandomContainer &xi, double const ftol,
             unsigned &iter, double &fret, Function func) {
-  using std::vector;
   using rtt_dsxx::square;
+  using std::vector;
 
   unsigned const ITMAX = iter;
   double const TINY = 1.0e-25;

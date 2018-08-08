@@ -17,11 +17,11 @@
 
 using namespace std;
 
-using rtt_dsxx::Packer;
-using rtt_dsxx::Unpacker;
 using rtt_dsxx::pack_data;
-using rtt_dsxx::unpack_data;
+using rtt_dsxx::Packer;
 using rtt_dsxx::soft_equiv;
+using rtt_dsxx::unpack_data;
+using rtt_dsxx::Unpacker;
 
 //---------------------------------------------------------------------------//
 // TESTS

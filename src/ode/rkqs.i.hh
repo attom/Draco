@@ -93,9 +93,8 @@ void rkck(std::vector<Field> const &y, std::vector<Field> const &dydx, double x,
   }
   derivs(x + a5 * h, ytemp, ak5);
   for (unsigned i = 0; i < n; i++) {
-    ytemp[i] = y[i] +
-               h * (b61 * dydx[i] + b62 * ak2[i] + b63 * ak3[i] + b64 * ak4[i] +
-                    b65 * ak5[i]);
+    ytemp[i] = y[i] + h * (b61 * dydx[i] + b62 * ak2[i] + b63 * ak3[i] +
+                           b64 * ak4[i] + b65 * ak5[i]);
   }
   derivs(x + a6 * h, ytemp, ak6);
   for (unsigned i = 0; i < n; i++) {

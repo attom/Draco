@@ -46,9 +46,8 @@ void svdcmp(RandomContainer &a, const unsigned m, const unsigned n,
   using namespace rtt_dsxx;
   using std::fabs;
   using std::max;
-  using std::sqrt;
   using std::min;
-  using std::max;
+  using std::sqrt;
 
   // More than 30 iterations says something is terribly wrong -- this shouldn't
   // happen even for very large matrices.

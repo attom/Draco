@@ -52,7 +52,7 @@ else
   module use --append ${VENDOR_DIR}-ec/modulefiles
 
   export dracomodules="ack htop clang-format \
-intel/17.0.4 openmpi/2.1.2 mkl \
+intel/18.0.2 openmpi/2.1.2 mkl \
 subversion cmake/3.9.0 numdiff git totalview trilinos/12.10.1 \
 superlu-dist/5.1.3 metis parmetis random123 eospac/6.3.0"
 

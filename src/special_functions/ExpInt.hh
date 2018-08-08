@@ -23,7 +23,7 @@ DLL_PUBLIC_special_functions double En(unsigned const n, double const x);
 
 //! Compute exponential integral, argument x \f$ Ei(x) \f$.
 DLL_PUBLIC_special_functions double Ei(double const x);
-}
+} // namespace rtt_sf
 
 #endif //special_functions_ExpInt
 

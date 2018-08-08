@@ -112,7 +112,7 @@ DLL_PUBLIC_dsxx void draco_mkdir(std::string const &path);
  */
 DLL_PUBLIC_dsxx void draco_remove(std::string const &path);
 
-} // end of rtt_dsxx
+} // namespace rtt_dsxx
 
 #endif // rtt_dsxx_SystemCall_hh
 

@@ -738,9 +738,9 @@ void quadrature_test(UnitTest &ut, Quadrature &quadrature) {
 // ----------------------------------------------------------------------------//
 extern "C" DLL_PUBLIC_quadrature_test void
 rtt_test_quadrature_interfaces(const quadrature_data &quad, int &error_code) {
+  using rtt_dsxx::soft_equiv;
   using std::cout;
   using std::endl;
-  using rtt_dsxx::soft_equiv;
 
   cout << "In C++, checking validity of quadrature_data..." << endl;
   check_quadrature_validity(quad);

@@ -65,7 +65,7 @@ template <int N, typename F> struct P {
 template <typename F> struct P<0, F> {
   static F compute(F /*x*/, F p) { return p; }
 };
-}
+} // namespace
 
 /* Function Power recursively implements the first half of the Russian Pesant
  * algorithm, by repeatedly computing x=x^2, N=N/2, so long as the remaining

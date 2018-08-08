@@ -11,11 +11,11 @@
 #include "ts_manager.hh"
 #include "c4/C4_Functions.hh"
 
-using std::list;
-using std::endl;
 using std::cerr;
 using std::cout;
+using std::endl;
 using std::ios;
+using std::list;
 
 namespace rtt_timestep {
 
@@ -242,7 +242,7 @@ bool ts_manager::invariant_satisfied() const {
   return ldum;
 }
 
-} // end of rtt_timestep namespace
+} // namespace rtt_timestep
 
 //---------------------------------------------------------------------------//
 // end of ts_manager.cc

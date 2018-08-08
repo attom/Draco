@@ -31,8 +31,9 @@ unsigned Tri_Chebyshev_Legendre::number_of_levels() const { return sn_order_; }
 
 //---------------------------------------------------------------------------//
 string Tri_Chebyshev_Legendre::as_text(string const &indent) const {
-  string Result = indent + "type = tri cl" + indent + "  order = " +
-                  to_string(sn_order_) + Octant_Quadrature::as_text(indent);
+  string Result = indent + "type = tri cl" + indent +
+                  "  order = " + to_string(sn_order_) +
+                  Octant_Quadrature::as_text(indent);
 
   return Result;
 }

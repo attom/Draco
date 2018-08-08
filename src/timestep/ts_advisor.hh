@@ -140,7 +140,7 @@ public:
                      const bool controlling = false) const;
 };
 
-} // end of rtt_timestep namespace
+} // namespace rtt_timestep
 
 #endif // __timestep_ts_advisor_hh__
 

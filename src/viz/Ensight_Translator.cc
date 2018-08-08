@@ -19,11 +19,11 @@
 namespace rtt_viz {
 
 using std::endl;
-using std::setw;
 using std::ios;
 using std::ofstream;
-using std::string;
 using std::setiosflags;
+using std::setw;
+using std::string;
 
 //---------------------------------------------------------------------------//
 // PUBLIC FUNCTIONS
@@ -43,8 +43,8 @@ void Ensight_Translator::open(const int icycle, const double time,
   Insist(!d_geom_out.is_open(),
          "Attempted to open an already open geometry file!");
 
-  using std::string;
   using std::ostringstream;
+  using std::string;
 
   // Increment local dump counter and add dump time
   d_dump_times.push_back(time);
@@ -391,7 +391,7 @@ void Ensight_Translator::write_case() {
     caseout << setw(12) << setiosflags(ios::right) << d_dump_times[i] << endl;
 }
 
-} // end of rtt_viz
+} // namespace rtt_viz
 
 //---------------------------------------------------------------------------//
 // end of Ensight_Translator.cc

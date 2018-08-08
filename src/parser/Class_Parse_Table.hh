@@ -122,9 +122,9 @@ template <class Class> class Class_Parse_Table;
 template <class Class_Parse_Table>
 std::shared_ptr<typename Class_Parse_Table::Return_Class>
 parse_class_from_table(Token_Stream &tokens) {
-  using rtt_parser::Token;
   using rtt_parser::END;
   using rtt_parser::EXIT;
+  using rtt_parser::Token;
 
   typedef typename Class_Parse_Table::Return_Class Return_Class;
 
@@ -172,9 +172,9 @@ parse_class_from_table(Token_Stream &tokens) {
 template <typename Class_Parse_Table, typename Context>
 std::shared_ptr<typename Class_Parse_Table::Return_Class>
 parse_class_from_table(Token_Stream &tokens, Context const &context) {
-  using rtt_parser::Token;
   using rtt_parser::END;
   using rtt_parser::EXIT;
+  using rtt_parser::Token;
 
   typedef typename Class_Parse_Table::Return_Class Return_Class;
 

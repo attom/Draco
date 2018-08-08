@@ -71,7 +71,7 @@ protected:
   virtual bool end_() const;
 };
 
-} // rtt_parser
+} // namespace rtt_parser
 
 #endif // CCS4_Console_Token_Stream_HH
 //---------------------------------------------------------------------------//

@@ -48,8 +48,8 @@ bool qrdcmp(RandomContainer &a, unsigned n, RandomContainer &c,
             RandomContainer &d) {
   Require(a.size() == n * n);
 
-  using std::sqrt;
   using rtt_dsxx::square;
+  using std::sqrt;
 
   c.resize(n);
   d.resize(n);

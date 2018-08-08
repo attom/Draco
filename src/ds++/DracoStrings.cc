@@ -99,10 +99,10 @@ std::vector<std::string> tokenize(std::string const &str,
  */
 std::map<std::string, unsigned> get_word_count(std::ostringstream const &msg,
                                                bool verbose) {
-  using std::map;
-  using std::string;
   using std::cout;
   using std::endl;
+  using std::map;
+  using std::string;
 
   map<string, unsigned> word_list;
   string msgbuf(msg.str());

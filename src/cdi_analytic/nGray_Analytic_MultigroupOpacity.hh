@@ -137,7 +137,7 @@ nGray_Analytic_MultigroupOpacity::getDataDescriptor() const {
   return descriptor;
 }
 
-} // end namespace
+} // namespace rtt_cdi_analytic
 
 #endif // __cdi_analytic_nGray_Analytic_MultigroupOpacity_hh__
 

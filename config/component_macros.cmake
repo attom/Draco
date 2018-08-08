@@ -230,7 +230,7 @@ or the target must be labeled NOEXPORT.")
   # If Win32, copy dll files into binary directory.
   copy_dll_link_libraries_to_build_dir( ${ace_TARGET} )
 
-endmacro()
+endmacro( add_component_executable )
 
 #------------------------------------------------------------------------------
 # replacement for built in command 'add_library'
@@ -584,7 +584,7 @@ function( copy_dll_link_libraries_to_build_dir target )
 
   # Debug dependencies for a particular target (uncomment the next line and
   # provide the targetname): "Ut_${compname}_${testname}_exe"
-  if( "Exe_draco_info_gui_foo" STREQUAL ${target} )
+  if( "Ut_rng_ut_gsl_exe_foo" STREQUAL ${target} )
      set(lverbose ON)
   endif()
   if( lverbose )
@@ -699,11 +699,14 @@ function( copy_dll_link_libraries_to_build_dir target )
         endif()
         continue()
       endif()
-      # TYPE = {STATIC_LIBRARY, MODULE_LIBRARY, SHARED_LIBRARY, 
+      # TYPE = {STATIC_LIBRARY, MODULE_LIBRARY, SHARED_LIBRARY,
       #         INTERFACE_LIBRARY, EXECUTABLE}
       # We cannot query INTERFACE_LIBRARY targets.
       get_target_property(lib_type ${lib} TYPE )
       if( ${lib_type} STREQUAL "INTERFACE_LIBRARY" )
+        if( lverbose )
+          message("  I think ${lib} is an INTERFACE_LIBRARY. Skipping to next dependency.")
+        endif()
         continue()
       endif()
       get_target_property(is_imported ${lib} IMPORTED )
@@ -725,25 +728,31 @@ function( copy_dll_link_libraries_to_build_dir target )
         get_target_property(target_gnutoms ${lib} GNUtoMS)
       elseif( EXISTS ${lib} )
         # If $lib is a full path to a library, add it to the list
+        if (lverbose )
+          message("  ${lib} is the full path to a library; adding to the list.")
+        endif()
         set( target_loc ${lib} )
         set( target_gnutoms NOTFOUND )
       else()
+        if (lverbose )
+          message("  ${lib} is a target that points to $<TARGET:${lib}>.")
+        endif()
         set( target_loc $<TARGET_FILE:${lib}> )
         get_target_property( target_gnutoms ${lib} GNUtoMS )
       endif()
 
       add_custom_command( TARGET ${target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${target_loc}
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR} )
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR} )
 
       if( lverbose )
-	message("  CMAKE_COMMAND -E copy_if_different ${target_loc} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}")
+        message("  CMAKE_COMMAND -E copy_if_different ${target_loc} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}")
       endif()
 
     endif()
   endforeach()
   unset( lverbose )
-endfunction()
+endfunction( copy_dll_link_libraries_to_build_dir )
 
 #----------------------------------------------------------------------#
 # add_scalar_tests
@@ -1037,13 +1046,6 @@ macro( add_parallel_tests )
       ${test_lib_target_name}
       ${addparalleltest_DEPS}
       )
-    # Extra dependencies for profiling tools
-    # if( USE_ALLINEA_MAP AND "${DRACO_LIBRARY_TYPE}" STREQUAL "SHARED")
-    #   target_link_libraries( Ut_${compname}_${testname}_exe ${map-sampler-pmpi} ${map-sampler} )
-    # endif()
-    # if( USE_ALLINEA_DMALLOC )
-    #   target_link_libraries( Ut_${compname}_${testname}_exe ${ddt-dmalloc} )
-    # endif()
 
     # Special post-build options for Win32 platforms
     # ------------------------------------------------------------

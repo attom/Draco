@@ -98,7 +98,7 @@ public:
   //! Retrieve electron temperature eval points (diagnostic use)
   std::vector<double> get_etemp_pts() const { return ei->get_etemp_pts(); }
 };
-}
+} // namespace rtt_compton
 
 #endif // COMPTON_FOUND
 

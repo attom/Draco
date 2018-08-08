@@ -36,8 +36,8 @@ namespace rtt_min {
 template <class Function>
 double brent(double const ax, double const bx, double const cx, Function f,
              double const tol, double &xmin) {
-  using std::numeric_limits;
   using rtt_dsxx::sign;
+  using std::numeric_limits;
 
   unsigned const ITMAX = 100;
   double const eps = numeric_limits<double>::epsilon();

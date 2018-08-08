@@ -115,7 +115,7 @@ template <typename Class, typename Context>
 std::shared_ptr<Class> parse_class(Token_Stream &tokens,
                                    Context const &context);
 
-} // rtt_parser
+} // namespace rtt_parser
 
 #endif
 // parser_utilities_hh

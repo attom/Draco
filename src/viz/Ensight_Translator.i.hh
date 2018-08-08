@@ -176,9 +176,9 @@ void Ensight_Translator::ensight_dump(
     const ISF &cell_rgn_index, const FVF &pt_coor_in, const FVF &vrtx_data_in,
     const FVF &cell_data_in, const ISF &rgn_numbers, const SSF &rgn_name) {
   using rtt_viz::Viz_Traits;
+  using std::find;
   using std::string;
   using std::vector;
-  using std::find;
 
   // >>> PREPARE DATA TO SET ENSIGHT OUTPUT
 
@@ -353,9 +353,9 @@ void Ensight_Translator::write_part(int part_num, const std_string &part_name,
   Require(part_num > 0);
 
   using rtt_viz::Viz_Traits;
+  using std::find;
   using std::string;
   using std::vector;
-  using std::find;
 
   // load traits for vector field types
   Viz_Traits<IVF> ipar(ipar_in);
@@ -561,7 +561,7 @@ void Ensight_Translator::write_cell_data(
   }
 }
 
-} // end of rtt_viz
+} // namespace rtt_viz
 
 //---------------------------------------------------------------------------//
 // end of viz/Ensight_Translator.t.hh

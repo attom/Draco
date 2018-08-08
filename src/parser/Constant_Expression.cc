@@ -58,7 +58,7 @@ void lower(ostream &out, char const *const label, double const power,
   }
 }
 
-} // namespace anonymous
+} // namespace
 
 namespace rtt_parser {
 using namespace rtt_parser;

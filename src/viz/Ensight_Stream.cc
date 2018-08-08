@@ -245,7 +245,7 @@ template <typename T> void Ensight_Stream::binary_write(const T v) {
   Ensure(d_stream.good());
 }
 
-} // end of rtt_viz
+} // namespace rtt_viz
 
 //---------------------------------------------------------------------------//
 // end of Ensight_Stream.cc

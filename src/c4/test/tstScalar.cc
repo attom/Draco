@@ -22,7 +22,7 @@ using namespace std;
 
 void tstScalar(rtt_dsxx::UnitTest &ut) {
 
-// Skip the tests if code not configured with the option --with-c4=scalar.
+  // Skip the tests if code not configured with the option --with-c4=scalar.
 
 #ifndef C4_SCALAR
 

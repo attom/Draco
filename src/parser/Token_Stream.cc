@@ -225,7 +225,7 @@ void Token_Stream::rewind() {
   Ensure(check_class_invariants());
 }
 
-} // rtt_parser
+} // namespace rtt_parser
 
 //---------------------------------------------------------------------------//
 // end of Token_Stream.cc

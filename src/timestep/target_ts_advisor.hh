@@ -85,7 +85,7 @@ public:
   bool invariant_satisfied() const;
 };
 
-} // end of rtt_timestep namespace
+} // namespace rtt_timestep
 
 #endif // __target_timestep_ts_advisor_hh__
 

@@ -135,7 +135,7 @@ public:
   bool invariant_satisfied() const;
 };
 
-} // end of rtt_timestep namespace
+} // namespace rtt_timestep
 
 #endif // __timestep_ts_manager_hh__
 

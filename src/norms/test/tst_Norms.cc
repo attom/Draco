@@ -25,10 +25,10 @@
 
 using namespace std;
 
+using rtt_dsxx::soft_equiv;
 using rtt_norms::Norms;
 using rtt_norms::Norms_Labeled;
 using rtt_norms::Norms_Proc;
-using rtt_dsxx::soft_equiv;
 
 //---------------------------------------------------------------------------//
 // TESTS

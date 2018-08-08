@@ -20,8 +20,8 @@
 #include "mesh_element/Geometry.hh"
 
 namespace rtt_quadrature {
-using std::vector;
 using rtt_mesh_element::Geometry;
+using std::vector;
 
 //===========================================================================//
 /*!

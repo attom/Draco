@@ -19,17 +19,17 @@
 //---------------------------------------------------------------------------//
 
 void wall_clock_test(rtt_dsxx::UnitTest &ut) {
-  using std::endl;
   using std::cout;
+  using std::endl;
   using std::ostringstream;
   using std::set;
   using std::string;
 
-  using rtt_dsxx::soft_equiv;
-  using rtt_c4::wall_clock_time;
-  using rtt_c4::wall_clock_resolution;
-  using rtt_c4::Timer;
   using rtt_c4::Global_Timer;
+  using rtt_c4::Timer;
+  using rtt_c4::wall_clock_resolution;
+  using rtt_c4::wall_clock_time;
+  using rtt_dsxx::soft_equiv;
 
   Global_Timer do_timer("do_timer");
   Global_Timer do_not_timer("do_not_timer");
@@ -100,7 +100,7 @@ void wall_clock_test(rtt_dsxx::UnitTest &ut) {
   std::vector<double> foo(len);
   double sum(0);
   for (size_t i = 0; i < len; ++i) {
-    double const d(i + 1);
+    double const d(i + 1.0);
     foo[i] = std::sqrt(std::log(d * 3.14) * std::fabs(std::cos(d / 3.14)));
     sum += foo[i];
   }
@@ -173,7 +173,7 @@ void wall_clock_test(rtt_dsxx::UnitTest &ut) {
 
   t.start();
   for (size_t i = 0; i < len; ++i)
-    foo[i] = i * 4;
+    foo[i] = i * 4.0;
   t.stop();
 
   t.print(cout, 6);

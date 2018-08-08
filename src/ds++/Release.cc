@@ -155,7 +155,7 @@ const std::string copyright() {
   return msg.str();
 }
 
-} // end of rtt_dsxx
+} // namespace rtt_dsxx
 
 //---------------------------------------------------------------------------//
 //! This version can be called by Fortran and wraps the C++ version.

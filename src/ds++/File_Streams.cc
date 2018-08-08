@@ -19,7 +19,7 @@ namespace {
 // This string should be one that is unlikely to be used by a client.
 static const std::string BINARY_FILE_HEADER =
     "bInArYfIlE_rtt_dsxx_File_Streams";
-}
+} // namespace
 
 namespace rtt_dsxx {
 
@@ -212,7 +212,7 @@ File_Input &File_Input::operator>>(char &c) {
   return *this;
 }
 
-} // end of rtt_dsxx
+} // namespace rtt_dsxx
 
 //---------------------------------------------------------------------------//
 //                              end of ds++/File_Streams.cc

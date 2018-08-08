@@ -200,8 +200,8 @@ void compareComplexYlk(unsigned const l, int const k, double const theta,
 //---------------------------------------------------------------------------//
 
 void tstNormalizedYlk(rtt_dsxx::UnitTest &ut) {
-  using rtt_units::PI;
   using rtt_dsxx::soft_equiv;
+  using rtt_units::PI;
 
   cout << "\nTesting normalizedYlk function.\n" << endl;
 
@@ -258,8 +258,8 @@ void tstNormalizedYlk(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void tstRealYlk(rtt_dsxx::UnitTest &ut) {
-  using rtt_units::PI;
   using rtt_dsxx::soft_equiv;
+  using rtt_units::PI;
 
   cout << "\nTesting realYlk function.\n" << endl;
 
@@ -285,8 +285,8 @@ void tstRealYlk(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void tstComplexYlk(rtt_dsxx::UnitTest &ut) {
-  using rtt_units::PI;
   using rtt_dsxx::soft_equiv;
+  using rtt_units::PI;
 
   cout << "\nTesting complexYlk function.\n" << endl;
 
@@ -313,8 +313,8 @@ void tstComplexYlk(rtt_dsxx::UnitTest &ut) {
 //---------------------------------------------------------------------------//
 
 void tstgalerkinYlk(rtt_dsxx::UnitTest &ut) {
-  using rtt_units::PI;
   using rtt_dsxx::soft_equiv;
+  using rtt_units::PI;
 
   cout << "\nTesting realYlk function.\n" << endl;
 

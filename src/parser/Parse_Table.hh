@@ -292,7 +292,7 @@ inline bool operator==(Keyword const &a, Keyword const &b) {
 
 DLL_PUBLIC_parser bool Is_Well_Formed_Keyword(Keyword const &key);
 
-} // rtt_parser
+} // namespace rtt_parser
 
 #endif // CCS4_Parse_Table_HH
 

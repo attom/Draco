@@ -3,9 +3,7 @@
 * \file   lapack_wrap/test/tstBlas_Level_1.cc
 * \brief  Test Blas level 1 wrap.
 * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC
-*         All rights reserved.
-* \version $Id$
-*/
+*         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "lapack_wrap/Blas.hh"
@@ -15,12 +13,12 @@
 
 using namespace std;
 
-using rtt_lapack_wrap::blas_copy;
-using rtt_lapack_wrap::blas_scal;
-using rtt_lapack_wrap::blas_dot;
-using rtt_lapack_wrap::blas_axpy;
-using rtt_lapack_wrap::blas_nrm2;
 using rtt_dsxx::soft_equiv;
+using rtt_lapack_wrap::blas_axpy;
+using rtt_lapack_wrap::blas_copy;
+using rtt_lapack_wrap::blas_dot;
+using rtt_lapack_wrap::blas_nrm2;
+using rtt_lapack_wrap::blas_scal;
 
 //---------------------------------------------------------------------------//
 // TESTS
@@ -186,7 +184,6 @@ template <typename T> void tst_nrm2(rtt_dsxx::UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_dsxx::ScalarUnitTest ut(argc, argv, rtt_dsxx::release);
   try {

@@ -18,12 +18,12 @@
 
 using namespace std;
 
-using rtt_cdi_analytic::nGray_Analytic_MultigroupOpacity;
-using rtt_cdi_analytic::Analytic_Opacity_Model;
-using rtt_cdi_analytic::Constant_Analytic_Opacity_Model;
-using rtt_cdi_analytic::Polynomial_Analytic_Opacity_Model;
 using rtt_cdi::CDI;
 using rtt_cdi::MultigroupOpacity;
+using rtt_cdi_analytic::Analytic_Opacity_Model;
+using rtt_cdi_analytic::Constant_Analytic_Opacity_Model;
+using rtt_cdi_analytic::nGray_Analytic_MultigroupOpacity;
+using rtt_cdi_analytic::Polynomial_Analytic_Opacity_Model;
 using rtt_dsxx::soft_equiv;
 
 //---------------------------------------------------------------------------//

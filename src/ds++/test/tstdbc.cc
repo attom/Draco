@@ -29,9 +29,9 @@ public:
 //---------------------------------------------------------------------------//
 
 void dbc_test(UnitTest &ut) {
+  using rtt_dsxx::dim;
   using std::pair;
   using std::vector;
-  using rtt_dsxx::dim;
   using namespace std;
 
   if (abs(abs(5.4) - 5.4) > std::numeric_limits<double>::epsilon() ||

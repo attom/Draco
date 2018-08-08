@@ -24,8 +24,8 @@
 
 using namespace std;
 using namespace rtt_dsxx;
-using rtt_RTT_Format_Reader::RTT_Mesh_Reader;
 using rtt_mesh_element::Element_Definition;
+using rtt_RTT_Format_Reader::RTT_Mesh_Reader;
 
 enum Meshes { DEFINED };
 

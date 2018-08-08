@@ -43,7 +43,7 @@ void tstProcessor_Group(rtt_dsxx::UnitTest &ut) {
   vector<double> myvec;
   size_t const vlen(5);
   for (size_t i = 0; i < vlen; ++i)
-    myvec.push_back(pid * 1000 + i);
+    myvec.push_back(pid * 1000.0 + i);
   vector<double> globalvec;
   comm.assemble_vector(myvec, globalvec);
 
@@ -54,7 +54,7 @@ void tstProcessor_Group(rtt_dsxx::UnitTest &ut) {
   vector<double> goldglobalvec;
   for (size_t j = 0; j < group_pids; ++j)
     for (size_t i = 0; i < vlen; ++i)
-      goldglobalvec.push_back((base + 2 * j) * 1000 + i);
+      goldglobalvec.push_back((base + 2.0 * j) * 1000 + i);
 
   if (!rtt_dsxx::soft_equiv(goldglobalvec.begin(), goldglobalvec.end(),
                             globalvec.begin(), globalvec.end()))

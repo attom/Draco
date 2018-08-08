@@ -20,7 +20,7 @@
 namespace rtt_timestep {
 class ts_manager;
 class field_ts_advisor;
-}
+} // namespace rtt_timestep
 
 namespace rtt_timestep_test {
 

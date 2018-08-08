@@ -333,36 +333,36 @@ double IpcressDataTable::interpOpac(double const targetTemperature,
 
   // 1. Normal path
   if (irho + 1 < numrho && iT + 1 < numT) {
-    double logsig12 = logOpacities[i] +
-                      (logrho - logDensities[irho]) /
-                          (logDensities[irho + 1] - logDensities[irho]) *
-                          (logOpacities[i + ng] - logOpacities[i]);
+    double logsig12 =
+        logOpacities[i] + (logrho - logDensities[irho]) /
+                              (logDensities[irho + 1] - logDensities[irho]) *
+                              (logOpacities[i + ng] - logOpacities[i]);
 
-    double logsig32 = logOpacities[k] +
-                      (logrho - logDensities[irho]) /
-                          (logDensities[irho + 1] - logDensities[irho]) *
-                          (logOpacities[k + ng] - logOpacities[k]);
+    double logsig32 =
+        logOpacities[k] + (logrho - logDensities[irho]) /
+                              (logDensities[irho + 1] - logDensities[irho]) *
+                              (logOpacities[k + ng] - logOpacities[k]);
 
-    logOpacity = logsig12 +
-                 (logT - logTemperatures[iT]) /
-                     (logTemperatures[iT + 1] - logTemperatures[iT]) *
-                     (logsig32 - logsig12);
+    logOpacity =
+        logsig12 + (logT - logTemperatures[iT]) /
+                       (logTemperatures[iT + 1] - logTemperatures[iT]) *
+                       (logsig32 - logsig12);
   }
 
   // 2. rho is at high side of table, T is in the table
   else if (irho + 1 >= numrho && iT + 1 < numT) {
-    logOpacity = logOpacities[i] +
-                 (logT - logTemperatures[iT]) /
-                     (logTemperatures[iT + 1] - logTemperatures[iT]) *
-                     (logOpacities[k] - logOpacities[i]);
+    logOpacity =
+        logOpacities[i] + (logT - logTemperatures[iT]) /
+                              (logTemperatures[iT + 1] - logTemperatures[iT]) *
+                              (logOpacities[k] - logOpacities[i]);
   }
 
   // 3. T is at high side of table, rho is in the table
   else if (irho + 1 < numrho && iT + 1 >= numT) {
-    logOpacity = logOpacities[i] +
-                 (logrho - logDensities[irho]) /
-                     (logDensities[irho + 1] - logDensities[irho]) *
-                     (logOpacities[i + ng] - logOpacities[i]);
+    logOpacity =
+        logOpacities[i] + (logrho - logDensities[irho]) /
+                              (logDensities[irho + 1] - logDensities[irho]) *
+                              (logOpacities[i + ng] - logOpacities[i]);
   }
 
   // 4. Both T and rho are on the high side of the table.

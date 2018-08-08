@@ -35,6 +35,9 @@ endmacro()
 
 #------------------------------------------------------------------------------#
 # Helper macros for Random123
+#
+# Providers: Linux - use spack to install netlib-lapack
+#                    https://github.com/spack/spack
 #------------------------------------------------------------------------------#
 macro( setupRandom123 )
 
@@ -61,6 +64,11 @@ endmacro()
 #         interface is found
 # lapack_VERSION - '3.4.1'
 # provides targets: lapack, blas
+#
+# Providers: Linux - use spack to install netlib-lapack
+#                    https://github.com/spack/spack
+#            Windows - clone and build from sources
+#                    https://github.com/KineticTheory/lapack-visualstudio-mingw-gfortran
 #------------------------------------------------------------------------------
 macro( setupLAPACKLibraries )
 

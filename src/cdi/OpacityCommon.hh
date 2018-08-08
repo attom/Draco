@@ -25,7 +25,7 @@ unsigned int const num_Models(7);
 
 //! Number of reaction types contained in rtt_cdi::Reaction.
 unsigned int const num_Reactions(3);
-}
+} // namespace constants
 
 //===========================================================================//
 // ENUMERATIONS USED BY OPACITY CLASSES IN CDI

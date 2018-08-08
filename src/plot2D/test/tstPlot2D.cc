@@ -16,13 +16,13 @@
 #include <iostream>
 #include <sstream>
 
+using rtt_plot2D::Plot2D;
+using rtt_plot2D::SetProps;
 using std::cin;
 using std::cout;
 using std::endl;
-using std::string;
 using std::ofstream;
-using rtt_plot2D::Plot2D;
-using rtt_plot2D::SetProps;
+using std::string;
 
 namespace test {
 void pause();
@@ -41,7 +41,7 @@ void pause() {
   cout << "Press RETURN to continue: ";
   cin.get();
 }
-}
+} // namespace test
 
 //---------------------------------------------------------------------------//
 // The main test

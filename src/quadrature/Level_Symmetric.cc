@@ -35,8 +35,8 @@ unsigned Level_Symmetric::number_of_levels() const { return sn_order_; }
 
 //----------------------------------------------------------------------------//
 string Level_Symmetric::as_text(string const &indent) const {
-  string Result = indent + "type = level symmetric" + indent + "  order = " +
-                  to_string(sn_order_) + indent + "end";
+  string Result = indent + "type = level symmetric" + indent +
+                  "  order = " + to_string(sn_order_) + indent + "end";
 
   return Result;
 }

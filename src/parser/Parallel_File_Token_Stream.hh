@@ -17,9 +17,9 @@
 #include <fstream>
 
 namespace rtt_parser {
-using std::string;
-using std::set;
 using std::ifstream;
+using std::set;
+using std::string;
 
 //-------------------------------------------------------------------------//
 /*!
@@ -95,7 +95,7 @@ private:
   bool at_error_; //!< Did processor 0 see an I/O error?
 };
 
-} // rtt_parser
+} // namespace rtt_parser
 
 #endif // CCS4_Parallel_File_Token_Stream_HH
 

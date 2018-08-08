@@ -9,11 +9,11 @@
 //---------------------------------------------------------------------------//
 
 #include "Test_Mesh_Interface.hh"
-#include "mesh/Draco_Mesh_Builder.hh"
-#include "mesh/RTT_Draco_Mesh_Reader.hh"
 #include "c4/ParallelUnitTest.hh"
 #include "ds++/Release.hh"
 #include "ds++/Soft_Equivalence.hh"
+#include "mesh/Draco_Mesh_Builder.hh"
+#include "mesh/RTT_Draco_Mesh_Reader.hh"
 
 using rtt_mesh::Draco_Mesh;
 using rtt_mesh::Draco_Mesh_Builder;

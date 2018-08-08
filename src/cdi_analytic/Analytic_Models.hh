@@ -343,10 +343,9 @@ public:
 
     //double nu = 0.5*(nu0+nu1);
     double nu = sqrt(nu0 * nu1);
-    double opacity =
-        (a +
-         b * pow(T / f, c) * pow(nu / h, e) * (1 - exp(-(nu / h) / (T / f)))) *
-        pow(rho / g, d);
+    double opacity = (a + b * pow(T / f, c) * pow(nu / h, e) *
+                              (1 - exp(-(nu / h) / (T / f)))) *
+                     pow(rho / g, d);
 
     Ensure(opacity >= 0.0);
     return opacity;
@@ -362,10 +361,9 @@ public:
     Require(g > 0.0);
     Require(h > 0.0);
 
-    double opacity =
-        (a +
-         b * pow(T / f, c) * pow(nu / h, e) * (1 - exp(-(nu / h) / (T / f)))) *
-        pow(rho / g, d);
+    double opacity = (a + b * pow(T / f, c) * pow(nu / h, e) *
+                              (1 - exp(-(nu / h) / (T / f)))) *
+                     pow(rho / g, d);
 
     Ensure(opacity >= 0.0);
     return opacity;

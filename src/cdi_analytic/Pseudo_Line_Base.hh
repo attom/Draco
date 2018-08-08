@@ -14,9 +14,9 @@
 #include <cstdio>
 
 namespace rtt_cdi_analytic {
-using std::vector;
-using std::string;
 using rtt_parser::Expression;
+using std::string;
+using std::vector;
 
 #ifdef _MSC_VER
 double expm1(double const &x);

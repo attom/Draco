@@ -48,7 +48,7 @@ void ludcmp(FieldVector &a, IntVector &indx,
 template <class FieldVector1, class IntVector, class FieldVector2>
 void lubksb(FieldVector1 const &a, IntVector const &indx, FieldVector2 &b);
 
-} // end namespace astr_star1d
+} // namespace rtt_linear
 
 #endif // linear_ludcmp_hh
 

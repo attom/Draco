@@ -18,18 +18,18 @@
 #include "ds++/Soft_Equivalence.hh"
 #include <cstdio>
 
-using rtt_cdi_ipcress::IpcressOdfmgOpacity;
-using rtt_cdi_ipcress::IpcressMultigroupOpacity;
 using rtt_cdi_ipcress::IpcressFile;
+using rtt_cdi_ipcress::IpcressMultigroupOpacity;
+using rtt_cdi_ipcress::IpcressOdfmgOpacity;
 using rtt_dsxx::soft_equiv;
 
 using std::cerr;
-using std::cout;
 using std::cin;
+using std::cout;
 using std::endl;
-using std::string;
 using std::istringstream;
 using std::ostringstream;
+using std::string;
 
 typedef std::shared_ptr<IpcressOdfmgOpacity const> SP_Goo;
 typedef std::vector<double> vec_d;
@@ -156,7 +156,7 @@ double const opacities[numGroups][numBands] = {
         3.176657778709061,  // group 10 band 7
         3.473741688650271   // group 10 band 8
     }};
-}
+} // namespace benchmarkData
 
 //---------------------------------------------------------------------------//
 

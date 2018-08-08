@@ -58,7 +58,7 @@ bool target_ts_advisor::invariant_satisfied() const {
   return ts_advisor::invariant_satisfied();
 }
 
-} // end of rtt_timestep namespace
+} // namespace rtt_timestep
 
 //---------------------------------------------------------------------------//
 // end of target_ts_advisor.cc

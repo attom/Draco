@@ -92,7 +92,7 @@ DummyGrayOpacity::getOpacity(double targetTemperature,
   return grayOpacity;
 }
 
-} // end rtt_cdi_test
+} // namespace rtt_cdi_test
 
 //---------------------------------------------------------------------------//
 // end of DummyGrayOpacity.cc

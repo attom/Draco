@@ -43,7 +43,7 @@ template <typename Ordered_Group_Element>
 inline Ordered_Group_Element dim(Ordered_Group_Element a,
                                  Ordered_Group_Element b);
 
-} // ane of namespace rtt_dsxx
+} // namespace rtt_dsxx
 
 // Use implicit instantiation for these templatized functions
 #include "dbc.i.hh"

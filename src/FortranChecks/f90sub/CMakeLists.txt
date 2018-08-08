@@ -41,9 +41,8 @@ if(NOT TARGET Lib_dsxx)
   string( REGEX REPLACE "___" ";" cafs_Draco_TPL_INCLUDE_DIRS
     "${Draco_TPL_INCLUDE_DIRS}" )
 
-  # message("dtplid = ${cafs_Draco_TPL_INCLUDE_DIRS}")
-
   include(CMakeAddFortranSubdirectory)
+
   get_filename_component( draco_BINARY_DIR ${PROJECT_BINARY_DIR}/../../..
     ABSOLUTE )
   cafs_create_imported_targets( Lib_dsxx "rtt_ds++"
@@ -70,7 +69,7 @@ if(NOT TARGET Lib_dsxx)
   setupVendorLibraries()
 
   if(WIN32)
-    # MS-MPI 5 and gfortran/4.8 do not play nice together...
+    # MS-MPI and gfortran do not play nice together...
     if( "${CMAKE_BUILD_TYPE}x" STREQUAL "x")
       message( FATAL_ERROR
         "In ftest/CMakeLists.txt, CMAKE_BUILD_TYPE must be set."

@@ -13,8 +13,8 @@
 #include "Foo.hh"
 #include "Foo_Base.hh"
 
-using rtt_shared_lib_test::Foo_Base;
 using rtt_shared_lib_test::Foo;
+using rtt_shared_lib_test::Foo_Base;
 
 // These functions are used by the tst_Shared_Lib to create and destroy Foo
 // objects, where Foo is defined within a shared library.

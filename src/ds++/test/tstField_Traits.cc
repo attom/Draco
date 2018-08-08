@@ -66,7 +66,7 @@ template <> class Field_Traits<labeled> {
 public:
   typedef unlabeled unlabeled_type;
 };
-}
+} // namespace rtt_dsxx
 
 bool operator==(unlabeled const &a, labeled const &b) { return a.i == b.s.i; }
 

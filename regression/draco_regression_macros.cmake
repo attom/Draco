@@ -84,7 +84,7 @@ macro( set_defaults )
 Setting defaults
 ----------------------------------------\n")
 
-  # Prerequisits:
+  # Prerequisites:
   #
   # This setup assumes that the project work_dir will contain 3 subdirectories:
   # source, build and target.  See how CMAKE_SOURCE_DIRECTORY,
@@ -147,7 +147,7 @@ win32$ set work_dir=c:/full/path/to/work_dir
   if( WIN32 )
     # add option for "NMake Makefiles JOM"?
     # set( CTEST_CMAKE_GENERATOR "NMake Makefiles" )
-    set( CTEST_CMAKE_GENERATOR "Visual Studio 15 2017" )
+    set( CTEST_CMAKE_GENERATOR "Visual Studio 15 2017 Win64" )
   else()
     set( CTEST_CMAKE_GENERATOR "Unix Makefiles" )
   endif()
@@ -532,8 +532,6 @@ Finding tools...
   if( ${drm_verbose} )
     message("
 CTEST_CMD           = ${CTEST_CMD}
-CTEST_CVS_COMMAND   = ${CTEST_CVS_COMMAND}
-CTEST_SVN_COMMAND   = ${CTEST_SVN_COMMAND}
 CTEST_GIT_COMMAND   = ${CTEST_GIT_COMMAND}
 CTEST_CMAKE_COMMAND = ${CTEST_CMAKE_COMMAND}
 MAKECOMMAND         = ${MAKECOMMAND}

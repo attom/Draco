@@ -203,7 +203,7 @@ private:
   bool key_available(const T &key, const std::vector<T> &keys) const;
 };
 
-} // end namespace
+} // namespace rtt_cdi_ipcress
 
 #endif // __cdi_ipcress_IpcressDataTable_hh__
 

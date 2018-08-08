@@ -23,8 +23,8 @@
 //---------------------------------------------------------------------------//
 
 void test_enumValues(rtt_dsxx::UnitTest &ut) {
-  using std::string;
   using rtt_dsxx::soft_equiv;
+  using std::string;
 
   {
     int const iSenVal(3);

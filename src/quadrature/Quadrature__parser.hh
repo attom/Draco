@@ -61,7 +61,7 @@ private:
   static std::shared_ptr<Quadrature> child_;
 };
 
-} // end namespace rtt_quadrature
+} // namespace rtt_parser
 
 //----------------------------------------------------------------------------//
 // end of quadrature/Quadrature__parser.hh

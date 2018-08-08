@@ -24,7 +24,7 @@ bool require_unit_expressions = true;
 // https://isocpp.org/wiki/faq/ctors#static-init-order)
 rtt_units::UnitSystem *internal_unit_system = nullptr;
 
-} // namespace anonymous
+} // namespace
 
 namespace rtt_parser {
 using namespace std;
@@ -947,7 +947,7 @@ parse_quantity(Token_Stream &tokens, Unit const &target_unit,
   }
 }
 
-} // rtt_parser
+} // namespace rtt_parser
 
 //----------------------------------------------------------------------------//
 // end of utilities.cc

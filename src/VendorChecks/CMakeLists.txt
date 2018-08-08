@@ -11,12 +11,8 @@ project( VendorsChecks CXX )
 
 # This component only has tests.
 
-# Ignore these tests if we are building on Windows or if we aren't building the
-# unit tests.
-if( NOT WIN32 )
-  if( BUILD_TESTING )
-    add_subdirectory(test)
-  endif()
+if( BUILD_TESTING )
+  add_subdirectory(test)
 endif()
 
 #------------------------------------------------------------------------------#

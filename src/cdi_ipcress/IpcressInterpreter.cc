@@ -22,15 +22,15 @@
 #include <sstream>
 #include <vector>
 
-using rtt_cdi_ipcress::IpcressFile;
-using rtt_cdi_ipcress::IpcressMultigroupOpacity;
-using rtt_cdi_ipcress::IpcressGrayOpacity;
 using rtt_cdi::GrayOpacity;
 using rtt_cdi::MultigroupOpacity;
+using rtt_cdi_ipcress::IpcressFile;
+using rtt_cdi_ipcress::IpcressGrayOpacity;
+using rtt_cdi_ipcress::IpcressMultigroupOpacity;
 using std::cout;
 using std::endl;
-using std::string;
 using std::ios;
+using std::string;
 
 //---------------------------------------------------------------------------//
 /*!

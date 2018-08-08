@@ -54,6 +54,9 @@ private:
   //! File name
   const std::string filename;
 
+  //! Boundary file names (optional data)
+  const std::vector<std::string> bdy_filenames;
+
   //! Vector of all parsed key-value data pairs (includes valueless delimiters)
   Parsed_Elements parsed_pairs;
 
@@ -69,9 +72,14 @@ private:
   //! Cell-to-face map
   std::map<int, std::vector<int>> x3d_cellface_map;
 
+  //! Side-to-node map (0-based indices, unlike other maps)
+  std::map<int, std::vector<int>> x3d_sidenode_map;
+
 public:
   //! Constructor
-  DLL_PUBLIC_mesh explicit X3D_Draco_Mesh_Reader(const std::string filename_);
+  DLL_PUBLIC_mesh
+  X3D_Draco_Mesh_Reader(const std::string &filename_,
+                        const std::vector<std::string> &bdy_filenames_ = {});
 
   // >>> SERVICES
 
@@ -96,11 +104,13 @@ public:
 
   // data needed from x3d boundary file (?)
   // \todo: parse x3d boundary file
-  unsigned get_numsides() const { return 0; }
-  unsigned get_sidetype(size_t /*side*/) const { return 0; }
+  unsigned get_numsides() const { return x3d_sidenode_map.size(); }
+  unsigned get_sidetype(size_t side) const {
+    return x3d_sidenode_map.at(side).size();
+  }
   unsigned get_sideflag(size_t /*side*/) const { return 0; }
-  std::vector<int> get_sidenodes(size_t /*side*/) const {
-    return std::vector<int>();
+  std::vector<int> get_sidenodes(size_t side) const {
+    return x3d_sidenode_map.at(side);
   }
 
 private:
@@ -115,6 +125,10 @@ private:
                                               int &dist);
 
   template <typename KT> KT convert_key(const std::string &skey);
+
+  std::vector<int> get_facenodes(int face) const;
+
+  void read_bdy_files();
 };
 
 //---------------------------------------------------------------------------//

@@ -464,8 +464,8 @@ size_t IpcressOdfmgOpacity::getNumDensities() const {
  * iterators because they are \b not required to be char *.
  */
 std::vector<char> IpcressOdfmgOpacity::pack() const {
-  using std::vector;
   using std::string;
+  using std::vector;
 
   Require(spIpcressFile);
 
