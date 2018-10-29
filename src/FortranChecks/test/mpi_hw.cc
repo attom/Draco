@@ -23,7 +23,7 @@ void test_mpi_hw(rtt_dsxx::UnitTest &ut) {
   // Call fortran subroutine
   tst_mpi_hw(&nf);
   ut.numPasses = 1;
-  ut.numFails = nf;
+  ut.numFails = static_cast<unsigned>(nf);
   return;
 }
 

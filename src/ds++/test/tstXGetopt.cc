@@ -334,7 +334,7 @@ void tst_shortopts_args_missingarg(rtt_dsxx::UnitTest &ut) {
   try {
     rtt_dsxx::XGetopt program_options(my_argc, my_argv, "hvc:");
     FAILMSG("Insist failed to fire with missing required argument.");
-  } catch (rtt_dsxx::assertion &err) {
+  } catch (rtt_dsxx::assertion & /*error*/) {
     PASSMSG("As expected, Insist fired with missing required argument.");
   }
   return;
@@ -868,7 +868,7 @@ void tst_lopts_args_missingarg(rtt_dsxx::UnitTest &ut) {
     rtt_dsxx::XGetopt program_options(my_argc, my_argv, long_options);
 
     FAILMSG("Insist failed to fire with missing required argument.");
-  } catch (rtt_dsxx::assertion &err) {
+  } catch (rtt_dsxx::assertion & /*error*/) {
     PASSMSG("As expected, Insist fired with missing required argument.");
   }
   return;

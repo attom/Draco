@@ -33,9 +33,10 @@ case ${-} in
 
     # Turn on checkwinsize
     shopt -s checkwinsize # autocorrect window size
-    shopt -s cdspell # autocorrect spelling errors on cd command line.
-    shopt -s histappend # append to the history file, don't overwrite it
-    shopt -s direxpand
+    shopt -s cdspell      # autocorrect spelling errors on cd command line.
+    shopt -s histappend   # append to the history file, don't overwrite it
+    # shopt -s direxpand  # Doesn't work on toss22 machines. Move this command to
+                          # .bashrc_toss3 and .bashrc_tt
 
     # don't put duplicate lines or lines starting with space in the history. See
     # bash(1) for more options
@@ -197,6 +198,12 @@ fi
 ## ENVIRONMENTS - once per login
 ##---------------------------------------------------------------------------##
 
+# Darwin salloc inherits the user environment, so we need to bypass the
+# "already-done" logic
+if [[ ${SLURM_CLUSTER_NAME} == "darwin" ]]; then
+  export DRACO_BASHRC_DONE=no
+fi
+
 if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
 
   # Clean up the default path to remove duplicates
@@ -257,6 +264,7 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
     # machine with GPUs
     # backend nodes with GPUs are cn[1-4].
     darwin-fe* | cn[0-9]*)
+      if [[ $verbose ]]; then echo "this is Darwin"; fi
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_darwin_fe
       ;;
 
@@ -265,8 +273,8 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss22
       ;;
 
-    # Snow | Badger | Fire | Ice
-    sn* | ba* | fi* | ic* )
+    # Badger | Fire | Grizzly | Ice | Snow
+    ba* | fi* | gr* | ic* | sn* )
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss3
       ;;
 

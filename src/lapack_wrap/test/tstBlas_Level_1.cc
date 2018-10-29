@@ -27,8 +27,8 @@ template <typename T> void tst_copy(rtt_dsxx::UnitTest &ut) {
   vector<T> x(10, 0.0);
   vector<T> y(10, 0.0);
 
-  for (int i = 0; i < 10; i++)
-    x[i] = 1.2 + i;
+  for (size_t i = 0; i < 10; i++)
+    x[i] = static_cast<T>(1.2 + i);
 
   blas_copy(10, &x[0], 1, &y[0], 1);
   if (!soft_equiv(x.begin(), x.end(), y.begin(), y.end()))

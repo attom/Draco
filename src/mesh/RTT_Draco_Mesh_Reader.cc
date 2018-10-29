@@ -59,7 +59,9 @@ unsigned RTT_Draco_Mesh_Reader::get_celltype(size_t cell) const {
   size_t cell_def = rtt_reader->get_cells_type(cell);
 
   // for Draco_Mesh, cell_type is number of nodes
-  unsigned cell_type = rtt_reader->get_cell_defs_nnodes(cell_def);
+  Check(rtt_reader->get_cell_defs_nnodes(cell_def) < UINT_MAX);
+  unsigned cell_type =
+      static_cast<unsigned>(rtt_reader->get_cell_defs_nnodes(cell_def));
 
   return cell_type;
 }
@@ -72,13 +74,13 @@ unsigned RTT_Draco_Mesh_Reader::get_celltype(size_t cell) const {
  *
  * \return number of nodes for side
  */
-unsigned RTT_Draco_Mesh_Reader::get_sidetype(size_t side) const {
+size_t RTT_Draco_Mesh_Reader::get_sidetype(size_t side) const {
 
   // first obtain a side definition index
   size_t side_def = rtt_reader->get_sides_type(side);
 
   // acquire the number of nodes associated with this side def
-  unsigned side_type = rtt_reader->get_cell_defs_nnodes(side_def);
+  size_t side_type = rtt_reader->get_cell_defs_nnodes(side_def);
 
   return side_type;
 }

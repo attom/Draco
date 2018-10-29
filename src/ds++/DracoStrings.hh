@@ -3,7 +3,7 @@
  * \file   ds++/DracoStrings.hh
  * \author Kelly G. Thompson <kgt@lanl.gov
  * \date   Wednesday, Aug 23, 2017, 12:48 pm
- * \brief  Enscapulates common string manipulations.
+ * \brief  Encapsulates common string manipulations.
  * \note   Copyright (C) 2017-2018 Los Alamos National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
@@ -12,12 +12,39 @@
 #define rtt_dsxx_DracoStrings_hh
 
 #include "ds++/config.h"
+#include <locale>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
 
 namespace rtt_dsxx {
+
+//----------------------------------------------------------------------------//
+/*!
+ * \brief Convert a string to all lower case
+ *
+ * \param[in] string_in This string will be converted letter by letter to 
+ *               lowercase.
+ * \return A string that contains no uppercase letters.
+ *
+ * There are many complexities not considered here (e.g.: non-ASCI character 
+ * sets) and many third party libraries like Boost provide a more complete 
+ * solution. 
+ */
+std::string string_tolower(std::string const &string_in);
+
+//----------------------------------------------------------------------------//
+/*!
+ * \brief Convert a string to all upper case
+ *
+ * \param[in] string_in This string will be converted letter by letter to 
+ *               uppercase.
+ * \return A string that contains no lowercase letters.
+ *
+ * \sa string_toupper
+ */
+std::string string_toupper(std::string const &string_in);
 
 //----------------------------------------------------------------------------//
 /*!
@@ -51,8 +78,7 @@ std::string to_string(T const num, unsigned int const precision = 23) {
  * \return A new, probably shortened, string without unwanted leading/training
  *         characters.
  */
-DLL_PUBLIC_dsxx std::string trim(std::string const &str,
-                                 std::string const &whitespace = " \t");
+std::string trim(std::string const &str, std::string const &whitespace = " \t");
 
 //----------------------------------------------------------------------------//
 /*!
@@ -64,8 +90,8 @@ DLL_PUBLIC_dsxx std::string trim(std::string const &str,
  * \return A new, possibly shortened, string that does not contain the unwanted
  *         characters.
  */
-DLL_PUBLIC_dsxx std::string prune(std::string const &orig_str,
-                                  std::string const &chars_to_remove);
+std::string prune(std::string const &orig_str,
+                  std::string const &chars_to_remove);
 
 //----------------------------------------------------------------------------//
 /*!
@@ -78,9 +104,9 @@ DLL_PUBLIC_dsxx std::string prune(std::string const &orig_str,
  *                 (default: false)
  * \return a vector of strings. The delimiter is always removed.
  */
-DLL_PUBLIC_dsxx std::vector<std::string>
-tokenize(std::string const &str, std::string const &delimiters = " ",
-         bool keepEmptyStrings = false);
+std::vector<std::string> tokenize(std::string const &str,
+                                  std::string const &delimiters = " ",
+                                  bool keepEmptyStrings = false);
 
 //----------------------------------------------------------------------------//
 /*!
@@ -94,19 +120,35 @@ tokenize(std::string const &str, std::string const &delimiters = " ",
  */
 template <typename T> auto parse_number_impl(std::string const &str) -> T;
 
-// specializations for these types are devined in DracoStrings.cc
+// specializations for these types are defined in DracoStrings.cc
+template <> auto parse_number_impl<int32_t>(std::string const &str) -> int32_t;
+template <> auto parse_number_impl<int64_t>(std::string const &str) -> int64_t;
 template <>
-DLL_PUBLIC_dsxx auto parse_number_impl<int>(std::string const &str) -> int;
+auto parse_number_impl<uint32_t>(std::string const &str) -> uint32_t;
 template <>
-DLL_PUBLIC_dsxx auto parse_number_impl<long>(std::string const &str) -> long;
+auto parse_number_impl<uint64_t>(std::string const &str) -> uint64_t;
+
+// I'm having trouble finding a generic solution for an issue where some
+// compilers require separate specialization for 'long' and 'int64_t'
+// (i.e. Visual Studio) while for other compilers these types are identical.
+// So, I'm using some info pulled from <stdint.h> on Linux.
+//
+// On Linux, it appears that long == 'int64_t' if Linux is 64-bit
+// (__WORDSIZE == 64).
+//
+// If we are using Visual Studio, we need these definitions. I expect that they
+// will be needed for 32-bit Linux as well, but I can't test that.
+// Might need to add "|| (defined(__GNUC__) && __WORDSIZE != 64)"
+#if defined(WIN32) || defined(APPLE)
+
+template <> auto parse_number_impl<long>(std::string const &str) -> long;
 template <>
-DLL_PUBLIC_dsxx auto parse_number_impl<unsigned long>(std::string const &str)
-    -> unsigned long;
-template <>
-DLL_PUBLIC_dsxx auto parse_number_impl<float>(std::string const &str) -> float;
-template <>
-DLL_PUBLIC_dsxx auto parse_number_impl<double>(std::string const &str)
-    -> double;
+auto parse_number_impl<unsigned long>(std::string const &str) -> unsigned long;
+
+#endif
+
+template <> auto parse_number_impl<float>(std::string const &str) -> float;
+template <> auto parse_number_impl<double>(std::string const &str) -> double;
 
 //----------------------------------------------------------------------------//
 /*!
@@ -160,7 +202,7 @@ auto parse_number(std::string const &str, bool verbose = true) -> T;
  *        values.
  *
  * \param[in] str The string that contains a number.
- * \param[in] range_symbols Parenthesis or brances that mark the begining or end
+ * \param[in] range_symbols Parenthesis or braces that mark the beginning or end
  *                 of the value range. (default: "{}")
  * \param[in] delimiter A character that separates each numeric entry.
  *                 (default: ",")
@@ -186,8 +228,8 @@ std::vector<T> string_to_numvec(std::string const &str,
  *                 (default: false).
  * \return a map<string,uint> that contains [word]:[num_occurances]
  */
-DLL_PUBLIC_dsxx std::map<std::string, unsigned>
-get_word_count(std::ostringstream const &data, bool verbose = false);
+std::map<std::string, unsigned> get_word_count(std::ostringstream const &data,
+                                               bool verbose = false);
 
 //----------------------------------------------------------------------------//
 /*!
@@ -199,8 +241,8 @@ get_word_count(std::ostringstream const &data, bool verbose = false);
  *                 (default: false).
  * \return a map<string,uint> that contains [word]:[num_occurances]
  */
-DLL_PUBLIC_dsxx std::map<std::string, unsigned>
-get_word_count(std::string const &filename, bool verbose = false);
+std::map<std::string, unsigned> get_word_count(std::string const &filename,
+                                               bool verbose = false);
 
 } // namespace rtt_dsxx
 

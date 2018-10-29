@@ -5,10 +5,7 @@
  * \date   Tue Dec 21 14:20:03 2004
  * \brief  Declaration file for the class rtt_quadrature::Ordinate.
  * \note   Copyright (C)  2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-// $Id: Ordinate.hh 6607 2012-06-14 22:31:45Z kellyt $
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include <algorithm>
@@ -28,7 +25,7 @@ bool check_4(vector<Ordinate> const &ordinates) {
   // In 1-D spherical geometry, the ordinates must be confined to the first
   // two octants.
 
-  unsigned const N = ordinates.size();
+  size_t const N = ordinates.size();
   for (unsigned i = 0; i < N; ++i) {
     if (ordinates[i].eta() < 0 || ordinates[i].xi() < 0)
       return false;
@@ -41,7 +38,7 @@ bool check_2(vector<Ordinate> const &ordinates) {
   // In 2-D geometry, the ordinates must be confined to the first
   // four octants
 
-  unsigned const N = ordinates.size();
+  size_t const N = ordinates.size();
   for (unsigned i = 0; i < N; ++i) {
     if (ordinates[i].xi() < 0)
       return false;
@@ -144,7 +141,7 @@ Ordinate_Set::Ordinate_Set(unsigned const dimension, Geometry const geometry,
   Require(dimension != 2 || check_2(ordinates));
 
   norm_ = 0.0;
-  unsigned const N = ordinates_.size();
+  size_t const N = ordinates_.size();
   for (unsigned i = 0; i < N; ++i) {
     norm_ += ordinates[i].wt();
   }
@@ -228,5 +225,5 @@ void Ordinate_Set::display() const {
 } // end namespace rtt_quadrature
 
 //---------------------------------------------------------------------------//
-//              end of quadrature/Ordinate_Set.cc
+// end of quadrature/Ordinate_Set.cc
 //---------------------------------------------------------------------------//

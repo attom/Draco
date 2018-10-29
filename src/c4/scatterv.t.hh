@@ -5,10 +5,7 @@
  * \date   Thu Mar 21 16:56:17 2002
  * \brief  C4 MPI template implementation.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef c4_scatterv_t_hh
@@ -41,7 +38,8 @@ DLL_PUBLIC_c4 void indeterminate_scatterv(vector<vector<T>> &outgoing_data,
       vector<int> counts(N), displs(N);
       unsigned total_count = 0;
       for (unsigned p = 0; p < N; ++p) {
-        unsigned const n = outgoing_data[p].size();
+        Check(outgoing_data[p].size() < UINT_MAX);
+        unsigned const n = static_cast<unsigned>(outgoing_data[p].size());
         counts[p] = n;
         displs[p] = total_count;
         total_count += n;
@@ -100,7 +98,8 @@ DLL_PUBLIC_c4 void determinate_scatterv(vector<vector<T>> &outgoing_data,
       vector<int> counts(N), displs(N);
       unsigned total_count = 0;
       for (unsigned p = 0; p < N; ++p) {
-        unsigned const n = outgoing_data[p].size();
+        Check(outgoing_data[p].size() < UINT_MAX);
+        unsigned const n = static_cast<unsigned>(outgoing_data[p].size());
         counts[p] = n;
         displs[p] = total_count;
         total_count += n;
@@ -117,7 +116,8 @@ DLL_PUBLIC_c4 void determinate_scatterv(vector<vector<T>> &outgoing_data,
           (sendbuf.size() > 0 ? &sendbuf[0] : NULL), &counts[0], &displs[0],
           (incoming_data.size() > 0 ? &incoming_data[0] : NULL), count);
     } else {
-      int count = incoming_data.size();
+      Check(incoming_data.size() < INT_MAX);
+      int count = static_cast<int>(incoming_data.size());
       rtt_c4::scatterv(static_cast<T *>(NULL), static_cast<int *>(NULL),
                        static_cast<int *>(NULL), &incoming_data[0], count);
     }

@@ -91,7 +91,6 @@ void runTest(UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 namespace rtt_meshReaders_test {
 
 bool check_mesh(UnitTest &ut, const rtt_meshReaders::Hex_Mesh_Reader &mesh,
@@ -181,7 +180,7 @@ bool check_node_units(UnitTest &ut,
 bool check_node_sets(UnitTest &ut, const rtt_meshReaders::Hex_Mesh_Reader &mesh,
                      const std::string &testid) {
   // Check node sets.
-  std::map<std::string, std::set<int>> ndsets = mesh.get_node_sets();
+  std::map<std::string, std::set<unsigned>> ndsets = mesh.get_node_sets();
   bool pass_ns = ndsets.size() == 1;
   if (testid == "slab") {
     pass_ns = pass_ns && check_map(ndsets, "Interior", 0, 101);
@@ -253,7 +252,7 @@ bool check_element_nodes(UnitTest &ut,
                          const std::string &testid) {
   // Check element nodes.
   bool pass_en = true;
-  std::vector<std::vector<int>> enodes = mesh.get_element_nodes();
+  std::vector<std::vector<unsigned>> enodes = mesh.get_element_nodes();
   if (testid == "slab")
     pass_en = enodes[0][0] == 0 && enodes[0][1] == 1 && enodes[10][0] == 10 &&
               enodes[10][1] == 11 && enodes[99][0] == 99 &&
@@ -323,7 +322,7 @@ bool check_invariant(UnitTest &ut,
 bool check_element_sets(UnitTest &ut,
                         const rtt_meshReaders::Hex_Mesh_Reader &mesh,
                         const std::string &testid) {
-  typedef std::map<std::string, std::set<int>> mt;
+  typedef std::map<std::string, std::set<unsigned>> mt;
   bool pass_es = true;
   const mt elmsets = mesh.get_element_sets();
   if (testid == "slab") {
@@ -444,16 +443,17 @@ bool compare_double(const double &lhs, const double &rhs) {
   return std::fabs(lhs - rhs) <= 0.00001;
 }
 
-bool check_map(const std::map<std::string, std::set<int>> &elmsets,
-               const std::string &name, const int &begin, const int &end) {
+bool check_map(const std::map<std::string, std::set<unsigned>> &elmsets,
+               const std::string &name, const unsigned &begin,
+               const unsigned &end) {
   bool pass = true;
-  typedef std::map<std::string, std::set<int>> mt;
+  typedef std::map<std::string, std::set<unsigned>> mt;
   mt::const_iterator iter = elmsets.find(name);
   if (iter != elmsets.end()) {
-    const std::set<int> &elem_subset = (*iter).second;
+    const std::set<unsigned> &elem_subset = (*iter).second;
     if (elem_subset.size() == static_cast<size_t>(end - begin)) {
-      for (int i = begin; i < end; ++i) {
-        std::set<int>::const_iterator siter = elem_subset.find(i);
+      for (unsigned i = begin; i < end; ++i) {
+        std::set<unsigned>::const_iterator siter = elem_subset.find(i);
         pass = pass && (siter != elem_subset.end());
       }
     } else

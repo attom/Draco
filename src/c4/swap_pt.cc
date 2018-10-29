@@ -5,10 +5,7 @@
  * \date   Mon Mar 25 14:44:54 2002
  * \brief  C4 MPI determinate and indeterminate swap instantiations.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "C4_Functions.hh"
@@ -17,33 +14,33 @@
 #include <c4/config.h>
 
 namespace rtt_c4 {
-using std::vector;
 
 //---------------------------------------------------------------------------//
 // EXPLICIT INSTANTIATIONS OF NON-BLOCKING SEND/RECEIVE
 //---------------------------------------------------------------------------//
 
 template DLL_PUBLIC_c4 void
-determinate_swap(vector<unsigned> const &outgoing_pid,
-                 vector<vector<unsigned>> const &outgoing_data,
-                 vector<unsigned> const &incoming_pid,
-                 vector<vector<unsigned>> &incoming_data, int tag);
+determinate_swap(std::vector<unsigned> const &outgoing_pid,
+                 std::vector<std::vector<unsigned>> const &outgoing_data,
+                 std::vector<unsigned> const &incoming_pid,
+                 std::vector<std::vector<unsigned>> &incoming_data, int tag);
 
 template DLL_PUBLIC_c4 void
-determinate_swap(vector<unsigned> const &outgoing_pid,
-                 vector<vector<double>> const &outgoing_data,
-                 vector<unsigned> const &incoming_pid,
-                 vector<vector<double>> &incoming_data, int tag);
+determinate_swap(std::vector<unsigned> const &outgoing_pid,
+                 std::vector<std::vector<double>> const &outgoing_data,
+                 std::vector<unsigned> const &incoming_pid,
+                 std::vector<std::vector<double>> &incoming_data, int tag);
 
 template DLL_PUBLIC_c4 void
-semideterminate_swap(vector<unsigned> const &outgoing_pid,
-                     vector<vector<unsigned>> const &outgoing_data,
-                     vector<unsigned> const &incoming_pid,
-                     vector<vector<unsigned>> &incoming_data, int tag);
+semideterminate_swap(std::vector<unsigned> const &outgoing_pid,
+                     std::vector<std::vector<unsigned>> const &outgoing_data,
+                     std::vector<unsigned> const &incoming_pid,
+                     std::vector<std::vector<unsigned>> &incoming_data,
+                     int tag);
 
 template DLL_PUBLIC_c4 void
-determinate_swap(vector<vector<unsigned>> const &outgoing_data,
-                 vector<vector<unsigned>> &incoming_data, int tag);
+determinate_swap(std::vector<std::vector<unsigned>> const &outgoing_data,
+                 std::vector<std::vector<unsigned>> &incoming_data, int tag);
 
 } // end namespace rtt_c4
 

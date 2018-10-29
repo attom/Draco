@@ -5,8 +5,7 @@
  * \date   Mon Aug  9 13:17:31 2004
  * \brief  Calculate the singular value decomposition of a matrix.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef fit_svdfit_i_hh
@@ -71,8 +70,10 @@ void svdfit(RandomContainer const &x, RandomContainer const &y,
   using rtt_linear::svbksb;
   using rtt_linear::svdcmp;
 
-  unsigned const ndata = x.size();
-  unsigned const ma = a.size();
+  Check(x.size() < UINT_MAX);
+  Check(a.size() < UINT_MAX);
+  unsigned const ndata = static_cast<unsigned>(x.size());
+  unsigned const ma = static_cast<unsigned>(a.size());
 
   vector<double> b(ndata), afunc(ma);
 

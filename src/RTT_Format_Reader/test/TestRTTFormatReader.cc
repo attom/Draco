@@ -21,7 +21,6 @@ using namespace std;
 using namespace rtt_dsxx;
 
 //---------------------------------------------------------------------------//
-
 map<Meshes, bool> Dims_validated;
 
 //---------------------------------------------------------------------------//
@@ -36,7 +35,7 @@ void runTest(UnitTest &ut) {
   // Meshes in the header file.
   int const MAX_MESHES = 1;
   std::string filename[MAX_MESHES] = {inpPath + string("rttdef.mesh")};
-  Meshes mesh_type;
+  Meshes mesh_type = MESHES_LASTENTRY;
 
   for (int mesh_number = 0; mesh_number < MAX_MESHES; mesh_number++) {
     // Construct an RTT_Format_Reader class object from the data in the
@@ -903,8 +902,8 @@ bool check_cell_defs(RTT_Format_Reader const &mesh, Meshes const &meshtype,
   std::vector<size_t> nnodes;
   std::vector<size_t> nsides;
   std::vector<std::vector<int>> side_types;
-  std::vector<std::vector<std::vector<size_t>>> sides;
-  std::vector<std::vector<std::vector<size_t>>> ordered_sides;
+  std::vector<std::vector<std::vector<unsigned>>> sides;
+  std::vector<std::vector<std::vector<unsigned>>> ordered_sides;
 
   switch (meshtype) {
   case DEFINED:
@@ -1107,7 +1106,7 @@ bool check_cell_defs(RTT_Format_Reader const &mesh, Meshes const &meshtype,
 
   // Check get_cell_defs_node_map(int)
   {
-    std::vector<int> const myNodes = mesh.get_cell_defs_node_map(0);
+    std::vector<unsigned> const myNodes = mesh.get_cell_defs_node_map(0);
     size_t mySize = myNodes.size();
     // std::cout << "mySize = " << mySize << std::endl;
     if (mySize == 0) {
@@ -1219,7 +1218,7 @@ bool check_nodes(RTT_Format_Reader const &mesh, Meshes const &meshtype,
   bool all_passed = true;
   std::vector<std::vector<double>> coords(
       mesh.get_dims_nnodes(), std::vector<double>(mesh.get_dims_ndim(), 0.0));
-  std::vector<int> parents(mesh.get_dims_nnodes());
+  std::vector<size_t> parents(mesh.get_dims_nnodes());
   std::vector<std::vector<int>> flags(mesh.get_dims_nnodes());
 
   switch (meshtype) {
@@ -1279,9 +1278,12 @@ bool check_nodes(RTT_Format_Reader const &mesh, Meshes const &meshtype,
   }
   // Check the node parents.
   bool got_nodes_parents = true;
-  for (size_t i = 0; i < mesh.get_dims_nnodes(); i++)
-    if (parents[i] != mesh.get_nodes_parents(i))
+  for (size_t i = 0; i < mesh.get_dims_nnodes(); i++) {
+    Check(mesh.get_nodes_parents(i) >= 0);
+    Check(parents[i] < INT_MAX);
+    if (static_cast<int>(parents[i]) != mesh.get_nodes_parents(i))
       got_nodes_parents = false;
+  }
   if (!got_nodes_parents) {
     FAILMSG("Nodes parents not obtained.");
     all_passed = false;
@@ -1317,8 +1319,8 @@ bool check_sides(RTT_Format_Reader const &mesh, Meshes const &meshtype,
   // Exercise the sides accessor functions for this mesh.
   bool all_passed = true;
   std::vector<int> sideType;
-  std::vector<std::vector<int>> nodes;
-  std::vector<std::vector<int>> flags;
+  std::vector<std::vector<unsigned>> nodes;
+  std::vector<std::vector<unsigned>> flags;
 
   switch (meshtype) {
   case DEFINED:
@@ -1419,8 +1421,8 @@ bool check_cells(RTT_Format_Reader const &mesh, Meshes const &meshtype,
   // Exercise the cells functions for this mesh.
   bool all_passed = true;
   std::vector<int> cellType;
-  std::vector<std::vector<int>> nodes;
-  std::vector<std::vector<int>> flags;
+  std::vector<std::vector<unsigned>> nodes;
+  std::vector<std::vector<unsigned>> flags;
 
   switch (meshtype) {
   case DEFINED:
@@ -1482,9 +1484,12 @@ bool check_cells(RTT_Format_Reader const &mesh, Meshes const &meshtype,
   // Check the cell flags.
   bool got_cells_flags = true;
   for (size_t i = 0; i < mesh.get_dims_ncells(); i++) {
-    for (size_t f = 0; f < mesh.get_dims_ncell_flag_types(); f++)
-      if (flags[i][f] != mesh.get_cells_flags(i, f))
+    for (size_t f = 0; f < mesh.get_dims_ncell_flag_types(); f++) {
+      Check(mesh.get_cells_flags(i, f) >= 0);
+      Check(flags[i][f] < INT_MAX);
+      if (static_cast<int>(flags[i][f]) != mesh.get_cells_flags(i, f))
         got_cells_flags = false;
+    }
   }
   if (!got_cells_flags) {
     FAILMSG("Cell flags not obtained.");

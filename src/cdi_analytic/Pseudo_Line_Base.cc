@@ -65,7 +65,7 @@ void Pseudo_Line_Base::setup_(double emin, double emax) {
     }
     double C;
     if (nu0_ < 0) {
-      unsigned N = continuum_table_.size();
+      size_t N = continuum_table_.size();
       if (N > 0) {
         C = continuum_table_[static_cast<unsigned int>(edge_[i] * N / emax)];
       } else {
@@ -218,7 +218,7 @@ double Pseudo_Line_Base::monoOpacity(double const x, double const T) const {
 
   double Result;
   if (nu0_ < 0) {
-    unsigned N = continuum_table_.size();
+    size_t N = continuum_table_.size();
     if (N > 0) {
       Result = continuum_table_[static_cast<unsigned int>(x * N / emax_)];
     } else {

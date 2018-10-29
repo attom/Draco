@@ -48,7 +48,7 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
   //-----------------------------------------------------------------
 
   // Ipcress data filename (IPCRESS format required)
-  string op_data_file = "analyticOpacities.ipcress";
+  string op_data_file = ut.getTestSourcePath() + "analyticOpacities.ipcress";
 
   // ------------------------- //
   // Create IpcressFile object //
@@ -255,7 +255,7 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
   bool caught = false;
   try {
     spCDI_Analytic->mg(r, rtt_cdi::SCATTERING);
-  } catch (const rtt_dsxx::assertion &excpt) {
+  } catch (const rtt_dsxx::assertion & /*excpt*/) {
     PASSMSG("Good, caught illegal accessor to CDI-mg().");
     caught = true;
   }
@@ -266,7 +266,7 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
   caught = false;
   try {
     spCDI_Analytic->gray(rtt_cdi::ANALYTIC, a);
-  } catch (const rtt_dsxx::assertion &excpt) {
+  } catch (const rtt_dsxx::assertion & /*excpt*/) {
     PASSMSG("Good, caught illegal accessor to CDI-gray().");
     caught = true;
   }

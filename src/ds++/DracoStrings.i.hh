@@ -35,7 +35,7 @@ auto parse_number(std::string const &str, bool verbose) -> T {
           << "\tstring = \"" << str << "\"\n"
           << std::endl;
     throw e;
-  } catch (std::out_of_range &e) {
+  } catch (std::out_of_range & /*error*/) {
     // if the converted value would fall out of the range of the result type
     // or if the underlying function (std::strtol or std::strtoull) sets
     // errno to ERANGE.

@@ -85,7 +85,7 @@ void tstcPlk(rtt_dsxx::UnitTest &ut) {
     bool caught(false);
     try {
       comparecPlk(2, 3, x, expVal, ut);
-    } catch (rtt_dsxx::assertion &err) {
+    } catch (rtt_dsxx::assertion & /*err*/) {
       ut.passes("Caught out of bounds.");
       caught = true;
     }
@@ -98,7 +98,7 @@ void tstcPlk(rtt_dsxx::UnitTest &ut) {
     x = -999999.999;
     try {
       comparecPlk(2, 0, x, expVal, ut);
-    } catch (rtt_dsxx::assertion &err) {
+    } catch (rtt_dsxx::assertion & /*err*/) {
       ut.passes("Caught mu out of range.");
       caught = true;
     }

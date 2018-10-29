@@ -36,7 +36,6 @@ void test_simple(rtt_dsxx::UnitTest &ut) {
   vector<double> v(10, 0.0);
   string msgref("hello, world!");
   string msg;
-  string badmsg; // length never set.
 
   // assign on node 0
   if (rtt_c4::node() == 0) {
@@ -93,11 +92,11 @@ void test_simple(rtt_dsxx::UnitTest &ut) {
     // The above command should throw on all procs.
     if (rtt_c4::node() != 0)
       ITFAILS;
-  } catch (std::exception &err) {
-    std::ostringstream msg;
-    msg << "Successfully caught a range violation in broadcast on PE "
-        << rtt_c4::node();
-    PASSMSG(msg.str());
+  } catch (std::exception & /*error*/) {
+    std::ostringstream mymsg;
+    mymsg << "Successfully caught a range violation in broadcast on PE "
+          << rtt_c4::node();
+    PASSMSG(mymsg.str());
   }
 
   rtt_c4::global_barrier();

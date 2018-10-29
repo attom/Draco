@@ -90,7 +90,7 @@ run "module list"
 export CXX=`which mpiicpc`
 export CC=`which mpiicc`
 export FC=`which mpiifort`
-export MPIEXEC=`which mpirun`
+export MPIEXEC_EXECUTABLE=`which mpirun`
 # http://stackoverflow.com/questions/11959906/openmp-and-numa-relation
 export OMP_NUM_THREADS=`lscpu | grep "per socket" | awk '{print $4}'`
 export OMP_PROC_BIND=true

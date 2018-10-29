@@ -54,7 +54,7 @@
 # Periodic usage reports
 #------------------------------------------------------------------------------#
 
-01 00 1 * * /usr/projects/packages/user_contrib/usage_logs/bin/user_contrib_monthly_report.sh
+# 01 00 1 * * /usr/projects/packages/user_contrib/usage_logs/bin/user_contrib_monthly_report.sh
 
 01 01 * * 4 /users/kellyt/bin/weekly_report.sh
 

@@ -83,7 +83,7 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   for (size_t cell = 0; cell < num_cells; ++cell) {
 
     // insert the vector of node indices
-    const std::vector<int> cell_nodes = reader->get_cellnodes(cell);
+    const std::vector<unsigned> cell_nodes = reader->get_cellnodes(cell);
     cell_to_node_linkage.insert(cell_to_node_linkage.end(), cell_nodes.begin(),
                                 cell_nodes.end());
   }
@@ -98,7 +98,8 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   for (size_t side = 0; side < num_sides; ++side) {
 
     // acquire the number of nodes associated with this side def
-    side_node_count[side] = reader->get_sidetype(side);
+    Check(reader->get_sidetype(side) < UINT_MAX);
+    side_node_count[side] = static_cast<unsigned>(reader->get_sidetype(side));
 
     // this is not required in rtt meshes, but is so in Draco_Mesh
     Check(dimension == 2 ? side_node_count[side] == 2 : true);
@@ -119,7 +120,7 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   for (size_t side = 0; side < num_sides; ++side) {
 
     // insert the vector of node indices
-    const std::vector<int> side_nodes = reader->get_sidenodes(side);
+    const std::vector<unsigned> side_nodes = reader->get_sidenodes(side);
     side_to_node_linkage.insert(side_to_node_linkage.end(), side_nodes.begin(),
                                 side_nodes.end());
   }
@@ -140,7 +141,8 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   for (size_t node = 0; node < num_nodes; ++node) {
 
     // set the "global" node indices
-    global_node_number[node] = node;
+    Check(node < UINT_MAX);
+    global_node_number[node] = static_cast<unsigned>(node);
 
     // get coordinates for this node
     const std::vector<double> node_coord = reader->get_nodecoord(node);

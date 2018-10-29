@@ -27,16 +27,15 @@ namespace rtt_norms {
  *
  * \arg \a Field A real type such as float or double.
  */
-template <class Field>
+template <typename Field>
 double accumulate_norm_(double const init, Field const &x) {
   return init + norm<Field>(x);
 }
 
 //---------------------------------------------------------------------------//
 /*!
- *
  * \arg \a In An input container type whose elements are real, such as
- * <code>vector<double></code> or <code>list<float></code>.
+ *            <code>vector<double></code> or <code>list<float></code>.
  *
  * \param x Container representing a real vector whose norm is desired.
  */
@@ -46,7 +45,8 @@ template <typename In> double L2norm(In const &x) {
 
   rtt_c4::global_sum(norm);
 
-  unsigned xlength(x.size());
+  Check(x.size() < UINT_MAX);
+  unsigned xlength(static_cast<unsigned>(x.size()));
 
   rtt_c4::global_sum(xlength);
   Require(xlength > 0);
@@ -89,7 +89,8 @@ double L2norm_diff(In1 const &x, In2 const &y) {
 
   rtt_c4::global_sum(norm);
 
-  unsigned xlength(x.size());
+  Check(x.size() < UINT_MAX);
+  unsigned xlength(static_cast<unsigned>(x.size()));
 
   rtt_c4::global_sum(xlength);
   Require(xlength > 0);

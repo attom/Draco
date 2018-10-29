@@ -171,7 +171,8 @@ int main(int argc, char *argv[]) {
   bool itPassed;
 
   // get the ipcress file name, and create the ipcress file
-  string ipcressFileName = "odfregression10.ipcress";
+  string ipcressFileName =
+      ut.getTestSourcePath() + std::string("odfregression10.ipcress");
   std::shared_ptr<IpcressFile const> file;
   try {
     file.reset(new IpcressFile(ipcressFileName));
@@ -284,15 +285,15 @@ bool checkData(rtt_dsxx::ScalarUnitTest &ut, SP_Goo spGandOpacity) {
     ITFAILS;
 
   rtt_cdi::Model om(spGandOpacity->getModelType());
-  if (om != rtt_cdi::ROSSELAND)
-    ITFAILS;
+  FAIL_IF_NOT(om == rtt_cdi::ROSSELAND);
 
   rtt_cdi::Reaction rt(spGandOpacity->getReactionType());
-  if (rt != rtt_cdi::ABSORPTION)
-    ITFAILS;
+  FAIL_IF_NOT(rt == rtt_cdi::ABSORPTION);
 
+  string const expectedIpcressFileName =
+      ut.getTestSourcePath() + std::string("odfregression10.ipcress");
   std::string dataFilename(spGandOpacity->getDataFilename());
-  if (dataFilename != std::string("odfregression10.ipcress"))
+  if (dataFilename != expectedIpcressFileName)
     ITFAILS;
 
   std::string ddesc(spGandOpacity->getDataDescriptor());
@@ -302,8 +303,8 @@ bool checkData(rtt_dsxx::ScalarUnitTest &ut, SP_Goo spGandOpacity) {
   double const temperature = benchmarkData::temp;
   double const density = benchmarkData::dens;
 
-  int const numBands = spGandOpacity->getNumBands();
-  int const numGroups = spGandOpacity->getNumGroups();
+  size_t const numBands = spGandOpacity->getNumBands();
+  size_t const numGroups = spGandOpacity->getNumGroups();
 
   bool hasNotFailed = true;
 
@@ -332,7 +333,7 @@ bool checkData(rtt_dsxx::ScalarUnitTest &ut, SP_Goo spGandOpacity) {
 
   // test group boundaries
   vec_d const groupBoundaries = spGandOpacity->getGroupBoundaries();
-  for (int group = 0; group < numGroups; group++) {
+  for (size_t group = 0; group < numGroups; group++) {
     if (!soft_equiv(groupBoundaries[group],
                     benchmarkData::groupBoundaries[group])) {
       itFails = true;
@@ -352,7 +353,7 @@ bool checkData(rtt_dsxx::ScalarUnitTest &ut, SP_Goo spGandOpacity) {
 
   itFails = false;
 
-  for (int band = 0; band < numBands; band++) {
+  for (size_t band = 0; band < numBands; band++) {
     if (!soft_equiv(bandBoundaries[band],
                     benchmarkData::bandBoundaries[band])) {
       itFails = true;
@@ -372,8 +373,8 @@ bool checkData(rtt_dsxx::ScalarUnitTest &ut, SP_Goo spGandOpacity) {
 
   itFails = false;
 
-  for (int group = 0; group < numGroups; group++) {
-    for (int band = 0; band < numBands; band++) {
+  for (size_t group = 0; group < numGroups; group++) {
+    for (size_t band = 0; band < numBands; band++) {
       if (!soft_equiv(multiBandOpacities[group][band],
                       benchmarkData::opacities[group][band])) {
         cout << "Mismatch in opacity for group " << group + 1 << "band "

@@ -220,7 +220,7 @@ macro( aut_register_test )
     -D GOLDFILE=${aut_GOLDFILE}
     -D RUN_CMD=${RUN_CMD}
     -D numPE=${numPE}
-    -D MPIEXEC=${MPIEXEC}
+    -D MPIEXEC_EXECUTABLE=${MPIEXEC_EXECUTABLE}
     -D MPI_CORES_PER_CPU=${MPI_CORES_PER_CPU}
     -D SITENAME=${SITENAME}
     -D PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
@@ -272,7 +272,7 @@ macro( aut_register_test )
       -DGOLDFILE=${aut_GOLDFILE}
       -DRUN_CMD=${RUN_CMD}
       -DnumPE=${numPE}
-      -D MPIEXEC=${MPIEXEC}
+      -D MPIEXEC_EXECUTABLE=${MPIEXEC_EXECUTABLE}
       -DMPI_CORES_PER_CPU=${MPI_CORES_PER_CPU}
       -DSITENAME=${SITENAME}
       -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
@@ -372,17 +372,17 @@ macro( add_app_unit_test )
   if( DEFINED aut_PE_LIST AND ${DRACO_C4} MATCHES "MPI" )
 
     # Parallel tests
-    if( "${MPIEXEC}" MATCHES "aprun" )
+    if( "${MPIEXEC_EXECUTABLE}" MATCHES "aprun" )
       set( RUN_CMD "aprun -n" )
     else()
-      set( RUN_CMD "${MPIEXEC} ${MPIEXEC_POSTFLAGS} ${MPIEXEC_NUMPROC_FLAG}")
+      set( RUN_CMD "${MPIEXEC_EXECUTABLE} ${MPIEXEC_POSTFLAGS} ${MPIEXEC_NUMPROC_FLAG}")
     endif()
 
   else()
 
     # Scalar tests
-    if( "${MPIEXEC}" MATCHES "aprun" OR "${MPIEXEC}" MATCHES "srun" )
-      set( RUN_CMD "${MPIEXEC} ${MPIEXEC_POSTFLAGS} ${MPIEXEC_NUMPROC_FLAG} 1" )
+    if( "${MPIEXEC_EXECUTABLE}" MATCHES "aprun" OR "${MPIEXEC_EXECUTABLE}" MATCHES "srun" )
+      set( RUN_CMD "${MPIEXEC_EXECUTABLE} ${MPIEXEC_POSTFLAGS} ${MPIEXEC_NUMPROC_FLAG} 1" )
     endif()
   endif()
 
@@ -418,8 +418,8 @@ macro( add_app_unit_test )
           if( ${argvalue} STREQUAL "none" )
             set( argvalue "_${numPE}" )
           else()
-            get_filename_component( argvalue "${argvalue}" NAME )
-            string( REGEX REPLACE "[-]" "" safe_argvalue ${argvalue} )
+            get_filename_component( safe_argvalue "${argvalue}" NAME )
+            string( REGEX REPLACE "[-]" "" safe_argvalue ${safe_argvalue} )
             string( REGEX REPLACE "[ +.]" "_" safe_argvalue ${safe_argvalue} )
             set( argname "_${numPE}_${safe_argvalue}" )
           endif()
@@ -435,8 +435,8 @@ macro( add_app_unit_test )
         if( ${argvalue} STREQUAL "none" )
           set( argvalue "" )
         else()
-          get_filename_component( argvalue "${argvalue}" NAME )
-          string( REGEX REPLACE "[-]" "" safe_argvalue ${argvalue} )
+          get_filename_component( safe_argvalue "${argvalue}" NAME )
+          string( REGEX REPLACE "[-]" "" safe_argvalue ${safe_argvalue} )
           string( REGEX REPLACE "[ +.]" "_" safe_argvalue ${safe_argvalue} )
           set( argname "_${safe_argvalue}" )
         endif()
@@ -497,10 +497,6 @@ macro( aut_runTests )
   if( numPE )
     # Use 1 proc to run draco_info
     set( draco_info_numPE 1 )
-#    if( "${MPIEXEC}" MATCHES "aprun" )
-#     # Run with 1 proc, but tell aprun that we need the whole node.
-#      set_aprun_depth_flags( 1 aprun_depth_options)
-#    endif()
   endif()
   if( EXISTS ${DRACO_INFO} )
     execute_process(
@@ -526,14 +522,6 @@ macro( aut_runTests )
     string( REPLACE ".out" "-${safe_argvalue}.out" OUTFILE ${OUTFILE} )
     string( REPLACE ".err" "-${safe_argvalue}.err" ERRFILE ${ERRFILE} )
   endif()
-
-  # if( "${MPIEXEC}" MATCHES "aprun" )
-  #   # Run with requested number of processors, but tell aprun that we need the
-  #   # whole node.
-  #   if( numPE )
-  #     set_aprun_depth_flags( ${numPE} aprun_depth_options)
-  #   endif()
-  # endif()
 
   if( DEFINED RUN_CMD )
     string( REPLACE ";" " " run_cmd_string "${RUN_CMD}" )
@@ -626,8 +614,8 @@ function(set_numdiff_run_cmd RUN_CMD numdiff_run_cmd)
   if( DEFINED RUN_CMD )
     set(numdiff_run_cmd ${RUN_CMD})
     separate_arguments(numdiff_run_cmd)
-    if( "${MPIEXEC}" MATCHES "aprun" OR
-        "${MPIEXEC}" MATCHES "mpiexec" )
+    if( "${MPIEXEC_EXECUTABLE}" MATCHES "aprun" OR
+        "${MPIEXEC_EXECUTABLE}" MATCHES "mpiexec" )
       # For Cray environments, let numdiff run on the login node.
       set(numdiff_run_cmd "")
     elseif( numPE )
@@ -747,21 +735,10 @@ Did you list it when registering this test?" )
   # Choose pgdiff or gdiff
 
   if( numPE AND "${numPE}" GREATER "1" )
-
-#    if( "${MPIEXEC}" MATCHES "aprun")
-#      # For Cray environments, fill up the node by setting the depth (-d) flag.
-#      set_aprun_depth_flags( ${numPE} aprun_depth_options)
-#    endif()
     set( pgdiff_gdiff  ${RUN_CMD} ${numPE} ${PGDIFF} )
-
   else()
-
     # Use 1 proc to run gdiff
-#    if( "${MPIEXEC}" MATCHES "aprun")
-#      set_aprun_depth_flags( 1 aprun_depth_options)
-#    endif()
     set( pgdiff_gdiff ${RUN_CMD} 1 ${GDIFF} )
-
   endif()
 
   #----------------------------------------

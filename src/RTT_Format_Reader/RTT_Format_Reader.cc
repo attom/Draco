@@ -132,8 +132,8 @@ void RTT_Format_Reader::readEndKeyword(ifstream &meshfile) {
  *        definitions.
  */
 void RTT_Format_Reader::reformatData(
-    vector_vector_int const &cell_side_types,
-    std::vector<std::vector<std::vector<size_t>>> const &cell_ordered_sides) {
+    vector_vector_uint const &cell_side_types,
+    std::vector<vector_vector_uint> const &cell_ordered_sides) {
   spCellDefs->redefineCellDefs(cell_side_types, cell_ordered_sides);
   spSides->redefineSides();
   spCells->redefineCells();

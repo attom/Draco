@@ -54,7 +54,7 @@ void fdjac(const std::vector<Field> &x, const std::vector<Field> &fvec,
   // Square root of the machine precision
   static const double EPS = sqrt(numeric_limits<Field>::epsilon());
 
-  const unsigned n = x.size();
+  const size_t n = x.size();
 
   df.resize(n * n);
 

@@ -18,6 +18,9 @@ if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
     toggle_compiler_flag( TRUE "-Wfloat-equal -Wunused-macros" "CXX;C" "DEBUG")
     # toggle_compiler_flag( TRUE "-Winline" "CXX;C" "RELEASE")
   endif()
+elseif( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" )
+  string( REPLACE "/W2" "/W4" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" )
+  string( REPLACE "/W2" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" )
 endif()
 
 # Level 1
@@ -48,7 +51,7 @@ endif()
 #    that require Fortran.
 if( NOT DEFINED ENV{APPVEYOR} )
   add_dir_if_exists( device )       # needs ds++
-  add_dir_if_exists( compton )      # needs ds++
+  add_dir_if_exists( compton )      # needs c4, CSK
   if( HAVE_Fortran )
     add_dir_if_exists( lapack_wrap )  # needs ds++
   endif()
@@ -80,20 +83,20 @@ endif()
 # Level 4
 message(" ")
 message( STATUS "Configuring Level 4 packages --" )
-add_dir_if_exists( special_functions ) # needs roots, units, ode
-add_dir_if_exists( cdi_analytic )      # needs parser, ode, cdi
+add_dir_if_exists( special_functions ) # needs roots, units, GSL
+add_dir_if_exists( cdi_analytic )      # needs parser, roots, ode, cdi
 add_dir_if_exists( RTT_Format_Reader)  # needs meshReaders
 if( NOT DEFINED ENV{APPVEYOR} AND NOT DEFINED ENV{TRAVIS} )
   add_dir_if_exists( cdi_eospac )      # needs parser, ode, cdi
 endif()
 
 # Level 5
+message(" ")
+message( STATUS "Configuring Level 5 packages --" )
 if( NOT DEFINED ENV{APPVEYOR} )
-  message(" ")
-  message( STATUS "Configuring Level 5 packages --" )
-  add_dir_if_exists( quadrature )   # needs mesh_element, parser, special_functions
-  add_dir_if_exists( mesh )         # needs c4, ds++, mesh_element
+  add_dir_if_exists( quadrature ) # needs mesh_element, parser, special_functions
 endif()
+add_dir_if_exists( mesh )         # needs c4, ds++, mesh_element
 
 # Summary
 
@@ -140,7 +143,7 @@ if( CAFS_Fortran_COMPILER )
 endif()
 if( "${DRACO_C4}" STREQUAL "MPI" )
   message(
-  "mpirun cmd  : ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} N ${MPIEXEC_POSTFLAGS}")
+  "mpirun cmd  : ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} N ${MPIEXEC_POSTFLAGS}")
 endif()
 message("Library Type: ${DRACO_LIBRARY_TYPE}
 ")

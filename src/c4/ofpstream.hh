@@ -63,7 +63,9 @@ namespace rtt_c4 {
 
 class ofpstream : public std::ostream {
 public:
-  DLL_PUBLIC_c4 explicit ofpstream(std::string const &filename);
+  //! Constructor -- default to standard output mode (ascii)
+  DLL_PUBLIC_c4 ofpstream(std::string const &filename,
+                          ios_base::openmode const mode = ios_base::out);
 
   //! Write all buffered output to the file stream, in MPI rank order.
   void send() { sb_.send(); }
@@ -79,6 +81,7 @@ private:
     DLL_PUBLIC_c4 virtual int_type overflow(int_type c);
 
     std::vector<char> buffer_;
+    ios_base::openmode mode_;
     std::ofstream out_;
   };
 

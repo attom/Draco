@@ -83,7 +83,8 @@ void broadcast(ForwardIterator first, ForwardIterator last,
   if (node() == 0)
     std::copy(first, last, buf);
 
-  Remember(check =) broadcast(buf, size, 0);
+  Check(size < INT_MAX);
+  Remember(check =) broadcast(buf, static_cast<int>(size), 0);
   Check(check == MPI_SUCCESS);
 
   if (node() != 0)

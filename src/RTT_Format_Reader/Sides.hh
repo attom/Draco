@@ -5,8 +5,7 @@
  * \date   Wed Jun 7 10:33:26 2000
  * \brief  Header file for RTT_Format_Reader/Sides class.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef __RTT_Format_Reader_Sides_hh__
@@ -22,22 +21,28 @@
 #include <vector>
 
 namespace rtt_RTT_Format_Reader {
+
+//============================================================================//
 /*!
+ * \class Sides
  * \brief Controls parsing, storing, and accessing the data specific to the
  *        sides block of the mesh file.
  */
+//============================================================================//
 class Sides {
   // typedefs
   typedef std::ifstream ifstream;
   typedef std::string string;
   typedef std::vector<int> vector_int;
   typedef std::vector<std::vector<int>> vector_vector_int;
+  typedef std::vector<unsigned> vector_uint;
+  typedef std::vector<std::vector<unsigned>> vector_vector_uint;
 
   const SideFlags &sideFlags;
   const Dims &dims;
   const CellDefs &cellDefs;
   vector_int sideType;
-  vector_vector_int nodes;
+  vector_vector_uint nodes;
   vector_vector_int flags;
 
 public:
@@ -66,18 +71,18 @@ public:
    * \param side_numb Side number.
    * \return The side type.
    */
-  int get_type(int side_numb) const { return sideType[side_numb]; }
+  int get_type(size_t side_numb) const { return sideType[side_numb]; }
   /*!
    * \brief Returns the node numbers associated with each side.
    * \return The node numbers for all of the sides.
    */
-  vector_vector_int get_nodes() const { return nodes; }
+  vector_vector_uint get_nodes() const { return nodes; }
   /*!
    * \brief Returns the node numbers associated with the specified side.
    * \param side_numb Side number.
    * \return The side node numbers.
    */
-  vector_int get_nodes(int side_numb) const { return nodes[side_numb]; }
+  vector_uint get_nodes(size_t side_numb) const { return nodes[side_numb]; }
   /*!
    * \brief Returns the node number associated with the specified side and
    *        side-node index.
@@ -85,7 +90,7 @@ public:
    * \param node_numb Side-node index number.
    * \return The side node number.
    */
-  int get_nodes(int side_numb, int node_numb) const {
+  int get_nodes(size_t side_numb, size_t node_numb) const {
     return nodes[side_numb][node_numb];
   }
   /*!
@@ -94,7 +99,7 @@ public:
    * \param flag_numb Side flag index.
    * \return The side flag.
    */
-  int get_flags(int side_numb, int flag_numb) const {
+  int get_flags(size_t side_numb, size_t flag_numb) const {
     return flags[side_numb][flag_numb];
   }
   /*!

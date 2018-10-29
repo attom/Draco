@@ -4,10 +4,7 @@
  * \author Kent Budge
  * \date   Mon Aug  9 13:39:20 2004
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "ds++/Release.hh"
@@ -123,8 +120,9 @@ void tstmrqmin(UnitTest &ut) {
       if (j == 2) {
         alamda = 0;
       }
-      mrqmin(x, y, sig, y.size(), 4U, a, ia, covar, alpha, 9U, chisq, model,
-             alamda);
+      Check(y.size() < UINT_MAX);
+      mrqmin(x, y, sig, static_cast<unsigned>(y.size()), 4U, a, ia, covar,
+             alpha, 9U, chisq, model, alamda);
     }
     if (chisq < copt) {
       iopt = i;
@@ -149,8 +147,9 @@ void tstmrqmin(UnitTest &ut) {
         if (ii == 2) {
           alamda = 0;
         }
-        mrqmin(x, y, sig, y.size(), 4U, a, ia, covar, alpha, 9U, chisq, model,
-               alamda);
+        Check(y.size() < UINT_MAX);
+        mrqmin(x, y, sig, static_cast<unsigned>(y.size()), 4U, a, ia, covar,
+               alpha, 9U, chisq, model, alamda);
       }
       if (chisq < copt) {
         i1 = i;
@@ -181,8 +180,9 @@ void tstmrqmin(UnitTest &ut) {
           if (ii == 2) {
             alamda = 0;
           }
-          mrqmin(x, y, sig, y.size(), 4U, a, ia, covar, alpha, 9U, chisq, model,
-                 alamda);
+          Check(y.size() < UINT_MAX);
+          mrqmin(x, y, sig, static_cast<unsigned>(y.size()), 4U, a, ia, covar,
+                 alpha, 9U, chisq, model, alamda);
         }
         if (chisq < copt) {
           i1 = i;
@@ -219,8 +219,9 @@ void tstmrqmin(UnitTest &ut) {
             if (ii == 2) {
               alamda = 0;
             }
-            mrqmin(x, y, sig, y.size(), 4U, a, ia, covar, alpha, 9U, chisq,
-                   model, alamda);
+            Check(y.size() < UINT_MAX);
+            mrqmin(x, y, sig, static_cast<unsigned>(y.size()), 4U, a, ia, covar,
+                   alpha, 9U, chisq, model, alamda);
           }
           if (chisq < copt) {
             i1 = j1;
@@ -263,8 +264,9 @@ void tstmrqmin(UnitTest &ut) {
               if (ii == 2) {
                 alamda = 0;
               }
-              mrqmin(x, y, sig, y.size(), 4U, a, ia, covar, alpha, 9U, chisq,
-                     model, alamda);
+              Check(y.size() < UINT_MAX);
+              mrqmin(x, y, sig, static_cast<unsigned>(y.size()), 4U, a, ia,
+                     covar, alpha, 9U, chisq, model, alamda);
             }
             if (chisq < copt) {
               i1 = j1;
@@ -313,8 +315,9 @@ void tstmrqmin(UnitTest &ut) {
                 if (ii == 2) {
                   alamda = 0;
                 }
-                mrqmin(x, y, sig, y.size(), 4U, a, ia, covar, alpha, 9U, chisq,
-                       model, alamda);
+                Check(y.size() < UINT_MAX);
+                mrqmin(x, y, sig, static_cast<unsigned>(y.size()), 4U, a, ia,
+                       covar, alpha, 9U, chisq, model, alamda);
               }
               if (chisq < copt) {
                 i1 = j1;
@@ -369,8 +372,9 @@ void tstmrqmin(UnitTest &ut) {
                   if (ii == 2) {
                     alamda = 0;
                   }
-                  mrqmin(x, y, sig, y.size(), 4U, a, ia, covar, alpha, 9U,
-                         chisq, model, alamda);
+                  Check(y.size() < UINT_MAX);
+                  mrqmin(x, y, sig, static_cast<unsigned>(y.size()), 4U, a, ia,
+                         covar, alpha, 9U, chisq, model, alamda);
                 }
                 if (chisq < copt) {
                   i1 = j1;
@@ -424,8 +428,9 @@ void tstmrqmin(UnitTest &ut) {
     if (ii == 2) {
       alamda = 0;
     }
-    mrqmin(x, y, sig, y.size(), 4U, a, ia, covar, alpha, 9U, chisq, model,
-           alamda);
+    Check(y.size() < UINT_MAX);
+    mrqmin(x, y, sig, static_cast<unsigned>(y.size()), 4U, a, ia, covar, alpha,
+           9U, chisq, model, alamda);
   }
 
   cout << endl;
@@ -440,7 +445,8 @@ void tstmrqmin(UnitTest &ut) {
   cout << "J = " << a[8] << " +/- " << sqrt(covar[8 + 9 * 8]) << endl;
   cout << "rms deviation = " << sqrt(chisq / y.size()) << endl;
 
-  unsigned const N = y.size();
+  Check(y.size() < UINT_MAX);
+  unsigned const N = static_cast<unsigned>(y.size());
   vector<double> xx(4);
   vector<double> dyda(9);
   double maxerr = 0;
@@ -467,7 +473,6 @@ void tstmrqmin(UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   ScalarUnitTest ut(argc, argv, release);
   try {

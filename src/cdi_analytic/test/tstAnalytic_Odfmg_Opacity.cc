@@ -57,17 +57,10 @@ bool checkOpacityEquivalence(vector<vector<double>> sigma, vector<double> ref) {
 
 void odfmg_test(UnitTest &ut) {
   // group structure
-  vector<double> groups(4, 0.0);
-  groups[0] = 0.05;
-  groups[1] = 0.5;
-  groups[2] = 5.0;
-  groups[3] = 50.0;
+  vector<double> groups = {0.05, 0.5, 5.0, 50.0};
 
   // band strucutre
-  vector<double> bands(3, 0.0);
-  bands[0] = 0.0;
-  bands[1] = 0.75;
-  bands[2] = 1.0;
+  vector<double> bands = {0.0, 0.75, 1.0};
 
   vector<std::shared_ptr<Analytic_Opacity_Model>> models(3);
 
@@ -130,19 +123,19 @@ void odfmg_test(UnitTest &ut) {
 
   {
     // make an analytic multigroup opacity object for scattering
-    nGray_Analytic_Odfmg_Opacity opacity(groups, bands, models,
-                                         rtt_cdi::SCATTERING);
+    nGray_Analytic_Odfmg_Opacity opac(groups, bands, models,
+                                      rtt_cdi::SCATTERING);
     string desc = "Analytic Odfmg Scattering";
 
-    if (opacity.getDataDescriptor() != desc)
+    if (opac.getDataDescriptor() != desc)
       ITFAILS;
   }
   {
     // make an analytic multigroup opacity object for scattering
-    nGray_Analytic_Odfmg_Opacity opacity(groups, bands, models, rtt_cdi::TOTAL);
+    nGray_Analytic_Odfmg_Opacity opac(groups, bands, models, rtt_cdi::TOTAL);
     string desc = "Analytic Odfmg Total";
 
-    if (opacity.getDataDescriptor() != desc)
+    if (opac.getDataDescriptor() != desc)
       ITFAILS;
   }
 
@@ -169,10 +162,7 @@ void odfmg_test(UnitTest &ut) {
   // >>> get opacities
 
   // scalar density and temperature
-  vector<double> ref(3, 0.0);
-  ref[0] = 100.0 / 8.0;
-  ref[1] = 1.5;
-  ref[2] = 3.0;
+  vector<double> ref = {100.0 / 8.0, 1.5, 3.0};
 
   // load groups * bands opacities; all bands inside each group should be
   // the same
@@ -248,20 +238,12 @@ void odfmg_test(UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 void test_CDI(UnitTest &ut) {
   // group structure
-  vector<double> groups(4, 0.0);
-  groups[0] = 0.05;
-  groups[1] = 0.5;
-  groups[2] = 5.0;
-  groups[3] = 50.0;
+  vector<double> groups = {0.05, 0.5, 5.0, 50.0};
 
   // band strucutre
-  vector<double> bands(3, 0.0);
-  bands[0] = 0.0;
-  bands[1] = 0.75;
-  bands[2] = 1.0;
+  vector<double> bands = {0.0, 0.75, 1.0};
 
   vector<std::shared_ptr<Analytic_Opacity_Model>> models(3);
 
@@ -311,10 +293,7 @@ void test_CDI(UnitTest &ut) {
   vector<vector<double>> sigma =
       cdi.odfmg(rtt_cdi::ANALYTIC, rtt_cdi::ABSORPTION)->getOpacity(2.0, 3.0);
 
-  vector<double> ref(3, 0.0);
-  ref[0] = 100.0 / 8.0;
-  ref[1] = 1.5;
-  ref[2] = 3.0;
+  vector<double> ref = {100.0 / 8.0, 1.5, 3.0};
 
   if (checkOpacityEquivalence(sigma, ref)) {
     ostringstream message;
@@ -330,22 +309,14 @@ void test_CDI(UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 void packing_test(UnitTest &ut) {
   vector<char> packed;
 
   // group structure
-  vector<double> groups(4, 0.0);
-  groups[0] = 0.05;
-  groups[1] = 0.5;
-  groups[2] = 5.0;
-  groups[3] = 50.0;
+  vector<double> groups = {0.05, 0.5, 5.0, 50.0};
 
   // band strucutre
-  vector<double> bands(3, 0.0);
-  bands[0] = 0.0;
-  bands[1] = 0.75;
-  bands[2] = 1.0;
+  vector<double> bands = {0.0, 0.75, 1.0};
 
   {
     vector<std::shared_ptr<Analytic_Opacity_Model>> models(3);
@@ -432,10 +403,7 @@ void packing_test(UnitTest &ut) {
 
   // scalar density and temperature
   vector<vector<double>> sigma = opacity.getOpacity(2.0, 3.0);
-  vector<double> ref(3, 0.0);
-  ref[0] = 100.0 / 8.0;
-  ref[1] = 1.5;
-  ref[2] = 3.0;
+  vector<double> ref = {100.0 / 8.0, 1.5, 3.0};
 
   if (checkOpacityEquivalence(sigma, ref)) {
     ostringstream message;
@@ -490,23 +458,15 @@ void packing_test(UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 void pseudo_line_opacity_test(UnitTest &ut) {
   // group structure
-  vector<double> groups(4, 0.0);
-  groups[0] = 0.05;
-  groups[1] = 0.5;
-  groups[2] = 5.0;
-  groups[3] = 10.0;
+  vector<double> groups = {0.05, 0.5, 5.0, 10.0};
 
   // band strucutre
-  vector<double> bands(3, 0.0);
-  bands[0] = 0.0;
-  bands[1] = 0.75;
-  bands[2] = 1.0;
+  vector<double> bands = {0.0, 0.75, 1.0};
 
-  unsigned const number_of_energy_groups = groups.size() - 1;
-  unsigned const bands_per_group = bands.size() - 1;
+  size_t const number_of_energy_groups = groups.size() - 1;
+  size_t const bands_per_group = bands.size() - 1;
 
   // continuum
   std::shared_ptr<Expression const> const continuum(
@@ -567,7 +527,6 @@ void pseudo_line_opacity_test(UnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, release);
   try {

@@ -33,10 +33,11 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   const std::vector<std::string> bdy_filenames = {
       inputpath + "x3d.mesh.bdy1.in", inputpath + "x3d.mesh.bdy2.in",
       inputpath + "x3d.mesh.bdy3.in", inputpath + "x3d.mesh.bdy4.in"};
+  const std::vector<unsigned> bdy_flags = {3, 1, 0, 2};
 
   // construct reader
   std::shared_ptr<X3D_Draco_Mesh_Reader> x3d_reader(
-      new X3D_Draco_Mesh_Reader(filename, bdy_filenames));
+      new X3D_Draco_Mesh_Reader(filename, bdy_filenames, bdy_flags));
 
   // read mesh
   x3d_reader->read_mesh();
@@ -60,7 +61,7 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   if (x3d_reader->get_celltype(0) != 4)
     ITFAILS;
 
-  std::vector<int> test_cellnodes = {0, 1, 2, 3};
+  std::vector<unsigned> test_cellnodes = {0, 1, 3, 2};
   if (x3d_reader->get_cellnodes(0) != test_cellnodes)
     ITFAILS;
 
@@ -78,7 +79,7 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   if (x3d_reader->get_numsides() != 4)
     ITFAILS;
 
-  std::vector<std::vector<int>> test_sidenodes = {
+  std::vector<std::vector<unsigned>> test_sidenodes = {
       {0, 1}, {1, 3}, {2, 3}, {0, 2}};
 
   // check each side's data
@@ -89,7 +90,8 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
       ITFAILS;
 
     // boundary conditions are not supplied in X3D
-    if (x3d_reader->get_sideflag(side) != 0)
+    // (note this check is specialized for the 1-cell mesh)
+    if (x3d_reader->get_sideflag(side) != bdy_flags[side])
       ITFAILS;
 
     // check node indices
@@ -103,6 +105,7 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   return;
 }
 
+//----------------------------------------------------------------------------//
 // Parse and build an X3D file format and compare to reference mesh
 void build_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
 
@@ -196,7 +199,8 @@ void build_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
         test_sn_linkage.begin();
     for (unsigned side = 0; side < mesh_iface.num_sides; ++side) {
 
-      // check that sn_linkage is a permutation of the original side-node linkage
+      // check that sn_linkage is a permutation of the original side-node
+      // linkage
       if (!std::is_permutation(test_sn_first,
                                test_sn_first + side_node_count[side], sn_first,
                                sn_first + side_node_count[side]))
@@ -215,7 +219,6 @@ void build_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, rtt_dsxx::release);
   try {

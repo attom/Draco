@@ -10,6 +10,8 @@
 
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
+#include "ds++/StackTrace.hh"
+#include <regex>
 
 using namespace std;
 
@@ -36,7 +38,7 @@ static void t1(rtt_dsxx::UnitTest &ut) {
   std::cout << "t1 test: ";
   try {
     throw std::runtime_error("hello1");
-  } catch (rtt_dsxx::assertion const &a) {
+  } catch (rtt_dsxx::assertion const & /*error*/) {
     FAILMSG("rtt_dsxx::assertion caught.");
   } catch (...) {
     PASSMSG("runtime_error exception caught");
@@ -44,10 +46,9 @@ static void t1(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------//
-// Make sure we can catch a rtt_dsxx::assertion and extract the error
-// message.
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// Make sure we can catch a rtt_dsxx::assertion and extract the error message.
+// ---------------------------------------------------------------------------//
 
 static void t2(rtt_dsxx::UnitTest &ut) {
   std::cout << "t2 test: ";
@@ -64,8 +65,15 @@ static void t2(rtt_dsxx::UnitTest &ut) {
   // Make sure we can extract the error message.
   std::string const compare_value(
       "Assertion: hello1, failed in myfile, line 42.\n");
-  if (error_message.compare(compare_value) != 0)
+  std::regex rgx(std::string(".*") + compare_value + ".*");
+  std::smatch match;
+
+  if (!std::regex_search(error_message, match, rgx)) {
     ITFAILS;
+    std::cout << "compare_value = \"" << compare_value << "\"\n"
+              << "match = \"" << match[1] << "\n"
+              << std::endl;
+  }
 
   return;
 }
@@ -78,9 +86,9 @@ static void t3(rtt_dsxx::UnitTest &ut) {
   std::cout << "t3 test: ";
   try {
     throw "hello";
-  } catch (rtt_dsxx::assertion const &a) {
+  } catch (rtt_dsxx::assertion const & /*error*/) {
     FAILMSG("Should not have caught an rtt_dsxx::assertion");
-  } catch (const char *msg) {
+  } catch (const char * /*message*/) {
     PASSMSG("Caught a const char* exception.");
   } catch (...) {
     FAILMSG("Failed to catch a const char* exception.");
@@ -100,7 +108,7 @@ static void ttoss_cookies(rtt_dsxx::UnitTest &ut) {
       std::string const file("DummyFile.ext");
       int const line(55);
       rtt_dsxx::toss_cookies(msg, file, line);
-      throw "Bogus!";
+      // throw "Bogus!";
     } catch (rtt_dsxx::assertion const & /* error */) {
       PASSMSG("Caught rtt_dsxx::assertion thrown by toss_cookies.");
     } catch (...) {
@@ -114,7 +122,7 @@ static void ttoss_cookies(rtt_dsxx::UnitTest &ut) {
       char const *const file("DummyFile.ext");
       int const line(56);
       rtt_dsxx::toss_cookies_ptr(msg, file, line);
-      throw "Bogus!";
+      //throw "Bogus!";
     } catch (rtt_dsxx::assertion const & /* error */) {
       PASSMSG("Caught rtt_dsxx::assertion thrown by toss_cookies_ptr.");
     } catch (...) {
@@ -447,6 +455,29 @@ void tverbose_error(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
+//----------------------------------------------------------------------------//
+// test catch of std::bad_alloc
+//----------------------------------------------------------------------------//
+void t_catch_bad_alloc(rtt_dsxx::UnitTest &ut) {
+
+  std::cout << "tstAssert::t_catch_bad_alloc()..." << std::endl;
+
+  try {
+    // instead of 'int * big = new int(999999999999999);'
+    std::bad_alloc exception;
+    throw exception;
+    //FAILMSG("failed to catch std::bad_alloc exception.");
+  } catch (std::bad_alloc & /*err*/) {
+    PASSMSG("caught a manually thrown std::bad_alloc exception.");
+    std::cout << rtt_dsxx::print_stacktrace("Caught a std::bad_alloc")
+              << std::endl;
+  } catch (...) {
+    FAILMSG("failed to catch std::bad_alloc exception.");
+  }
+
+  return;
+}
+
 //---------------------------------------------------------------------------//
 bool no_exception() NOEXCEPT;
 bool no_exception_c() NOEXCEPT_C(true);
@@ -476,7 +507,6 @@ int unused(int i) {
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_dsxx::ScalarUnitTest ut(argc, argv, rtt_dsxx::release);
   try { // >>> UNIT TESTS
@@ -509,6 +539,9 @@ int main(int argc, char *argv[]) {
     // noreturn
     // called only to keep code coverage good
     unused(0);
+
+    // catch bad_alloc
+    t_catch_bad_alloc(ut);
   }
   UT_EPILOG(ut);
 }

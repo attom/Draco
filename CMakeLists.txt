@@ -11,9 +11,9 @@
 #   https://rtt.lanl.gov/redmine/projects/draco/wiki/
 #   https://rtt.lanl.gov/redmine/projects/draco/wiki/Common_Configure_Options
 
-cmake_minimum_required(VERSION 3.9.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.11.0 FATAL_ERROR)
 project( Draco
-  VERSION 6.24
+  VERSION 6.25
   DESCRIPTION "An object-oriented component library supporting radiation transport applications."
   LANGUAGES CXX C )
 
@@ -81,6 +81,7 @@ dbsSetupCompilers()
 dbsSetupCxx()
 dbsSetupFortran()
 dbsSetupProfilerTools()
+dbsSetupStaticAnalyzers()
 
 # Find any globally required libraries
 include( FeatureSummary )

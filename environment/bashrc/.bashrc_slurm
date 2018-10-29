@@ -53,6 +53,8 @@ case ${-} in
      echo "jobpriorities  - List of all jobs and their priorities."
      echo "backfill       - Maximum job size to allow immediate start?"
      echo "usercpuhrs [moniker] [start date (mm/dd/yy)] [end date (mm/dd/yy)] - Print total cpu-hr usage by account."
+     if [[ -f /usr/projects/consult/public/SLURM/aliases/slurm_bash_alias ]]; then
+     echo -e "\nMore slurm related aliases can be found at /usr/projects/consult/public/SLURM/aliases/slurm_bash_alias."
    }
 
    alias hluser="egrep --color -E '.*${USER}.*|$'"
@@ -66,17 +68,18 @@ case ${-} in
    function sq() {
      local stop=0; local hluser="$USER"; local squeue_args=""
      local OPTIND;
-     while getopts ":hr:u:" opt; do
+     while getopts ":A:hj:n:p:R:r:u:" opt; do
        case $opt in
          h) echo "Usage: sq [-h] [-r <moniker>] [-u <moniker>]"; stop=1 ;;
          r) hluser=$OPTARG ;;
-         u) squeue_args="-u $OPTARG" ;;
+         A|j|n|p|R|u) squeue_args+=" -${opt} $OPTARG" ;;
        esac
      done
      shift $((OPTIND-1))
      if [[ ${stop} == 1 ]]; then return 1; fi
      if ! [[ `squeue ${squeue_args} -h -t R | wc -l` == 0 ]]; then
        echo -e "\n${boldface}RUNNING${normalface}":
+       echo " squeue ${squeue_args} -o"
        squeue ${squeue_args} -o "%.7i %.10u %.10a %.8q %.9P %.16j %.6D %.6C %.12L %S" -S "L" -t R | egrep --color -E ".*${hluser}.*|$"
      fi
      if ! [[ `squeue ${squeue_args} -h -t PD | wc -l` == 0 ]]; then
@@ -176,6 +179,11 @@ case ${-} in
      [ -z "$user" ] && user=${USER}
      sreport -t Hours cluster AccountUtilizationByUser user=$user start=$fday end=$lday
    }
+
+   export host=`uname -n | sed -e 's/[.].*//g'`
+   case $host in
+   tt*|tr*) alias salloc='salloc --gres=craynetwork:0' ;;
+   esac
    ;; # end case 'interactive'
 
 ##---------------------------------------------------------------------------##

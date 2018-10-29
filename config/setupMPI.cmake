@@ -123,11 +123,14 @@ macro( query_topology )
   # Check for hyperthreading - This is important for reserving threads for
   # OpenMP tests...
   #
-  math( EXPR MPI_MAX_NUMPROCS_PHYSICAL "${MPI_PHYSICAL_CORES} * ${MPI_CORES_PER_CPU}" )
+  math( EXPR MPI_MAX_NUMPROCS_PHYSICAL
+    "${MPI_PHYSICAL_CORES} * ${MPI_CORES_PER_CPU}" )
   if( "${MPI_MAX_NUMPROCS_PHYSICAL}" STREQUAL "${MPIEXEC_MAX_NUMPROCS}" )
-    set( MPI_HYPERTHREADING "OFF" CACHE BOOL "Are we using hyperthreading?" FORCE )
+    set( MPI_HYPERTHREADING "OFF" CACHE BOOL "Are we using hyperthreading?"
+      FORCE )
   else()
-    set( MPI_HYPERTHREADING "ON" CACHE BOOL "Are we using hyperthreading?" FORCE )
+    set( MPI_HYPERTHREADING "ON" CACHE BOOL "Are we using hyperthreading?"
+      FORCE )
   endif()
 
 endmacro()
@@ -170,7 +173,8 @@ macro( setupOpenMPI )
     # -bind-to fails on OSX, See #691
     set( MPIEXEC_OMP_POSTFLAGS
       "--map-by ppr:${MPI_CORES_PER_CPU}:socket --report-bindings ${runasroot}" )
-      # "-bind-to socket --map-by ppr:${MPI_CORES_PER_CPU}:socket --report-bindings ${runasroot}"
+      # "-bind-to socket --map-by ppr:${MPI_CORES_PER_CPU}:socket
+      # --report-bindings ${runasroot}"
   endif()
 
   set( MPIEXEC_OMP_POSTFLAGS ${MPIEXEC_OMP_POSTFLAGS}
@@ -299,23 +303,29 @@ macro( setupMPILibrariesUnix )
 
       message(STATUS "Looking for MPI...")
 
+      # Preserve data that may already be set.
+      if( DEFINED ENV{MPIRUN} )
+        set( MPIEXEC_EXECUTABLE $ENV{MPIRUN} CACHE STRING
+          "Program to execute MPI prallel programs." )
+      elseif( DEFINED ENV{MPIEXEC_EXECUTABLE} )
+        set( MPIEXEC_EXECUTABLE $ENV{MPIEXEC_EXECUTABLE} CACHE STRING
+          "Program to execute MPI prallel programs." )
+      elseif( DEFINED ENV{MPIEXEC} )
+        set( MPIEXEC_EXECUTABLE $ENV{MPIEXEC} CACHE STRING
+          "Program to execute MPI prallel programs." )
+      endif()
+
       # If this is a Cray system and the Cray MPI compile wrappers are used,
       # then do some special setup:
 
       if( CRAY_PE )
-        set( MPIEXEC "srun" CACHE STRING
-          "Program to execute MPI prallel programs." )
+        if( NOT EXISTS ${MPIEXEC_EXECUTABLE} )
+          find_program( MPIEXEC_EXECUTABLE srun )
+        endif()
+        set( MPIEXEC_EXECUTABLE ${MPIEXEC_EXECUTABLE} CACHE STRING
+          "Program to execute MPI prallel programs." FORCE )
         set( MPIEXEC_NUMPROC_FLAG "-n" CACHE STRING
           "mpirun flag used to specify the number of processors to use")
-      endif()
-
-      # Preserve data that may already be set.
-      if( DEFINED ENV{MPIRUN} )
-        set( MPIEXEC $ENV{MPIRUN} CACHE STRING
-          "Program to execute MPI prallel programs." )
-      elseif( DEFINED ENV{MPIEXEC} )
-        set( MPIEXEC $ENV{MPIEXEC} CACHE STRING
-          "Program to execute MPI prallel programs." )
       endif()
 
       # Temporary work around until FindMPI.cmake is fixed: Setting
@@ -350,7 +360,7 @@ macro( setupMPILibrariesUnix )
         else()
 
           if( NOT CRAY_PE )
-            execute_process( COMMAND ${MPIEXEC} --version
+            execute_process( COMMAND ${MPIEXEC_EXECUTABLE} --version
               OUTPUT_VARIABLE DBS_MPI_VER_OUT
               ERROR_VARIABLE DBS_MPI_VER_ERR)
             set( DBS_MPI_VER "${DBS_MPI_VER_OUT}${DBS_MPI_VER_ERR}")
@@ -389,14 +399,15 @@ macro( setupMPILibrariesUnix )
       # 1. For Intel MPI when cross compiling for MIC, the variable DBS_MPI_VER
       #    will be bad because this configuration is done on x86 but mpiexec is
       #    a mic executable and cannot be run on the x86.  To correctly match
-      #    the MPI flavor to Intel (on darwin), we rely on the path MPIEXEC to
-      #    match the string "impi/[0-9.]+/mic".
+      #    the MPI flavor to Intel (on darwin), we rely on the path
+      #    MPIEXEC_EXECUTABLE to match the string "impi/[0-9.]+/mic".
 
-      if( "${MPIEXEC}" MATCHES openmpi OR "${DBS_MPI_VER}" MATCHES open-mpi )
+      if( "${MPIEXEC_EXECUTABLE}" MATCHES openmpi OR
+          "${DBS_MPI_VER}" MATCHES open-mpi )
         setupOpenMPI()
 
-      elseif( "${MPIEXEC}" MATCHES intel-mpi OR
-          "${MPIEXEC}" MATCHES "impi/.*/mic" OR
+      elseif( "${MPIEXEC_EXECUTABLE}" MATCHES intel-mpi OR
+          "${MPIEXEC_EXECUTABLE}" MATCHES "impi/.*/mic" OR
           "${DBS_MPI_VER}" MATCHES "Intel[(]R[)] MPI Library" )
         setupIntelMPI()
 
@@ -405,13 +416,13 @@ macro( setupMPILibrariesUnix )
 
       # LANL Cray systems also use srun, so this 'elseif' must appear after our
       # test for CRAY_PE.
-      elseif( "${MPIEXEC}" MATCHES srun)
+      elseif( "${MPIEXEC_EXECUTABLE}" MATCHES srun)
         setupSequoiaMPI()
 
       else()
          message( FATAL_ERROR "
 The Draco build system doesn't know how to configure the build for
-  MPIEXEC     = ${MPIEXEC}
+  MPIEXEC_EXECUTABLE     = ${MPIEXEC_EXECUTABLE}
   DBS_MPI_VER = ${DBS_MPI_VER}
   CRAY_PE     = ${CRAY_PE}")
       endif()
@@ -420,7 +431,7 @@ The Draco build system doesn't know how to configure the build for
       # that they do not show up in the 'simple' ccmake view.
       mark_as_advanced( MPI_EXTRA_LIBRARY MPI_LIBRARY )
 
-      message(STATUS "Looking for MPI.......found ${MPIEXEC}")
+      message(STATUS "Looking for MPI.......found ${MPIEXEC_EXECUTABLE}")
 
       # Sanity Checks for DRACO_C4==MPI
       if( "${MPI_CORES_PER_CPU}x" STREQUAL "x" )
@@ -458,7 +469,7 @@ macro( setupMPILibrariesWindows )
       message(STATUS "Looking for MPI...")
       find_package( MPI QUIET )
 
-      # For MS-MPI 5, mpifptr.h is architecture dependent. Figure out
+      # For MS-MPI, mpifptr.h is architecture dependent. Figure out
       # what arch this is and save this path to MPI_Fortran_INCLUDE_PATH
       list( GET MPI_CXX_LIBRARIES 0 first_cxx_mpi_library )
       if( first_cxx_mpi_library AND NOT MPI_Fortran_INCLUDE_PATH )
@@ -478,7 +489,7 @@ macro( setupMPILibrariesWindows )
 
       # Find the version
       # This is not working (hardwire it for now)
-      execute_process( COMMAND "${MPIEXEC}" -help
+      execute_process( COMMAND "${MPIEXEC_EXECUTABLE}" -help
         OUTPUT_VARIABLE DBS_MPI_VER_OUT
         ERROR_VARIABLE DBS_MPI_VER_ERR
         ERROR_QUIET
@@ -505,9 +516,8 @@ macro( setupMPILibrariesWindows )
         )
 
       # Check flavor and add optional flags
-      if("${MPIEXEC}" MATCHES "Microsoft HPC" OR
-          "${MPIEXEC}" MATCHES "Microsoft MPI")
-         set( MPI_FLAVOR "MicrosoftHPC" CACHE STRING "Flavor of MPI." )
+      if("${MPIEXEC_EXECUTABLE}" MATCHES "Microsoft MPI")
+         set( MPI_FLAVOR "MicrosoftMPI" CACHE STRING "Flavor of MPI." )
 
          # Use wmic to learn about the current machine
          execute_process(
@@ -521,7 +531,7 @@ macro( setupMPILibrariesWindows )
          execute_process(
             COMMAND wmic computersystem get NumberOfProcessors
             OUTPUT_VARIABLE MPI_CPUS_PER_NODE
-            OUTPUT_STRIP_TRAILING_WHITESPACE ) 
+            OUTPUT_STRIP_TRAILING_WHITESPACE )
          string( REGEX REPLACE ".*[\n]([0-9]+$)" "\\1" MPI_CORES_PER_CPU
            ${MPI_CORES_PER_CPU})
          string( REGEX REPLACE ".*[\n]([0-9]+$)" "\\1" MPIEXEC_MAX_NUMPROCS
@@ -539,11 +549,14 @@ macro( setupMPILibrariesWindows )
          # Check for hyperthreading - This is important for reserving
          # threads for OpenMP tests...
 
-         math( EXPR MPI_MAX_NUMPROCS_PHYSICAL "${MPI_CPUS_PER_NODE} * ${MPI_CORES_PER_CPU}" )
+         math( EXPR MPI_MAX_NUMPROCS_PHYSICAL
+           "${MPI_CPUS_PER_NODE} * ${MPI_CORES_PER_CPU}" )
          if( "${MPI_MAX_NUMPROCS_PHYSICAL}" STREQUAL "${MPIEXEC_MAX_NUMPROCS}" )
-            set( MPI_HYPERTHREADING "OFF" CACHE BOOL "Are we using hyperthreading?" FORCE )
+            set( MPI_HYPERTHREADING "OFF" CACHE BOOL
+              "Are we using hyperthreading?" FORCE )
          else()
-            set( MPI_HYPERTHREADING "ON" CACHE BOOL "Are we using hyperthreading?" FORCE )
+            set( MPI_HYPERTHREADING "ON" CACHE BOOL
+              "Are we using hyperthreading?" FORCE )
          endif()
 
          set( MPIEXEC_OMP_POSTFLAGS "-exitcodes"
@@ -574,7 +587,8 @@ macro( setupMPILibrariesWindows )
    # Don't link to the C++ MS-MPI library when compiling with MinGW gfortran.
    # Instead, link to libmsmpi.a that was created via gendef.exe and
    # dlltool.exe from msmpi.dll.  Ref:
-   # http://www.geuz.org/pipermail/getdp/2012/001520.html
+   # http://www.geuz.org/pipermail/getdp/2012/001520.html, or
+   # https://github.com/KineticTheory/Linux-HPC-Env/wiki/Setup-Win32-development-environment
 
    # Preparing Microsoft's MPI to work with x86_64-w64-mingw32-gfortran by
    # creating libmsmpi.a. (Last tested: 2017-08-31)
@@ -624,7 +638,7 @@ macro( setupMPILibrariesWindows )
    endif()
 
    if( ${MPI_C_FOUND} )
-      message(STATUS "Looking for MPI...${MPIEXEC}")
+      message(STATUS "Looking for MPI...${MPIEXEC_EXECUTABLE}")
    else()
       message(STATUS "Looking for MPI...not found")
    endif()

@@ -34,11 +34,11 @@ namespace rtt_mesh {
  * https://xcp-confluence.lanl.gov/display/SIMC/Ingen->Flag+Data+Transfer
  *
  * \todo: Boundary condition data is evidently parsed separately in X3D, so
- * meshes generated from this reader will not have side flag data (which ids
- * boundary conditions.
+ *        meshes generated from this reader will not have side flag data (which
+ *        ids boundary conditions.
  *
  * \todo: Consider using the Class_Parse_Table formalism developed by Kent Budge
- * as an alternative.
+ *        as an alternative.
  */
 //===========================================================================//
 
@@ -57,11 +57,14 @@ private:
   //! Boundary file names (optional data)
   const std::vector<std::string> bdy_filenames;
 
+  //! Boundary conditions per bdy file (optional data)
+  const std::vector<unsigned> bdy_flags;
+
   //! Vector of all parsed key-value data pairs (includes valueless delimiters)
   Parsed_Elements parsed_pairs;
 
   //! Header data map (header in x3d file)
-  std::map<std::string, std::vector<int>> x3d_header_map;
+  std::map<std::string, std::vector<size_t>> x3d_header_map;
 
   //! Node coordinates
   std::map<int, std::vector<double>> x3d_coord_map;
@@ -73,13 +76,17 @@ private:
   std::map<int, std::vector<int>> x3d_cellface_map;
 
   //! Side-to-node map (0-based indices, unlike other maps)
-  std::map<int, std::vector<int>> x3d_sidenode_map;
+  std::map<int, std::vector<unsigned>> x3d_sidenode_map;
+
+  //! Side-to-flag map
+  std::map<int, unsigned> x3d_sideflag_map;
 
 public:
   //! Constructor
   DLL_PUBLIC_mesh
   X3D_Draco_Mesh_Reader(const std::string &filename_,
-                        const std::vector<std::string> &bdy_filenames_ = {});
+                        const std::vector<std::string> &bdy_filenames_ = {},
+                        const std::vector<unsigned> &bdy_flags_ = {});
 
   // >>> SERVICES
 
@@ -88,29 +95,40 @@ public:
   // >>> ACCESSORS
 
   // header data
-  unsigned get_process() const { return x3d_header_map.at("process")[0] - 1; }
-  unsigned get_numdim() const { return x3d_header_map.at("numdim")[0]; }
-  unsigned get_numcells() const { return x3d_header_map.at("elements")[0]; }
-  unsigned get_numnodes() const { return x3d_header_map.at("nodes")[0]; }
+  unsigned get_process() const {
+    Check(x3d_header_map.at("process")[0] - 1 < UINT_MAX);
+    return static_cast<unsigned>(x3d_header_map.at("process")[0] - 1);
+  }
+  unsigned get_numdim() const {
+    Check(x3d_header_map.at("numdim")[0] < UINT_MAX);
+    return static_cast<unsigned>(x3d_header_map.at("numdim")[0]);
+  }
+  size_t get_numcells() const { return x3d_header_map.at("elements")[0]; }
+  size_t get_numnodes() const { return x3d_header_map.at("nodes")[0]; }
 
   // coord data
   std::vector<double> get_nodecoord(size_t node) const {
-    return x3d_coord_map.at(node + 1);
+    Check(node + 1 < INT_MAX);
+    return x3d_coord_map.at(static_cast<int>(node + 1));
   }
 
   // accessors with deferred implementations
   unsigned get_celltype(size_t cell) const;
-  std::vector<int> get_cellnodes(size_t cell) const;
+  std::vector<unsigned> get_cellnodes(size_t cell) const;
 
-  // data needed from x3d boundary file (?)
-  // \todo: parse x3d boundary file
-  unsigned get_numsides() const { return x3d_sidenode_map.size(); }
-  unsigned get_sidetype(size_t side) const {
-    return x3d_sidenode_map.at(side).size();
+  // data needed from x3d boundary file
+  size_t get_numsides() const { return x3d_sidenode_map.size(); }
+  size_t get_sidetype(size_t side) const {
+    Check(side < INT_MAX);
+    return x3d_sidenode_map.at(static_cast<int>(side)).size();
   }
-  unsigned get_sideflag(size_t /*side*/) const { return 0; }
-  std::vector<int> get_sidenodes(size_t side) const {
-    return x3d_sidenode_map.at(side);
+  unsigned get_sideflag(size_t side) const {
+    Check(side < INT_MAX);
+    return x3d_sideflag_map.at(static_cast<int>(side));
+  }
+  std::vector<unsigned> get_sidenodes(size_t side) const {
+    Check(side < INT_MAX);
+    return x3d_sidenode_map.at(static_cast<int>(side));
   }
 
 private:
@@ -122,11 +140,11 @@ private:
 
   template <typename KT, typename VT>
   std::map<KT, std::vector<VT>> map_x3d_block(const std::string &block_name,
-                                              int &dist);
+                                              size_t &dist);
 
   template <typename KT> KT convert_key(const std::string &skey);
 
-  std::vector<int> get_facenodes(int face) const;
+  std::vector<unsigned> get_facenodes(size_t face) const;
 
   void read_bdy_files();
 };

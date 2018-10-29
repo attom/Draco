@@ -3,7 +3,7 @@
  * \file   ds++/DracoStrings.cc
  * \author Kelly G. Thompson <kgt@lanl.gov
  * \date   Wednesday, Aug 23, 2017, 12:48 pm
- * \brief  Enscapulates common string manipulations (implementation).
+ * \brief  Encapsulates common string manipulations (implementation).
  * \note   Copyright (C) 2017-2018 Los Alamos National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
@@ -16,19 +16,56 @@
 namespace rtt_dsxx {
 
 //----------------------------------------------------------------------------//
+//! Convert a string to all lower case
+std::string string_tolower(std::string const &string_in) {
+  std::locale loc;
+  std::ostringstream string_out;
+  for (auto elem : string_in)
+    string_out << std::tolower(elem, loc);
+  return string_out.str();
+}
+
+//----------------------------------------------------------------------------//
+//! Convert a string to all upper case
+std::string string_toupper(std::string const &string_in) {
+  std::locale loc;
+  std::ostringstream string_out;
+  for (auto elem : string_in)
+    string_out << std::toupper(elem, loc);
+  return string_out.str();
+}
+
+//----------------------------------------------------------------------------//
 // Definitions for fully specialized template functions
 //----------------------------------------------------------------------------//
 
-template <> auto parse_number_impl<int>(std::string const &str) -> int {
+template <> auto parse_number_impl<int32_t>(std::string const &str) -> int32_t {
   return std::stoi(str);
 }
-template <> auto parse_number_impl<long>(std::string const &str) -> long {
+template <> auto parse_number_impl<int64_t>(std::string const &str) -> int64_t {
   return std::stol(str);
 }
 template <>
-auto parse_number_impl<unsigned long>(std::string const &str) -> unsigned long {
+auto parse_number_impl<uint32_t>(std::string const &str) -> uint32_t {
   return std::stoul(str);
 }
+template <>
+auto parse_number_impl<uint64_t>(std::string const &str) -> uint64_t {
+  return std::stoull(str); // use stoull or stul?
+}
+
+// See notes in DracoStrings.hh about this CPP block
+#if defined(WIN32) || defined(APPLE)
+
+template <> auto parse_number_impl<long>(std::string const &str) -> long {
+  return std::stol(str); // use stoull or stul?
+}
+template <>
+auto parse_number_impl<unsigned long>(std::string const &str) -> unsigned long {
+  return std::stoul(str); // use stoull or stul?
+}
+#endif
+
 template <> auto parse_number_impl<float>(std::string const &str) -> float {
   return std::stof(str);
 }
@@ -69,7 +106,7 @@ std::vector<std::string> tokenize(std::string const &str,
   std::vector<std::string> retval; // Storage for the result
   // convert a string into a stream to be processed by getline.
 
-  // Simple implementaiton if only one delimiter
+  // Simple implementation if only one delimiter
   if (delimiters.size() == 1) {
     std::istringstream iss(str);
     std::string single_word; // local storage
@@ -94,7 +131,7 @@ std::vector<std::string> tokenize(std::string const &str,
 
 //----------------------------------------------------------------------------//
 /*!
- * \brief Parse msg to provide a list of words and the number of occurances of
+ * \brief Parse msg to provide a list of words and the number of occurrences of
  *        each.
  */
 std::map<std::string, unsigned> get_word_count(std::ostringstream const &msg,
@@ -108,7 +145,7 @@ std::map<std::string, unsigned> get_word_count(std::ostringstream const &msg,
   string msgbuf(msg.str());
   string delims(" \n\t:,.;");
 
-  { // Build a list of words found in msgbuf.  Count the number of occurances.
+  { // Build a list of words found in msgbuf.  Count the number of occurrences.
 
     // Find the beginning of the first word.
     string::size_type begIdx = msgbuf.find_first_not_of(delims);
@@ -134,7 +171,7 @@ std::map<std::string, unsigned> get_word_count(std::ostringstream const &msg,
 
   if (verbose) {
     cout << "The messages from the message stream contained the following "
-         << "words/occurances." << endl;
+         << "words/occurrences." << endl;
     // print the word_list
     for (auto it : word_list)
       cout << it.first << ": " << it.second << endl;
@@ -146,7 +183,7 @@ std::map<std::string, unsigned> get_word_count(std::ostringstream const &msg,
 //----------------------------------------------------------------------------//
 /*!
  * \brief Parse text file to provide a list of words and the number of
- *        occurances of each.
+ *        occurrences of each.
  */
 std::map<std::string, unsigned> get_word_count(std::string const &filename,
                                                bool verbose) {

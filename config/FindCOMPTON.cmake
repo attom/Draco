@@ -119,13 +119,15 @@ if( NOT COMPTON_VERSION )
   endif()
   # We might also try scraping the directory name for a regex match
   # "csk-X.X.X"
-  if( NOT COMPTON_MAJOR )
+  if( NOT COMPTON_VERSION )
     string( REGEX REPLACE ".*csk-([0-9]+).([0-9]+).([0-9]+).*" "\\1"
       COMPTON_MAJOR ${COMPTON_INCLUDE_DIR} )
     string( REGEX REPLACE ".*csk-([0-9]+).([0-9]+).([0-9]+).*" "\\2"
       COMPTON_MINOR ${COMPTON_INCLUDE_DIR} )
     string( REGEX REPLACE ".*csk-([0-9]+).([0-9]+).([0-9]+).*" "\\3"
       COMPTON_SUBMINOR ${COMPTON_INCLUDE_DIR} )
+    set( COMPTON_VERSION "${COMPTON_MAJOR}.${COMPTON_MINOR}.${COMPTON_SUBMINOR}"
+      CACHE STRING "CSK version" FORCE )
   endif()
 endif()
 

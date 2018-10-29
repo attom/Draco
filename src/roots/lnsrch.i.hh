@@ -65,7 +65,7 @@ void lnsrch(RandomContainer const &xold, double const fold,
 
   double const eps =
       std::numeric_limits<typename RandomContainer::value_type>::epsilon();
-  const unsigned n = xold.size();
+  const size_t n = xold.size();
 
   x.resize(n);
   fvec.resize(n);

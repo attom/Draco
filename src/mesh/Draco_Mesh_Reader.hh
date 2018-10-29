@@ -34,15 +34,19 @@ public:
   // >>> ACCESSORS
 
   virtual unsigned get_numdim() const = 0;
-  virtual unsigned get_numcells() const = 0;
-  virtual unsigned get_numnodes() const = 0;
+  virtual size_t get_numcells() const = 0;
+  virtual size_t get_numnodes() const = 0;
   virtual std::vector<double> get_nodecoord(size_t node) const = 0;
-  virtual std::vector<int> get_cellnodes(size_t cell) const = 0;
-  virtual unsigned get_numsides() const = 0;
+  virtual std::vector<unsigned> get_cellnodes(size_t cell) const = 0;
+  virtual size_t get_numsides() const = 0;
   virtual unsigned get_sideflag(size_t side) const = 0;
-  virtual std::vector<int> get_sidenodes(size_t side) const = 0;
+  virtual std::vector<unsigned> get_sidenodes(size_t side) const = 0;
   virtual unsigned get_celltype(size_t cell) const = 0;
-  virtual unsigned get_sidetype(size_t side) const = 0;
+  virtual size_t get_sidetype(size_t side) const = 0;
+
+  // >>> SERVICES
+
+  virtual void read_mesh() = 0;
 };
 
 } // namespace rtt_mesh

@@ -48,7 +48,7 @@ public:
   inline const_iterator begin() const { return d_begin; }
   //! end iterator
   inline const_iterator end() const { return d_end; }
-  inline unsigned size() const { return d_end - d_begin; }
+  inline uint64_t size() const { return d_end - d_begin; }
   inline T const &front() const;
   inline T const &back() const;
   inline T *access();

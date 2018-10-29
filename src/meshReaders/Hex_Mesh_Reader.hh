@@ -42,40 +42,33 @@ class DLL_PUBLIC_meshReaders Hex_Mesh_Reader
   std::string meshfile_name;
   static std::string keyword() { return "cic19_hex_mesh"; }
   std::string version;
-  int npoints;
-  int ncells;
-  int nvrtx;
-  int nvrpf;
-  int ndim;
-  int nvb_faces;
-  int nrb_faces;
-  int nmat;
+  unsigned npoints;
+  unsigned ncells;
+  unsigned nvrtx;
+  unsigned nvrpf;
+  unsigned ndim;
+  unsigned nvb_faces;
+  unsigned nrb_faces;
+  unsigned nmat;
   std::vector<std::vector<double>> point_coords;
-  std::vector<std::vector<int>> ipar;
+  std::vector<std::vector<unsigned>> ipar;
   std::vector<int> imat_index;
   std::vector<int> irgn_vb_index;
-  std::vector<std::vector<int>> ipar_vb;
-  std::vector<std::vector<int>> ipar_rb;
+  std::vector<std::vector<unsigned>> ipar_vb;
+  std::vector<std::vector<unsigned>> ipar_rb;
 
-  std::map<std::string, std::set<int>> node_sets;
+  std::map<std::string, std::set<unsigned>> node_sets;
 
 public:
   // CREATORS
 
   explicit Hex_Mesh_Reader(std::string filename);
 
-  // Defaulted Hex_Mesh_Reader(const Hex_Mesh_Reader &rhs);
-  // Defaulted ~Hex_Mesh_Reader();
-
   // MANIPULATORS
-
-  // Defaulted Hex_Mesh_Reader& operator=(const Hex_Mesh_Reader &rhs);
 
   // ACCESSORS
 
-  /*!
-   *  Returns the point coordinates.
-   */
+  //! Returns the point coordinates.
   std::vector<std::vector<double>> get_node_coords() const {
     return point_coords;
   }
@@ -90,7 +83,7 @@ public:
    * The Hex mesh format has no provision for flagging nodes.  This method
    * therefore always returns a map with one entry which contains all the nodes.
    */
-  std::map<std::string, std::set<int>> get_node_sets() const {
+  std::map<std::string, std::set<unsigned>> get_node_sets() const {
     return node_sets;
   }
 
@@ -100,11 +93,11 @@ public:
    */
   std::string get_title() const { return "Untitled -- CIC-19 Hex Mesh"; }
 
-  std::vector<std::vector<int>> get_element_nodes(void) const;
+  std::vector<std::vector<unsigned>> get_element_nodes(void) const;
 
   bool invariant() const;
 
-  std::map<std::string, std::set<int>> get_element_sets() const;
+  std::map<std::string, std::set<unsigned>> get_element_sets() const;
 
   std::vector<rtt_mesh_element::Element_Definition::Element_Type>
   get_element_types() const;

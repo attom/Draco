@@ -23,12 +23,18 @@ if( NOT Fortran_FLAGS_INITIALIZED )
   #    '-ip' is turned on and a library has unresolved symbols (this occurs when
   #    capsaicin links to openmpi/1.10.3 on snow/fire/ice).
   #    Ref: https://github.com/open-mpi/ompi/issues/251
+  # [KT 2018-03-14] '-assume nostd_mod_proc_name' --  discussion with G.
+  #    Rockefeller and S. Nolen aobut ifort's non-standard name mangling for
+  #    module procedures. Not sure if we need this yet.
+
   set( CMAKE_Fortran_FLAGS
     "-warn  -fpp -implicitnone -diag-disable 11060" )
   set( CMAKE_Fortran_FLAGS_DEBUG
     "-g -O0 -traceback -ftrapuv -check -DDEBUG" )
   set( CMAKE_Fortran_FLAGS_RELEASE
-    "-O2 -inline-level=2 -fp-speculation fast -fp-model fast -align array32byte -funroll-loops -diag-disable 11021 -DNDEBUG" )
+    "-O2 -inline-level=2 -fp-speculation fast -fp-model fast" )
+  string(APPEND CMAKE_Fortran_FLAGS_RELEASE
+    " -align array32byte -funroll-loops -diag-disable 11021 -DNDEBUG" )
   set( CMAKE_Fortran_FLAGS_MINSIZEREL
     "${CMAKE_Fortran_FLAGS_RELEASE}" )
   set( CMAKE_Fortran_FLAGS_RELWITHDEBINFO

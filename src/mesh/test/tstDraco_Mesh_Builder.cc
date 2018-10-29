@@ -35,7 +35,7 @@ void build_cartesian_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   const size_t num_xdir = 2;
   const size_t num_ydir = 1;
 
-  // generate a constainer for data needed in mesh construction
+  // generate a container for data needed in mesh construction
   rtt_mesh_test::Test_Mesh_Interface mesh_iface(num_xdir, num_ydir);
 
   // short-cut to some arrays
@@ -128,7 +128,8 @@ void build_cartesian_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
     std::vector<unsigned>::const_iterator sn_first = sn_linkage.begin();
     for (unsigned side = 0; side < mesh_iface.num_sides; ++side) {
 
-      // check that sn_linkage is a permutation of the original side-node linkage
+      // check that sn_linkage is a permutation of the original side-node
+      // linkage
       if (!std::is_permutation(sn_first, sn_first + side_node_count[side],
                                ref_sn_first,
                                ref_sn_first + side_node_count[side]))
@@ -147,7 +148,6 @@ void build_cartesian_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, rtt_dsxx::release);
   try {

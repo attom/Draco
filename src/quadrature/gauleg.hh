@@ -115,7 +115,7 @@ void gauleg(
     } while (!soft_equiv(z, z1, tolerance));
 
     // Roots will be between -1 and 1.0 and symmetric about the origin.
-    int const idxSymPart(n - iroot - 1);
+    size_t const idxSymPart(n - iroot - 1);
 
     // Now, scale the root to tthe desired interval and put in its
     // symmetric counterpart.

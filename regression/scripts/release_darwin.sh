@@ -44,7 +44,7 @@ function intel14env()
   run "module load compilers/intel/14.0.2 mpi/openmpi-1.6.5-intel_14.0.2"
   run "module load random123 eospac/6.2.4"
   run "module list"
-  export MPIEXEC=${MPIRUN}
+  export MPIEXEC_EXECUTABLE=${MPIRUN}
 }
 function intel15env()
 {
@@ -54,7 +54,7 @@ function intel15env()
   run "module load intel/15.0.3 openmpi/1.6.5-intel_15.0.3"
   run "module load random123 eospac/6.2.4"
   run "module list"
-  export MPIEXEC=${MPIRUN}
+  export MPIEXEC_EXECUTABLE=${MPIRUN}
 }
 
 # ============================================================================

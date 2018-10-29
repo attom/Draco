@@ -3,7 +3,7 @@
 ## File  : ./travis-run-tests.sh
 ## Date  : Tuesday, Jan 17, 2017, 15:55 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2017-2018, Los Alamos National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
@@ -79,7 +79,7 @@ else
       eval export ${i}_FLAGS+=\" -Werror\"
     done
   fi
-  if [[ ${COVERAGE} ]]; then
+  if [[ ${COVERAGE:-OFF} == "ON" ]]; then
     for i in C CXX Fortran; do
       eval export ${i}_FLAGS+=\" --coverage\"
     done
@@ -107,7 +107,7 @@ else
   # tstOMP_2 needs too many ppr (threads * cores) for Travis.
   run "ctest -j 2 -E \(c4_tstOMP_2\|c4_tstTermination_Detector_2\) --output-on-failure"
   cd -
-  if [[ ${COVERAGE} ]]; then
+  if [[ ${COVERAGE} == "ON" ]]; then
     echo "========"
     #which codecov
     #run "codecov --gcov-exec $GCOV"

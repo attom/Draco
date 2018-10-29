@@ -672,7 +672,7 @@ void test_valid_units(rtt_dsxx::UnitTest &ut) {
         msg << "validUnits() is not working for myus (L)." << endl;
         FAILMSG(msg.str());
       }
-    } catch (rtt_dsxx::assertion &assert) {
+    } catch (rtt_dsxx::assertion & /*assert*/) {
       ostringstream msg;
       msg << "Expected assertion caught with invalid cf for L." << endl;
       //  << "The message was: " << assert.what() << endl;
@@ -710,7 +710,7 @@ void test_valid_units(rtt_dsxx::UnitTest &ut) {
         msg << "validUnits() is working for myus (M)." << endl;
         PASSMSG(msg.str());
       }
-    } catch (rtt_dsxx::assertion &assert) {
+    } catch (rtt_dsxx::assertion & /*assert*/) {
       ostringstream msg;
       msg << "Expected assertion caught with invalid cf for M." << endl;
       PASSMSG(msg.str());
@@ -747,7 +747,7 @@ void test_valid_units(rtt_dsxx::UnitTest &ut) {
         msg << "validUnits() is working for myus (t)." << endl;
         PASSMSG(msg.str());
       }
-    } catch (rtt_dsxx::assertion &assert) {
+    } catch (rtt_dsxx::assertion & /*assert*/) {
       ostringstream msg;
       msg << "Expected assertion caught with invalid cf for t." << endl;
       PASSMSG(msg.str());
@@ -781,7 +781,7 @@ void test_valid_units(rtt_dsxx::UnitTest &ut) {
         msg << "validUnits() is working for myus (T)." << endl;
         PASSMSG(msg.str());
       }
-    } catch (rtt_dsxx::assertion &assert) {
+    } catch (rtt_dsxx::assertion & /*assert*/) {
       ostringstream msg;
       msg << "Expected assertion caught with invalid cf for T." << endl;
       PASSMSG(msg.str());
@@ -815,7 +815,7 @@ void test_valid_units(rtt_dsxx::UnitTest &ut) {
         msg << "validUnits() is working for myus (I)." << endl;
         PASSMSG(msg.str());
       }
-    } catch (rtt_dsxx::assertion &assert) {
+    } catch (rtt_dsxx::assertion & /*assert*/) {
       ostringstream msg;
       msg << "Expected assertion caught with invalid cf for I." << endl;
       PASSMSG(msg.str());
@@ -849,7 +849,7 @@ void test_valid_units(rtt_dsxx::UnitTest &ut) {
         msg << "validUnits() is working for myus (A)." << endl;
         PASSMSG(msg.str());
       }
-    } catch (rtt_dsxx::assertion &assert) {
+    } catch (rtt_dsxx::assertion & /*assert*/) {
       ostringstream msg;
       msg << "Expected assertion caught with invalid cf for A." << endl;
       PASSMSG(msg.str());
@@ -883,7 +883,7 @@ void test_valid_units(rtt_dsxx::UnitTest &ut) {
         msg << "validUnits() is working for myus (Q)." << endl;
         PASSMSG(msg.str());
       }
-    } catch (rtt_dsxx::assertion &assert) {
+    } catch (rtt_dsxx::assertion & /*assert*/) {
       ostringstream msg;
       msg << "Expected assertion caught with invalid cf for Q." << endl;
       PASSMSG(msg.str());

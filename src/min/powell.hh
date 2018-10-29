@@ -5,10 +5,7 @@
  * \date   Tue Aug 17 15:30:23 2004
  * \brief  Find minimum of a multivariate function.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef min_powell_hh
@@ -48,7 +45,8 @@ void powell(RandomContainer &p, RandomContainer &xi, double const ftol,
   unsigned const ITMAX = iter;
   double const TINY = 1.0e-25;
 
-  unsigned const n = p.size();
+  Check(p.size() < UINT_MAX);
+  unsigned const n = static_cast<unsigned>(p.size());
   vector<double> pt(n), ptt(n), xit(n);
 
   fret = func(p);

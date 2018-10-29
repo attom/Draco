@@ -65,7 +65,7 @@ macro( find_num_procs_avail_for_running_tests )
     set( num_test_procs $ENV{SLURM_NPROCS} )
   else()
     # If this is not a known batch system, then attempt to set values according
-    # to machine name:
+    # to machine properties
     include(ProcessorCount)
     ProcessorCount(num_test_procs)
   endif()
@@ -205,7 +205,7 @@ win32$ set work_dir=c:/full/path/to/work_dir
          set(CTEST_BUILD_FLAGS "-j${num_compile_procs} -l${num_compile_procs}")
          if( "${sitename}" STREQUAL "Trinity" OR "${sitename}" STREQUAL "Trinitite")
            # We compile on the front end for this machine. Since we don't know
-           # the actual load apriori, we use the -l option to limit the total
+           # the actual load a priori, we use the -l option to limit the total
            # load on the machine.  For CT, my experience shows that 'make -l N'
            # actually produces a machine load ~ 1.5*N, so we will specify the
            # max load to be half of the total number of procs.
@@ -213,6 +213,12 @@ win32$ set work_dir=c:/full/path/to/work_dir
            set(CTEST_BUILD_FLAGS "-j ${half_num_compile_procs} -l ${num_compile_procs}")
          endif()
        endif()
+   else()
+     if(NOT num_compile_procs EQUAL 0)
+       # Parallel builds for 'msbuild'
+       # Ref: https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-command-line-reference?view=vs-2015
+       set(CTEST_BUILD_FLAGS "-m:${num_compile_procs}")
+     endif()
    endif()
 
    # Testing parallelism
@@ -799,6 +805,7 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
   # Assume that draco_work_dir is parallel to our current location, but only
   # replace the directory name preceeding the dashboard name.
   file( TO_CMAKE_PATH "$ENV{work_dir}" work_dir )
+  file( TO_CMAKE_PATH "$ENV{DRACO_DIR}" DRACO_DIR )
   string( REGEX REPLACE "${this_pkg}[/\\](Nightly|Experimental|Continuous)"
     "${dep_pkg}/\\1" ${dep_pkg}_work_dir ${work_dir} )
 
@@ -818,7 +825,6 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
       string( REGEX REPLACE "[-_]${extraparam}[-_]" "-" ${dep_pkg}_work_dir
         ${${dep_pkg}_work_dir} )
     endforeach()
-
     if( "${this_pkg}" MATCHES "jayenne" OR "${this_pkg}" MATCHES "capsaicin")
       # If this is jayenne, we might be building a pull request. Replace the PR
       # number in the path with '-develop' before looking for draco.
@@ -831,11 +837,11 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
     NAMES README.${dep_pkg} README.md
     HINTS
       # if DRACO_DIR is defined, use it.
-      $ENV{DRACO_DIR}
+      ${DRACO_DIR}
       # Try a path parallel to the work_dir
       ${${dep_pkg}_work_dir}/target
+    NO_DEFAULT_PATH
   )
-
   if( NOT EXISTS ${${dep_pkg}_target_dir} )
     message( FATAL_ERROR
       "Could not locate the ${dep_pkg} installation directory.
@@ -844,6 +850,7 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
   endif()
 
   get_filename_component( ${dep_pkg_caps}_DIR ${${dep_pkg}_target_dir} PATH )
+  unset( dep_pkg_caps )
 
 endmacro(set_pkg_work_dir)
 

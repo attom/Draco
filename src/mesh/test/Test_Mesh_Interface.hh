@@ -11,6 +11,7 @@
 #ifndef rtt_mesh_test_Test_Mesh_Interface_hh
 #define rtt_mesh_test_Test_Mesh_Interface_hh
 
+#include "ds++/Assert.hh"
 #include "mesh/Draco_Mesh.hh"
 #include <algorithm>
 
@@ -94,10 +95,13 @@ Test_Mesh_Interface::Test_Mesh_Interface(
       size_t cell = i + num_xdir * j;
 
       // set each node entry per cell
-      cell_to_node_linkage[4 * cell] = cell + j;
-      cell_to_node_linkage[4 * cell + 1] = cell + j + 1;
-      cell_to_node_linkage[4 * cell + 2] = cell + num_xdir + 1 + j + 1;
-      cell_to_node_linkage[4 * cell + 3] = cell + num_xdir + 1 + j;
+      Check(cell + num_xdir + 1 + j + 1 < UINT_MAX);
+      cell_to_node_linkage[4 * cell] = static_cast<unsigned>(cell + j);
+      cell_to_node_linkage[4 * cell + 1] = static_cast<unsigned>(cell + j + 1);
+      cell_to_node_linkage[4 * cell + 2] =
+          static_cast<unsigned>(cell + num_xdir + 1 + j + 1);
+      cell_to_node_linkage[4 * cell + 3] =
+          static_cast<unsigned>(cell + num_xdir + 1 + j);
     }
   }
 
@@ -111,25 +115,33 @@ Test_Mesh_Interface::Test_Mesh_Interface(
   for (size_t i = 0; i < num_xdir; ++i) {
     // bottom face
     side_set_flag[i] = 1;
-    side_to_node_linkage[2 * i] = i;
-    side_to_node_linkage[2 * i + 1] = i + 1;
+    Check(i + 1 < UINT_MAX);
+    side_to_node_linkage[2 * i] = static_cast<unsigned>(i);
+    side_to_node_linkage[2 * i + 1] = static_cast<unsigned>(i + 1);
     // top face
     side_set_flag[i + poff] = 3;
-    side_to_node_linkage[2 * (i + poff)] = num_nodes - 1 - i;
-    side_to_node_linkage[2 * (i + poff) + 1] = num_nodes - 1 - i - 1;
+    Check(num_nodes < UINT_MAX);
+    side_to_node_linkage[2 * (i + poff)] =
+        static_cast<unsigned>(num_nodes - 1 - i);
+    side_to_node_linkage[2 * (i + poff) + 1] =
+        static_cast<unsigned>(num_nodes - 1 - i - 1);
   }
   // ... over left and right faces
   for (size_t j = 0; j < num_ydir; ++j) {
     // right face
     side_set_flag[j + num_xdir] = 2;
-    side_to_node_linkage[2 * (j + num_xdir)] = num_xdir * (j + 1) + j;
-    side_to_node_linkage[2 * (j + num_xdir) + 1] = num_xdir * (j + 2) + j + 1;
+    Check(num_xdir * (j + 2) + j + 1 < UINT_MAX);
+    side_to_node_linkage[2 * (j + num_xdir)] =
+        static_cast<unsigned>(num_xdir * (j + 1) + j);
+    side_to_node_linkage[2 * (j + num_xdir) + 1] =
+        static_cast<unsigned>(num_xdir * (j + 2) + j + 1);
     // left face
     side_set_flag[j + poff + num_xdir] = 4;
+    Check(num_nodes - 1 - num_xdir * (j + 2) - (j + 1) < UINT_MAX);
     side_to_node_linkage[2 * (j + poff + num_xdir)] =
-        num_nodes - 1 - num_xdir * (j + 1) - j;
+        static_cast<unsigned>(num_nodes - 1 - num_xdir * (j + 1) - j);
     side_to_node_linkage[2 * (j + poff + num_xdir) + 1] =
-        num_nodes - 1 - num_xdir * (j + 2) - (j + 1);
+        static_cast<unsigned>(num_nodes - 1 - num_xdir * (j + 2) - (j + 1));
   }
 
   // set uniform coordinate increments

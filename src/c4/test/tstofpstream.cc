@@ -44,12 +44,43 @@ void tstofpstream(UnitTest &ut) {
   ut.passes("completed serialized write without hanging or segfaulting");
 }
 
+void tstofpstream_bin(UnitTest &ut) {
+
+  int pid = rtt_c4::node();
+
+  // Binary write rank ids to file using ofpstream:
+  {
+    ofpstream out("tstofpstream.bin", std::ofstream::binary);
+
+    out.write(reinterpret_cast<const char *>(&pid), sizeof(int));
+
+    out.send();
+
+    out.shrink_to_fit();
+  }
+
+  // Read file on head rank, check for correct conversion and ordering
+  if (pid == 0) {
+    ifstream in("tstofpstream.bin", std::ofstream::binary);
+    int this_pid;
+    for (int a = 0; a < rtt_c4::nodes(); a++) {
+      in.read(reinterpret_cast<char *>(&this_pid), sizeof(int));
+      if (this_pid != a) {
+        ITFAILS;
+      }
+    }
+  }
+
+  ut.passes("completed serialized binary write without hanging or segfaulting");
+}
+
 //---------------------------------------------------------------------------//
 
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, release);
   try {
     tstofpstream(ut);
+    tstofpstream_bin(ut);
   }
   UT_EPILOG(ut);
 }

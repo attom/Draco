@@ -115,7 +115,7 @@ template <unsigned D, int OFFSET> void Index_Counter<D, OFFSET>::increment() {
   ++indices[0];
   ++index;
 
-  for (size_t d = 0; d < D - 1; ++d) {
+  for (unsigned d = 0; d < D - 1; ++d) {
     if (indices[d] > index_set.max_of_index(d)) {
       ++indices[d + 1];
       indices[d] = index_set.min_of_index(d);
@@ -138,7 +138,7 @@ template <unsigned D, int OFFSET> void Index_Counter<D, OFFSET>::decrement() {
   --indices[0];
   --index;
 
-  for (size_t d = 0; d < D - 1; ++d) {
+  for (unsigned d = 0; d < D - 1; ++d) {
     if (indices[d] < index_set.min_of_index(d)) {
       indices[d] = index_set.max_of_index(d);
       --indices[d + 1];

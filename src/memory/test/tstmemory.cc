@@ -88,6 +88,47 @@ void tst_memory(rtt_dsxx::UnitTest &ut) {
   } else {
     FAILMSG("NOT correct largest allocation");
   }
+#endif
+
+  // Just to try to exercise the sized delete version.
+  int *scalar = new int;
+
+#if DRACO_DIAGNOSTICS & 2
+  if (total_allocation() == sizeof(int)) {
+    PASSMSG("correct total allocation");
+  } else {
+    FAILMSG("NOT correct total allocation");
+  }
+  if (peak_allocation() >= 50 * sizeof(double) + sizeof(int)) {
+    PASSMSG("correct peak allocation");
+  } else {
+    FAILMSG("NOT correct peak allocation");
+  }
+  if (largest_allocation() >= 30 * sizeof(double)) {
+    PASSMSG("correct largest allocation");
+  } else {
+    FAILMSG("NOT correct largest allocation");
+  }
+#endif
+
+  delete scalar;
+
+#if DRACO_DIAGNOSTICS & 2
+  if (total_allocation() == 0) {
+    PASSMSG("correct total allocation");
+  } else {
+    FAILMSG("NOT correct total allocation");
+  }
+  if (peak_allocation() >= 50 * sizeof(double) + sizeof(int)) {
+    PASSMSG("correct peak allocation");
+  } else {
+    FAILMSG("NOT correct peak allocation");
+  }
+  if (largest_allocation() >= 30 * sizeof(double)) {
+    PASSMSG("correct largest allocation");
+  } else {
+    FAILMSG("NOT correct largest allocation");
+  }
   report_leaks(cerr);
 #endif
 }

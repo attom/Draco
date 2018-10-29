@@ -27,27 +27,31 @@ endif()
 # Compiler Flags
 #
 
+# As of cmake-3.12.1, the cray flags for C++14 were not available in cmake.
+if( NOT DEFINED CMAKE_CXX14_STANDARD_COMPILE_OPTION )
+  set( CMAKE_CXX14_STANDARD_COMPILE_OPTION "-hstd=c++14" CACHE STRING "internal"
+    FORCE)
+endif()
+
 if( NOT CXX_FLAGS_INITIALIZED )
    set( CXX_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using draco settings." )
 
   set( CMAKE_C_FLAGS                "-DR123_USE_GNU_UINT128=0" )
   set( CMAKE_C_FLAGS_DEBUG          "-g -O0 -DDEBUG")
   #if( HAVE_MIC )
-    # For floating point consistency with Xeon when using Intel 15.0.090 + Intel MPI 5.0.2
+    # For floating point consistency with Xeon when using Intel 15.0.090 + Intel
+    # MPI 5.0.2
     #set( CMAKE_C_FLAGS_DEBUG        "${CMAKE_C_FLAGS_DEBUG} -fp-model precise -fp-speculation safe" )
   #endif()
   set( CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG" )
   set( CMAKE_C_FLAGS_MINSIZEREL     "${CMAKE_C_FLAGS_RELEASE}" )
   set( CMAKE_C_FLAGS_RELWITHDEBINFO "-g -O3 -DNDEBUG" )
 
-  set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS} -hstd=c++11" )
+  set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS}")
   set( CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_C_FLAGS_DEBUG}")
   set( CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_C_FLAGS_RELEASE}")
   set( CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_RELEASE}")
   set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}" )
-
-   # Use C99 standard.
-   # set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 endif()
 

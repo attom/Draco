@@ -150,12 +150,16 @@ Analytic_Odfmg_Opacity::sf_char Analytic_Odfmg_Opacity::pack() const {
 //---------------------------------------------------------------------------//
 unsigned Analytic_Odfmg_Opacity::packed_size() const {
   // This must match the size calculated in the previous function
-  return 4 * sizeof(int) + groupBoundaries.size() * sizeof(double) +
-         bandBoundaries.size() * sizeof(double);
+  Check(4 * sizeof(int) + groupBoundaries.size() * sizeof(double) +
+            bandBoundaries.size() * sizeof(double) <
+        UINT_MAX);
+  return static_cast<unsigned>(4 * sizeof(int) +
+                               groupBoundaries.size() * sizeof(double) +
+                               bandBoundaries.size() * sizeof(double));
 }
 
 } // end namespace rtt_cdi_analytic
 
 //---------------------------------------------------------------------------//
-//                              end of Analytic_Odfmg_Opacity.cc
+// end of Analytic_Odfmg_Opacity.cc
 //---------------------------------------------------------------------------//

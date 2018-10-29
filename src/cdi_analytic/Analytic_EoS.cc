@@ -467,7 +467,8 @@ Analytic_EoS::getElectronThermalConductivity(const sf_double &T,
  *
  * \param rho density field in g/cm^3 (unused by the current analytic models)
  * \param Ue specific electron energy (kJ/g)
- * \param Tguess An electron temperature (keV) guess that can be used to help the root finder.
+ * \param Tguess An electron temperature (keV) guess that can be used to help 
+ *        the root finder.
  * \return electron temperature in keV.
  */
 double Analytic_EoS::getElectronTemperature(double rho, double Ue,
@@ -529,7 +530,8 @@ Analytic_EoS::sf_char Analytic_EoS::pack() const {
 
   // now add up the total size (in bytes): size of analytic model + 1
   // int for size of analytic model
-  int size = anal_model.size() + 1 * sizeof(int);
+  Check(anal_model.size() + 1 * sizeof(int) < INT_MAX);
+  int size = static_cast<int>(anal_model.size() + 1 * sizeof(int));
 
   // make a char array
   sf_char packed(size);
@@ -551,5 +553,5 @@ Analytic_EoS::sf_char Analytic_EoS::pack() const {
 } // end namespace rtt_cdi_analytic
 
 //---------------------------------------------------------------------------//
-//                              end of Analytic_EoS.cc
+// end of Analytic_EoS.cc
 //---------------------------------------------------------------------------//

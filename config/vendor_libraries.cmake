@@ -97,9 +97,10 @@ macro( setupLAPACKLibraries )
       get_target_property(tmp lapack IMPORTED_LOCATION_${config} )
       if( EXISTS ${tmp} )
         set( lapack_FOUND TRUE )
+        set( lapack_loc ${tmp} )
       endif()
     endforeach()
-    message( STATUS "Looking for lapack (netlib)....found ${tmp}")
+    message( STATUS "Looking for lapack (netlib)....found ${lapack_loc}")
     set( lapack_FOUND ${lapack_FOUND} CACHE BOOL "Did we find LAPACK." FORCE )
 
     # The above might define blas, or it might not. Double check:
@@ -401,13 +402,29 @@ endmacro()
 # Setup GSL (any)
 #------------------------------------------------------------------------------
 macro( setupGSL )
+
   if( NOT TARGET GSL::gsl )
 
     message( STATUS "Looking for GSL..." )
+    set( QUIET "QUIET")
 
-    # If gsl-config is in the PATH, query the value for GSL_ROOT_DIR
-    # This bit of logic is needed on Cielo/Cielito because gsl is not in
-    # a system location (it is provided by a module)
+    # There are 3 ways to find gsl:
+
+    # 1. Config mode.
+    #    If CMAKE_PREFIX_PATH contains a GSL install prefix directory and
+    #    the file gsl-config.cmake is found somewhere in this installation
+    #    tree, then the targets defined by gsl-config.cmake will be used.
+    find_package( GSL CONFIG ${QUIET} )
+
+  endif()
+
+  if( NOT TARGET GSL::gsl ) # if option #1 was successful, skip this.
+
+    # 2. pkg-config mode (Linux)
+    #    IF GSL_ROOT_DIR isn't set, look for the binary 'gsl-config' in $PATH.
+    #    If found, run it to discover and set GSL_ROOT_DIR that will be used
+    #    in method #3.
+
     if( "$ENV{GSL_ROOT_DIR}x" STREQUAL "x" AND "${GSL_ROOT_DIR}x" STREQUAL "x")
       find_program( GSL_CONFIG gsl-config )
       if( EXISTS "${GSL_CONFIG}" )
@@ -417,14 +434,33 @@ macro( setupGSL )
       endif()
     endif()
 
-    find_package( GSL QUIET REQUIRED )
-    if( GSL_FOUND )
-      message( STATUS "Looking for GSL.......found ${GSL_LIBRARY}" )
-      mark_as_advanced( GSL_CONFIG_EXECUTABLE )
-    else()
-      message( STATUS "Looking for GSL.......not found" )
-    endif()
+    # 3. Module mode.
+    #    Locate GSL by using the value of GSL_ROOT_DIR or by looking in
+    #    standard locations. We add 'REQUIRED' here because if this fails,
+    #    then we abort the built.
+    find_package( GSL REQUIRED ${QUIET} )
 
+  endif()
+
+  # Print a report
+  if( TARGET GSL::gsl )
+    if( TARGET GSL::gsl AND NOT GSL_LIBRARY )
+      foreach( config NOCONFIG DEBUG RELEASE RELWITHDEBINFO )
+        get_target_property(tmp GSL::gsl IMPORTED_LOCATION_${config} )
+        if( EXISTS ${tmp} AND NOT GSL_LIBRARY )
+          set( GSL_LIBRARY ${tmp} )
+        endif()
+      endforeach()
+    endif()
+    message( STATUS "Looking for GSL.......found ${GSL_LIBRARY}" )
+    mark_as_advanced( GSL_CONFIG_EXECUTABLE )
+  else()
+    message( STATUS "Looking for GSL.......not found" )
+  endif()
+
+  # If successful in finding GSL, provide some information for the vendor
+  # summary reported by src/CMakeLists.txt.
+  if( TARGET GSL::gsl )
     #=============================================================================
     # Include some information that can be printed by the build system.
     set_package_properties( GSL PROPERTIES
@@ -433,8 +469,8 @@ macro( setupGSL )
    programmers."
       TYPE REQUIRED
       PURPOSE "Required for rng and quadrature components." )
-
   endif()
+  unset(QUIET)
 
 endmacro()
 
@@ -443,11 +479,23 @@ endmacro()
 #------------------------------------------------------------------------------
 macro( setupParMETIS )
 
+  set( QUIET "QUIET")
   if( NOT TARGET METIS::metis )
     message( STATUS "Looking for METIS..." )
 
-    find_package( METIS QUIET )
-    if( METIS_FOUND )
+    find_package( METIS CONFIG ${QUIET} )
+    if( NOT TARGET METIS::metis )
+      find_package( METIS ${QUIET} )
+    endif()
+    if( TARGET METIS::metis )
+      if( TARGET METIS::metis AND NOT METIS_LIBRARY )
+        foreach( config NOCONFIG DEBUG RELEASE RELWITHDEBINFO )
+          get_target_property(tmp METIS::metis IMPORTED_LOCATION_${config} )
+          if( EXISTS ${tmp} AND NOT METIS_LIBRARY )
+            set( METIS_LIBRARY ${tmp} )
+          endif()
+        endforeach()
+      endif()
       message( STATUS "Looking for METIS.....found ${METIS_LIBRARY}" )
     else()
       message( STATUS "Looking for METIS.....not found" )
@@ -487,7 +535,7 @@ macro( setupParMETIS )
    computing fill-reducing orderings of sparse matrices." )
 
   endif()
-
+  unset(QUIET)
 endmacro()
 
 #------------------------------------------------------------------------------
@@ -503,6 +551,11 @@ macro( setupSuperLU_DIST )
       message( STATUS "Looking for SuperLU_DIST.....found ${SuperLU_DIST_LIBRARY}" )
     else()
       message( STATUS "Looking for SuperLU_DIST.....not found" )
+    endif()
+
+    if( ${SuperLU_DIST_VERSION} VERSION_GREATER 5.2.9 )
+      message( FATAL_ERROR "The API change in SuperLU_DIST 5.3+ is not yet
+      supported by Draco. Please use a version of SuperLU_DIST prior to 5.3.")
     endif()
 
     #===========================================================================

@@ -66,7 +66,7 @@ inline void blas_copy(int N, const double *x, int increment_x, double *y,
  *
  * The results are written into y.
  */
-template <class T>
+template <typename T>
 inline void blas_copy(const std::vector<T> &x, int increment_x,
                       std::vector<T> &y, int increment_y) {
   Check(x.size() == y.size());
@@ -113,7 +113,7 @@ inline void blas_scal(int N, double alpha, double *x, int increment_x) {
  *
  * The results are written into x.
  */
-template <class T>
+template <typename T>
 inline void blas_scal(T alpha, std::vector<T> &x, int /*increment_x*/) {
   Check(typeid(T) == typeid(float) || typeid(T) == typeid(double));
 
@@ -168,7 +168,7 @@ inline double blas_dot(int N, const double *x, int increment_x, const double *y,
  *
  * \return the dot product (type T)
  */
-template <class T>
+template <typename T>
 inline T blas_dot(const std::vector<T> &x, int increment_x,
                   const std::vector<T> &y, int increment_y) {
   Check(x.size() == y.size());
@@ -231,7 +231,7 @@ inline void blas_axpy(int N, double alpha, const double *x, int increment_x,
  *
  * The results are written into y.
  */
-template <class T>
+template <typename T>
 inline void blas_axpy(T alpha, const std::vector<T> &x, int increment_x,
                       std::vector<T> &y, int increment_y) {
   Check(x.size() == y.size());
@@ -287,7 +287,7 @@ inline double blas_nrm2(int N, const double *x, int increment_x) {
  *
  * \return the 2-norm of x (the value_type of Forward_Iterator)
  */
-template <class Forward_Iterator>
+template <typename Forward_Iterator>
 inline typename std::iterator_traits<Forward_Iterator>::value_type
 blas_nrm2(Forward_Iterator x_begin, Forward_Iterator x_end) {
   Check(typeid(typename std::iterator_traits<Forward_Iterator>::value_type) ==
@@ -296,7 +296,7 @@ blas_nrm2(Forward_Iterator x_begin, Forward_Iterator x_end) {
             typeid(float));
 
   // get the size of the arrays
-  int N = std::distance(x_begin, x_end);
+  auto N = std::distance(x_begin, x_end);
 
   // allocate x array
   typename std::iterator_traits<Forward_Iterator>::value_type *x;
@@ -309,7 +309,8 @@ blas_nrm2(Forward_Iterator x_begin, Forward_Iterator x_end) {
   std::copy(x_begin, x_end, &x[0]);
 
   // do the 2-norm
-  nrm2 = blas_nrm2(N, x, 1);
+  Check(N < INT_MAX);
+  nrm2 = blas_nrm2(static_cast<int>(N), x, 1);
   Check(nrm2 >= 0.0);
 
   // clean up the memory
@@ -328,7 +329,7 @@ blas_nrm2(Forward_Iterator x_begin, Forward_Iterator x_end) {
  *
  * \return the 2-norm of x (type T)
  */
-template <class T>
+template <typename T>
 inline T blas_nrm2(const std::vector<T> &x, int increment_x) {
   Check(typeid(T) == typeid(float) || typeid(T) == typeid(double));
 

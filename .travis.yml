@@ -16,7 +16,7 @@ services:
 #------------------------------------------------------------------------------#
 # Notes: Build docker container before running this script:
 #
-# 1. cd to direcotry contataining Dockerfile.
+# 1. cd to directory contataining Dockerfile.
 # 2. Build the docker container.  This can take an hour or more.  If you are
 #    starting from scratch, you will need to change the first line of the
 #    Dockerfile so that it starts from 'ubuntu' instead of 'draco-travis-ci'
@@ -52,7 +52,7 @@ services:
 #
 # - The docker image mounts the PR sources (/home/travis/build/lanl/Draco) as
 #   /home/travis/Draco
-# - The vneodrs are at /vendors/spack
+# - The vendors are at /vendors/spack
 # - Spack is already in the environment
 #------------------------------------------------------------------------------#
 
@@ -84,7 +84,7 @@ install:
   - travis_retry timeout 540 docker pull kinetictheory/draco-travis-ci
 
 script:
-  - if [[ $COVERAGE ]]; then ci_env=`/bin/bash <(curl -s https://codecov.io/env)`; fi
+  - if [[ ${COVERAGE:-OFF} == "ON" ]]; then ci_env=`/bin/bash <(curl -s https://codecov.io/env)`; fi
   - docker run ${ci_env} -v ${T_SOURCE_DIR}:${SOURCE_DIR} -e VENDOR_DIR=${VENDOR_DIR} -e BUILD_DIR=${BUILD_DIR} -e SOURCE_DIR=${SOURCE_DIR} -e STYLE=${STYLE} -e COVERAGE=${COVERAGE} -e WERROR=${WERROR} -e DRACO_C4=${DRACO_C4} kinetictheory/draco-travis-ci /bin/bash -l -c "${SOURCE_DIR}/regression/travis-run-tests.sh"
 
 #------------------------------------------------------------------------------#

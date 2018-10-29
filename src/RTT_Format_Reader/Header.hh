@@ -5,10 +5,7 @@
  * \date   Wed Jun 7 10:33:26 2000
  * \brief  Header file for RTT_Format_Reader/Header class.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef __RTT_Format_Reader_Header_hh__
@@ -91,7 +88,7 @@ public:
  * \param i Line number of the comment to be returned.
  * \return The comment line.
  */
-  string get_comments(int i) const { return comments[i]; }
+  string get_comments(size_t const i) const { return comments[i]; }
 };
 
 } // end namespace rtt_RTT_Format_Reader

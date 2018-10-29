@@ -38,7 +38,7 @@ std::string st_to_string(int const i) {
 
 //---------------------------------------------------------------------------//
 // Print a demangled stack backtrace of the caller function.
-std::string rtt_dsxx::print_stacktrace(std::string const &error_name) {
+std::string rtt_dsxx::print_stacktrace(std::string const &error_message) {
   // store/build the message here.  At the end of the function we return
   // msg.str().
   std::ostringstream msg;
@@ -63,12 +63,12 @@ std::string rtt_dsxx::print_stacktrace(std::string const &error_name) {
   int stack_depth = backtrace(addrlist, sizeof(addrlist) / sizeof(void *));
 
   // Print a header for the stack trace
-  msg << "\nStack trace:"
-      << "\n  Signaling error: " << error_name
+  msg << "\n"
+      << error_message << "\nStack trace:"
       << "\n  Process        : " << process_name
       << "\n  PID            : " << pid
       << "\n  Stack depth    : " << stack_depth << " (showing "
-      << stack_depth - 3 << ")"
+      << stack_depth - 2 << ")"
       << "\n\n";
 
   // If there is no stack information, we are done.
@@ -93,7 +93,7 @@ std::string rtt_dsxx::print_stacktrace(std::string const &error_name) {
 
   // iterate over the returned symbol lines. skip first two,
   // (addresses of this function and handler)
-  for (int i = 1; i < stack_depth - 2; i++) {
+  for (int i = 0; i < stack_depth - 2; i++) {
     char *begin_name = 0, *begin_offset = 0, *end_offset = 0;
 
     // find parentheses and +address offset surrounding the mangled name:
@@ -169,7 +169,7 @@ std::string rtt_dsxx::print_stacktrace(std::string const &error_name) {
 
 //---------------------------------------------------------------------------//
 // Print a demangled stack backtrace of the caller function.
-std::string rtt_dsxx::print_stacktrace(std::string const &error_name) {
+std::string rtt_dsxx::print_stacktrace(std::string const &error_message) {
   // store/build the message here.  At the end of the function we return
   // msg.str().
   std::ostringstream msg;
@@ -179,8 +179,8 @@ std::string rtt_dsxx::print_stacktrace(std::string const &error_name) {
   int stack_depth(3);
 
   // Print a header for the stack trace
-  msg << "\nStack trace:"
-      << "\n  Signaling error: " << error_name
+  msg << "\n"
+      << error_message << "\nStack trace:"
       << "\n  Process        : " << process_name
       << "\n  PID            : " << pid
       << "\n  Stack depth    : " << stack_depth << " (showing "

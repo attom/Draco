@@ -23,6 +23,10 @@
 #      suppressions: LSAN_OPTIONS=suppressions=MyLSan.supp
 #      human readable: ASAN_SYMBOLIZER_PATH=/usr/local/bin/llvm-symbolizer ./a.out
 
+if( CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0 )
+  message( FATAL_ERROR "Draco requires LLVM clang version >= 6.0." )
+endif()
+
 #
 # Compiler Flags
 #
@@ -41,10 +45,7 @@ if( NOT CXX_FLAGS_INITIALIZED )
 
   # Suppress warnings about typeid() called with function as an argument. In this
   # case, the function might not be called if the type can be deduced.
-  set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS} -stdlib=libc++ -Wno-potentially-evaluated-expression" )
-  if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 3.8 )
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-undefined-var-template")
-  endif()
+  set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS} -stdlib=libc++ -Wno-undefined-var-template -Wno-potentially-evaluated-expression" )
   set( CMAKE_CXX_FLAGS_DEBUG          "${CMAKE_C_FLAGS_DEBUG} -Woverloaded-virtual")
   set( CMAKE_CXX_FLAGS_RELEASE        "${CMAKE_C_FLAGS_RELEASE}")
   set( CMAKE_CXX_FLAGS_MINSIZEREL     "${CMAKE_CXX_FLAGS_RELEASE}")
@@ -76,6 +77,7 @@ if( OpenMP_CXX_FLAGS )
 endif()
 # adding openmp option to EXE_LINKER will break MPI detection for gfortran when
 # running with clang++/clang/gfortran.
+
 
 #------------------------------------------------------------------------------#
 # End config/unix-clang.cmake

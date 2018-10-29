@@ -5,6 +5,7 @@
 
 # Send a copy of our repositories to the Red.
 00 01 * * 0-6 /scratch/regress/draco/regression/push_repositories_xf.sh
+00 11 * * 0-6 /scratch/regress/draco/regression/push_repositories_xf.sh
 
 # Keep a local bare copy of the repo available on the ccs-net.  This is used by Redmine.
 */20 * * * * /scratch/regress/draco/regression/sync_repository.sh

@@ -140,7 +140,7 @@ void cartesian_mesh_2d_dd(rtt_c4::ParallelUnitTest &ut) {
         ghost_cell_to_node_linkage.begin();
     std::vector<unsigned>::const_iterator test_gn_first =
         test_gn_linkage.begin();
-    unsigned num_ghost_cells = ghost_cell_type.size();
+    size_t const num_ghost_cells = ghost_cell_type.size();
     for (unsigned ghost = 0; ghost < num_ghost_cells; ++ghost) {
 
       // check that sn_linkage is a permutation of original ghost-node linkage

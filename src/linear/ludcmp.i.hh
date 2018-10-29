@@ -39,7 +39,8 @@ void ludcmp(FieldVector &a, IntVector &indx,
 
   typedef typename FieldVector::value_type Field;
 
-  unsigned const n = indx.size();
+  Check(indx.size() < UINT_MAX);
+  unsigned const n = static_cast<unsigned>(indx.size());
 
   vector<Field> vv(n);
 
@@ -124,7 +125,8 @@ void lubksb(FieldVector1 const &a, IntVector const &indx, FieldVector2 &b) {
 
   // minimum representable value
   double const mrv = std::numeric_limits<Field>::min();
-  unsigned const n = indx.size();
+  Check(indx.size() < UINT_MAX);
+  unsigned const n = static_cast<unsigned>(indx.size());
 
   unsigned ii = 0;
 

@@ -23,8 +23,8 @@ void test_isocbinding_sub1(rtt_dsxx::UnitTest &ut) {
   size_t nf(ut.numFails);
   // Call fortran subroutine
   sub1(alpha, &np, &nf);
-  ut.numPasses = np;
-  ut.numFails = nf;
+  ut.numPasses = static_cast<unsigned>(np);
+  ut.numFails = static_cast<unsigned>(nf);
   std::cout << ut.numPasses << " " << ut.numFails << std::endl;
   return;
 }

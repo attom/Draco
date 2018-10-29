@@ -24,7 +24,8 @@ namespace rtt_mesh {
  */
 template <typename KT, typename VT>
 std::map<KT, std::vector<VT>>
-X3D_Draco_Mesh_Reader::map_x3d_block(const std::string &block_name, int &dist) {
+X3D_Draco_Mesh_Reader::map_x3d_block(const std::string &block_name,
+                                     size_t &dist) {
 
   // parse x3d block and generate x3d_map
   auto label_first = find_iter_of_key(parsed_pairs, block_name, dist);

@@ -67,7 +67,7 @@ public:
   static double timer_value(const std::string &k) { return timers[k]; }
 
   //! Get number of timers in map.
-  static int num_timers() { return timers.size(); }
+  static size_t num_timers() { return timers.size(); }
 
   // Return a vector of timer keys.
   static Vec_Keys timer_keys();

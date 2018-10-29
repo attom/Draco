@@ -335,7 +335,7 @@ void CDI_test(rtt_dsxx::UnitTest &ut) {
   bool caught = false;
   try {
     eosdata.eos();
-  } catch (const rtt_dsxx::assertion &ass) {
+  } catch (const rtt_dsxx::assertion & /* except */) {
     PASSMSG("Good, caught an unreferenced EoS shared_ptr!");
     caught = true;
   }

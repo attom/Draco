@@ -5,10 +5,7 @@
  * \date   Tue Nov 13 11:19:59 2001
  * \brief  Analytic_MultigroupOpacity class member definitions.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "Analytic_MultigroupOpacity.hh"
@@ -105,7 +102,9 @@ Analytic_MultigroupOpacity::sf_char Analytic_MultigroupOpacity::pack() const {
   // now add up the total size; number of groups + 1 int for number of
   // groups, number of models + size in each model + models, 1 int for
   // reaction type, 1 int for model type
-  int size = 3 * sizeof(int) + group_boundaries.size() * sizeof(double);
+  Check(3 * sizeof(int) + group_boundaries.size() * sizeof(double) < INT_MAX);
+  int size = static_cast<int>(3 * sizeof(int) +
+                              group_boundaries.size() * sizeof(double));
 
   // make a char array
   sf_char packed(size);
@@ -128,7 +127,9 @@ Analytic_MultigroupOpacity::sf_char Analytic_MultigroupOpacity::pack() const {
 //---------------------------------------------------------------------------//
 unsigned Analytic_MultigroupOpacity::packed_size() const {
   // This must match the size calculated in the previous function
-  return 3 * sizeof(int) + group_boundaries.size() * sizeof(double);
+  Check(3 * sizeof(int) + group_boundaries.size() * sizeof(double) < UINT_MAX);
+  return static_cast<unsigned>(3 * sizeof(int) +
+                               group_boundaries.size() * sizeof(double));
 }
 
 //---------------------------------------------------------------------------//

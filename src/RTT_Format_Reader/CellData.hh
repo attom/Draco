@@ -5,10 +5,7 @@
  * \date   Wed Jun 7 10:33:26 2000
  * \brief  Header file for RTT_Format_Reader/CellData class.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef __RTT_Format_Reader_CellData_hh__
@@ -52,23 +49,25 @@ private:
 
 public:
   /*!
- * \brief Returns all of the data field values for each of the cells.
- * \return The data field values for each of the cells.
- */
+   * \brief Returns all of the data field values for each of the cells.
+   * \return The data field values for each of the cells.
+   */
   vector_vector_dbl get_data() const { return data; }
+
   /*!
- * \brief Returns all of the data field values for the specified cell.
- * \param cell_numb Cell number.
- * \return The cell data field values.
- */
-  vector_dbl get_data(int cell_numb) const { return data[cell_numb]; }
+   * \brief Returns all of the data field values for the specified cell.
+   * \param cell_numb Cell number.
+   * \return The cell data field values.
+   */
+  vector_dbl get_data(size_t cell_numb) const { return data[cell_numb]; }
+
   /*!
- * \brief Returns the specified data field value for the specified cel.
- * \param cell_numb Cell number.
- * \param data_index Data field.
- * \return The cell data field value.
- */
-  double get_data(int cell_numb, int data_index) const {
+   * \brief Returns the specified data field value for the specified cel.
+   * \param cell_numb Cell number.
+   * \param data_index Data field.
+   * \return The cell data field value.
+   */
+  double get_data(size_t cell_numb, size_t data_index) const {
     return data[cell_numb][data_index];
   }
 };

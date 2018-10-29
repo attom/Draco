@@ -36,35 +36,43 @@ extern "C" void catch_sigfpe(int sig, siginfo_t *psSiginfo,
   std::string error_type;
 
   if (sig != SIGFPE) {
-    error_type = "Floating point exception problem.";
+    error_type = "FATAL ERROR: Floating point exception problem.";
   } else {
     switch (psSiginfo->si_code) {
     case FPE_INTDIV:
-      error_type = "SIGFPE (Integer divide by zero)";
+      error_type =
+          "FATAL ERROR (SIGNAL) Caught SIGFPE (Integer divide by zero)";
       break;
     case FPE_INTOVF:
-      error_type = "SIGFPE (Integer overflow)";
+      error_type = "FATAL ERROR (SIGNAL) Caught SIGFPE (Integer overflow)";
       break;
     case FPE_FLTDIV:
-      error_type = "SIGFPE (Floating point divide by zero)";
+      error_type =
+          "FATAL ERROR (SIGNAL) Caught SIGFPE (Floating point divide by zero)";
       break;
     case FPE_FLTOVF:
-      error_type = "SIGFPE (Floating point overflow)";
+      error_type =
+          "FATAL ERROR (SIGNAL) Caught SIGFPE (Floating point overflow)";
       break;
     case FPE_FLTUND:
-      error_type = "SIGFPE (Floating point underflow)";
+      error_type =
+          "FATAL ERROR (SIGNAL) Caught SIGFPE (Floating point underflow)";
       break;
     case FPE_FLTRES:
-      error_type = "SIGFPE (Floating point inexact result)";
+      error_type =
+          "FATAL ERROR (SIGNAL) Caught SIGFPE (Floating point inexact result)";
       break;
     case FPE_FLTINV:
-      error_type = "SIGFPE (Invalid floating point operation)";
+      error_type = "FATAL ERROR (SIGNAL) Caught SIGFPE (Invalid floating point "
+                   "operation)";
       break;
     case FPE_FLTSUB:
-      error_type = "SIGFPE (Floating point subscript out of range)";
+      error_type = "FATAL ERROR (SIGNAL) Caught SIGFPE (Floating point "
+                   "subscript out of range)";
       break;
     default:
-      error_type = "SIGFPE (Unknown floating point exception)";
+      error_type = "FATAL ERROR (SIGNAL) Caught SIGFPE (Unknown floating point "
+                   "exception)";
       break;
     }
   }
@@ -210,7 +218,7 @@ void fpe_trap::disable(void) {
 #pragma fenv_access(on)
 
 /* Signal handler for floating point exceptions. */
-extern "C" void trans_func(unsigned int u, PEXCEPTION_POINTERS pExp) {
+extern "C" void trans_func(unsigned int u, PEXCEPTION_POINTERS /*pExp*/) {
   std::cout << "(fpe_trap/windows_x86.cc) A SIGFPE was detected!" << std::endl;
 
   std::string mesg;
@@ -567,11 +575,10 @@ void __cdecl CCrashHandler::PureCallHandler() {
 }
 
 // CRT invalid parameter handler
-void __cdecl CCrashHandler::InvalidParameterHandler(const wchar_t *expression,
-                                                    const wchar_t *function,
-                                                    const wchar_t *file,
-                                                    unsigned int line,
-                                                    uintptr_t pReserved) {
+void __cdecl CCrashHandler::InvalidParameterHandler(
+    const wchar_t * /*expression*/, const wchar_t * /*function*/,
+    const wchar_t * /*file*/, unsigned int /*line*/, uintptr_t pReserved) {
+
   std::cout << "In CCrashHandler::InvalidParameterHandler" << std::endl;
   pReserved;
 
@@ -618,7 +625,7 @@ void CCrashHandler::SigabrtHandler(int) {
 }
 
 // CRT SIGFPE signal handler
-void CCrashHandler::SigfpeHandler(int /*code*/, int subcode) {
+void CCrashHandler::SigfpeHandler(int /*code*/, int /*subcode*/) {
   std::cout << "In CCrashHandler::SigfpeHandler" << std::endl;
   // Floating point exception (SIGFPE)
 

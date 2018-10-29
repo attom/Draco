@@ -62,7 +62,8 @@ void indeterminate_gatherv(std::vector<T> &outgoing_data,
     unsigned const N(rtt_c4::nodes());
     incoming_data.resize(N);
 
-    int count(outgoing_data.size());
+    Check(outgoing_data.size() < INT_MAX);
+    int count(static_cast<int>(outgoing_data.size()));
     if (rtt_c4::node() == 0) {
       std::vector<int> counts(N, -1);
       std::vector<int> displs(N, -1);
@@ -73,7 +74,8 @@ void indeterminate_gatherv(std::vector<T> &outgoing_data,
       Check(check == MPI_SUCCESS);
       uint64_t total_count_64(0);
       for (unsigned p = 0; p < N; ++p) {
-        displs[p] = total_count_64;
+        Check(total_count_64 < INT_MAX);
+        displs[p] = static_cast<int>(total_count_64);
         total_count_64 += counts[p];
       }
       // Require that total_count_64 can be expressed as a 32-bit integer.
@@ -86,9 +88,11 @@ void indeterminate_gatherv(std::vector<T> &outgoing_data,
       // in length.  An shorthand-if is used to pass 'NULL' to mpi if
       // there is no data to gather.
       std::vector<T> recbuf(total_count, 42);
-      Remember(check =) rtt_c4::gatherv(
-          (count > 0 ? &outgoing_data[0] : NULL), outgoing_data.size(),
-          (total_count > 0 ? &recbuf[0] : NULL), &counts[0], &displs[0]);
+      Check(outgoing_data.size() < INT_MAX);
+      Remember(check =) rtt_c4::gatherv((count > 0 ? &outgoing_data[0] : NULL),
+                                        static_cast<int>(outgoing_data.size()),
+                                        (total_count > 0 ? &recbuf[0] : NULL),
+                                        &counts[0], &displs[0]);
       Check(check == MPI_SUCCESS);
 
       for (unsigned p = 0; p < N; ++p) {
@@ -126,13 +130,15 @@ void determinate_gatherv(std::vector<T> &outgoing_data,
   { // This block is a no-op for with-c4=scalar
     unsigned const N(rtt_c4::nodes());
 
-    int count(outgoing_data.size());
+    Check(outgoing_data.size() < INT_MAX);
+    int count(static_cast<int>(outgoing_data.size()));
     if (rtt_c4::node() == 0) {
       std::vector<int> counts(N, -1);
       std::vector<int> displs(N, -1);
       uint64_t total_count_64(0);
       for (unsigned p = 0; p < N; ++p) {
-        counts[p] = incoming_data[p].size();
+        Check(incoming_data[p].size() < INT_MAX);
+        counts[p] = static_cast<int>(incoming_data[p].size());
         displs[p] = static_cast<int>(total_count_64);
         total_count_64 += counts[p];
       }

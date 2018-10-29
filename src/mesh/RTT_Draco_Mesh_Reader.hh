@@ -43,25 +43,25 @@ public:
   // >>> ACCESSORS
 
   unsigned get_numdim() const { return rtt_reader->get_dims_ndim(); }
-  unsigned get_numcells() const { return rtt_reader->get_dims_ncells(); }
-  unsigned get_numnodes() const { return rtt_reader->get_dims_nnodes(); }
+  size_t get_numcells() const { return rtt_reader->get_dims_ncells(); }
+  size_t get_numnodes() const { return rtt_reader->get_dims_nnodes(); }
   std::vector<double> get_nodecoord(size_t node) const {
     return rtt_reader->get_nodes_coords(node);
   }
-  std::vector<int> get_cellnodes(size_t cell) const {
+  std::vector<unsigned> get_cellnodes(size_t cell) const {
     return rtt_reader->get_cells_nodes(cell);
   }
-  unsigned get_numsides() const { return rtt_reader->get_dims_nsides(); }
+  size_t get_numsides() const { return rtt_reader->get_dims_nsides(); }
   unsigned get_sideflag(size_t side) const {
     return rtt_reader->get_sides_flags(side, 0);
   }
-  std::vector<int> get_sidenodes(size_t side) const {
+  std::vector<unsigned> get_sidenodes(size_t side) const {
     return rtt_reader->get_sides_nodes(side);
   }
 
   // accessors with deferred implementation
   DLL_PUBLIC_mesh unsigned get_celltype(size_t cell) const;
-  DLL_PUBLIC_mesh unsigned get_sidetype(size_t side) const;
+  DLL_PUBLIC_mesh size_t get_sidetype(size_t side) const;
 };
 
 } // end namespace rtt_mesh

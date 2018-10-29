@@ -35,14 +35,14 @@ void tstruntime_error(UnitTest &ut) {
   try {
     runtime_check(false, "condition fails on all");
     ut.failure("check false on all processors");
-  } catch (std::runtime_error &error) {
+  } catch (std::runtime_error & /*error*/) {
     ut.passes("check false on all processors throws on all as it should.");
   }
 
   try {
     runtime_check(rtt_c4::node() != 0, "condition fails on one processor");
     ut.failure("check false on one processors");
-  } catch (std::runtime_error &error) {
+  } catch (std::runtime_error & /*error*/) {
     ut.passes("check false on one processor throws on all as it should.");
   }
 }

@@ -77,7 +77,7 @@ public:
    * including multple dimensions. The elements may be spatially disjoint. The
    * operator [i][j] returns cell i, node j.
    */
-  virtual std::vector<std::vector<int>> get_element_nodes() const = 0;
+  virtual std::vector<std::vector<unsigned>> get_element_nodes() const = 0;
 
   /*!
    * \brief Returns the type of all the elements in the mesh.
@@ -102,7 +102,7 @@ public:
    * sources. The string key to the map provides a unique and hopefully
    * descriptive name for each node sub-set.
    */
-  virtual std::map<std::string, std::set<int>> get_node_sets() const = 0;
+  virtual std::map<std::string, std::set<unsigned>> get_node_sets() const = 0;
 
   /*!
    * \brief Returns element sub-sets.
@@ -116,7 +116,8 @@ public:
    * key to the map provides a unique and hopefully descriptive name for each
    * element sub-set.
    */
-  virtual std::map<std::string, std::set<int>> get_element_sets() const = 0;
+  virtual std::map<std::string, std::set<unsigned>>
+  get_element_sets() const = 0;
 
   //! Returns the title of the mesh.
   virtual std::string get_title() const = 0;

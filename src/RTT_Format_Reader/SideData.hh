@@ -5,10 +5,7 @@
  * \date   Wed Jun 7 10:33:26 2000
  * \brief  Header file for RTT_Format_Reader/SideData class.
  * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #ifndef __RTT_Format_Reader_SideData_hh__
@@ -52,23 +49,25 @@ private:
 
 public:
   /*!
- * \brief Returns all of the data field values for each of the sides.
- * \return The data field values for each of the sides.
- */
+   * \brief Returns all of the data field values for each of the sides.
+   * \return The data field values for each of the sides.
+   */
   vector_vector_dbl get_data() const { return data; }
+
   /*!
- * \brief Returns all of the data field values for the specified side.
- * \param side_numb Side number.
- * \return The side data field values.
- */
-  vector_dbl get_data(int side_numb) const { return data[side_numb]; }
+   * \brief Returns all of the data field values for the specified side.
+   * \param side_numb Side number.
+   * \return The side data field values.
+   */
+  vector_dbl get_data(size_t side_numb) const { return data[side_numb]; }
+
   /*!
- * \brief Returns the specified data field value for the specified side.
- * \param side_numb Side number.
- * \param data_index Data field.
- * \return The side data field value.
- */
-  double get_data(int side_numb, int data_index) const {
+   * \brief Returns the specified data field value for the specified side.
+   * \param side_numb Side number.
+   * \param data_index Data field.
+   * \return The side data field value.
+   */
+  double get_data(size_t side_numb, size_t data_index) const {
     return data[side_numb][data_index];
   }
 };

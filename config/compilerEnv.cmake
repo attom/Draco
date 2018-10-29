@@ -200,7 +200,7 @@ macro(dbsSetupCxx)
       message( FATAL_ERROR
 "I think the C++ compiler is a Cray compiler wrapper, but I don't know what "
 "compiler is wrapped.  CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
-    elseif( "${my_cxx_compiler}" MATCHES "cl" )
+    elseif( "${my_cxx_compiler}" MATCHES "cl" AND WIN32)
       include( windows-cl )
     elseif( "${my_cxx_compiler}" MATCHES "icpc" )
       include( unix-intel )
@@ -322,6 +322,130 @@ macro(dbsSetupCxx)
       message( STATUS "Looking for f90cache... not found.")
     endif()
 
+  endif()
+
+endmacro()
+
+#------------------------------------------------------------------------------#
+# Setup Static Analyzer (if any)
+#
+# Enable with:
+#   -DDRACO_STATIC_ANALYZER=[none|clang-tidy|iwyu|cppcheck|cpplint|iwyl]
+#
+# Default is 'none'
+#
+# Variables set by this macro
+# - DRACO_STATIC_ANALYZER
+# - CMAKE_CXX_CLANG_TIDY
+# - CMAKE_CXX_INCLUDE_WHAT_YOU_USE
+# - CMAKE_CXX_CPPCHECK
+# - CMAKE_CXX_CPPLINT
+# - CMAKE_CXX_LINK_WHAT_YOU_USE
+
+# Ref: https://blog.kitware.com/static-checks-with-cmake-cdash-iwyu-clang-tidy-lwyu-cpplint-and-cppcheck/
+#------------------------------------------------------------------------------#
+macro(dbsSetupStaticAnalyzers)
+
+  set( DRACO_STATIC_ANALYZER "none" CACHE STRING "Enable a static analysis tool" )
+  set_property( CACHE DRACO_STATIC_ANALYZER PROPERTY STRINGS
+    "none" "clang-tidy" "iwyu" "cppcheck" "cpplint" "iwyl" )
+
+  if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
+
+    # clang-tidy
+    # https://clang.llvm.org/extra/clang-tidy/
+    if( ${DRACO_STATIC_ANALYZER} STREQUAL "clang-tidy" )
+      find_program( CMAKE_CXX_CLANG_TIDY clang-tidy )
+      if( CMAKE_CXX_CLANG_TIDY )
+        if( NOT "${CMAKE_CXX_CLANG_TIDY}" MATCHES "[-]checks[=]" )
+          set( CMAKE_CXX_CLANG_TIDY "${CMAKE_CXX_CLANG_TIDY};-checks=mpi-*,bugprone-*,performance-*"
+            CACHE STRING "Run clang-tidy on each source file before compile."
+            FORCE)
+        endif()
+      else()
+        unset( CMAKE_CXX_CLANG_TIDY )
+        unset( CMAKE_CXX_CLANG_TIDY CACHE )
+      endif()
+    endif()
+
+    # include-what-you-use
+    # https://github.com/include-what-you-use/include-what-you-use/blob/master/README.md
+    if( ${DRACO_STATIC_ANALYZER} STREQUAL "iwyu" )
+      find_program( CMAKE_CXX_INCLUDE_WHAT_YOU_USE iwyu )
+      if( CMAKE_CXX_INCLUDE_WHAT_YOU_USE )
+        if( NOT "${CMAKE_CXX_INCLUDE_WHAT_YOU_USE}" MATCHES "Xiwyu" )
+          set( CMAKE_CXX_INCLUDE_WHAT_YOU_USE
+            "${CMAKE_CXX_INCLUDE_WHAT_YOU_USE};-Xiwyu;--transitive_includes_only"
+            CACHE STRING "Run iwyu on each source file before compile." FORCE)
+        endif()
+      else()
+        unset( CMAKE_CXX_INCLUDE_WHAT_YOU_USE )
+        unset( CMAKE_CXX_INCLUDE_WHAT_YOU_USE CACHE )
+      endif()
+    endif()
+  endif()
+
+  # cppcheck
+  # http://cppcheck.sourceforge.net/
+  # http://cppcheck.sourceforge.net/demo/
+  if( ${DRACO_STATIC_ANALYZER} STREQUAL "cppcheck" )
+    find_program( CMAKE_CXX_CPPCHECK cppcheck )
+    if( CMAKE_CXX_CPPCHECK )
+      if( NOT "${CMAKE_CXX_CPPCHECK}" MATCHES "-std=" )
+        set( CMAKE_CXX_CPPCHECK "${CMAKE_CXX_CPPCHECK};--std=c++14"
+          CACHE STRING "Run cppcheck on each source file before compile." FORCE)
+      endif()
+    else()
+      unset( CMAKE_CXX_CPPCHECK )
+      unset( CMAKE_CXX_CPPCHECK CACHE )
+    endif()
+  endif()
+
+  # cpplint
+  # https://github.com/cpplint/cpplint
+  if( ${DRACO_STATIC_ANALYZER} STREQUAL "cpplint" )
+    find_program( CMAKE_CXX_CPPLINT cpplint )
+    if( CMAKE_CXX_CPPLINT )
+      if( NOT "${CMAKE_CXX_CPPLINT}" MATCHES "linelength" )
+        set( CMAKE_CXX_CPPLINT "${CMAKE_CXX_CPPLINT};--linelength=81"
+          CACHE STRING "Run cpplint on each source file before compile." FORCE)
+      endif()
+    else()
+      unset( CMAKE_CXX_CPPLINT )
+      unset( CMAKE_CXX_CPPLINT CACHE )
+    endif()
+  endif()
+
+  # include-what-you-link
+  # https://blog.kitware.com/static-checks-with-cmake-cdash-iwyu-clang-tidy-lwyu-cpplint-and-cppcheck/'
+  if( ${DRACO_STATIC_ANALYZER} MATCHES "iwyl" AND UNIX )
+    option( CMAKE_LINK_WHAT_YOU_USE "Report if extra libraries are linked."
+      TRUE )
+  else()
+    option( CMAKE_LINK_WHAT_YOU_USE "Report if extra libraries are linked."
+      FALSE )
+  endif()
+
+  # Report
+
+  if( NOT ${DRACO_STATIC_ANALYZER} STREQUAL "none" )
+    message("\nStatic Analyzer Setup...\n")
+
+    if( NOT "${CMAKE_CXX_CLANG_TIDY}x" STREQUAL "x" )
+      message(STATUS "Enabling static analysis option: ${CMAKE_CXX_CLANG_TIDY}")
+    endif()
+    if( NOT "${CMAKE_CXX_INCLUDE_WHAT_YOU_USE}x" STREQUAL "x" )
+      message(STATUS "Enabling static analysis option: ${CMAKE_CXX_INCLUDE_WHAT_YOU_USE}")
+    endif()
+    if( NOT "${CMAKE_CXX_CPPCHECK}x" STREQUAL "x" )
+      message(STATUS "Enabling static analysis option: ${CMAKE_CXX_CPPCHECK}")
+    endif()
+    if( NOT "${CMAKE_CXX_CPPLINT}x" STREQUAL "x" )
+      message(STATUS "Enabling static analysis option: ${CMAKE_CXX_CPPLINT}")
+    endif()
+    if( CMAKE_LINK_WHAT_YOU_USE )
+      message(STATUS "Enabling static analysis option: CMAKE_LINK_WHAT_YOU_USE")
+    endif()
   endif()
 
 endmacro()
@@ -491,8 +615,7 @@ macro( toggle_compiler_flag switch compiler_flag
   # generate names that are safe for CMake RegEx MATCHES commands
   string(REPLACE "+" "x" safe_compiler_flag ${compiler_flag})
 
-  # Loop over types of variables to check: CMAKE_C_FLAGS,
-  # CMAKE_CXX_FLAGS, etc.
+  # Loop over types of variables to check: CMAKE_C_FLAGS, CMAKE_CXX_FLAGS, etc.
   foreach( comp ${compiler_flag_var_names} )
 
     # sanity check

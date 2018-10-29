@@ -28,32 +28,45 @@ void Processor_Group::sum(RandomAccessContainer &x) {
   std::vector<T> y(x.begin(), x.end());
 
   // do global MPI reduction (result is on all processors) into x
+  Check(y.size() < INT_MAX);
   int status =
-      MPI_Allreduce(&y[0], &x[0], y.size(),
+      MPI_Allreduce(&y[0], &x[0], static_cast<int>(y.size()),
                     rtt_c4::MPI_Traits<T>::element_type(), MPI_SUM, comm_);
 
   Insist(status == 0, "MPI_Allreduce failed");
 }
 
 //---------------------------------------------------------------------------//
+/*!
+ * \brief Assemble a set of local vectors into global vectors (container-based
+ *        version).
+ *
+ * \param[in]  local  Points to a region of storage of size N.
+ * \param[out] global Points to a region of storage of size N*this->size()
+ */
 template <typename T>
 void Processor_Group::assemble_vector(std::vector<T> const &local,
                                       std::vector<T> &global) const {
   global.resize(local.size() * size());
 
+  Check(local.size() < INT_MAX);
   int status =
-      MPI_Allgather(const_cast<T *>(&local[0]), local.size(),
+      MPI_Allgather(const_cast<T *>(&local[0]), static_cast<int>(local.size()),
                     rtt_c4::MPI_Traits<T>::element_type(), &global[0],
-                    local.size(), rtt_c4::MPI_Traits<T>::element_type(), comm_);
+                    static_cast<int>(local.size()),
+                    rtt_c4::MPI_Traits<T>::element_type(), comm_);
 
   Insist(status == 0, "MPI_Gather failed");
 }
 
 //---------------------------------------------------------------------------//
 /*!
- * \param local Points to a region of storage of size N.
- * \param global Points to a region of storage of size N*this->size()
- * \param N Number of local quantities to assemble.
+ * \brief Assemble a set of local vectors into global vectors (pointer-based
+ *        version).
+ *
+ * \param[in]  local  Points to a region of storage of size N.
+ * \param[out] global Points to a region of storage of size N*this->size()
+ * \param[in]  N      Number of local quantities to assemble.
  */
 template <typename T>
 void Processor_Group::assemble_vector(T const *local, T *global,
