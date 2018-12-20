@@ -249,8 +249,8 @@ auto-mode-alist.
 		      ("\\.c$"      . c-mode)   ; to edit C code
 		      ("\\.cu$"     . c-mode)   ; to edit CUDA kernels
 		      ("\\.h$"      . c-mode)   ; to edit C code
-		      ("\\.dcc$"    . c-mode)   ; to edit C code
-		      ("\\.dcc.in$" . c-mode)   ; to edit C code
+		      ("\\.dcc$"    . c++-mode)   ; to edit C code
+		      ("\\.dcc.in$" . c++-mode)   ; to edit C code
  		      ("\\.dot$"    . c-mode)  ; for dot files
 		      ) auto-mode-alist))
       (defun draco-menu-insert-comments-cc ()
@@ -480,7 +480,15 @@ auto-mode-alist."
     (defvar crypt-freeze-vs-fortran nil)
     (add-hook 'f90-mode-hook 'draco-f90-mode-hook)
     (add-hook 'f90-mode-hook 'turn-on-draco-mode)
-    (add-hook 'f90-mode-hook 'turn-on-auto-fill)))
+    (add-hook 'f90-mode-hook 'turn-on-auto-fill)
+    ; should add this sometime
+    ; (add-hook 'font-lock-mode-hook
+    ;          '(lambda ()
+    ;             (if (major-mode 'f90-mode)
+    ;                 (draco-f90-font-lock)))) ; create this function
+                                        ; based on draco-font-lock but
+                                        ; for f90
+    ))
 
 ;; ========================================
 ;; FORTRAN
@@ -524,7 +532,8 @@ auto-mode-alist."
       (draco-mode-update-menu (draco-menu-insert-comments-f77)))
     (add-hook 'fortran-mode-hook 'draco-fortran-mode-hook)
     (add-hook 'fortran-mode-hook 'turn-on-draco-mode)
-    (add-hook 'fortran-mode-hook 'turn-on-auto-fill)))
+    (add-hook 'fortran-mode-hook 'turn-on-auto-fill)
+    ))
 
 ;; ========================================
 ;; ChangeLog

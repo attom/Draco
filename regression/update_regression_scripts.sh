@@ -21,6 +21,7 @@ timestamp=`date +%Y%m%d-%H%M`
 target="`uname -n | sed -e s/[.].*//`"
 logdir="$( cd $scriptdir/../../logs && pwd )"
 logfile=$logdir/update_regression_scripts-$target-$timestamp.log
+echo "==> Redirecting output to $logfile"
 exec > $logfile
 exec 2>&1
 
@@ -96,23 +97,47 @@ if ! [[ -d $REGDIR ]]; then
   run "chmod g+s ${REGDIR}"
 fi
 
-# Draco/Jayenne/Capsaicin
-projects="draco jayenne capsaicin CSK"
-for p in $projects; do
-  echo -e "\nUpdating $REGDIR/$p..."
-  if test -d ${REGDIR}/$p; then
-    run "cd ${REGDIR}/$p; git pull"
+# List of repositories (also used by push_repositories_xf.sh and
+# pull_repositories_xf.sh).  It defines $github_projects and $gitlab_projects.
+source ${scriptdir}/repository_list.sh
+
+for project in ${github_projects[@]}; do
+  namespace=`echo $project | sed -e 's%/.*%%'`
+  repo=`echo $project | sed -e 's%.*/%%'`
+  case ${repo} in
+    Draco) ldir="draco" ;;
+    *)     ldir=${repo} ;;
+  esac
+  echo -e "\nUpdating $REGDIR/$ldir..."
+  if [[ -d ${REGDIR}/$ldir ]]; then
+    run "cd ${REGDIR}/$ldir; git pull"
   else
-    case $p in
-      draco)
-        run "cd ${REGDIR}; git clone git@github.com:lanl/Draco.git $p"
-        ;;
-      *)
-        run "cd ${REGDIR}; git clone git@gitlab.lanl.gov:${p}/${p}.git"
-        ;;
-    esac
+    echo "No local directory $REGDIR/${ldir}"
+    echo "  ==> To enable regressions for project ${project}, create this directory"
+    echo "      by running 'cd $REGDIR && git clone git@github.com:$project $ldir"
+#    run "cd ${REGDIR}; git clone git@github.com:$project $ldir"
   fi
 done
+
+# Gitlab repositories...
+for project in ${gitlab_projects[@]}; do
+  namespace=`echo $project | sed -e 's%/.*%%'`
+  repo=`echo $project | sed -e 's%.*/%%'`
+  case ${repo} in
+    Draco) ldir="draco" ;;
+    *)     ldir=${repo} ;;
+  esac
+  echo -e "\nUpdating $REGDIR/$ldir..."
+  if [[ -d ${REGDIR}/$ldir ]]; then
+    run "cd ${REGDIR}/$ldir; git pull"
+  else
+    echo "No local directory $REGDIR/${ldir}"
+    echo "  ==> To enable regressions for project ${project}, create this directory"
+    echo "      by running 'cd $REGDIR && git clone git@github.com:$project $ldir"
+#    run "cd ${REGDIR}; git clone git@gitlab.lanl.gov:${project}.git"
+  fi
+done
+
 
 #------------------------------------------------------------------------------#
 # Cleanup old files and directories

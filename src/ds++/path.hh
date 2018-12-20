@@ -15,7 +15,7 @@
 #include "Assert.hh"
 #include "SystemCall.hh"
 #include <iostream>
-#ifdef UNIX
+#if defined UNIX || defined MINGW
 #include <dirent.h>   // struct DIR
 #include <sys/stat.h> // struct stat; S_ISDIR
 #endif
@@ -34,7 +34,11 @@ enum FilenameComponent {
 };
 
 //---------------------------------------------------------------------------//
-//! Get a specific component of a full filename.
+/*!
+ * \brief Get a specific component of a full filename.
+ * \param fqName a fully qualified pathname
+ * \param fc Enum type FilenameComponent that specificies the action.
+ */
 std::string getFilenameComponent(std::string const &fqName,
                                  FilenameComponent fc);
 

@@ -61,8 +61,8 @@ Draco_Mesh::Draco_Mesh(unsigned dimension_, Geometry geometry_,
                        const std::vector<unsigned> &global_node_number_,
                        const std::vector<unsigned> &ghost_cell_type_,
                        const std::vector<unsigned> &ghost_cell_to_node_linkage_,
-                       const std::vector<unsigned> &ghost_cell_number_,
-                       const std::vector<unsigned> &ghost_cell_rank_)
+                       const std::vector<int> &ghost_cell_number_,
+                       const std::vector<int> &ghost_cell_rank_)
     : dimension(dimension_), geometry(geometry_),
       num_cells(safe_convert_from_size_t(cell_type_.size())),
       num_nodes(safe_convert_from_size_t(global_node_number_.size())),
@@ -144,6 +144,8 @@ std::vector<std::vector<double>> Draco_Mesh::compute_node_coord_vec(
  * \param[in] cell_to_node_linkage serial map of cell index to node indices.
  * \param[in] side_node_count number of verices per side.
  * \param[in] side_to_node_linkage serial map of side index to node indices.
+ * \param[in] ghost_cell_type  number of common vertices per ghost cell.
+ * \param[in] ghost_cell_to_node_linkage vertices in common per ghost cell.
  */
 void Draco_Mesh::compute_cell_to_cell_linkage(
     const std::vector<unsigned> &cell_type,
@@ -172,7 +174,6 @@ void Draco_Mesh::compute_cell_to_cell_linkage(
   Remember(const size_t num_sides =
                safe_convert_from_size_t(side_node_count.size()));
   Check(dimension == 2 ? side_to_node_linkage.size() == 2 * num_sides : true);
-  Check(node_to_side_map.size() == num_sides);
 
   // STEP 3: create a node-to-ghost-cell map
 
@@ -192,27 +193,22 @@ void Draco_Mesh::compute_cell_to_cell_linkage(
 
     // create a vector of all possible node pairs
     unsigned nper_cell = cell_type[cell];
-    unsigned num_pairs = nper_cell * (nper_cell - 1) / 2;
-    std::vector<std::vector<unsigned>> vec_node_vec(num_pairs,
+    std::vector<std::vector<unsigned>> vec_node_vec(nper_cell,
                                                     std::vector<unsigned>(2));
     // \todo: change type of vec_node_vec?
-    unsigned k = 0;
+    // this assumes counter-clockwise cell-node linkage
     for (unsigned i = 0; i < nper_cell; ++i) {
-      for (unsigned j = i + 1; j < nper_cell; ++j) {
 
-        // set kth pair entry to the size 2 vector of nodes
-        vec_node_vec[k] = {cell_to_node_linkage[node_offset + i],
-                           cell_to_node_linkage[node_offset + j]};
+      // next cell-local node
+      const unsigned j = (i + 1) % nper_cell;
 
-        // increment k
-        k++;
-      }
+      // set ith pair entry to the size 2 vector of nodes
+      vec_node_vec[i] = {cell_to_node_linkage[node_offset + i],
+                         cell_to_node_linkage[node_offset + j]};
     }
 
-    Check(k == num_pairs);
-
     // check if each pair constitutes a face
-    for (unsigned l = 0; l < num_pairs; ++l) {
+    for (unsigned l = 0; l < nper_cell; ++l) {
 
       // get adjacent cells from node-to-cell map
       // \todo: add DbC to ensure these are sorted

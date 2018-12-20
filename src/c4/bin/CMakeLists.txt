@@ -26,21 +26,20 @@ add_component_executable(
   TARGET      Exe_xthi
   TARGET_DEPS Lib_c4
   SOURCES     ${PROJECT_SOURCE_DIR}/xthi.cc
-  PREFIX       Draco
-  )
+  PREFIX       Draco )
 
 add_component_executable(
   TARGET      Exe_ythi
   TARGET_DEPS Lib_c4
   SOURCES     ${PROJECT_SOURCE_DIR}/ythi.cc
-  PREFIX       Draco
-  )
-
+  PREFIX       Draco )
+  
 # ---------------------------------------------------------------------------- #
 # Installation instructions
 # ---------------------------------------------------------------------------- #
 
 install( TARGETS Exe_xthi EXPORT draco-targets DESTINATION ${DBSCFGDIR}bin )
+install( TARGETS Exe_ythi EXPORT draco-targets DESTINATION ${DBSCFGDIR}bin )
 
 # ---------------------------------------------------------------------------- #
 # End cdi_eospac/CMakeLists.txt

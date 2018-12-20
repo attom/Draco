@@ -52,7 +52,7 @@ target_include_directories( Lib_c4
   PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> )
 
 # xthi binary
-if( NOT WIN32 AND NOT APPLE )
+if( NOT APPLE )
   add_subdirectory( bin )
 endif()
 

@@ -50,6 +50,9 @@
 #cmakedefine MSVC @MSVC@
 #cmakedefine MSVC_IDE @MSVC_IDE@
 #cmakedefine MSVC_VERSION @MSVC_VERSION@
+#cmakedefine MINGW @MINGW@
+#cmakedefine XCODE @XCODE@
+#cmakedefine XCODE_VERSION @XCODE_VERSION@
 #cmakedefine CMAKE_SYSTEM_NAME @CMAKE_SYSTEM_NAME@
 #ifdef CMAKE_SYSTEM_NAME
 #define CMAKE_SYSTEM_NAME_STRING "@CMAKE_SYSTEM_NAME@"
@@ -106,10 +109,14 @@
 #endif
 #ifndef HAVE_HOST_NAME_MAX
     #ifdef HAVE_MAXHOSTNAMELEN
+        #ifndef HOST_NAME_MAX
         #define HOST_NAME_MAX MAXHOSTNAMELEN
+        #endif
         #define HAVE_HOST_NAME_MAX
     #else
+        #ifndef HOST_NAME_MAX
         #define HOST_NAME_MAX 256
+        #endif
         #define HAVE_HOST_NAME_MAX
     #endif
 #endif

@@ -382,9 +382,6 @@ Parsing arguments
       # Note 'DRACO_TIMING:STRING=2' will break milagro tests (python cannot
       # parse output).
     endif()
-    if( $ENV{extra_params_sort_safe} MATCHES "nr" )
-      set( RNG_NR "ENABLE_RNG_NR:BOOL=ON" )
-    endif()
     if( $ENV{extra_params_sort_safe} MATCHES "scalar" )
       set( DRACO_C4 "DRACO_C4:STRING=SCALAR" )
     elseif( $ENV{extra_params_sort_safe} MATCHES "static" )
@@ -825,7 +822,7 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
       string( REGEX REPLACE "[-_]${extraparam}[-_]" "-" ${dep_pkg}_work_dir
         ${${dep_pkg}_work_dir} )
     endforeach()
-    if( "${this_pkg}" MATCHES "jayenne" OR "${this_pkg}" MATCHES "capsaicin")
+    if( "${this_pkg}" MATCHES "jayenne" OR "${this_pkg}" MATCHES "capsaicin" OR "${this_pkg}" MATCHES "core")
       # If this is jayenne, we might be building a pull request. Replace the PR
       # number in the path with '-develop' before looking for draco.
       string( REGEX REPLACE "(Nightly|Experimental|Continuous)_(.*)(-pr[0-9]+)/"
