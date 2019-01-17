@@ -4,7 +4,7 @@
  * \author Kelly (KT) Thompson
  * \date   Thu Oct 20 15:28:48 2011
  * \brief  
- * \note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 

@@ -1,7 +1,7 @@
 #-----------------------------*-cmake-*----------------------------------------#
 # file   draco_regression_macros.cmake
 # brief  Helper macros for setting up a CTest/CDash regression system
-# note   Copyright (C) 2016-2018 Los Alamos National Security, LLC.
+# note   Copyright (C) 2016-2019 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -794,7 +794,7 @@ endmacro(process_cc_or_da)
 # ------------------------------------------------------------
 # Special default settings for a couple of platforms
 #
-# Sets DRACO_DIR
+# Sets ${dep_pkg}_DIR (e.g.: DRACO_DIR, or CORE_DIR)
 # ------------------------------------------------------------
 macro(set_pkg_work_dir this_pkg dep_pkg)
 
@@ -802,7 +802,8 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
   # Assume that draco_work_dir is parallel to our current location, but only
   # replace the directory name preceeding the dashboard name.
   file( TO_CMAKE_PATH "$ENV{work_dir}" work_dir )
-  file( TO_CMAKE_PATH "$ENV{DRACO_DIR}" DRACO_DIR )
+  # ${dep_pkg_caps}_DIR == {DRACO_DIR, CORE_DIR}
+  file( TO_CMAKE_PATH "$ENV{${dep_pkg_caps}_DIR}" ${dep_pkg_caps}_DIR )
   string( REGEX REPLACE "${this_pkg}[/\\](Nightly|Experimental|Continuous)"
     "${dep_pkg}/\\1" ${dep_pkg}_work_dir ${work_dir} )
 
@@ -822,7 +823,9 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
       string( REGEX REPLACE "[-_]${extraparam}[-_]" "-" ${dep_pkg}_work_dir
         ${${dep_pkg}_work_dir} )
     endforeach()
-    if( "${this_pkg}" MATCHES "jayenne" OR "${this_pkg}" MATCHES "capsaicin" OR "${this_pkg}" MATCHES "core")
+    if( "${this_pkg}" MATCHES "jayenne"   OR
+        "${this_pkg}" MATCHES "capsaicin" OR
+        "${this_pkg}" MATCHES "core")
       # If this is jayenne, we might be building a pull request. Replace the PR
       # number in the path with '-develop' before looking for draco.
       string( REGEX REPLACE "(Nightly|Experimental|Continuous)_(.*)(-pr[0-9]+)/"
@@ -833,8 +836,8 @@ macro(set_pkg_work_dir this_pkg dep_pkg)
   find_file( ${dep_pkg}_target_dir
     NAMES README.${dep_pkg} README.md
     HINTS
-      # if DRACO_DIR is defined, use it.
-      ${DRACO_DIR}
+      # if DRACO_DIR or CORE_DIR is defined, use it.
+      ${${dep_pkg_caps}_DIR}
       # Try a path parallel to the work_dir
       ${${dep_pkg}_work_dir}/target
     NO_DEFAULT_PATH

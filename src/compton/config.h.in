@@ -2,7 +2,7 @@
 /*!
  * \file   compton/config.h
  * \brief  CPP defines necessary for the compton packages.
- * \note   Copyright (C) 2017-2018 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2017-2019 Triad National Security, LLC.
  *         All rights reserved. */
 /*---------------------------------------------------------------------------*/
 

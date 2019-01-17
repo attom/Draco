@@ -34,7 +34,7 @@ pdir=$ddir
 target="`uname -n | sed -e s/[.].*//`"
 case $target in
   t[rt]-fe* | t[rt]-login* )
-    environments="intel1802env intel1802env-knl";;
+    environments="intel1802env intel1802env-knl intel1704env intel1704env-knl";;
 esac
 
 # ============================================================================

@@ -1,7 +1,7 @@
 #-----------------------------*-cmake-*----------------------------------------#
 # file   device/test/CPU_Device.cmake
 # brief  Instructions for building device/test Makefile.
-# note   Copyright (C) 2016-2018 Los Alamos National Security
+# note   Copyright (C) 2016-2019 Triad National Security
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 

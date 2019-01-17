@@ -3,7 +3,7 @@
 ## File  : regression/ccscs-job-launch.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
-## Note  : Copyright (C) 2016-2018, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2016-2019, Triad National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
@@ -58,8 +58,7 @@ done
 if ! test -d $logdir; then
   mkdir -p $logdir
   chgrp ccsrad $logdir
-  chmod g+rwX $logdir
-  chmod g+s $logdir
+  chmod g+rsX $logdir
 fi
 
 # Configure, Build, Test and Submit (no Torque batch system here).

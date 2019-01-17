@@ -1,3 +1,185 @@
+2018-12-18  Kelly (KT) Thompson  <kgt@lanl.gov>
+
+ 	* "Release draco-7_0_0":https://rtt.lanl.gov/redmine/versions/63.
+	  This is a minor Draco release.
+
+	* This release was required by Jayenne and Capsaicin.  It is
+	  linked to:
+	  - "Jayenne-8_0_0":https://rtt.lanl.gov/redmine/versions/61
+	  - "Capsaicin-4_15_0":https://rtt.lanl.gov/redmine/projects/capsaicin
+
+	* Platforms:
+	  SN/GR/FI/IC/CY     Intel 18.0.2    OpenMPI-2.1.2
+	                     Intel 17.0.4    OpenMPI-2.1.2
+	                     GCC 6.4.0       OpenMPI-2.1.2
+	  TT/TR              Intel 18.0.2    Cray_MPICH2-7.7.3
+	                     Intel 17.0.4    Cray_MPICH2-7.7.3
+
+	* Summary of changes:
+	- 378 files changed, added or removed in 58 commits.
+	- Extend draco_mesh and X3D parser capability
+	- Cleaned up the autodoc build target.
+	- Enable Compton and xthi/ythi tests under Visual Studio
+
+ 	* Corrected Defects:
+	- Github #508 A couple of tweaks to fix build/run on Darwin ARM nodes.
+	- Github #515 Fix DbC bug in Draco_Mesh and update X3D parser.
+	- Github #516 Fix a few typos in the release scripts.
+	- Github #518 A few more tweaks to the release scripts for draco-6_25_0
+	- Github #519 Fixes to target autodoc
+	- Github #520 Minor cleanup for environments and regressions
+	- Github #533 Fix a cmake logic error related to XCode.
+	- Github #539 Fix a bug related to setting version numbers.
+	- Github #541 Update regression environment to fix script-update.
+	- Github #544 Compton bugfix
+	- Github #547 Misc updates to prepare for next release
+	- Github #552 Added missing header.
+	- Bug #1250 Add git-commit-precomit-hook for f90
+	- Bug #1291 Review doxygen build errors
+	- Bug #1292 Track CMake + nvcc issue related to pthreads
+	- Bug #1304 doxygen not generating expected collaboration diagrams
+	- Bug #1308 Published autodoc has wrong stylesheet
+	- Bug #1330 Published autodoc: selecting Draco class from other project links to wrong page
+	- Bug #1335 'update_regression_scripts.sh' broken
+	- Bug #1339 CSK update to 0.4.0 broke ccs-net regression
+	- Bug #1353 Provide csk/0.4.1 on ccs-net machines
+	- Bug #1354 Possible cyclic dependencies in Scalar/Parallel Unit Test implementation
+
+	* New Features:
+
+	- Github #509 Teach the PR regression system to also build autodoc.
+	- Github #510 Core autodoc
+	- Github #511 Merge Draco-6_25_0 release back to develop
+	- Github #513 Make minor modifications following further usage of Draco_Mesh.
+	- Github #514 Add delete with size to complement unsized delete.
+	- Github #517 Update regression system to support new Capsaicin projects.
+	- Github #521 Cleanup Units/PhysicalConstants and add some comments.
+	- Github #522 General code cleanup
+	- Github #523 Add single-call test functions to Draco.
+	- Github #527 Fix warnings and errors generated when running doxygen.
+	- Github #528 Travis autodoc
+	- Github #530 Compton with average energy deposition
+	- Github #531 Provide new git commit hooks that test f90 code style.
+	- Github #534 Add F90 style and line-length checks to check_style.sh
+	- Github #536 More cleanup
+	- Github #540 Enhance autodoc features.
+	- Github #542 Add compton to VS2017 regressions.
+	- Github #543 Updates to the LANL HPC release scripts.
+	- Github #545 Corrected the release script for cts machines.
+	- Github #546 Remove csk-0.4.0 version specification from regression scripts so 0.4.1 can be loaded
+	- Github #548 Enable xthi and ythi builds/tests for Visual Studio.
+	- Github #549 Add boilerplate base for Class_Parse_Table
+	- Github #550 Order nodes counterclockwise for each face in `Draco_Mesh::Layout`.
+	- Feature #1284 Extend checkpr.sh to build/install generated autodoc.
+	- Support #1350 ccs-net: add numpy to python@3.6.5 installation
+	- Task #1301 Move the environment bash functions to common.sh
+	- Task #1303 Update spack for doxygen@1.8.14 + shared_ptr patch
+
+	* Known Defects:
+
+	- Bug #1306 Possible to have gitlab CI use cl.exe?
+	- Bug #1289 Move docker containers to gitlab?
+	- Bug #1282 Add support for newer superlu-dist
+	- Bug #1269 Demo CDash running in a docker container
+	- Bug #1268 memory: needs more tests
+	- Bug #1266 cdi_analytic: Code coverage improvements
+	- Bug #1265 Quadrature: Needs more unit tests
+	- Bug #1246 Cannot delete branches from forked EAP repo
+	- Bug #1242 Support machines where mpiexec is at /usr/bin
+	- Bug #1227 VS2017: tstSuperlu-dist not running?
+	- Bug #1207 Appveyor: enable more tests
+	- Bug #1152 Visualization: consider VTK or Silo
+	- Bug #1151 Occasional mpirun errors on snow
+	- Bug #1149 setupMPI.cmake: use 'cmake_host_system_information'
+	- Bug #1148 perfbench time variation on snow
+	- Bug #1133 Move code from c4 that doesn't wrap MPI
+	- Bug #1090 Regressions on trinitite occasionally fail with "address in use" errors
+	- Bug #1083 Darwin: demo power9+volta nodes
+	- Bug #1062 Prepare Darwin as sierra-proxy machine
+	- Bug #1049 Visit install not working on ccs-net machines
+	- Bug #1025 Add common build options to "Enabled features" list in build summary
+	- Bug #59 cdi_eospac design flaw
+
+	* Statistics
+
+Contributers (updated Release.cc and README.md with this ordering).
+
+CCS-2 Draco Team: Kelly G. Thompson, Kent G. Budge, Ryan T. Wollaeger, James S. Warsa,
+      Alex R. Long, Kendra P. Keady, Jae H. Chang, Matt A. Cleveland, Andrew T. Till,
+      Tim Kelley and Kris C. Garrett.
+Prior Contributers: Jeff D. Densmore, Gabriel M. Rockefeller,
+     Allan B. Wollaber, Rob B. Lowrie, Lori A. Pritchett-Sheats,
+     Paul W. Talbot, and Katherine J. Wang.
+
+Lines of Code
+-------------
+
+Code Coverage
+-------------
+
+Directory                             Function Coverage           C/D Coverage
+--------------------------------  ---------------------  ---------------------
+../source/src/units/                  82 /    82 = 100%      58 /    58 = 100%
+../source/src/quadrature/fctest/       1 /     1 = 100%       0 /     0
+../source/src/lapack_wrap/            12 /    12 = 100%       0 /     0
+../source/src/rng/                    57 /    57 = 100%      23 /    24 =  95%
+../source/src/mesh/                   56 /    56 = 100%      77 /    82 =  93%
+../source/src/fit/                     1 /     1 = 100%      15 /    16 =  93%
+../source/src/ode/                     5 /     5 = 100%      29 /    32 =  90%
+../source/src/special_functions/      31 /    31 = 100%     193 /   216 =  89%
+../source/src/ds++/                  336 /   336 = 100%     493 /   553 =  89%
+../source/src/min/                     9 /     9 = 100%     137 /   154 =  88%
+../source/src/cdi_ipcress/           106 /   106 = 100%     210 /   238 =  88%
+../source/src/RTT_Format_Reader/     323 /   323 = 100%     377 /   434 =  86%
+../source/src/linear/                 16 /    16 = 100%     335 /   392 =  85%
+../source/src/c4/bin/                  4 /     4 = 100%      17 /    20 =  85%
+../source/src/cdi/                    46 /    46 = 100%      73 /    86 =  84%
+../source/src/roots/                   8 /     8 = 100%     258 /   310 =  83%
+../source/src/mesh_element/           23 /    23 = 100%     154 /   197 =  78%
+../source/src/viz/                    32 /    32 = 100%     138 /   178 =  77%
+../source/src/meshReaders/            15 /    15 = 100%     122 /   162 =  75%
+../source/src/compton/                16 /    16 = 100%       4 /     6 =  66%
+../source/src/norms/                  27 /    27 = 100%      23 /    36 =  63%
+../source/src/timestep/               62 /    62 = 100%     104 /   178 =  58%
+../source/src/cdi_eospac/             52 /    52 = 100%      65 /   127 =  51%
+../source/src/FortranChecks/           1 /     1 = 100%       7 /    14 =  50%
+../source/src/c4/                    181 /   182 =  99%     440 /   504 =  87%
+../source/src/quadrature/            224 /   226 =  99%     603 /   732 =  82%
+../source/src/parser/                321 /   330 =  97%    1260 /  1611 =  78%
+../source/src/cdi_analytic/          146 /   165 =  88%     172 /   224 =  76%
+../source/src/diagnostics/            16 /    21 =  76%      37 /    55 =  67%
+../source/src/memory/                  4 /     6 =  66%       0 /     2 =   0%
+../source/src/diagnostics/qt/          0 /     5 =   0%       0 /     0
+--------------------------------  ---------------------  ---------------------
+Total                               2208 /  2246 =  98%    5407 /  6621 =  81%
+
+
+Lines of Code
+-------------
+
+--------------------------------------------------------------------------------
+Language                      files          blank        comment           code
+--------------------------------------------------------------------------------
+C++                             439          12946          22616          53829
+C/C++ Header                    350           7261          21131          17430
+Lisp                             19           2038           2973          13118
+CMake                           126           2214           5852           9137
+Bourne Shell                     34            703           1501           3417
+Bourne Again Shell               12            302            587           1601
+Python                           16            447            768           1474
+CSS                               1            261             75           1260
+Fortran 90                        8            114            217            381
+C                                 4             59            129            288
+C Shell                           2             32             36            163
+DOS Batch                         4             59             92            109
+HTML                              2              3             47             68
+YAML                              3             22            140             66
+CUDA                              3             19             59             40
+make                              2             22             13             39
+--------------------------------------------------------------------------------
+SUM:                           1025          26502          56236         102420
+--------------------------------------------------------------------------------
+
 2018-10-23  Kelly (KT) Thompson  <kgt@lanl.gov>
 
 	* "Release draco-6_25_0":https://rtt.lanl.gov/redmine/versions/62.
@@ -257,7 +439,7 @@ make                              2             22             13             39
 SUM:                           1019          26399          56192         100882
 --------------------------------------------------------------------------------
 
-Code Doverage
+Code Coverage
 -------------
 
 Directory               Function Coverage           C/D Coverage

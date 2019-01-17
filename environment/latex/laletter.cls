@@ -131,7 +131,7 @@
         \footnotesize
         \hfill 
         An Equal Opportunity Employer/Operated 
-        by the Los Alamos National Security, LLC
+        by the Triad National Security, LLC
         \hfill}}
 % Initializations
 \distribution{}

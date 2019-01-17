@@ -4,7 +4,7 @@
 # date   Wednesday, Nov 14, 2018, 19:01 pm
 # brief  Provide extra macros to simplify CMakeLists.txt for autodoc
 #        directories.
-# note   Copyright (C) 2018 Los Alamos National Security, LLC.
+# note   Copyright (C) 2018-2019 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -25,9 +25,6 @@ function( set_autodocdir )
   else()
     set( DOXYGEN_OUTPUT_DIR ${CMAKE_INSTALL_PREFIX}/autodoc PARENT_SCOPE)
   endif()
-
-  message(STATUS "Using autodoc directory ${AUTODOCDIR}")
-
 endfunction()
 
 #------------------------------------------------------------------------------

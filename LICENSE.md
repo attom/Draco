@@ -1,9 +1,9 @@
 # License (BSD)
 
-Copyright (C) 2016-2018 Los Alamos National Security, LLC.
+Copyright (C) 2016-2019 Triad National Security, LLC.
 All rights reserved.
 
-Copyright 2016.  Los Alamos National Security, LLC. This software was
+Copyright 2016.  Triad National Security, LLC. This software was
 produced under U.S. Government contract DE-AC52-06NA25396 for Los
 Alamos National Laboratory (LANL), which is operated by Los Alamos
 National Security, LLC for the U.S. Department of Energy. The
@@ -25,7 +25,7 @@ conditions are met:
   notice, this list of conditions and the following disclaimer in the
   documentation and/or other materials provided with the distribution.
 
-- Neither the name of Los Alamos National Security, LLC, Los Alamos
+- Neither the name of Triad National Security, LLC, Los Alamos
   National Laboratory, LANL, the U.S. Government, nor the names of its
   contributors may be used to endorse or promote products derived from
   this software without specific prior written permission.

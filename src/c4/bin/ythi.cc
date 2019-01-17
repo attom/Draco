@@ -5,7 +5,7 @@
  *         Tim Kelley <tkelley@lanl.gov.
  * \date   Tuesday, Jun 05, 2018, 17:12 pm
  * \brief  Print MPI rank, thread number and core affinity bindings.
- * \note   Copyright (C) 2018 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2018-2019 Triad National Security, LLC.
  *         All rights reserved.
  *
  * Rewritten by Tim Kelley to run C++11 std::threads You may override

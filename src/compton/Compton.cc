@@ -4,7 +4,7 @@
  * \author Kendra Keady
  * \date   Tues Feb 21 2017
  * \brief  Implementation file for compton CSK_generator interface
- * \note   Copyright (C) 2017-2018 Los Alamos National Security, LLC.
+ * \note   Copyright (C) 2017-2019 Triad National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 

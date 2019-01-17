@@ -3,7 +3,7 @@
 ## File  : regression/checkpr.sh
 ## Date  : Wednesday, Mar 22, 2017, 16:01 pm
 ## Author: Kelly Thompson <kgt@lanl.gov>
-## Note  : Copyright (C) 2017, Los Alamos National Security, LLC.
+## Note  : Copyright (C) 2017, Triad National Security, LLC.
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
