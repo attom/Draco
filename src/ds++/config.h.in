@@ -24,7 +24,7 @@
 
 /* Version Inforation */
 #define Draco_BUILD_DATE "@Draco_BUILD_DATE@"
-#define Draco_BUILD_TYPE "@Draco_BUILD_TYPE@"
+#define Draco_BUILD_TYPE @Draco_BUILD_TYPE@
 #cmakedefine Draco_VERSION @Draco_VERSION@
 #cmakedefine Draco_VERSION_FULL @Draco_VERSION_FULL@
 #define Draco_VERSION_MAJOR "@Draco_VERSION_MAJOR@"

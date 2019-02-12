@@ -58,7 +58,8 @@ done
 if ! test -d $logdir; then
   mkdir -p $logdir
   chgrp ccsrad $logdir
-  chmod g+rsX $logdir
+  chmod g+rwX $logdir
+  chmod g+s $logdir
 fi
 
 # Configure, Build, Test and Submit (no Torque batch system here).

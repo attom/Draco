@@ -324,6 +324,7 @@ if [[ ${regress_mode} == "on" ]]; then
   echo " "
   run "chgrp -R ccsrad ${work_dir}"
   run "chmod -R g+rX,o-rwX ${work_dir}"
+  run "chmod g+s ${work_dir}"
 fi
 
 echo "All done."

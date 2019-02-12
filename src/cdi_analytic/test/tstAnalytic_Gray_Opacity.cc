@@ -234,7 +234,7 @@ void CDI_test(rtt_dsxx::UnitTest &ut) {
   {
     std::vector<double> params(amodel->get_parameters());
 
-    std::vector<double> expectedValue(8);
+    std::vector<double> expectedValue(11);
     expectedValue[0] = 0.0;
     expectedValue[1] = 100.0;
     expectedValue[2] = -3.0;
@@ -243,6 +243,9 @@ void CDI_test(rtt_dsxx::UnitTest &ut) {
     expectedValue[5] = 1.0;
     expectedValue[6] = 1.0;
     expectedValue[7] = 1.0;
+    expectedValue[8] = 0.0;
+    expectedValue[9] = 0.0;
+    expectedValue[10] = 0.0;
 
     double const tol(1.0e-12);
 

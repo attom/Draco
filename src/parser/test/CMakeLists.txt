@@ -34,7 +34,8 @@ set( scalar_test_sources
    ${PROJECT_SOURCE_DIR}/tstutilities.cc
    ${PROJECT_SOURCE_DIR}/tstUnit.cc
    ${PROJECT_SOURCE_DIR}/tstString_Token_Stream.cc
-   ${PROJECT_SOURCE_DIR}/tstParse_Table.cc )
+   ${PROJECT_SOURCE_DIR}/tstParse_Table.cc
+   ${PROJECT_SOURCE_DIR}/tstClass_Parser.cc )
 list( REMOVE_ITEM test_sources ${scalar_test_sources} )
 add_scalar_tests(
    SOURCES "${scalar_test_sources}"

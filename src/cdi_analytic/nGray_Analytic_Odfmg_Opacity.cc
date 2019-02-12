@@ -114,10 +114,6 @@ nGray_Analytic_Odfmg_Opacity::nGray_Analytic_Odfmg_Opacity(
     } else if (indicator ==
                rtt_cdi_analytic::POLYNOMIAL_ANALYTIC_OPACITY_MODEL) {
       group_models[i].reset(new Polynomial_Analytic_Opacity_Model(models[i]));
-    } else if (indicator ==
-               rtt_cdi_analytic::STIMULATED_EMISSION_ANALYTIC_OPACITY_MODEL) {
-      group_models[i].reset(
-          new Stimulated_Emission_Analytic_Opacity_Model(models[i]));
     } else {
       Insist(false, "Unregistered analytic opacity model!");
     }

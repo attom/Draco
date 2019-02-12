@@ -17,12 +17,18 @@
 #include "ds++/Release.hh"
 #include "ds++/Soft_Equivalence.hh"
 #include "ds++/path.hh"
+#include <fstream>
 #include <sstream>
+#include <vector>
+
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wundef"
+#endif
 #include <superlu_ddefs.h>
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
-#include <vector>
+#endif
 
 // forward declarations
 void test_superludist(rtt_c4::ParallelUnitTest &ut);
@@ -83,6 +89,20 @@ void test_superludist(rtt_c4::ParallelUnitTest &ut) {
   std::string const inpPath = ut.getTestSourcePath();
   std::string const filename(inpPath + "big.rua");
   FILE *fp;
+
+#if 0
+  // check the file
+  if (rtt_c4::node() == 0) {
+    std::string line;
+    std::ifstream myfile(filename.c_str());
+    if (myfile.is_open()) {
+      while (getline(myfile, line)) {
+        std::cout << line << '\n';
+      }
+      myfile.close();
+    }
+  }
+#endif
 
   //---------------------------------------------------------------------------//
   // Initialize the SuperLU process grid
@@ -263,7 +283,7 @@ int dcreate_matrix(SuperMatrix *A, int nrhs, double **rhs, int *ldb, double **x,
   double *nzval;                   /* global */
   double *nzval_loc;               /* local */
   int_t *colind, *rowptr;          /* local */
-  int_t m, n, nnz;
+  int_t m(0), n(0), nnz(0);
   int_t m_loc, fst_row, nnz_loc;
   int_t m_loc_fst; /* Record m_loc of the first p-1 processors,
                            when mod(m, p) is not zero. */

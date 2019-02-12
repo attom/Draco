@@ -91,6 +91,7 @@ vdir_subdirs=`\ls -1 $vdir`
 for dir in $vdir_subdirs; do
   run "chgrp -R draco $dir &> /dev/null"
   run "chmod -R g+rX,o+rX $dir &> /dev/null"
+  run "find $dir -type d -exec chmod g+s {} \;"
 done
 
 run "cd ${vdir}-ec"
@@ -98,6 +99,7 @@ vdir_subdirs=`\ls -1 ${vdir}-ec`
 for dir in $vdir_subdirs; do
   run "chgrp -R ccsrad $dir &> /dev/null"
   run "chmod -R g+rX,o-rwX $dir &> /dev/null"
+  run "find $dir -type d -exec chmod g+s {} \;"
 done
 
 #echo " "

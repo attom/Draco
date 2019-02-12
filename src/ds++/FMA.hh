@@ -47,6 +47,16 @@
 #include "ds++/config.h"
 #include <cmath>
 
+/*
+ * Override - always use software fma or alwasy use hardware fma
+ */
+//#define FMA_ALWAYS_SOFTWARE 1
+//#define FMA_NEVER_SOFTWARE 1
+
+#if defined(FMA_ALWAYS_SOFTWARE) && defined(FMA_NEVER_SOFTWARE)
+#error "Both FMA_ALWAYS_SOFTWARE and FMA_NEVER_SOFTWARE should not be set."
+#endif
+
 /*!
  * Normally \c FMA_FIND_DIFFS is \b NOT defined.  If defined then all FMA calls
  * will be processed by fma_with_diagnostics and will throw an exception if
@@ -86,20 +96,30 @@ namespace rtt_dsxx {
  *   sufficiently different.
  * - Return the 'accurate' result.
  */
-inline double fma_with_diagnostics(double const a, double const b,
-                                   double const c, std::string const &file,
-                                   uint32_t const line,
-                                   bool const abort_on_fail) {
-  double const accurate = fma(a, b, c);
-  double const fast = ((a) * (b) + c);
-  double const tol = 1.e-13;
+template <typename T> // float, double, long double
+inline T fma_with_diagnostics(T const a, T const b, T const c,
+                              std::string const &file, uint32_t const line,
+                              bool const abort_on_fail) {
+  T const accurate = fma(a, b, c);
+  T const fast = ((a) * (b) + c);
+  // For T=double, tol = 1.e+7 * 1.e-19 = 1.e-12
+  T const tol = std::pow(10, (std::numeric_limits<T>::max_digits10 / 3)) *
+                std::numeric_limits<T>::epsilon();
   std::ostringstream msg;
   msg << "FMA accuracy error in " << file << " (" << line << ") "
-      << std::setprecision(std::numeric_limits<double>::max_digits10)
+      << std::setprecision(std::numeric_limits<T>::max_digits10)
       << "\n  accurate = " << accurate << "\n  fast = " << fast
-      << "\n  diff = " << fabs(accurate - fast)
-      << "\n  rdiff = " << 2.0 * fabs(accurate - fast) / fabs(accurate + fast)
-      << "\n  a = " << a << "\n  b = " << b << "\n  c = " << c << std::endl;
+      << "\n  diff = " << fabs(accurate - fast);
+  if (std::fabs(accurate + fast) < std::numeric_limits<T>::epsilon()) {
+    // solution is zero, rdiff is meaningless
+    msg << "\n  rdiff = NA";
+  } else {
+    msg << "\n  rdiff = "
+        << 2.0 * fabs(accurate - fast) /
+               fabs(accurate + fast + std::numeric_limits<T>::epsilon());
+  }
+  msg << "\n  a   = " << a << "\n  b   = " << b << "\n  c   = " << c
+      << std::endl;
   if (abort_on_fail) {
     Insist(rtt_dsxx::soft_equiv(accurate, fast, tol), msg.str().c_str());
   } else {
@@ -110,6 +130,7 @@ inline double fma_with_diagnostics(double const a, double const b,
 
   return abort_on_fail ? fast : accurate;
 }
+
 } // namespace rtt_dsxx
 
 //----------------------------------------------------------------------------//
@@ -169,6 +190,24 @@ inline double fma_with_diagnostics(double const a, double const b,
 #endif /* HAVE_HARDWARE_FMA */
 
 #endif /* FMA_FIND_DIFFS */
+
+//----------------------------------------------------------------------------//
+// Override
+//----------------------------------------------------------------------------//
+
+#ifdef FMA_ALWAYS_SOFTWARE
+#undef FMA
+#define FMA(a, b, c) fma((a), (b), (c))
+#undef FMA_ACCURATE
+#define FMA_ACCURATE(a, b, c) fma((a), (b), (c))
+#endif
+
+#ifdef FMA_NEVER_SOFTWARE
+#undef FMA
+#define FMA(a, b, c) ((a) * (b) + c)
+#undef FMA_ACCURATE
+#define FMA_ACCURATE(a, b, c) ((a) * (b) + c)
+#endif
 
 #endif // rtt_dsxx_FMA_hh
 

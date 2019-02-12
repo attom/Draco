@@ -330,6 +330,7 @@ if [[ ${regress_mode} == "on" ]]; then
   echo " "
   run "chgrp -R draco ${work_dir}"
   run "chmod -R g+rwX,o-rwX ${work_dir}"
+#  run "find ${work_dir} -type d -exec chmod g+s {} \;"
 fi
 
 echo "All done."
