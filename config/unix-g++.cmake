@@ -5,6 +5,8 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
+include_guard(GLOBAL)
+
 # Note: In config/compilerEnv.cmake, the build system sets flags for
 # 1) the language standard (C++14, C99, etc)
 # 2) interprocedural optimization.

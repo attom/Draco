@@ -357,6 +357,78 @@ Polynomial_Specific_Heat_Analytic_EoS_Model::get_parameters() const {
   return p;
 }
 
+//===========================================================================//
+// CONSTANT_ANALYTIC_EI_COUPLING_MODEL MEMBER DEFINITIONS
+//===========================================================================//
+// Unpacking constructor.
+
+Constant_Analytic_EICoupling_Model::Constant_Analytic_EICoupling_Model(
+    const sf_char &packed)
+    : ei_coupling(0) {
+  // size of stream
+  int size(sizeof(int) + sizeof(double));
+
+  Require(packed.size() == static_cast<size_t>(size));
+
+  // make an unpacker
+  rtt_dsxx::Unpacker unpacker;
+
+  // set the unpacker
+  unpacker.set_buffer(size, &packed[0]);
+
+  // unpack the indicator
+  int indicator;
+  unpacker >> indicator;
+  Insist(indicator == CONSTANT_ANALYTIC_EICOUPLING_MODEL,
+         "Tried to unpack the wrong type in Constant_Analytic_Opacity_Model");
+
+  // unpack the data
+  unpacker >> ei_coupling;
+  Check(ei_coupling >= 0.0);
+
+  Ensure(unpacker.get_ptr() == unpacker.end());
+}
+
+//---------------------------------------------------------------------------//
+// Packing function
+
+Analytic_EICoupling_Model::sf_char
+Constant_Analytic_EICoupling_Model::pack() const {
+  // get the registered indicator
+  int indicator = CONSTANT_ANALYTIC_EICOUPLING_MODEL;
+
+  // caculate the size in bytes: indicator + 1 double
+  int size = sizeof(int) + sizeof(double);
+
+  // make a vector of the appropriate size
+  sf_char pdata(size);
+
+  // make a packer
+  rtt_dsxx::Packer packer;
+
+  // set the packer buffer
+  packer.set_buffer(size, &pdata[0]);
+
+  // pack the indicator
+  packer << indicator;
+
+  // pack the data
+  packer << ei_coupling;
+
+  // Check the size
+  Ensure(packer.get_ptr() == &pdata[0] + size);
+
+  return pdata;
+}
+
+//---------------------------------------------------------------------------//
+// Return the model parameters
+
+Analytic_EICoupling_Model::sf_double
+Constant_Analytic_EICoupling_Model::get_parameters() const {
+  return sf_double(1, ei_coupling);
+}
+
 } // end namespace rtt_cdi_analytic
 
 //---------------------------------------------------------------------------//

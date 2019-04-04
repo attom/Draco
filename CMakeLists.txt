@@ -13,19 +13,25 @@
 
 cmake_minimum_required(VERSION 3.11.0 FATAL_ERROR)
 project( Draco
-  VERSION 7.0
+  VERSION 7.1
   DESCRIPTION "An object-oriented component library supporting radiation transport applications."
   LANGUAGES CXX C )
 
-# Do not look for Fortran for
+# Do not look for Fortran/CUDA for
 # 1. XCode based Generators, or
 # 2. Visual Studio IDE or NMake Generators (MSYS or CYGWIN environments will
 #    look for Fortran).
 # 3. Ninja, Codeblocks or Eclipse CDT4 generators.
-# 4. Unix Makefile generators when $ENV{FC} is not set (clang on Linux)
-if( ${CMAKE_GENERATOR} MATCHES "Unix Makefiles" AND
-    (DEFINED ENV{FC} OR DEFINED CMAKE_Fortran_COMPILER ))
-  enable_language( Fortran OPTIONAL )
+# 4. Unix Makefile generator when:
+#    - Fortran only: $ENV{FC} is not set (e.g. clang on Linux)
+#    - Cuda only   : $ENV{CUDADIR} is not set (e.g. cuda module not loaded)
+if( ${CMAKE_GENERATOR} MATCHES "Unix Makefiles")
+  if( DEFINED ENV{FC} OR DEFINED CMAKE_Fortran_COMPILER )
+    enable_language( Fortran OPTIONAL )
+  endif()
+  if( DEFINED ENV{CUDADIR} )
+    enable_language( CUDA OPTIONAL )
+  endif()
 endif()
 
 # Build system configuration files are located here.
@@ -106,7 +112,7 @@ configure_file(
 
 # install top level documents
 install(
-  FILES ChangeLog Copyright README.md
+  FILES ChangeLog LICENSE.md README.md
   DESTINATION ${CMAKE_INSTALL_PREFIX} )
 
 # Add support for the 'uninstall' target

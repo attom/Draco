@@ -21,7 +21,8 @@ file( GLOB test_sources *.cc )
 add_parallel_tests(
    SOURCES "${test_sources}"
    PE_LIST "1;2"
-   DEPS    "Lib_norms;${MPI_CXX_LIBRARIES};${PAPI_LIBRARY}" )
+#   DEPS    "Lib_norms;${MPI_CXX_LIBRARIES};${PAPI_LIBRARY}" )
+   DEPS    "Lib_norms;${PAPI_LIBRARY}" )
 
 #------------------------------------------------------------------------------#
 # End norms/test/CMakeLists.txt

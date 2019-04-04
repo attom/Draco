@@ -49,8 +49,9 @@ platform_extra_params=`echo $platform_extra_params | sed -e 's/ / | /g'`
 export host=`uname -n | sed -e 's/[.].*//g'`
 case $host in
   ba*|gr*|sn*) source $rscriptdir/cts1-options.sh ;;
-  ccscs*)  source $rscriptdir/ccscs-options.sh ;;
-  tt*)     source $rscriptdir/tt-options.sh ;;
+  ccscs*)      source $rscriptdir/ccscs-options.sh ;;
+  darwin-fe*)  source $rscriptdir/darwin-options.sh ;;
+  tt*)         source $rscriptdir/tt-options.sh ;;
   *)
     echo "FATAL ERROR: I don't know how to run regression on host = ${host}."
     print_use;  exit 1 ;;
@@ -62,7 +63,9 @@ esac
 
 print_use()
 {
-  platform_extra_params=`echo $platform_extra_params | sed -e 's/ / | /g'`
+  if [[ `echo $platform_extra_params  | grep -c "|"` == 0 ]]; then
+    platform_extra_params=`echo $platform_extra_params | sed -e 's/ / | /g'`
+  fi
 
   echo " "
   echo "Usage: ${0##*/} -b [Release|Debug] -d [Experimental|Nightly|Continuous]"
@@ -178,8 +181,8 @@ on)
       echo "You are not authorized to use option '-r'."
       exit 1
     fi
-    if [[ -d /usr/projects/jayenne/regress ]]; then
-      regdir=/usr/projects/jayenne/regress
+    if [[ -d /usr/projects/draco/regress ]]; then
+      regdir=/usr/projects/draco/regress
     else
       regdir=/scratch/regress
     fi

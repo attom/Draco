@@ -34,9 +34,9 @@ set( ptest_sources
 
 # When building on SQ with XLC/XLF90, ensure that libxlomp_ser is not
 # on the link line.  This macro is defined in config/unix-xlf.cmake.
-if( ${CMAKE_Fortran_COMPILER_FLAVOR} MATCHES "XL" )
-  remove_lib_from_link( "xlomp_ser" )
-endif()
+#if( ${CMAKE_Fortran_COMPILER_ID} MATCHES "XL" )
+#  remove_lib_from_link( "xlomp_ser" )
+#endif()
 
 # When building with MVSE and linking Fortran libraries generated with MinGW's
 # gfortran, the libquadmath-0.dll library must be found in the path.

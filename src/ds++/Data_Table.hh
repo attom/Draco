@@ -67,7 +67,7 @@ private:
 //---------------------------------------------------------------------------//
 /*!
  * Copy constructor, but update the pointers to point to the local d_value if
- * they pointed to the d_value in the rhs.
+ * they pointed to the d_value in the RHS.
 */
 template <typename T>
 Data_Table<T>::Data_Table(Data_Table<T> const &rhs)

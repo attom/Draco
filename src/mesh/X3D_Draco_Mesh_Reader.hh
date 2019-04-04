@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
  * \file   mesh/X3D_Draco_Mesh_Reader.cc
- * \author Ryan Wollaeger <wollaeger@lanl.gov>, Kendra Keady
+ * \author Ryan Wollaeger <wollaeger@lanl.gov>, Kendra Long
  * \date   Wednesday, Jul 11, 2018, 14:24 pm
  * \brief  X3D_Draco_Mesh_Reader header file.
  * \note   Copyright (C) 2018-2019 Triad National Security, LLC.
@@ -28,7 +28,7 @@ namespace rtt_mesh {
  *
  * This class parses mesh data from an x3d file format and manipulates it into a
  * form that is compatible to the Draco_Mesh_Builder class.  The parsing of the
- * file stream to the map follows work by Kendra Keady on a parsing framework.
+ * file stream to the map follows work by Kendra Long on a parsing framework.
  *
  * For a description of the X3D mesh file layout, see:
  * https://xcp-confluence.lanl.gov/display/SIMC/Ingen->Flag+Data+Transfer
@@ -57,7 +57,7 @@ private:
   //! Boundary file names (optional data)
   const std::vector<std::string> bdy_filenames;
 
-  //! Boundary conditions per bdy file (optional data)
+  //! Boundary conditions per boundary file (optional data)
   const std::vector<unsigned> bdy_flags;
 
   //! Vector of all parsed key-value data pairs (includes valueless delimiters)
@@ -109,7 +109,7 @@ public:
   size_t get_numcells() const { return x3d_header_map.at("elements")[0]; }
   size_t get_numnodes() const { return x3d_header_map.at("nodes")[0]; }
 
-  // coord data
+  // coordinate data
   std::vector<double> get_nodecoord(size_t node) const {
     Check(node + 1 < INT_MAX);
     return x3d_coord_map.at(static_cast<int>(node + 1));

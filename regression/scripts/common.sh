@@ -84,18 +84,22 @@ function establish_permissions
   case $package in
     draco)
       # Draco is open source - allow anyone to read.
-      install_group="draco"
+      if [[ `groups | grep -c draco` == 1 ]]; then
+        install_group="draco"
+      elif [[ `groups | grep -c dacodes` == 1 ]]; then
+        install_group="dacodes"
+      else
+        echo "FATAL_ERROR: expecting to use group draco|dacodes."
+        exit 1
+      fi
       install_permissions="g+rwX,o=g-w"
       ;;
-    capsaicin | jayenne)
+    core | trt | npt | jayenne)
       # Export controlled sources - limit access
-      # if [[ `groups | grep -c ccsrad` = 1 ]]; then
-      #   install_group="ccsrad"
-      #   install_permissions="g+rwX,o-rwX"
       if [[ `groups | grep -c dacodes` = 1 ]]; then
         install_group="dacodes"
         install_permissions="g+rwX,o-rwX"
-      else
+        elif [[ `groups | grep -c draco` = 1 ]]; then
         install_group="draco"
         install_permissions="g-rwX,o-rwX"
       fi
@@ -114,8 +118,13 @@ function machineName
     sysName=`/usr/projects/hpcsoft/utilities/bin/sys_name`
   elif [[ -d /projects/darwin ]]; then
     sysName=darwin
-  elif test -d /usr/gapps/jayenne; then
-    sysName=sq
+  elif [[ -d /usr/gapps/jayenne ]]; then
+    case `uname -n` in
+      sq* | sequoia*) sysName=sq ;;
+      rzansel*) sysName=rzansel ;;
+      rzmanta*) sysName=rzmanta ;;
+      sierra*) sysName=sierra ;;
+    esac
   fi
   if [[ "$sysName" == "unknown" ]]; then
     die "Unable to determine machine name, please edit scripts/common.sh."
@@ -228,6 +237,24 @@ function flavor
           compiler_flavor=unknown-unknown ;;
       esac
       ;;
+
+    ppc64le)
+      mpiflavor=`echo $OPAL_PREFIX | sed -e 's%.*/%%'`
+      case $CC in
+      *gcc*)
+          LCOMPILER=gnu
+          LCOMPILERVER=`$CC --version | head -n 1 | sed -e 's/.*\([0-9][.][0-9][.][0-9]\).*/\1/'`
+          compilerflavor=$LCOMPILER-$LCOMPILERVER
+          ;;
+      *xlc*)
+          LCOMPILER=ibm
+          LCOMPILERVER=`$CC -qversion | head -n 1 | sed -e 's/.*V\([0-9][0-9][.][0-9][.][0-9]\) .*/\1/'`
+          compilerflavor=$LCOMPILER-$LCOMPILERVER
+          ;;
+      *) compiler_flavor=unknown-unknown ;;
+      esac
+      ;;
+
     *)
       # CCS-NET machines or generic Linux?
       if [[ $MPI_NAME ]]; then
@@ -253,6 +280,9 @@ function selectscratchdir
   local scratchdirs=`df --output=pcent,target 2>&1 | grep -c unrecognized`
   if [[ $scratchdirs == 0 ]]; then
     scratchdirs=`df --output=pcent,target | grep scratch | grep -v netscratch | sort -g`
+    if [[ -z "$scratchdirs" ]]; then
+      scratchdirs=`df --output=pcent,target | grep workspace | sort -g`
+    fi
   else
     scratchdirs=`df -a 2> /dev/null | grep net/scratch | awk '{ print $4 " "$5 }' | sort -g`
     if ! [[ $scratchdirs ]]; then
@@ -272,6 +302,9 @@ function selectscratchdir
     fi
     # if this location is good (must be able to write to this location), return
     # the path.
+    if [[ -d $item/users ]]; then
+      item="${item}/users"
+    fi
     mkdir -p $item/$USER &> /dev/null
     if [[ -w $item/$USER ]]; then
       echo "$item"
@@ -302,7 +335,6 @@ function lookupppn()
   local target="`uname -n | sed -e s/[.].*//`"
   local ppn=1
   case ${target} in
-    pi* | wf* ) ppn=16 ;;
     t[rt]-fe* | t[rt]-login*)
       if [[ $CRAY_CPU_TARGET == "haswell" ]]; then
           ppn=32
@@ -313,7 +345,8 @@ function lookupppn()
         exit 1
       fi
       ;;
-    fi* | ic* | sn* ) ppn=36 ;;
+    fi* | ic* | sn* | cy* )         ppn=36 ;;
+    rzansel* | rzmanta* | sierra* ) ppn=40 ;;
     *) ppn=`cat /proc/cpuinfo | grep -c processor` ;;
   esac
   echo $ppn
@@ -330,6 +363,8 @@ function npes_build
     np=${SLURM_CPUS_ON_NODE}
   elif [[ ${SLURM_TASKS_PER_NODE} ]]; then
     np=${SLURM_TSKS_PER_NODE}
+  elif [[ ${LSB_DJOB_NUMPROC} ]]; then
+    np=${LSB_DJOB_NUMPROC}
   elif [[ -f /proc/cpuinfo ]]; then
     # lscpu=`lscpu | grep "CPU(s):" | head -n 1 | awk '{ print $2 }'`
     np=`cat /proc/cpuinfo | grep -c processor`
@@ -339,34 +374,47 @@ function npes_build
 
 function npes_test
 {
+  # assume no parallel testing capability
   local np=1
-  # use lscpu if it is available.
-  if ! [[ `which lscpu 2>/dev/null` == 0 ]]; then
-    # number of cores per socket
-    local cps=`lscpu | grep "^Core(s)" | awk '{ print $4 }'`
-    # number of sockets
-    local ns=`lscpu | grep "^Socket(s):" | awk '{ print $2 }'`
-    np=`expr $cps \* $ns`
 
-  else
+  # allow specializations per machien (if needed)
+  local target="`uname -n | sed -e s/[.].*//`"
+  case ${target} in
 
-    if [[ ${PBS_NP} ]]; then
-      np=${PBS_NP}
-    elif [[ ${SLURM_NPROCS} ]]; then
-      np=${SLURM_NPROCS}
-    elif [[  ${SLURM_CPUS_ON_NODE} ]]; then
-      np=${SLURM_CPUS_ON_NODE}
-    elif [[ ${SLURM_TASKS_PER_NODE} ]]; then
-      np=${SLURM_TSKS_PER_NODE}
-    elif [[ `uname -p` == "ppc" ]]; then
-      # sinfo --long --partition=pdebug (show limits)
-      np=64
-    elif [[ -f /proc/cpuinfo ]]; then
-      # lscpu=`lscpu | grep "CPU(s):" | head -n 1 | awk '{ print $2 }'`
-      np=`cat /proc/cpuinfo | grep -c processor`
-    fi
+    # current LSF only allows one executable to run under 'jsrun' at a time.
+    rzansel* | rzmanta* | sierra*) ppn=1 ;;
 
-  fi
+    *)
+
+      # use lscpu if it is available.
+      if ! [[ `which lscpu 2>/dev/null` == 0 ]]; then
+        # number of cores per socket
+        local cps=`lscpu | grep "^Core(s)" | awk '{ print $4 }'`
+        # number of sockets
+        local ns=`lscpu | grep "^Socket(s):" | awk '{ print $2 }'`
+        np=`expr $cps \* $ns`
+
+      else
+
+        if [[ ${PBS_NP} ]]; then
+          np=${PBS_NP}
+        elif [[ ${SLURM_NPROCS} ]]; then
+          np=${SLURM_NPROCS}
+        elif [[  ${SLURM_CPUS_ON_NODE} ]]; then
+          np=${SLURM_CPUS_ON_NODE}
+        elif [[ ${SLURM_TASKS_PER_NODE} ]]; then
+          np=${SLURM_TSKS_PER_NODE}
+        elif [[ `uname -p` == "ppc" ]]; then
+          # sinfo --long --partition=pdebug (show limits)
+          np=64
+        elif [[ -f /proc/cpuinfo ]]; then
+          # lscpu=`lscpu | grep "CPU(s):" | head -n 1 | awk '{ print $2 }'`
+          np=`cat /proc/cpuinfo | grep -c processor`
+        fi
+
+      fi
+      ;;
+  esac
   echo $np
 }
 
@@ -487,18 +535,11 @@ function install_versions
       || die "Could not build code/tests in $build_dir"
   fi
   if test $test_step == 1; then
-    case $version in
-      *_nr)
-        # only run tests that are safe in non-reproducible mode.
-        run "ctest -L nr -j $test_pe" ;;
-      *)
-        # run all tests
-        run "ctest -j $test_pe --output-on-failure"
-        if [[ $? != 0 ]]; then
-          run "ctest -j $test_pe --output-on-failure --rerun-failed"
-        fi
-        ;;
-    esac
+    # run all tests
+    run "ctest -j $test_pe --output-on-failure"
+    if [[ $? != 0 ]]; then
+      run "ctest -j $test_pe --output-on-failure --rerun-failed"
+    fi
   fi
   if ! test ${build_permissions:-notset} = "notset"; then
     run "chmod -R $build_permissions $build_dir"
@@ -506,8 +547,8 @@ function install_versions
 }
 
 ##----------------------------------------------------------------------------##
-## If $jobids is set, wait for those jobs to finish before setting
-## groups and permissions.
+## If $jobids is set, wait for those jobs to finish before setting groups and
+## permissions.
 function publish_release()
 {
   echo " "
@@ -519,6 +560,7 @@ function publish_release()
   case `osName` in
     toss* | cle* ) SHOWQ=squeue ;;
     darwin| ppc64) SHOWQ=squeue ;;
+    rzansel* | rzmanta* | sierra* ) SHOWQ=bjobs ;;
   esac
 
   # wait for jobs to finish

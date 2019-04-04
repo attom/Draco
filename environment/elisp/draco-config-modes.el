@@ -655,42 +655,42 @@ auto-mode-alist and set up some customizations for DRACO."
   (progn
 ;    (autoload 'cvs-examine "pcl-cvs" "CVS mode" t)
 ;    (require 'pcl-cvs)
-    (require 'psvn)
-    (setq svn-status-verbose nil)
+    ;; (require 'psvn)
+    ;; (setq svn-status-verbose nil)
 
-    (defun draco-menu-extras-cvs ()
-      "Submenu for inserting comments (context sensitive)."
-      (list "CVS extras..."
-	    ["CVS help" cvs-help t]))
+    ;; (defun draco-menu-extras-cvs ()
+    ;;   "Submenu for inserting comments (context sensitive)."
+    ;;   (list "CVS extras..."
+    ;;         ["CVS help" cvs-help t]))
 
-    (defun draco-cvs-edit-mode-hook ()
-      "Setup the PCL-CVS cvs-edit-mode with draco prefs."
-      (auto-fill-mode t)
-      (setq fill-prefix "  ")
-      (draco-mode-update-menu (draco-menu-extras-cvs)))
-    (add-hook 'cvs-mode-hook 'draco-cvs-edit-mode-hook)
-    (add-hook 'cvs-mode-hook 'turn-on-draco-mode)
-    (if draco-colorize-modeline
-	(add-hook 'cvs-mode-hook
-		  '(lambda () ;; M-x list-colors-display
-		     (set-face-background 'modeline
-					  "honeydew" (current-buffer))
-		     (set-face-foreground 'modeline
-					  "black"   (current-buffer)))))
-    (setq cvs-erase-input-buffer        nil
-	  cvs-inhibit-copyright-message t
-	  cvs-status-flags "-q"
-	  vc-dired-terse-display nil )
-    ; If this variable is set to any non-nil value
-    ; `cvs-mode-remove-handled' will be called every time you check in
-    ; files, after the check-in is ready. See section 5.11 Removing handled
-    ; entries.
-    (setq cvs-auto-remove-handled t)
+    ;; (defun draco-cvs-edit-mode-hook ()
+    ;;   "Setup the PCL-CVS cvs-edit-mode with draco prefs."
+    ;;   (auto-fill-mode t)
+    ;;   (setq fill-prefix "  ")
+    ;;   (draco-mode-update-menu (draco-menu-extras-cvs)))
+    ;; (add-hook 'cvs-mode-hook 'draco-cvs-edit-mode-hook)
+    ;; (add-hook 'cvs-mode-hook 'turn-on-draco-mode)
+    ;; (if draco-colorize-modeline
+    ;;     (add-hook 'cvs-mode-hook
+    ;;     	  '(lambda () ;; M-x list-colors-display
+    ;;     	     (set-face-background 'modeline
+    ;;     				  "honeydew" (current-buffer))
+    ;;     	     (set-face-foreground 'modeline
+    ;;     				  "black"   (current-buffer)))))
+    ;; (setq cvs-erase-input-buffer        nil
+    ;;       cvs-inhibit-copyright-message t
+    ;;       cvs-status-flags "-q"
+    ;;       vc-dired-terse-display nil )
+    ;; ; If this variable is set to any non-nil value
+    ;; ; `cvs-mode-remove-handled' will be called every time you check in
+    ;; ; files, after the check-in is ready. See section 5.11 Removing handled
+    ;; ; entries.
+    ;; (setq cvs-auto-remove-handled t)
 
-    ; If this variable is set to any non-nil value, directories that do not
-    ; contain any files to be checked in will not be listed in the `*cvs*'
-    ; buffer.
-    (setq cvs-auto-remove-handled-directories t)
+    ;; ; If this variable is set to any non-nil value, directories that do not
+    ;; ; contain any files to be checked in will not be listed in the `*cvs*'
+    ;; ; buffer.
+    ;; (setq cvs-auto-remove-handled-directories t)
     ))
 
 ;; ========================================

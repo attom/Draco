@@ -124,8 +124,20 @@ echo " "
 
 patchfile_c=$(mktemp /tmp/gcf.patch.XXXXXXXX)
 
-# don't actually modify the files (compare to branch 'develop')
-cmd="${gcf} --binary ${cf} -f --diff --extensions hh,cc develop"
+# don't actually modify the files (originally we compared to branch 'develop',
+# but let's try ORIG_HEAD or maybe use CI variables like TRAVIS_BRANCH or
+# CI_MERGE_REQUEST_TARGET_BRANCH_NAME).
+run "git branch -a"
+echo "TRAVIS_BRANCH = $TRAVIS_BRANCH"
+echo "CI_MERGE_REQUEST_TARGET_BRANCH_NAME = $CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+target_branch=develop
+if [[ -n ${TRAVIS_BRANCH} ]]; then
+  target_branch=${TRAVIS_BRANCH}
+elif [[ -n ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} ]]; then
+  target_branch=${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}
+fi
+echo "Looking at code changes compared to target branch = $target_branch"
+cmd="${gcf} --binary ${cf} -f --diff --extensions hh,cc,cu $target_branch"
 run "${cmd}" &> $patchfile_c
 
 # if the patch file has the string "no modified files to format", the check

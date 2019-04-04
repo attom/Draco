@@ -44,6 +44,16 @@ enum Opacity_Models {
  */
 enum EoS_Models { POLYNOMIAL_SPECIFIC_HEAT_ANALYTIC_EOS_MODEL };
 
+//----------------------------------------------------------------------------//
+/*!
+ * \brief Enumeration describing the electron-ion coupling models.
+ *
+ * Only three temperature coupling models that can be regesterd here and
+ * unpacked by the Analytic_ieCoupling classes. The enumeration name should be
+ * the same as the derived class names.
+ */
+enum EICoupling_Models { CONSTANT_ANALYTIC_EICOUPLING_MODEL };
+
 //===========================================================================//
 /*!
  * \class Analytic_Opacity_Model
@@ -551,6 +561,95 @@ struct find_elec_temperature_functor {
   double operator()(double T) {
     return dUe - a * T - b / (c + 1) * std::pow(T, c + 1);
   }
+};
+
+//===========================================================================//
+/*!
+ * \class Analytic_EICoupling_Model
+ * \brief Analytic_EICoupling_Model base class.
+ *
+ * This is a base class that defines the interface give to
+ * Constant_Analytic_EICoupling_Model.  The user can define any derived model
+ * class that will work with these analtyic electron-ion coupling classes as
+ * long as it contains the following function: (declared
+ * pure virtual in this class).
+ *
+ * \arg double (double T, double rho)
+ *
+ * To enable packing functionality, the class must be registered in the
+ * Opacity_Models enumeration.  Also, it must contain the following pure virtual
+ * function:
+ *
+ * \arg vector<char> pack() const;
+ *
+ * This class is a pure virtual base class.
+ *
+ * The returned opacity should have units of cm^2/g.
+ */
+//===========================================================================//
+
+class Analytic_EICoupling_Model {
+public:
+  // Typedefs.
+  typedef std::vector<char> sf_char;
+  typedef std::vector<double> sf_double;
+
+public:
+  //! Virtual destructor for proper inheritance destruction.
+  virtual ~Analytic_EICoupling_Model() { /*...*/
+  }
+
+  //! Interface for derived analytic opacity models.
+  virtual double calculate_ei_coupling(double /*Te*/, double /*Ti*/,
+                                       double /*rho*/, double /*w_e*/,
+                                       double /*w_i*/) const = 0;
+
+  //! Return parameters.
+  virtual sf_double get_parameters() const = 0;
+
+  //! Return a char string of packed data.
+  virtual sf_char pack() const = 0;
+};
+
+//---------------------------------------------------------------------------//
+/*!
+ * \class Constant_Analytic_EICoupling_Model
+ * \brief Derived electron-ion coupling class that defines a constant coupling.
+ *
+ * The election-ion coupling is defined:
+ *
+ * \arg ei_coupling = alpha
+ *
+ * where the coefficient has the following units:
+ *
+ * \arg alpha = [kJ/g/K/s]
+ */
+class Constant_Analytic_EICoupling_Model : public Analytic_EICoupling_Model {
+private:
+  // Constant electron-ion coupling coeffiecent
+  double ei_coupling;
+
+public:
+  //! Constructor, alpha has units of kJ/g/K/s.
+  explicit Constant_Analytic_EICoupling_Model(double alpha)
+      : ei_coupling(alpha) {
+    Require(ei_coupling >= 0.0);
+  }
+
+  //! Constructor for packed state.
+  explicit Constant_Analytic_EICoupling_Model(const sf_char &packed);
+
+  //! Calculate the ei_coupling in units of kJ/g/K/s.
+  double calculate_ei_coupling(double /*Te*/, double /*Ti*/, double /*rho*/,
+                               double /*w_e*/, double /*w_i*/) const {
+    return ei_coupling;
+  }
+
+  //! Return the model parameters.
+  sf_double get_parameters() const;
+
+  //! Pack up the class for persistence.
+  sf_char pack() const;
 };
 
 } // end namespace rtt_cdi_analytic

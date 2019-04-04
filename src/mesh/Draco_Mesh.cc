@@ -142,7 +142,7 @@ std::vector<std::vector<double>> Draco_Mesh::compute_node_coord_vec(
  *
  * \param[in] cell_type number of vertices per cell.
  * \param[in] cell_to_node_linkage serial map of cell index to node indices.
- * \param[in] side_node_count number of verices per side.
+ * \param[in] side_node_count number of vertices per side.
  * \param[in] side_to_node_linkage serial map of side index to node indices.
  * \param[in] ghost_cell_type  number of common vertices per ghost cell.
  * \param[in] ghost_cell_to_node_linkage vertices in common per ghost cell.
@@ -195,7 +195,7 @@ void Draco_Mesh::compute_cell_to_cell_linkage(
     unsigned nper_cell = cell_type[cell];
     std::vector<std::vector<unsigned>> vec_node_vec(nper_cell,
                                                     std::vector<unsigned>(2));
-    // \todo: change type of vec_node_vec?
+
     // this assumes counter-clockwise cell-node linkage
     for (unsigned i = 0; i < nper_cell; ++i) {
 
@@ -210,12 +210,16 @@ void Draco_Mesh::compute_cell_to_cell_linkage(
     // check if each pair constitutes a face
     for (unsigned l = 0; l < nper_cell; ++l) {
 
+      // initialize this face to not having a condition
+      bool has_face_cond = false;
+
       // get adjacent cells from node-to-cell map
-      // \todo: add DbC to ensure these are sorted
       const std::vector<unsigned> &vert0_cells =
           node_to_cell_map[vec_node_vec[l][0]];
+      Check(std::is_sorted(vert0_cells.begin(), vert0_cells.end()));
       const std::vector<unsigned> &vert1_cells =
           node_to_cell_map[vec_node_vec[l][1]];
+      Check(std::is_sorted(vert1_cells.begin(), vert1_cells.end()));
 
       // find common cells (set_intersection is low-complexity)
       // \todo: reserve size for cells_in_common
@@ -234,14 +238,18 @@ void Draco_Mesh::compute_cell_to_cell_linkage(
             cell_to_cell_linkage[cell].push_back(
                 std::make_pair(oth_cell, vec_node_vec[l]));
         }
+
+        // set bool to indicate a condition for face l has been found
+        has_face_cond = true;
       }
 
       // check if this vertex pair has a side flag
-      // \todo: add DbC to ensure these are sorted
       const std::vector<unsigned> &vert0_sides =
           node_to_side_map[vec_node_vec[l][0]];
+      Check(std::is_sorted(vert0_sides.begin(), vert0_sides.end()));
       const std::vector<unsigned> &vert1_sides =
           node_to_side_map[vec_node_vec[l][1]];
+      Check(std::is_sorted(vert1_sides.begin(), vert1_sides.end()));
 
       // find common sides
       std::vector<unsigned> sides_in_common;
@@ -254,14 +262,18 @@ void Draco_Mesh::compute_cell_to_cell_linkage(
         // populate cell-to-side linkage
         cell_to_side_linkage[cell].push_back(
             std::make_pair(sides_in_common[0], vec_node_vec[l]));
+
+        // set bool to indicate a condition for face l has been found
+        has_face_cond = true;
       }
 
       // check if this vertex pair has a ghost cell
-      // \todo: add DbC to ensure these are sorted
       const std::vector<unsigned> &vert0_ghosts =
           node_to_ghost_cell_map[vec_node_vec[l][0]];
+      Check(std::is_sorted(vert0_ghosts.begin(), vert0_ghosts.end()));
       const std::vector<unsigned> &vert1_ghosts =
           node_to_ghost_cell_map[vec_node_vec[l][1]];
+      Check(std::is_sorted(vert1_ghosts.begin(), vert1_ghosts.end()));
 
       // find common ghost cells
       std::vector<unsigned> ghost_cells_in_common;
@@ -274,6 +286,27 @@ void Draco_Mesh::compute_cell_to_cell_linkage(
         // populated cell-to-ghost-cell linkage
         cell_to_ghost_cell_linkage[cell].push_back(
             std::make_pair(ghost_cells_in_common[0], vec_node_vec[l]));
+
+        // set bool to indicate a condition for face l has been found
+        has_face_cond = true;
+      }
+
+      // make face a boundary if no face conditions have been found
+      if (!has_face_cond) {
+
+        // augment side flags with vacuum b.c.
+        side_set_flag.push_back(0);
+        // augment side-node count
+        m_side_node_count.push_back(2);
+        Check(m_side_node_count.size() == side_set_flag.size());
+        // augment side-node linkage
+        m_side_to_node_linkage.push_back(vec_node_vec[l][0]);
+        m_side_to_node_linkage.push_back(vec_node_vec[l][1]);
+
+        // augment cell-side linkage
+        cell_to_side_linkage[cell].push_back(
+            std::make_pair(static_cast<unsigned>(m_side_node_count.size() - 1),
+                           vec_node_vec[l]));
       }
     }
 
@@ -294,7 +327,7 @@ void Draco_Mesh::compute_cell_to_cell_linkage(
 /*!
  * \brief Build an intermediate node-index map to support layout generation.
  *
- * \param[in] indx_type vector of number of nodes, subscipted by index.
+ * \param[in] indx_type vector of number of nodes, subscripted by index.
  * \param[in] indx_to_node_linkage serial map of index to node indices.
  * \return a map of node index to vector of indexes adjacent to the node.
  */

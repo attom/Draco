@@ -331,9 +331,9 @@ case $target in
     startCI ${project} Release knl $pr
     ;;
 
-  # Darwin: Disabled
+  # Darwin: volta-x86
   darwin-fe*)
-    # startCI ${project} Release na $pr
+    # startCI ${project} Release volta-x86 $pr
     ;;
 
   # These cases are not automated checks of PRs.  However, these machines are

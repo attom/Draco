@@ -51,7 +51,7 @@ add_component_library(
 target_include_directories( Lib_c4
   PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> )
 
-# xthi binary
+# xthi, ythi binaries
 if( NOT APPLE )
   add_subdirectory( bin )
 endif()
@@ -72,7 +72,6 @@ endif()
 # ---------------------------------------------------------------------------- #
 # Autodoc
 # ---------------------------------------------------------------------------- #
-
 process_autodoc_pages()
 
 #------------------------------------------------------------------------------#

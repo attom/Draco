@@ -21,7 +21,7 @@ file( GLOB mesh_input_files *.mesh.in )
 
 add_scalar_tests(
    SOURCES "${test_sources}"
-   DEPS    "Lib_meshReaders;Lib_dsxx" )
+   DEPS    "Lib_meshReaders" )
 
 # ---------------------------------------------------------------------------- #
 # Copy mesh files to test directory (binary_dir)

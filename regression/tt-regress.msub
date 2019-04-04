@@ -183,13 +183,14 @@ comp=$comp-$featurebranch
 # When run by crontab, use a special ssh-key to allow authentication to gitlab
 if [[ ${regress_mode} == "on" ]]; then
   run "module load git"
-  keychain=keychain-2.8.2
-  $VENDOR_DIR/$keychain/keychain $HOME/.ssh/regress_rsa
-  if test -f $HOME/.keychain/$machine-sh; then
-    run "source $HOME/.keychain/$machine-sh"
-  else
-    echo "Error: could not find $HOME/.keychain/$machine-sh"
+  keychain=keychain-2.8.5
+  run "$VENDOR_DIR/$keychain/keychain --agents ssh regress_rsa"
+  if [[ `$VENDOR_DIR/$keychain/keychain -l 2>&1 | grep -c Error` != 0 ||
+        `$VENDOR_DIR/$keychain/keychain -l 2>&1 | grep -c authentication` != 0 ]]; then
+    run "source ~/.keychain/${machine}-sh"
   fi
+  #run "$VENDOR_DIR/$keychain/keychain -l"
+  #run "ssh-add -L"
 fi
 
 # ----------------------------------------

@@ -8,6 +8,8 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
+include_guard(GLOBAL)
+
 #------------------------------------------------------------------------------
 # replacement for built in command 'add_executable'
 #
@@ -799,7 +801,8 @@ macro( add_scalar_tests test_sources )
   # On some platforms (Trinity), even scalar tests must be run underneath
   # MPIEXEC_EXECUTABLE (aprun):
   separate_arguments(MPIEXEC_POSTFLAGS)
-  if( "${MPIEXEC_EXECUTABLE}" MATCHES "srun" )
+  if( "${MPIEXEC_EXECUTABLE}" MATCHES "srun" OR
+      "${MPIEXEC_EXECUTABLE}" MATCHES "jsrun" )
     set( RUN_CMD ${MPIEXEC_EXECUTABLE} ${MPIEXEC_POSTFLAGS} -n 1 )
   else()
     unset( RUN_CMD )

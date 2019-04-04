@@ -44,7 +44,7 @@ CTEST_TEST_TIMEOUT:STRING=${CTEST_TEST_TIMEOUT}
 
 VENDOR_DIR:PATH=${VENDOR_DIR}
 AUTODOCDIR:PATH=${AUTODOCDIR}
-USE_CUDA:BOOL=${USE_CUDA}
+WITH_CUDA:BOOL=${WITH_CUDA}
 
 ${TOOLCHAIN_SETUP}
 # Set DRACO_DIAGNOSTICS and DRACO_TIMING:
@@ -183,5 +183,3 @@ message("end of ${CTEST_SCRIPT_NAME}.")
 #------------------------------------------------------------------------------#
 # End Draco_Linux64.cmake
 #------------------------------------------------------------------------------#
-
-

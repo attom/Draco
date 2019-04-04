@@ -76,6 +76,9 @@ if( NOT DEFINED ENV{APPVEYOR} )
   if( HAVE_Fortran )
     add_dir_if_exists( FortranChecks )
   endif()
+  if( NOT DEFINED ENV{TRAVIS} )
+    add_dir_if_exists( cdi_eospac ) # needs parser, ode, cdi
+  endif()
 endif()
 
 # Level 4
@@ -84,9 +87,6 @@ message( STATUS "Configuring Level 4 packages --" )
 add_dir_if_exists( special_functions ) # needs roots, units, GSL
 add_dir_if_exists( cdi_analytic )      # needs parser, roots, ode, cdi
 add_dir_if_exists( RTT_Format_Reader)  # needs meshReaders
-if( NOT DEFINED ENV{APPVEYOR} AND NOT DEFINED ENV{TRAVIS} )
-  add_dir_if_exists( cdi_eospac )      # needs parser, ode, cdi
-endif()
 
 # Level 5
 message(" ")

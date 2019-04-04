@@ -46,7 +46,7 @@ template <typename FRT>
 std::shared_ptr<Draco_Mesh>
 Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
 
-  // \todo: Should geometry be to rtt format parsing?
+  // \todo: Should geometry be to RTT format parsing?
   // \todo: Generate ghost node and cell data for domain-decomposed meshes.
 
   Require(geometry != rtt_mesh_element::END_GEOMETRY);
@@ -75,7 +75,7 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
     cn_linkage_size += cell_type[cell];
   }
 
-  // \todo: Can the cell defs past num_cells - 1 be checked as invalid?
+  // \todo: Can the cell definitions past num_cells - 1 be checked as invalid?
 
   // generate the cell-to-node linkage
   std::vector<unsigned> cell_to_node_linkage;
@@ -101,7 +101,7 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
     Check(reader->get_sidetype(side) < UINT_MAX);
     side_node_count[side] = static_cast<unsigned>(reader->get_sidetype(side));
 
-    // this is not required in rtt meshes, but is so in Draco_Mesh
+    // this is not required in RTT meshes, but is so in Draco_Mesh
     Check(dimension == 2 ? side_node_count[side] == 2 : true);
 
     // get the 1st side flag associated with this side
@@ -112,7 +112,7 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
     sn_linkage_size += side_node_count[side];
   }
 
-  // \todo: Can the side defs past num_sides - 1 be checked as invalid?
+  // \todo: Can the side definitions past num_sides - 1 be checked as invalid?
 
   // generate the side-to-node linkage
   std::vector<unsigned> side_to_node_linkage;
@@ -131,7 +131,7 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   Check(num_nodes >= num_cells);
   Check(num_nodes <= cn_linkage_size);
 
-  // \todo: add global node numbers to rtt mesh reader?
+  // \todo: add global node numbers to RTT mesh reader?
   // \todo: or, remove global_node_number from mesh constructor?
   // assume domain is not decomposed, for now
 

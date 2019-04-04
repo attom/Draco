@@ -57,6 +57,7 @@ available_partition=`sacctmgr -np list assoc user=$LOGNAME format=Partition | se
 available_qos=`sacctmgr -np list assoc user=$LOGNAME format=Qos | sed -e 's/|//' | sed -e 's/,/ /g' | xargs -n 1 | sort -u | xargs`
 # not sure how to detect access to
 # pm="--reservation=PreventMaint"
+pm="--exclude=nid00160"
 case $available_qos in
 #  *access*) access_queue="-A access --qos=access" ;;
   *dev*)    access_queue="--qos=dev ${pm}" ;;

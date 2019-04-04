@@ -7,6 +7,8 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
+include_guard(GLOBAL)
+
 function( generate_dll_declspec dir components )
 
 string( REPLACE "+" "x" safedir ${dir} )

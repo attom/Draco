@@ -7,6 +7,7 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
+include_guard(GLOBAL)
 include( FeatureSummary )
 include( setupMPI ) # defines the macros setupMPILibrariesUnix|Windows
 
@@ -90,9 +91,9 @@ macro( setupLAPACKLibraries )
   endif()
   find_package( lapack CONFIG QUIET )
 
+  set( lapack_url "http://www.netlib.org/lapack" )
   if( lapack_FOUND )
     set( lapack_flavor "netlib")
-    set( lapack_url "http://www.netlib.org/lapack" )
     foreach( config NOCONFIG DEBUG RELEASE RELWITHDEBINFO )
       get_target_property(tmp lapack IMPORTED_LOCATION_${config} )
       if( EXISTS ${tmp} )
@@ -105,7 +106,7 @@ macro( setupLAPACKLibraries )
 
     # The above might define blas, or it might not. Double check:
     if( NOT TARGET blas )
-      find_package( BLAS )
+      find_package( BLAS QUIET)
       if( BLAS_FOUND )
         add_library( blas STATIC IMPORTED)
         set_target_properties( blas PROPERTIES
@@ -192,7 +193,8 @@ macro( setupLAPACKLibraries )
         set_target_properties( blas PROPERTIES
           IMPORTED_LOCATION                 "${BLAS_mkl_intel_lp64_LIBRARY}"
           IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-          IMPORTED_LINK_INTERFACE_LIBRARIES "-Wl,--start-group;${BLAS_mkl_core_LIBRARY};${BLAS_${tlib}_LIBRARY};-Wl,--end-group"
+          IMPORTED_LINK_INTERFACE_LIBRARIES blas::mkl_core
+#          IMPORTED_LINK_INTERFACE_LIBRARIES "-Wl,--start-group;${BLAS_mkl_core_LIBRARY};${BLAS_${tlib}_LIBRARY};-Wl,--end-group"
           IMPORTED_LINK_INTERFACE_MULTIPLICITY 20)
         set_target_properties( lapack PROPERTIES
           IMPORTED_LOCATION                 "${BLAS_mkl_intel_lp64_LIBRARY}"
@@ -218,8 +220,8 @@ macro( setupLAPACKLibraries )
       find_package( BLAS QUIET )
 
       if( BLAS_FOUND )
-        set( LAPACK_FOUND TRUE CACHE BOOL "lapack (OpenBlas) found?")
-        set( lapack_FOUND TRUE CACHE BOOL "lapack (OpenBlas) found?")
+        set( LAPACK_FOUND TRUE CACHE BOOL "lapack (OpenBlas) found?" FORCE)
+        set( lapack_FOUND TRUE CACHE BOOL "lapack (OpenBlas) found?" FORCE)
         set( lapack_flavor "openblas")
         set( lapack_url "http://www.openblas.net")
         add_library( lapack SHARED IMPORTED)
@@ -276,73 +278,54 @@ endmacro()
 #------------------------------------------------------------------------------
 # Helper macros for CUDA/Unix
 #
-# Processes FindCUDA.cmake from the standard CMake Module location.
-# This standard file establishes many macros and variables used by the
-# build system for compiling CUDA code.
-# (try 'cmake --help-module FindCUDA' for details)
-#
-# Override the FindCUDA defaults in a way that is standardized for
-# Draco and Draco clients.
-#
-# Provided macros:
-#    cuda_add_library(    target )
-#    cuda_add_executable( target )
-#    ...
-#
-# Provided variables:
-#    CUDA_FOUND
-#    CUDA_PROPAGATE_HOST_FLAGS
-#    CUDA_NVCC_FLAGS
-#    CUDA_SDK_ROOT_DIR
-#    CUDA_VERBOSE_BUILD
-#    CUDA_TOOLKIT_ROOT_DIR
-#    CUDA_BUILD_CUBIN
-#    CUDA_BUILD_EMULATION
-#    ...
+# https://devblogs.nvidia.com/tag/cuda/
+# https://devblogs.nvidia.com/building-cuda-applications-cmake/
 #------------------------------------------------------------------------------
 macro( setupCudaEnv )
 
-  if( NOT DEFINED USE_CUDA )
-    option( USE_CUDA "If CUDA is available, should we use it?" OFF )
-  endif()
-  if( USE_CUDA )
-
-    message( STATUS "Looking for CUDA..." )
-    find_package( CUDA QUIET )
-    set_package_properties( CUDA PROPERTIES
-      DESCRIPTION "Toolkit providing tools and libraries needed for GPU applications."
-      TYPE OPTIONAL
-      PURPOSE "Required for building a GPU enabled application." )
-    if( NOT EXISTS ${CUDA_NVCC_EXECUTABLE} )
-      set( CUDA_FOUND 0 )
-    endif()
-    if( CUDA_FOUND )
-      set( HAVE_CUDA 1 )
-      option( USE_CUDA "If CUDA is available, should we use it?" ON )
-      if( USE_CUDA )
-        set( CUDA_PROPAGATE_HOST_FLAGS OFF CACHE BOOL "blah" FORCE)
-        set( CUDA_NVCC_FLAGS "-arch=sm_21" )
-        string( TOUPPER ${CMAKE_BUILD_TYPE} UC_CMAKE_BUILD_TYPE )
-        if( ${UC_CMAKE_BUILD_TYPE} MATCHES DEBUG )
-          set( CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -g -G" )
-        endif()
-        set( cudalibs ${CUDA_CUDART_LIBRARY} )
-        set( DRACO_LIBRARY_TYPE "STATIC" CACHE STRING
-          "static or shared (dll) libraries" FORCE )
-      endif()
-      message( STATUS "Looking for CUDA......found ${CUDA_NVCC_EXECUTABLE}" )
+  # if WITH_CUDA is set, use the provided value, otherwise disable CUDA unless
+  # the CUDA_COMPILER exists.
+  if( NOT DEFINED WITH_CUDA )
+    if( EXISTS "${CMAKE_CUDA_COMPILER}" )
+      set( WITH_CUDA ON)
     else()
-      message( STATUS "Looking for CUDA......not found" )
-      set( USE_CUDA OFF CACHE BOOL "cuda" FORCE )
+      set( WITH_CUDA OFF)
     endif()
-    mark_as_advanced(
-      CUDA_SDK_ROOT_DIR
-      CUDA_VERBOSE_BUILD
-      CUDA_TOOLKIT_ROOT_DIR
-      CUDA_BUILD_CUBIN
-      CUDA_BUILD_EMULATION
-      CUDA_HOST_COMPILER
-      )
+  endif()
+  set( WITH_CUDA ${WITH_CUDA} CACHE BOOL "Attempt to compile CUDA kernels." )
+
+  add_feature_info( Cuda WITH_CUDA "Build CUDA kernels for GPU compute.")
+
+  if( WITH_CUDA )
+    set( CUDA_DBS_STRING "CUDA" CACHE BOOL
+      "If CUDA is available, this variable is 'CUDA'")
+
+    # message("
+    # CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES = ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
+    # CMAKE_CUDA_HOST_COMPILER       = ${CMAKE_CUDA_HOST_COMPILER}
+    # CMAKE_GENERATOR_TOOLSET        = ${CMAKE_GENERATOR_TOOLSET}
+    # CMAKE_VS_PLATFORM_TOOLSET_CUDA = ${CMAKE_VS_PLATFORM_TOOLSET_CUDA}
+    # CUDA_EXTENSIONS = ${CUDA_EXTENSIONS}
+    # CUDAHOSTCXX     = ${CUDAHOSTCXX}
+    # CUDAFLAGS       = ${CUDAFLAGS}
+    # CUDACXX         = ${CUDACXX}
+    # CUDA_STANDARD   = ${CUDA_STANDARD}
+    # CUDA_SEPARABLE_COMPILATION  = ${CUDA_SEPARABLE_COMPILATION}
+    # CUDA_RESOLVE_DEVICE_SYMBOLS = ${CUDA_RESOLVE_DEVICE_SYMBOLS}
+    # CUDA_PTX_COMPILATION        = ${CUDA_PTX_COMPILATION}
+    # ")
+
+    # $ENV{CUDACXX}
+    # $ENV{CUDAFLAGS}
+    # $ENV{CUDAHOSTCXX}
+
+    # target properties
+    # - CUDA_EXTENSIONS
+    # - CUDA_PTX_COMPILATION
+    # - CUDA_RESOLVE_DEVICE_SYMBOLS
+    # - CUDA_SEPARABLE_COMPILATION
+    # - CUDA_STANDARD
+    # - CUDA_STANDARD_REQUIRED
   endif()
 
 endmacro()
@@ -686,6 +669,7 @@ macro( SetupVendorLibrariesWindows )
   setupEospac()
   setupPython()
   setupQt()
+  setupCudaEnv()
 
   # Doxygen ------------------------------------------------------------------
   message( STATUS "Looking for Doxygen..." )
@@ -701,8 +685,8 @@ macro( SetupVendorLibrariesWindows )
   else()
     message( STATUS "Looking for Doxygen...not found" )
   endif()
-  
-  
+
+
 endmacro()
 
 #------------------------------------------------------------------------------
@@ -717,7 +701,7 @@ macro( setVendorVersionDefaults )
   #environment variable.
 
   # See if VENDOR_DIR is set.  Try some defaults if it is not set.
-  if( NOT EXISTS "${VENDOR_DIR}" AND IS_DIRECTORY "$ENV{VENDOR_DIR}" )
+  if( NOT DEFINED VENDOR_DIR AND IS_DIRECTORY "$ENV{VENDOR_DIR}" )
     set( VENDOR_DIR $ENV{VENDOR_DIR} )
   endif()
   # If needed, try some obvious places.
@@ -745,7 +729,7 @@ macro( setVendorVersionDefaults )
   # 3. Try to find vendor in $VENDOR_DIR
   # 4. Don't set anything and let the user set a value in the cache
   #    after failed 1st configure attempt.
-  if( NOT LAPACK_LIB_DIR AND IS_DIRECTORY $ENV{LAPACK_LIB_DIR} )
+  if( NOT DEFINED LAPACK_LIB_DIR AND IS_DIRECTORY $ENV{LAPACK_LIB_DIR} )
     set( LAPACK_LIB_DIR $ENV{LAPACK_LIB_DIR} )
     set( LAPACK_INC_DIR $ENV{LAPACK_INC_DIR} )
   endif()
@@ -754,7 +738,7 @@ macro( setVendorVersionDefaults )
     set( LAPACK_INC_DIR "${VENDOR_DIR}/lapack-3.4.2/include" )
   endif()
 
-  if( NOT GSL_LIB_DIR )
+  if( NOT DEFINED GSL_LIB_DIR )
     if( IS_DIRECTORY $ENV{GSL_LIB_DIR}  )
       set( GSL_LIB_DIR $ENV{GSL_LIB_DIR} )
       set( GSL_INC_DIR $ENV{GSL_INC_DIR} )
@@ -764,16 +748,16 @@ macro( setVendorVersionDefaults )
     endif()
   endif()
 
-  if( NOT ParMETIS_ROOT_DIR )
+  if( NOT DEFINED ParMETIS_ROOT_DIR )
     if( IS_DIRECTORY $ENV{ParMETIS_ROOT_DIR}  )
       set( ParMETIS_ROOT_DIR $ENV{ParMETIS_ROOT_DIR} )
     endif()
   endif()
 
-  if( NOT RANDOM123_INC_DIR AND IS_DIRECTORY $ENV{RANDOM123_INC_DIR}  )
+  if( NOT DEFINED RANDOM123_INC_DIR AND IS_DIRECTORY $ENV{RANDOM123_INC_DIR}  )
     set( RANDOM123_INC_DIR $ENV{RANDOM123_INC_DIR} )
   endif()
-  if( NOT RANDOM123_INC_DIR AND
+  if( NOT DEFINED RANDOM123_INC_DIR AND
       IS_DIRECTORY ${VENDOR_DIR}/Random123-1.08/include )
     set( RANDOM123_INC_DIR "${VENDOR_DIR}/Random123-1.08/include" )
   endif()

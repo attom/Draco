@@ -268,12 +268,7 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_darwin_fe
       ;;
 
-    # Pinto | Wolf
-    pi* | wf* | lu* )
-      source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss22
-      ;;
-
-    # Badger | Fire | Grizzly | Ice | Snow
+    # Badger | Cyclone | Fire | Grizzly | Ice | Snow
     ba* | cy* | fi* | gr* | ic* | sn* )
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss3
       ;;
@@ -286,9 +281,10 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
     tt-fey* | tt-login* | tr-fe* | tr-login* | nid* )
       source ${DRACO_ENV_DIR}/bashrc/.bashrc_tt
       ;;
-    # rzuseq
-    rzuseq*)
-      source ${DRACO_ENV_DIR}/bashrc/.bashrc_bgq
+
+    # LLNL ATS-2
+    rzmanta* | rzansel* | sierra* )
+      source ${DRACO_ENV_DIR}/bashrc/.bashrc_ats2
       ;;
 
     # Assume CCS machine (ccscs[0-9] or personal workstation)

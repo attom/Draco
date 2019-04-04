@@ -5,16 +5,12 @@
  * \date   Wed Apr 28 09:31:51 2010
  * \brief  Test c4::determinate_swap and c4::indeterminate_swap functions
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"
 #include "c4/ofpstream.hh"
 #include "ds++/Release.hh"
-#include <cmath>
 
 using namespace std;
 using namespace rtt_dsxx;
@@ -27,23 +23,20 @@ using namespace rtt_c4;
 void tstofpstream(UnitTest &ut) {
 
   unsigned const pid = rtt_c4::node();
-
   ofpstream out("tstofpstream.txt");
 
   out << "MPI rank " << pid << " reporting ..." << endl;
-
   out.send();
-
   out.shrink_to_fit();
 
   out << "MPI rank " << pid << " reporting a second time ..." << endl;
-
   out.shrink_to_fit();
   out.send();
 
-  ut.passes("completed serialized write without hanging or segfaulting");
+  PASSMSG("completed serialized write without hanging or segfaulting");
 }
 
+//----------------------------------------------------------------------------//
 void tstofpstream_bin(UnitTest &ut) {
 
   int pid = rtt_c4::node();
@@ -51,11 +44,8 @@ void tstofpstream_bin(UnitTest &ut) {
   // Binary write rank ids to file using ofpstream:
   {
     ofpstream out("tstofpstream.bin", std::ofstream::binary);
-
     out.write(reinterpret_cast<const char *>(&pid), sizeof(int));
-
     out.send();
-
     out.shrink_to_fit();
   }
 
@@ -71,11 +61,10 @@ void tstofpstream_bin(UnitTest &ut) {
     }
   }
 
-  ut.passes("completed serialized binary write without hanging or segfaulting");
+  PASSMSG("completed serialized binary write without hanging or segfaulting");
 }
 
 //---------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, release);
   try {

@@ -189,12 +189,12 @@ for ep in $extra_params; do
       run "module purge &> /dev/null"
       run "module list"
       run "module load user_contrib friendly-testing"
-      run "module load intel/18.0.2 openmpi/2.1.2 mkl"
+      run "module load intel/19.0.1 openmpi/3.1.2 mkl"
       run "unset MPI_ROOT"
       run "module load superlu-dist metis parmetis"
       run "module load trilinos/12.10.1"
       run "module load cmake/3.12.1 ndi numdiff git"
-      run "module load mkl random123 eospac/6.3.0 csk"
+      run "module load mkl random123 eospac csk"
       ;;
     nr)
       # no-op
@@ -232,13 +232,15 @@ comp=$comp-$featurebranch
 # When run by crontab, use a special ssh-key to allow authentication to gitlab
 if [[ ${regress_mode} == "on" ]]; then
   run "module load git"
+  target=`uname -n | sed -e 's/[.].*//g'`
   keychain=keychain-2.8.5
-  $VENDOR_DIR/$keychain/keychain $HOME/.ssh/regress_rsa
-  if test -f $HOME/.keychain/$machine-sh; then
-    run "source $HOME/.keychain/$machine-sh"
-  else
-    echo "Error: could not find $HOME/.keychain/$machine-sh"
+  run "$VENDOR_DIR/$keychain/keychain --agents ssh regress_rsa"
+  if [[ `$VENDOR_DIR/$keychain/keychain -l 2>&1 | grep -c Error` != 0 ||
+        `$VENDOR_DIR/$keychain/keychain -l 2>&1 | grep -c authentication` != 0 ]]; then
+    run "source ~/.keychain/${target}-sh"
   fi
+  # run "$VENDOR_DIR/$keychain/keychain -l"
+  # run "ssh-add -L"
 fi
 
 # ----------------------------------------

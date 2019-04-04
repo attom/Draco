@@ -7,6 +7,8 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
+include_guard(GLOBAL)
+
 if( NOT Fortran_FLAGS_INITIALIZED )
   # gfortran < 4.3 won't compile Draco
   # gfortran < 4.7 won't compile Jayenne

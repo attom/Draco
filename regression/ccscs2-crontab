@@ -7,7 +7,7 @@
 00 01 * * 0-6 /scratch/regress/draco/regression/push_repositories_xf.sh
 00 11 * * 0-6 /scratch/regress/draco/regression/push_repositories_xf.sh
 
-# Keep a local bare copy of the repo available on the ccs-net.  This is used by Redmine.
+# Keep a local bare copy of the repo available on the ccs-net.  This also triggers CI.
 */20 * * * * /scratch/regress/draco/regression/sync_repository.sh
 
 # Run the metrics report on the first Monday of each month.
@@ -35,9 +35,11 @@
 
 05 00 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Release -d Nightly -p \"draco jayenne core trt npt\"
 
-00 02 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -a -r -b Debug -d Nightly -p \"draco jayenne core trt npt\" -e coverage
+00 02 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne core trt npt\"
 
-30 04 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne core trt npt\" -e valgrind
+00 04 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -a -r -b Debug -d Nightly -p \"draco jayenne core trt npt\" -e coverage
+
+30 05 * * 0-6 /scratch/regress/draco/regression/regression-master.sh -r -b Debug -d Nightly -p \"draco jayenne core trt npt\" -e valgrind
 
 # |    |    |    |    |   |
 # |    |    |    |    |   +- command

@@ -37,8 +37,7 @@ add_component_library(
 
 add_scalar_tests(
   SOURCES "${test_sources}"
-  DEPS    Lib_quadrature_test
-  )
+  DEPS    Lib_quadrature_test )
 
 # ---------------------------------------------------------------------------- #
 # Copy input files to test directory (binary_dir)

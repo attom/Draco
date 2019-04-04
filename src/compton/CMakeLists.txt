@@ -32,7 +32,7 @@ if( TARGET COMPTON::compton )
 
   add_component_library(
     TARGET       Lib_compton
-    TARGET_DEPS  "Lib_c4;Lib_dsxx;COMPTON::compton"
+    TARGET_DEPS  "Lib_c4;COMPTON::compton"
     LIBRARY_NAME compton
     SOURCES      "${sources}"
     HEADERS      "${headers}" )

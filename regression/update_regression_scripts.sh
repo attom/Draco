@@ -38,7 +38,7 @@ echo -e "umask: `umask` \n"
 case ${target} in
   darwin-fe* | cn[0-9]*)
     REGDIR=/usr/projects/draco/regress
-    keychain=keychain-2.7.1
+    keychain=keychain-2.8.5
     VENDOR_DIR=/usr/projects/draco/vendors
     # personal copy of ssh-agent.
     export PATH=$HOME/bin:$PATH
@@ -57,6 +57,7 @@ case ${target} in
   sn-* | ba-* | tt-* )
     REGDIR=/usr/projects/jayenne/regress
     VENDOR_DIR=/usr/projects/draco/vendors
+    keychain=keychain-2.8.5
     ;;
   *)
     REGDIR=/scratch/regress
@@ -64,14 +65,14 @@ case ${target} in
 esac
 
 # Load some identities used for accessing gitlab.
-if [[ -f $HOME/.ssh/id_rsa ]]; then
-  MYHOSTNAME="`uname -n`"
-  run "$VENDOR_DIR/$keychain/keychain $HOME/.ssh/id_rsa"
-  if [[ -f $HOME/.keychain/$MYHOSTNAME-sh ]]; then
-    run "source $HOME/.keychain/$MYHOSTNAME-sh"
-  else
-    echo "Error: could not find $HOME/.keychain/$MYHOSTNAME-sh"
+if [[ -f $HOME/.ssh/regress_rsa ]]; then
+  run "$VENDOR_DIR/$keychain/keychain --agents ssh regress_rsa"
+  if [[ `$VENDOR_DIR/$keychain/keychain -l 2>&1 | grep -c Error` != 0 ||
+        `$VENDOR_DIR/$keychain/keychain -l 2>&1 | grep -c authentication` != 0 ]]; then
+    run "source ~/.keychain/${target}-sh"
   fi
+  #run "$VENDOR_DIR/$keychain/keychain -l"
+  #run "ssh-add -L"
 fi
 
 # ---------------------------------------------------------------------------- #

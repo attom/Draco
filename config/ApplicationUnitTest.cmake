@@ -69,6 +69,7 @@
 
 #------------------------------------------------------------------------------#
 
+include_guard(GLOBAL)
 set( VERBOSE_DEBUG OFF )
 
 function(JOIN VALUES GLUE OUTPUT)
@@ -381,7 +382,9 @@ macro( add_app_unit_test )
   else()
 
     # Scalar tests
-    if( "${MPIEXEC_EXECUTABLE}" MATCHES "aprun" OR "${MPIEXEC_EXECUTABLE}" MATCHES "srun" )
+    if( "${MPIEXEC_EXECUTABLE}" MATCHES "aprun" OR
+        "${MPIEXEC_EXECUTABLE}" MATCHES "jsrun" OR
+        "${MPIEXEC_EXECUTABLE}" MATCHES "srun" )
       set( RUN_CMD "${MPIEXEC_EXECUTABLE} ${MPIEXEC_POSTFLAGS} ${MPIEXEC_NUMPROC_FLAG} 1" )
     endif()
   endif()

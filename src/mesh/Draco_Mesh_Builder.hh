@@ -25,7 +25,7 @@ class Draco_Mesh;
  *
  * \brief Draco_Mesh unstructured mesh builder from reader.
  *
- * Reader is a template parameter ("FRT" = "Format Reater Type") to the builder
+ * Reader is a template parameter ("FRT" = "Format Reader Type") to the builder
  * class. Hence all readers that instantiate the template must have a common set
  * of accessors.  In particular the reader must supply some functions in the
  * RTT_Format_Reader class.

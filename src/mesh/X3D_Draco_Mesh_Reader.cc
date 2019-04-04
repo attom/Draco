@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
  * \file   mesh/X3D_Draco_Mesh_Reader.cc
- * \author Ryan Wollaeger <wollaeger@lanl.gov>, Kendra Keady
+ * \author Ryan Wollaeger <wollaeger@lanl.gov>, Kendra Long
  * \date   Thursday, Jul 12, 2018, 08:46 am
  * \brief  X3D_Draco_Mesh_Reader class implementation file.
  * \note   Copyright (C) 2018-2019 Triad National Security, LLC.
@@ -24,7 +24,8 @@ namespace rtt_mesh {
  *
  * \param[in] filename_ name of file to be parsed
  * \param[in] bdy_filenames_ names of files with lists of side node indexes
- * \param[in] bdy_flags_ uint indicating B.C. per side file (bdy_filenames_)
+ * \param[in] bdy_flags_ unsigned int indicating B.C. per side file 
+ *           (bdy_filenames_)
  */
 X3D_Draco_Mesh_Reader::X3D_Draco_Mesh_Reader(
     const std::string &filename_,
@@ -200,7 +201,7 @@ std::vector<unsigned> X3D_Draco_Mesh_Reader::get_cellnodes(size_t cell) const {
     }
   }
 
-  // substract 1 to get base 0 nodes
+  // subtract 1 to get base 0 nodes
   for (size_t i = 0; i < node_indexes.size(); ++i)
     node_indexes[i]--;
 
@@ -276,7 +277,7 @@ std::vector<unsigned> X3D_Draco_Mesh_Reader::get_facenodes(size_t face) const {
 
 //---------------------------------------------------------------------------//
 /*!
- * \brief Read side node lists from given bdy files
+ * \brief Read side node lists from given boundary files
  */
 void X3D_Draco_Mesh_Reader::read_bdy_files() {
 
@@ -331,7 +332,7 @@ void X3D_Draco_Mesh_Reader::read_bdy_files() {
   }
 
   // Insist that there was at least one side node in all the files
-  Insist(bc_node_map.size() > 0, "Bdy file(s) read, but no side nodes.");
+  Insist(bc_node_map.size() > 0, "Boundary file(s) read, but no side nodes.");
 
   // treat sides as a subset of cell faces here
   int num_side = 0;

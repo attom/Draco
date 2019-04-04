@@ -105,7 +105,7 @@ case ${-} in
    # %F - Number of nodes by state in the form allocated/idle/other/total
    alias idle='sinfo -l | egrep "(idle|PARTITION)"; echo " "; sinfo -o "%P %t %F" -p standard -t idle; echo "(A)llocated, (I)dle, (O)ther, (T)otal"'
    alias sfeatures='sinfo -o "%P %.5a %.10l %.6D %.6t %N %f"'
-   alias slimits='sacctmgr show QOS'
+   alias slimits='sacctmgr show qos format=name%12,priority%3,MaxTRES%8,MaxWall,MaxTRESPU%9,MaxJobsPU%6,GraceTime,Preempt%20,Flags%40'
    alias knownqos='sacctmgr show qos format=name,priority'
    alias knownaccounts='sacctmgr show account format=account%20,description'
    alias knownreservations='sacctmgr show reservation' # format=Nane%20,Start,End

@@ -5,39 +5,57 @@
 #          All rights reserved
 ##---------------------------------------------------------------------------##
 
+include_guard(GLOBAL)
+
+# ----------------------------------------------------------------------------
+# Identify machine and save name in ds++/config.h
+# ----------------------------------------------------------------------------
+
+macro(dbs_set_sitename)
+
+  site_name( SITENAME )
+  string( REGEX REPLACE "([A-z0-9]+).*" "\\1" SITENAME ${SITENAME} )
+  set( SITENAME_FAMILY "unknown" )
+  if( ${SITENAME} MATCHES "ba")
+    set( SITENAME "Badger" )
+    set( SITENAME_FAMILY "CTS-1" )
+  elseif( ${SITENAME} MATCHES "ccscs[0-9]+" )
+    set( SITENAME_FAMILY "CCS-NET" )
+  elseif( ${SITENAME} MATCHES "fi")
+    set( SITENAME "Fire" )
+    set( SITENAME_FAMILY "CTS-1" )
+  elseif( ${SITENAME} MATCHES "ic")
+    set( SITENAME "Ice" )
+    set( SITENAME_FAMILY "CTS-1" )
+  elseif( ${SITENAME} MATCHES "nid")
+    if( "$ENV{SLURM_CLUSTER_NAME}" MATCHES "trinity" )
+      set( SITENAME "Trinity" )
+      set( SITENAME_FAMILY "ATS-1" )
+    else()
+      set( SITENAME "Trinitite" )
+      set( SITENAME_FAMILY "ATS-1" )
+    endif()
+  elseif( ${SITENAME} MATCHES "sn")
+    set( SITENAME "Snow" )
+    set( SITENAME_FAMILY "CTS-1" )
+  elseif( ${SITENAME} MATCHES "tr")
+    set( SITENAME "Trinity" )
+      set( SITENAME_FAMILY "ATS-1" )
+  elseif( ${SITENAME} MATCHES "tt")
+    set( SITENAME "Trinitite" )
+      set( SITENAME_FAMILY "ATS-1" )
+  endif()
+  set( SITENAME ${SITENAME} CACHE "STRING" "Name of the current machine" FORCE)
+  set( SITENAME_FAMILY ${SITENAME_FAMILY} CACHE "STRING"
+    "Name of the current machine family (ATS-1, CTS-1, etc.)" FORCE)
+
+endmacro()
+
 if( NOT DEFINED CRAY_PE )
   message("
 Platform Checks...
 ")
-
-  # ----------------------------------------------------------------------------
-  # Identify machine and save name in ds++/config.h
-  # ----------------------------------------------------------------------------
-  site_name( SITENAME )
-  string( REGEX REPLACE "([A-z0-9]+).*" "\\1" SITENAME ${SITENAME} )
-  if( ${SITENAME} MATCHES "ba")
-    set( SITENAME "Badger" )
-  elseif( ${SITENAME} MATCHES "ccscs[0-9]+" )
-    # do nothing (keep the fullname)
-  elseif( ${SITENAME} MATCHES "fi")
-    set( SITENAME "Fire" )
-  elseif( ${SITENAME} MATCHES "ic")
-    set( SITENAME "Ice" )
-  elseif( ${SITENAME} MATCHES "nid")
-    if( "$ENV{SLURM_CLUSTER_NAME}" MATCHES "trinity" )
-      set( SITENAME "Trinity" )
-    else()
-      set( SITENAME "Trinitite" )
-    endif()
-  elseif( ${SITENAME} MATCHES "sn")
-    set( SITENAME "Snow" )
-  elseif( ${SITENAME} MATCHES "tr")
-    set( SITENAME "Trinity" )
-  elseif( ${SITENAME} MATCHES "tt")
-    set( SITENAME "Trinitite" )
-  endif()
-  set( SITENAME ${SITENAME} CACHE "STRING" "Name of the current machine" FORCE)
-
+  dbs_set_sitename()
 endif()
 
 #------------------------------------------------------------------------------#

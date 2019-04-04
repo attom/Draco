@@ -5,16 +5,14 @@
  * \date   Thu Oct 25 15:28:48 2011
  * \brief  Simple test of the CUDA Driver API.
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
-#include "../GPU_Device.hh"
-#include "../GPU_Module.hh"
+#include "device/GPU_Device.hh"
+#include "device/GPU_Module.hh"
 #include "device/config.h"
 #include "ds++/Assert.hh"
+#include "ds++/DracoStrings.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 #include "ds++/Soft_Equivalence.hh"
@@ -72,7 +70,8 @@ void query_device(rtt_dsxx::ScalarUnitTest &ut) {
 
   // Parse the output
   bool verbose(false);
-  std::map<std::string, unsigned> wordCount = ut.get_word_count(out, verbose);
+  std::map<std::string, unsigned> wordCount =
+      rtt_dsxx::get_word_count(out, verbose);
 
   if (wordCount[string("Device")] == numDev)
     ut.passes("Found a report for each available device.");

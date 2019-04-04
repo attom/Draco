@@ -37,6 +37,7 @@ int dcreate_matrix(SuperMatrix *A, int nrhs, double **rhs, int *ldb, double **x,
 
 //---------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
+
   rtt_c4::ParallelUnitTest ut(argc, argv, rtt_dsxx::release);
   try {
     test_superludist(ut);
@@ -129,7 +130,7 @@ void test_superludist(rtt_c4::ParallelUnitTest &ut) {
   }
 
   //---------------------------------------------------------------------------//
-  // Load the matirx from file and setup the RHS.
+  // Load the matrix from file and setup the RHS.
   //---------------------------------------------------------------------------//
 
   dcreate_matrix(&A, nrhs, &b, &ldb, &xtrue, &ldx, fp, &grid);
@@ -322,9 +323,9 @@ int dcreate_matrix(SuperMatrix *A, int nrhs, double **rhs, int *ldb, double **x,
   /* Compute the number of rows to be distributed to local process */
   m_loc = m / (grid->nprow * grid->npcol);
   m_loc_fst = m_loc;
-  /* When m / procs is not an integer */
+  /* When m / procsessors is not an integer */
   if ((m_loc * grid->nprow * grid->npcol) != m) {
-    if (iam == (grid->nprow * grid->npcol - 1)) /* last proc. gets all*/
+    if (iam == (grid->nprow * grid->npcol - 1)) /* last processor gets all*/
       m_loc = m - m_loc * (grid->nprow * grid->npcol - 1);
   }
 
@@ -333,9 +334,11 @@ int dcreate_matrix(SuperMatrix *A, int nrhs, double **rhs, int *ldb, double **x,
                               SLU_D, SLU_GE);
 
   /* Generate the exact solution and compute the right-hand side. */
-  if (!(b_global = doubleMalloc_dist(m * nrhs)))
+  b_global = doubleMalloc_dist(m * nrhs);
+  if (!b_global)
     ABORT("Malloc fails for b[]");
-  if (!(xtrue_global = doubleMalloc_dist(n * nrhs)))
+  xtrue_global = doubleMalloc_dist(n * nrhs);
+  if (!xtrue_global)
     ABORT("Malloc fails for xtrue[]");
   *trans = 'N';
 
@@ -394,7 +397,8 @@ int dcreate_matrix(SuperMatrix *A, int nrhs, double **rhs, int *ldb, double **x,
                                  colind, rowptr, SLU_NR_loc, SLU_D, SLU_GE);
 
   /* Get the local B */
-  if (!((*rhs) = doubleMalloc_dist(m_loc * nrhs)))
+  (*rhs) = doubleMalloc_dist(m_loc * nrhs);
+  if (!rhs)
     ABORT("Malloc fails for rhs[]");
   for (j = 0; j < nrhs; ++j) {
     for (i = 0; i < m_loc; ++i) {
@@ -406,7 +410,8 @@ int dcreate_matrix(SuperMatrix *A, int nrhs, double **rhs, int *ldb, double **x,
 
   /* Set the true X */
   *ldx = m_loc;
-  if (!((*x) = doubleMalloc_dist(*ldx * nrhs)))
+  (*x) = doubleMalloc_dist(*ldx * nrhs);
+  if (!(x))
     ABORT("Malloc fails for x_loc[]");
 
   /* Get the local part of xtrue_global */

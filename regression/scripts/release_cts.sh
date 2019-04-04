@@ -26,7 +26,7 @@
 
 # Draco install directory name (/usr/projects/draco/draco-NN_NN_NN)
 export package=draco
-ddir=draco-7_0_0
+ddir=draco-7_1_0
 pdir=$ddir
 
 # release for each environment listed

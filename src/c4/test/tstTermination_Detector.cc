@@ -4,10 +4,7 @@
  * \author Kent Budge
  * \date   Tue Sep 21 11:45:44 2004
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"

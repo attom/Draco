@@ -26,7 +26,7 @@ namespace rtt_cdi_analytic {
  * rtt_cdi::Reaction argument.
  *
  * \param model_in shared_ptr to a derived
- *           rtt_cdi_analytic::Analytic_Opacity_Model object
+ *                 rtt_cdi_analytic::Analytic_Opacity_Model object
  * \param reaction_in rtt_cdi::Reaction type (enumeration)
  * \param cdi_model_in CDI model type
  */
@@ -261,5 +261,5 @@ Analytic_Gray_Opacity::sf_char Analytic_Gray_Opacity::pack() const {
 } // end namespace rtt_cdi_analytic
 
 //---------------------------------------------------------------------------//
-//                              end of Analytic_Gray_Opacity.cc
+// end of Analytic_Gray_Opacity.cc
 //---------------------------------------------------------------------------//

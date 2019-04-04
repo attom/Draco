@@ -48,7 +48,7 @@ VENDOR_DIR:PATH=${VENDOR_DIR}
 AUTODOCDIR:PATH=${AUTODOCDIR}
 # CMAKE_MAKE_PROGRAM:FILEPATH=${MAKECOMMAND}
 ${TEST_PPE_BINDIR}
-USE_CUDA:BOOL=${USE_CUDA}
+WITH_CUDA:BOOL=${WITH_CUDA}
 
 ${INIT_CACHE_PPE_PREFIX}
 ${TOOLCHAIN_SETUP}
@@ -183,4 +183,3 @@ message("end of ${CTEST_SCRIPT_NAME}.")
 #------------------------------------------------------------------------------#
 # End Draco_Win32.cmake
 #------------------------------------------------------------------------------#
-

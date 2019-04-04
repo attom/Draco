@@ -8,6 +8,7 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
+include_guard(GLOBAL)
 set(draco_config_dir ${CMAKE_CURRENT_LIST_DIR} CACHE INTERNAL "")
 
 #------------------------------------------------------------------------------
@@ -114,7 +115,9 @@ endfunction()
 #------------------------------------------------------------------------------
 function( set_doxygen_dot_num_threads )
   # Doxygen only allows 32 threads max
-  if( ${MPIEXEC_MAX_NUMPROCS} GREATER 32 )
+  if(NOT DEFINED MPIEXEC_MAX_NUMPROCS)
+    set( DOXYGEN_DOT_NUM_THREADS 1 PARENT_SCOPE)
+  elseif( ${MPIEXEC_MAX_NUMPROCS} GREATER 32 )
     set( DOXYGEN_DOT_NUM_THREADS 32 PARENT_SCOPE)
   else()
     set( DOXYGEN_DOT_NUM_THREADS ${MPIEXEC_MAX_NUMPROCS} PARENT_SCOPE)

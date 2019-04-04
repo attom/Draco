@@ -6,7 +6,7 @@
 case $ddir in
 
   #------------------------------------------------------------------------------#
-  draco-6_25_0 | draco-7_0_0 )
+  draco-6_25_0 | draco-7_0_0 | draco-7_1_0)
     function intel1802env()
     {
       export VENDOR_DIR=/usr/projects/draco/vendors
@@ -15,6 +15,7 @@ case $ddir in
       run "module load friendly-testing user_contrib"
       run "module load cmake git numdiff python/3.6-anaconda-5.0.1"
       run "module load intel/18.0.2 openmpi/2.1.2"
+      run "unset MPI_ROOT"
       run "module load random123 eospac/6.3.0 gsl"
       run "module load mkl metis ndi csk qt"
       run "module load parmetis superlu-dist trilinos"
@@ -28,6 +29,7 @@ case $ddir in
       run "module load friendly-testing user_contrib"
       run "module load cmake git numdiff python/3.6-anaconda-5.0.1"
       run "module load intel/17.0.4 openmpi/2.1.2"
+      run "unset MPI_ROOT"
       run "module load random123 eospac/6.3.0 gsl"
       run "module load mkl metis ndi csk qt"
       run "module load parmetis superlu-dist trilinos"
@@ -41,6 +43,7 @@ case $ddir in
       run "module load friendly-testing user_contrib"
       run "module load cmake git numdiff python/3.6-anaconda-5.0.1"
       run "module load gcc/6.4.0 openmpi/2.1.2"
+      run "unset MPI_ROOT"
       run "module load random123 eospac/6.3.0 gsl"
       run "module load mkl metis ndi qt"
       run "module load parmetis superlu-dist trilinos"

@@ -59,6 +59,22 @@ if( CRAY_PE AND "$ENV{CRAY_CPU_TARGET}" STREQUAL "mic-knl" )
   set( draco_isKNL ON )
 endif()
 
+# Information about the current machine
+cmake_host_system_information(RESULT COMPILED_HOSTNAME QUERY HOSTNAME)
+cmake_host_system_information(RESULT COMPILED_FQDN QUERY FQDN)
+cmake_host_system_information(RESULT COMPILED_OS_NAME QUERY OS_NAME)
+cmake_host_system_information(RESULT COMPILED_OS_RELEASE QUERY OS_RELEASE)
+cmake_host_system_information(RESULT COMPILED_OS_VERSION QUERY OS_VERSION)
+cmake_host_system_information(RESULT COMPILED_OS_PLATFORM QUERY OS_PLATFORM)
+cmake_host_system_information(RESULT draco_is64bit QUERY IS_64BIT)
+cmake_host_system_information(RESULT HAVE_HARDWARE_FPU QUERY HAS_FPU)
+cmake_host_system_information(RESULT HAVE_HARDWARE_MMX QUERY HAS_MMX)
+cmake_host_system_information(RESULT HAVE_HARDWARE_MMX_PLUS QUERY HAS_MMX_PLUS)
+cmake_host_system_information(RESULT HAVE_HARDWARE_SSE QUERY HAS_SSE)
+cmake_host_system_information(RESULT HAVE_HARDWARE_SSE2 QUERY HAS_SSE2)
+cmake_host_system_information(RESULT HAVE_HARDWARE_SSE_FP QUERY HAS_SSE_FP)
+cmake_host_system_information(RESULT HAVE_HARDWARE_SSE_MMX QUERY HAS_SSE_MMX)
+
 # Create ds++/config.h
 configure_file( config.h.in ${PROJECT_BINARY_DIR}/ds++/config.h )
 

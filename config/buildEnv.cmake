@@ -7,6 +7,8 @@
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
+include_guard(GLOBAL)
+
 #------------------------------------------------------------------------------#
 # Build Parameters
 #------------------------------------------------------------------------------#
@@ -122,7 +124,8 @@ macro( dbsSetDefaults )
   set_property( CACHE DRACO_LIBRARY_TYPE PROPERTY STRINGS SHARED STATIC)
 
   # Enable parallel build for Eclipse:
-  set( CMAKE_ECLIPSE_MAKE_ARGUMENTS "-j ${MPIEXEC_MAX_NUMPROCS}" )
+  cmake_host_system_information( RESULT logical_cores QUERY NUMBER_OF_LOGICAL_CORES )
+  set( CMAKE_ECLIPSE_MAKE_ARGUMENTS "-j ${logical_cores}" )
 
   # Set RPATH for all libraries on Apple platform
   if (APPLE)

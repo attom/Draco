@@ -106,7 +106,7 @@ std::string cpuset_to_string(unsigned const /*num_cpu*/) {
       if (run == 0)
         cpuset << i << ",";
       else
-        cpuset << i << "" << i + run << ",";
+        cpuset << i << "-" << i + run << ",";
       i += run;
     }
   }

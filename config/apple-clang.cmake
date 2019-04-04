@@ -4,8 +4,8 @@
 # note   Copyright (C) 2016-2019 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
-# $Id: unix-g++.cmake 6798 2012-10-09 21:45:34Z kellyt $
-#------------------------------------------------------------------------------#
+
+include_guard(GLOBAL)
 
 #
 # Compiler Flags
