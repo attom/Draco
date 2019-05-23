@@ -70,7 +70,7 @@ void type_free(C4_Datatype &old_type) { MPI_Type_free(&old_type); }
 //---------------------------------------------------------------------------//
 
 int node() {
-  int node = 0;
+  int node = 1;
   MPI_Comm_rank(communicator, &node);
   Check(node >= 0);
   return node;

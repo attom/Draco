@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
   int numBands = 0;
   rtt_cdi::Model model = rtt_cdi::ROSSELAND;
   rtt_cdi::Reaction reaction = rtt_cdi::ABSORPTION;
-  int matID = 19000;
+  int matID = 10001;
   int actionToTake = 0; // 0 for user input, 1 for analyze, 2 for print c
 
   double temperature = 0;
@@ -303,18 +303,12 @@ int main(int argc, char *argv[]) {
     std::cout << "\nChecking a few values for the unit test...\n" << std::endl;
     std::vector<std::vector<double>> opac =
         spGandOpacity->getOpacity(5.0, 0.05);
-    if (opac.size() != 80)
-      ITFAILS;
-    if (!rtt_dsxx::soft_equiv(opac[0][0], 2128.526464249052))
-      ITFAILS;
-    if (!rtt_dsxx::soft_equiv(opac[10][0], 221.5324065688365))
-      ITFAILS;
-    if (!rtt_dsxx::soft_equiv(opac[20][0], 12.04514705449304))
-      ITFAILS;
-    if (!rtt_dsxx::soft_equiv(opac[30][0], 0.9751198562573208))
-      ITFAILS;
-    if (!rtt_dsxx::soft_equiv(opac[40][0], 0.3344851514293186))
-      ITFAILS;
+    FAIL_IF_NOT(opac.size() == 264);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(opac[0][0], 0.1404115734213344));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(opac[10][0], 0.1399132061841302));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(opac[20][0], 0.139265648891887));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(opac[30][0], 0.1385270808014648));
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(opac[40][0], 0.1378478184227526));
     if (ut.numFails != 0) {
       std::cout.precision(16);
       std::cout << "opac[0][0]  = " << opac[0][0] << std::endl;
@@ -324,15 +318,12 @@ int main(int argc, char *argv[]) {
       std::cout << "opac[40][0] = " << opac[40][0] << std::endl;
     }
     std::vector<double> grp_bnds = spGandOpacity->getGroupBoundaries();
-    if (grp_bnds.size() != 81)
-      ITFAILS;
-    if (!rtt_dsxx::soft_equiv(grp_bnds[0], 0.01) ||
-        !rtt_dsxx::soft_equiv(grp_bnds[80], 100.0))
-      ITFAILS;
-    if (spGandOpacity->getNumTemperatures() != 6)
-      ITFAILS;
-    if (spGandOpacity->getNumDensities() != 4)
-      ITFAILS;
+    FAIL_IF_NOT(grp_bnds.size() == 265);
+    FAIL_IF_NOT(rtt_dsxx::soft_equiv(grp_bnds[0], 1.0e-5) &&
+                rtt_dsxx::soft_equiv(grp_bnds[264], 300.0));
+    FAIL_IF_NOT(spGandOpacity->getNumTemperatures() == 6);
+    FAIL_IF_NOT(spGandOpacity->getNumDensities() == 4);
+
     if (ut.numFails == 0)
       PASSMSG("Successfully extracted data from odfregression10.ipcress.");
     else

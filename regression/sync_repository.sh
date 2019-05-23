@@ -16,6 +16,7 @@ umask 0007
 # Locate the directory that this script is located in:
 scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 target="`uname -n | sed -e s/[.].*//`"
+target_full="`uname -n`"
 
 # Prevent multiple copies of this script from running at the same time:
 if ! [[ -d /var/tmp/$USER ]]; then
@@ -107,7 +108,7 @@ case ${target} in
     regdir=/scratch/regress
     gitroot=/ccs/codes/radtran/git.${target}
     VENDOR_DIR=/scratch/vendors
-    keychain=keychain-2.8.2
+    keychain=keychain-2.8.5
     ;;
   darwin-fe* | cn[0-9]*)
     regdir=/usr/projects/draco/regress
@@ -148,7 +149,11 @@ if [[ -f $HOME/.ssh/regress_rsa ]]; then
   run "$VENDOR_DIR/$keychain/keychain --agents ssh regress_rsa"
   if [[ `$VENDOR_DIR/$keychain/keychain -l 2>&1 | grep -c Error` != 0 ||
         `$VENDOR_DIR/$keychain/keychain -l 2>&1 | grep -c authentication` != 0 ]]; then
-    run "source ~/.keychain/${target}-sh"
+    if [[ "~/.keychain/${target}-sh" ]]; then
+      run "source ~/.keychain/${target}-sh"
+    elif [[ "~/.keychain/${target_full}-sh" ]]; then
+      run "source ~/.keychain/${target_full}-sh"
+    fi
   fi
   #run "$VENDOR_DIR/$keychain/keychain -l"
   #run "ssh-add -L"

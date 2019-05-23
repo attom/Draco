@@ -54,80 +54,90 @@ public:
   //! \todo Make electronCharge and Avaragodo adjustable based on units.
 
   //! accesses Avogadro's number (1/mole)
-  double avogadro() { return d_avogadro; }
+  constexpr double avogadro() { return d_avogadro; }
 
   //! see avogadro()
-  double Na() { return avogadro(); }
+  constexpr double Na() { return avogadro(); }
 
   //! access the Planck constant (units of energy-time)
-  double planck() const { return d_planck; }
+  constexpr double planck() const { return d_planck; }
   //! see planck()
-  double h() const { return planck(); }
+  constexpr double h() const { return planck(); }
 
   //! access the Gas constant (units of energy/mol/temp)
-  double gasConstant() const { return d_gasConstant; }
+  constexpr double gasConstant() const { return d_gasConstant; }
   //! see gasConstant()
-  double R() const { return gasConstant(); }
+  constexpr double R() const { return gasConstant(); }
 
   //! accesses the Boltzmann constant (Energy/Temp)
-  double boltzmann() const { return d_boltzmann; }
+  constexpr double boltzmann() const { return d_boltzmann; }
   //! see boltzmann()
-  double k() const { return boltzmann(); }
+  constexpr double k() const { return boltzmann(); }
 
   //! accesses the electron charge (Charge)
-  double electronCharge() const { return d_electronCharge; }
+  constexpr double electronCharge() const { return d_electronCharge; }
   //! see electronCharge()
-  double e() const { return electronCharge(); }
+  constexpr double e() const { return electronCharge(); }
 
   //! accesses the speed of light (units of velocity)
-  double speedOfLight() const { return d_cLight; }
+  constexpr double speedOfLight() const { return d_cLight; }
   //! see speedOfLight()
-  double c() const { return speedOfLight(); }
+  constexpr double c() const { return speedOfLight(); }
 
   //! accesses the StefanBoltzmann constant (Work/Area/Temp^4 )
-  double stefanBoltzmann() const { return d_stefanBoltzmann; }
+  constexpr double stefanBoltzmann() const { return d_stefanBoltzmann; }
   //! see stefanBoltzmann()
-  double sigma() const { return stefanBoltzmann(); }
+  constexpr double sigma() const { return stefanBoltzmann(); }
 
   //! accesses the gravitational constant
-  double gravitationalConstant() const { return d_gravitationalConstant; }
+  constexpr double gravitationalConstant() const {
+    return d_gravitationalConstant;
+  }
   //! see gravitationalConstant()
-  double G() const { return gravitationalConstant(); }
+  constexpr double G() const { return gravitationalConstant(); }
 
   //! access the acceleration due to gravity (standard).
-  double accelerationFromGravity() const { return d_accelerationFromGravity; }
+  constexpr double accelerationFromGravity() const {
+    return d_accelerationFromGravity;
+  }
   //! see accelerationFromGravity()
-  double g() const { return accelerationFromGravity(); }
+  constexpr double g() const { return accelerationFromGravity(); }
 
   //! access the Faraday constant
-  double faradayConstant() const { return d_faradayConstant; }
+  constexpr double faradayConstant() const { return d_faradayConstant; }
   //! see faradayConstant()
-  double F() const { return faradayConstant(); }
+  constexpr double F() const { return faradayConstant(); }
 
   //! access the Permeability of vacuum (free space)
-  double permeabilityOfVacuum() const { return d_permeabilityOfVacuum; }
+  constexpr double permeabilityOfVacuum() const {
+    return d_permeabilityOfVacuum;
+  }
   //! see permeabilityOfVacuum()
-  double mu0() const { return permeabilityOfVacuum(); }
+  constexpr double mu0() const { return permeabilityOfVacuum(); }
 
   //! accesses the permittivity of free space (units of force/length)
-  double permittivityOfFreeSpace() const { return d_permittivityOfFreeSpace; }
+  constexpr double permittivityOfFreeSpace() const {
+    return d_permittivityOfFreeSpace;
+  }
   //! see permittivityOfFreeSpace()
-  double epsi0() const { return permittivityOfFreeSpace(); }
+  constexpr double epsi0() const { return permittivityOfFreeSpace(); }
 
   //! accesses the classical electron radius (units of length)
-  double classicalElectronRadius() const { return d_classicalElectronRadius; }
+  constexpr double classicalElectronRadius() const {
+    return d_classicalElectronRadius;
+  }
   //! see classicalElectronRadius()
-  double re() const { return classicalElectronRadius(); }
+  constexpr double re() const { return classicalElectronRadius(); }
 
   //! accesses the electron mass (units of mass)
-  double electronMass() const { return d_electronMass; }
+  constexpr double electronMass() const { return d_electronMass; }
   //! see electronMass()
-  double me() const { return electronMass(); }
+  constexpr double me() const { return electronMass(); }
 
   //! accesses the proton mass (units of mass)
-  double protonMass() const { return d_protonMass; }
+  constexpr double protonMass() const { return d_protonMass; }
   //! see protonMass()
-  double mp() const { return protonMass(); }
+  constexpr double mp() const { return protonMass(); }
 
 private:
   // Base physical constants in SI units:

@@ -253,6 +253,7 @@ endmacro( add_component_executable )
 #   SOURCES      "file1.cc;file2.cc;..."
 #   HEADERS      "file1.hh;file2.hh;..."
 #   LIBRARY_NAME_PREFIX "rtt_"
+#   LIBRARY_TYPE "SHARED"
 #   VENDOR_LIST  "MPI;GSL"
 #   VENDOR_LIBS  "${MPI_CXX_LIBRARIES};${GSL_LIBRARIES}"
 #   VENDOR_INCLUDE_DIRS "${MPI_CXX_INCLUDE_DIR};${GSL_INCLUDE_DIR}"
@@ -279,7 +280,7 @@ macro( add_component_library )
   cmake_parse_arguments(
     acl
     "NOEXPORT"
-    "PREFIX;TARGET;LIBRARY_NAME;LIBRARY_NAME_PREFIX;LINK_LANGUAGE"
+    "PREFIX;TARGET;LIBRARY_NAME;LIBRARY_NAME_PREFIX;LIBRARY_TYPE;LINK_LANGUAGE"
     "HEADERS;SOURCES;TARGET_DEPS;VENDOR_LIST;VENDOR_LIBS;VENDOR_INCLUDE_DIRS"
     ${ARGV}
     )
@@ -305,6 +306,11 @@ macro( add_component_library )
     endif()
   endif()
 
+  # if a library type was not specified use the default Draco setting
+  if(NOT acl_LIBRARY_TYPE)
+    set( acl_LIBRARY_TYPE ${DRACO_LIBRARY_TYPE})
+  endif()
+
   #
   # Create the library and set the properties
   #
@@ -314,7 +320,7 @@ macro( add_component_library )
   # extract project name, minus leading "Lib_"
   string( REPLACE "Lib_" "" folder_name ${acl_TARGET} )
 
-  add_library( ${acl_TARGET} ${DRACO_LIBRARY_TYPE} ${acl_SOURCES} )
+  add_library( ${acl_TARGET} ${acl_LIBRARY_TYPE} ${acl_SOURCES} )
   # Some properties are set at a global scope in compilerEnv.cmake:
   # - C_STANDARD, C_EXTENSIONS, CXX_STANDARD, CXX_EXTENSIONS,
   #   CXX_STANDARD_REQUIRED, and POSITION_INDEPENDENT_CODE

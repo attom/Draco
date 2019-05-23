@@ -1,15 +1,15 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   cdi_analytic/nGray_Analytic_Odfmg_Opacity.hh
+ * \file   cdi_analytic/Compound_Analytic_Odfmg_Opacity.hh
  * \author Thomas M. Evans
  * \date   Tue Nov 13 11:19:59 2001
- * \brief  nGray_Analytic_Odfmg_Opacity class definition.
+ * \brief  Compound_Analytic_Odfmg_Opacity class definition.
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-#ifndef __cdi_analytic_nGray_Analytic_Odfmg_Opacity_hh__
-#define __cdi_analytic_nGray_Analytic_Odfmg_Opacity_hh__
+#ifndef __cdi_analytic_Compound_Analytic_Odfmg_Opacity_hh__
+#define __cdi_analytic_Compound_Analytic_Odfmg_Opacity_hh__
 
 #include "Analytic_Odfmg_Opacity.hh"
 
@@ -17,7 +17,7 @@ namespace rtt_cdi_analytic {
 
 //===========================================================================//
 /*!
- * \class nGray_Analytic_Odfmg_Opacity
+ * \class Compound_Analytic_Odfmg_Opacity
  *
  * \brief Derived rtt_cdi::OdfmgOpacity class for analytic opacities.
  *
@@ -25,7 +25,7 @@ namespace rtt_cdi_analytic {
  */
 //===========================================================================//
 
-class nGray_Analytic_Odfmg_Opacity : public Analytic_Odfmg_Opacity {
+class Compound_Analytic_Odfmg_Opacity : public Analytic_Odfmg_Opacity {
 public:
   // Useful typedefs.
   typedef std::shared_ptr<Analytic_Opacity_Model> SP_Analytic_Model;
@@ -42,13 +42,14 @@ private:
 
 public:
   // Constructor.
-  nGray_Analytic_Odfmg_Opacity(const sf_double &groups, const sf_double &bands,
-                               const sf_Analytic_Model &models,
-                               rtt_cdi::Reaction reaction_in,
-                               rtt_cdi::Model model_in = rtt_cdi::ANALYTIC);
+  Compound_Analytic_Odfmg_Opacity(const sf_double &groups,
+                                  const sf_double &bands,
+                                  const sf_Analytic_Model &models,
+                                  rtt_cdi::Reaction reaction_in,
+                                  rtt_cdi::Model model_in = rtt_cdi::ANALYTIC);
 
-  // Constructor for packed nGray_Analytic_Odfmg_Opacities
-  explicit nGray_Analytic_Odfmg_Opacity(const sf_char &);
+  // Constructor for packed Compound_Analytic_Odfmg_Opacities
+  explicit Compound_Analytic_Odfmg_Opacity(const sf_char &);
 
   // >>> ACCESSORS
   const_Model get_Analytic_Model(int g) const { return group_models[g - 1]; }
@@ -85,14 +86,14 @@ public:
   // Get the data description of the opacity.
   inline std_string getDataDescriptor() const;
 
-  // Pack the nGray_Analytic_Odfmg_Opacity into a character string.
+  // Pack the Compound_Analytic_Odfmg_Opacity into a character string.
   sf_char pack() const;
 };
 
 //---------------------------------------------------------------------------//
 //! Return a string describing the opacity model.
-nGray_Analytic_Odfmg_Opacity::std_string
-nGray_Analytic_Odfmg_Opacity::getDataDescriptor() const {
+Compound_Analytic_Odfmg_Opacity::std_string
+Compound_Analytic_Odfmg_Opacity::getDataDescriptor() const {
   std_string descriptor;
 
   rtt_cdi::Reaction const rxn = getReactionType();
@@ -111,8 +112,8 @@ nGray_Analytic_Odfmg_Opacity::getDataDescriptor() const {
 
 } // end namespace rtt_cdi_analytic
 
-#endif // __cdi_analytic_nGray_Analytic_Odfmg_Opacity_hh__
+#endif // __cdi_analytic_Compound_Analytic_Odfmg_Opacity_hh__
 
 //---------------------------------------------------------------------------//
-// end of cdi_analytic/nGray_Analytic_Odfmg_Opacity.hh
+// end of cdi_analytic/Compound_Analytic_Odfmg_Opacity.hh
 //---------------------------------------------------------------------------//

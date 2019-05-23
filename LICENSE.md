@@ -6,7 +6,7 @@
 Please read these terms and conditions of use carefully before using this
 software. Version 7_X_X of this code has been reviewed by the Los Alamos
 National Laboratory (LANL) Export Control and the Classification Teams and
-deeped to be Open Source Software under a 3-Clause BSD license.  The copyright
+deemed to be Open Source Software under a 3-Clause BSD license.  The copyright
 disclosure record is C19028 for "Draco-7_X_X".
 
 Version 6_X_X was also released as Open Source Software and given the

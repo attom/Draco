@@ -31,6 +31,9 @@ esac
 # Draco developer environment
 #------------------------------------------------------------------------------#
 if test -f ${DRACO_ENV_DIR}/bashrc/.bashrc; then
+  # Don't autoload the modules.  Allow me to run 'dracoenv' or 'rmdracoenv'
+  # later (or 'rdde').
+  export DRACO_ENV_LOAD=OFF
   source ${DRACO_ENV_DIR}/bashrc/.bashrc
 fi
 

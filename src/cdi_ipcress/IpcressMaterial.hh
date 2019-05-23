@@ -54,8 +54,8 @@ namespace rtt_cdi_ipcress {
  *    - atwt
  *    - opname
  *    - general
- * 3. The field values.  For example, 'tgrid' might be a list of 5
- *    temperatures, { 0.01, 0.1, 1.0, 10.0, 100.0}.
+ * 3. The field values.  For example, 'tgrid' might be a list of 5 temperatures,
+ *     {0.01, 0.1, 1.0, 10.0, 100.0}.
  *
  * This object is used as a data container by the IpcressFile class.  A vector
  * of empty IpcressMaterials is created (length = num materials) and then the
@@ -91,12 +91,13 @@ public:
 
   /*!
    * \brief Add a field and it's data to the current material.  This is the
-   * normal way of populating this storage class.
+   *        normal way of populating this storage class. If a field is already
+   *        registered, then overwrite the values.
    *
    * \param in_fieldName a string from the IPCRESS file that describes the
    *        associated data values (e.g.: tgrid, ramg, etc.)
-   * \param in_values a vector<double> of values that represent the data
-   *        loaded from the IPCRESS file.
+   * \param in_values a vector<double> of values that represent the data loaded
+   *        from the IPCRESS file.
    */
   void add_field(std::string &in_fieldName,
                  std::vector<double> const &in_values) {
@@ -106,10 +107,21 @@ public:
         std::remove_if(in_fieldName.begin(), in_fieldName.end(), ::isspace),
         in_fieldName.end());
 
-    // Save the material data field (description and associated values).
-    fieldNames.push_back(in_fieldName);
-    fieldValues.push_back(in_values);
+    // Check if the field name is already registered.
+    auto itr = std::find(fieldNames.begin(), fieldNames.end(), in_fieldName);
+    if (fieldNames.size() == 0 || itr == fieldNames.end()) {
 
+      // Save the material data field (description and associated values).
+      fieldNames.push_back(in_fieldName);
+      fieldValues.push_back(in_values);
+
+    } else {
+
+      // Overwrite existing entries.
+      size_t index = std::distance(fieldNames.begin(), itr);
+      Check(fieldValues[index].size() == in_values.size());
+      fieldValues[index] = in_values;
+    }
     return;
   }
 

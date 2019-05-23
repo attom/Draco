@@ -19,10 +19,10 @@ namespace rtt_units {
 // standard C++.
 
 //! pi the ratio of a circle's circumference to its diameter (dimensionless)
-static double const PI = 3.141592653589793238462643383279;
+static double constexpr PI = 3.141592653589793238462643383279;
 
 // Euler's number (dimensionless)
-static double const N_EULER = 2.7182818284590452353602874;
+static double constexpr N_EULER = 2.7182818284590452353602874;
 
 } // end namespace rtt_units
 

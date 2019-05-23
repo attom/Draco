@@ -21,16 +21,24 @@ using namespace rtt_c4;
 // TESTS
 //---------------------------------------------------------------------------//
 
-#ifdef C4_MPI
 void tstProcessor_Group(rtt_dsxx::UnitTest &ut) {
+
   unsigned const pid = rtt_c4::node();
 
+#ifdef C4_MPI
   // Test construction
   Processor_Group comm(2);
-  PASSMSG("Processor_Group constructed without exception.");
+#else
+  // Test construction
+  Processor_Group comm(1);
+#endif // C4_MPI
+
+  std::string pm = "Processor_Group constructed on pid " + to_string(pid) + ".";
+  PASSMSG(pm);
 
   // Test sum
   unsigned const group_pids = comm.size();
+
   unsigned const base = pid % 2;
   vector<double> sum(1, base + 1.);
   comm.sum(sum);
@@ -84,19 +92,16 @@ void tstProcessor_Group(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_dsxx::soft_equiv(goldglobalvec.begin(), goldglobalvec.end(),
                                      globalvec.begin(), globalvec.end()));
   }
+
   return;
 }
-#endif // C4_MPI
 
 //---------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
+
   ParallelUnitTest ut(argc, argv, release);
   try {
-#ifdef C4_MPI
     tstProcessor_Group(ut);
-#else
-    ut.passes("Test inactive for scalar");
-#endif //C4_MPI
   }
   UT_EPILOG(ut);
 }

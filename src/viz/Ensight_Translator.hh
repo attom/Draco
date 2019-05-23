@@ -229,7 +229,8 @@ public:
   Ensight_Translator(const std_string &prefix, const std_string &gd_wpath,
                      const SSF &vdata_names, const SSF &cdata_names,
                      const bool overwrite = false,
-                     const bool static_geom = false, const bool binary = false);
+                     const bool static_geom = false, const bool binary = false,
+                     const double reset_time = -1.0);
 
   // Do an Ensight_Dump.
   template <typename ISF, typename IVF, typename SSF, typename FVF>

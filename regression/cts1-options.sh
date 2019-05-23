@@ -31,7 +31,7 @@ sn*)
     export machine_name_short="sn"
     export machine_name_long="Snow" ;;
 esac
-platform_extra_params="fulldiagnostics gcc610 gcc640 newtools nr perfbench valgrind vtest"
+platform_extra_params="fulldiagnostics gcc640 gcc740 newtools nr perfbench valgrind vtest"
 pem_match=`echo $platform_extra_params | sed -e 's/[ ]/|/g'`
 
 ##---------------------------------------------------------------------------##

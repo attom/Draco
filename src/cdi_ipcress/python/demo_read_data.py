@@ -42,7 +42,7 @@ print("\n")
 
 # check for data set I want to use
 mat_ID = 10001
-if ipcress_data.has_key("{0}_{1}".format("rgray",  mat_ID)):
+if "{0}_{1}".format("rgray",  mat_ID) in ipcress_data:
   print("File has Rosseland gray data for {0}".format(mat_ID))
 else:
   print("File does not have Rosseland gray data for {0}".format(mat_ID))

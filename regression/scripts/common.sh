@@ -285,25 +285,20 @@ function selectscratchdir
     fi
   else
     scratchdirs=`df -a 2> /dev/null | grep net/scratch | awk '{ print $4 " "$5 }' | sort -g`
-    if ! [[ $scratchdirs ]]; then
+    if [[ -z "$scratchdirs" ]]; then
       scratchdirs=`df -a 2> /dev/null | grep lustre/scratch | awk '{ print $4 " "$5 }' | sort -g`
-
     fi
   fi
-  local odd=1
   for item in $scratchdirs; do
-    # odd numbered items are disk's 'percent full'. They are ordered from least
-    # used to most used.  Skip these values.
-    if [[ $odd == 1 ]]; then
-      odd=0
-      continue
-    else
-      odd=1
-    fi
-    # if this location is good (must be able to write to this location), return
-    # the path.
+    # omit entries that have a percent
+    if [[ `echo $item | grep -c %` == 1 ]]; then continue; fi
     if [[ -d $item/users ]]; then
-      item="${item}/users"
+      item2="${item}/users"
+      mkdir -p $item2/$USER &> /dev/null
+      if [[ -w $item2/$USER ]]; then
+        echo "$item2"
+        return
+      fi
     fi
     mkdir -p $item/$USER &> /dev/null
     if [[ -w $item/$USER ]]; then
@@ -325,7 +320,6 @@ function selectscratchdir
     echo "$item"
     return
   fi
-
 }
 
 #------------------------------------------------------------------------------#

@@ -38,6 +38,7 @@ namespace rtt_viz {
  *           across all calls to Ensight_Translator::ensight_dump.
  * \param binary If true, geometry and variable data files are output in binary
  *           format.
+ * \param reset_time time after which to rewrite dumps, if overwrite=false
  *
  * NOTE: If appending data (\a overwrite is false), then \a binary must be the
  * same value as the first ensight dump.  This class does NOT check for this
@@ -48,7 +49,7 @@ template <typename SSF>
 Ensight_Translator::Ensight_Translator(
     const std_string &prefix, const std_string &gd_wpath,
     const SSF &vdata_names, const SSF &cdata_names, const bool overwrite,
-    const bool static_geom, const bool binary)
+    const bool static_geom, const bool binary, const double reset_time)
     : d_static_geom(static_geom), d_binary(binary), d_dump_dir(gd_wpath),
       d_num_cell_types(0), d_cell_names(), d_vrtx_cnt(0), d_cell_type_index(),
       d_dump_times(), d_prefix(), d_vdata_names(vdata_names),
@@ -101,6 +102,23 @@ Ensight_Translator::Ensight_Translator(
 
       casefile.close();
       graphics_continue = true;
+
+      // check if a valid reset time was provided
+      if (reset_time > 0.0) {
+
+        // find nearest graphics dump before reset time
+        int idump = num_steps;
+        for (int i = num_steps - 1; i >= 0; --i) {
+          if (reset_time > d_dump_times[i]) {
+            idump = i + 1;
+            break;
+          }
+        }
+
+        // truncate times at most recent graphics dump before restart
+        if (idump < num_steps)
+          d_dump_times.erase(d_dump_times.begin() + idump, d_dump_times.end());
+      }
     }
   }
 

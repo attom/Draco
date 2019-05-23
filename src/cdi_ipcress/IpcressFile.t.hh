@@ -45,7 +45,7 @@ void IpcressFile::read_v(size_t const byte_offset,
   // Copy data into vector<int> container
   double ddata;
   for (size_t i = 0; i < nitems; ++i) {
-    // cast raw cahr data to double and perform a byte swap
+    // cast raw char data to double and perform a byte swap
     std::memcpy(&ddata, &memblock[i * ipcress_word_size], ipcress_word_size);
     if (!rtt_dsxx::is_big_endian())
       rtt_dsxx::byte_swap(ddata);

@@ -103,7 +103,11 @@ uint64_t peak_allocation() { return peak; }
 uint64_t largest_allocation() { return largest; }
 
 //---------------------------------------------------------------------------//
-//! \bug Untested
+/*! Print a report on possible leaks.
+ *
+ * This function prints a report in a human-friendly format on possible memory
+ * leaks.
+ */
 void report_leaks(ostream &out) {
   if (is_active) {
 #if DRACO_DIAGNOSTICS & 2
@@ -240,7 +244,7 @@ void operator delete(void *ptr, size_t) throw() { operator delete(ptr); }
 
 //---------------------------------------------------------------------------//
 /*!
- * \brief Provide a special action when an out-of-memory condition is 
+ * \brief Provide a special action when an out-of-memory condition is
  *        encountered.
  *
  * The usual notion is that if new operator cannot allocate dynamic memory of
@@ -269,9 +273,9 @@ void operator delete(void *ptr, size_t) throw() { operator delete(ptr); }
  * \bug untested
  */
 void rtt_memory::out_of_memory_handler(void) {
+  std::set_new_handler(nullptr);
   std::cerr << "Unable to allocate requested memory.\n"
             << rtt_dsxx::print_stacktrace("bad_alloc");
-  throw std::bad_alloc();
 }
 
 //---------------------------------------------------------------------------//

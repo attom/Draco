@@ -36,7 +36,7 @@ case ${-} in
     shopt -s cdspell      # autocorrect spelling errors on cd command line.
     shopt -s histappend   # append to the history file, don't overwrite it
     # shopt -s direxpand  # Doesn't work on toss22 machines. Move this command to
-                          # .bashrc_toss3 and .bashrc_tt
+                          # .bashrc_toss3 and .bashrc_cray
 
     # don't put duplicate lines or lines starting with space in the history. See
     # bash(1) for more options
@@ -250,6 +250,12 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
   # Possible values: ON, TRUE, OFF, FALSE, DIFF (the default value is ON).
   export DRACO_AUTO_CLANG_FORMAT=ON
 
+  # Parse the setup scripts, but don't actually load any modules.  This allows
+  # the developer to run 'dracoenv' or 'rdde' later to load modules.
+  if [[ -z $DRACO_ENV_LOAD ]]; then
+    export DRACO_ENV_LOAD=ON
+  fi
+
   # Silence warnings from GTK/Gnome
   export NO_AT_BRIDGE=1
 
@@ -261,33 +267,37 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
 
   case ${target} in
 
-    # machine with GPUs
-    # backend nodes with GPUs are cn[1-4].
+    # Darwin Heterogeneous Cluster (GPU, ARM, P9, etc.)
+    # wiki: https://darwin.lanl.gov
     darwin-fe* | cn[0-9]*)
-      if [[ $verbose ]]; then echo "this is Darwin"; fi
-      source ${DRACO_ENV_DIR}/bashrc/.bashrc_darwin_fe
-      ;;
+      source ${DRACO_ENV_DIR}/bashrc/.bashrc_darwin_fe ;;
 
     # Badger | Cyclone | Fire | Grizzly | Ice | Snow
     ba* | cy* | fi* | gr* | ic* | sn* )
-      source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss3
-      ;;
+      source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss3 ;;
 
     # wtrw and rfta
     red-wtrw* | rfta* | redcap* )
-      source ${DRACO_ENV_DIR}/bashrc/.bashrc_rfta
-      ;;
-    # trinitite (tt-fey) | trinity (tr-fe)
-    tt-fey* | tt-login* | tr-fe* | tr-login* | nid* )
-      source ${DRACO_ENV_DIR}/bashrc/.bashrc_tt
-      ;;
+      source ${DRACO_ENV_DIR}/bashrc/.bashrc_rfta ;;
+
+    # capulin, thunder, trinitite (tt-fey) | trinity (tr-fe)
+    cp-login* | th-login* |tt-fey* | tt-login* | tr-fe* | tr-login* | nid* )
+      source ${DRACO_ENV_DIR}/bashrc/.bashrc_cray ;;
 
     # LLNL ATS-2
     rzmanta* | rzansel* | sierra* )
-      source ${DRACO_ENV_DIR}/bashrc/.bashrc_ats2
-      ;;
+      source ${DRACO_ENV_DIR}/bashrc/.bashrc_ats2 ;;
 
-    # Assume CCS machine (ccscs[0-9] or personal workstation)
+    # CCS-NET machines (insufficient space on ccscs5 for vendor+data).
+    ccscs5*)
+      echo "Draco developer environment not provided on this machine"
+      echo "(${target}) due to insufficient /scratch storage."
+      export NoModules=1
+      ;;
+    ccscs[1-4]* | ccscs[6-9]*)
+      source ${DRACO_ENV_DIR}/bashrc/.bashrc_linux64 ;;
+
+    # Assume personal workstation
     *)
       if [[ -d /ccs/codes/radtran ]]; then
         # assume this is a CCS LAN machine (64-bit)
@@ -309,7 +319,9 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
   esac
 
   source ${DRACO_ENV_DIR}/bashrc/bash_functions2.sh
-  dracoenv
+  if [[ "${DRACO_ENV_LOAD:-OFF}" == "ON" ]]; then
+    dracoenv
+  fi
 
   # Mark that we have already done this setup
   export DRACO_BASHRC_DONE=yes

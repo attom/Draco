@@ -11,7 +11,7 @@
 #include "cdi_analytic_test.hh"
 #include "cdi/CDI.hh"
 #include "cdi_analytic/Analytic_Gray_Opacity.hh"
-#include "cdi_analytic/nGray_Analytic_MultigroupOpacity.hh"
+#include "cdi_analytic/Compound_Analytic_MultigroupOpacity.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 #include <sstream>
@@ -22,8 +22,8 @@ using rtt_cdi::CDI;
 using rtt_cdi::GrayOpacity;
 using rtt_cdi_analytic::Analytic_Gray_Opacity;
 using rtt_cdi_analytic::Analytic_Opacity_Model;
+using rtt_cdi_analytic::Compound_Analytic_MultigroupOpacity;
 using rtt_cdi_analytic::Constant_Analytic_Opacity_Model;
-using rtt_cdi_analytic::nGray_Analytic_MultigroupOpacity;
 using rtt_cdi_analytic::Polynomial_Analytic_Opacity_Model;
 using rtt_dsxx::soft_equiv;
 using std::dynamic_pointer_cast;
@@ -341,8 +341,8 @@ void type_test(rtt_dsxx::UnitTest &ut) {
     ITFAILS;
 
   // another way to do this
-  nGray_Analytic_MultigroupOpacity *m =
-      dynamic_cast<nGray_Analytic_MultigroupOpacity *>(&*op);
+  Compound_Analytic_MultigroupOpacity *m =
+      dynamic_cast<Compound_Analytic_MultigroupOpacity *>(&*op);
   Analytic_Gray_Opacity *o = dynamic_cast<Analytic_Gray_Opacity *>(&*op);
 
   if (m)

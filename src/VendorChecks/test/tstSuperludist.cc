@@ -13,6 +13,7 @@
  */
 //---------------------------------------------------------------------------//
 
+#include "superlu-dist-wrapper.h"
 #include "c4/ParallelUnitTest.hh"
 #include "ds++/Release.hh"
 #include "ds++/Soft_Equivalence.hh"
@@ -20,15 +21,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wundef"
-#endif
-#include <superlu_ddefs.h>
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
 
 // forward declarations
 void test_superludist(rtt_c4::ParallelUnitTest &ut);

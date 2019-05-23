@@ -1,7 +1,6 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
  * \file   c4/Processor_Group.hh
- * \author Kent Budge
  * \brief  Definition of class Processor_Group
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
  *         All rights reserved. */
@@ -14,8 +13,8 @@
 #include <vector>
 
 #ifdef C4_MPI
-
 #include "c4_mpi.h"
+#endif // C4_MPI
 
 namespace rtt_c4 {
 
@@ -48,7 +47,7 @@ public:
   //! Get the number of processors in the group.
   unsigned size() const { return size_; }
 
-  bool check_class_invariants() const { return true; }
+  bool check_class_invariants() const { return (size() > 0); }
 
   // SERVICES
 
@@ -70,7 +69,7 @@ public:
    */
   template <typename T>
   void assemble_vector(T const *local_vector, T *global_vector,
-                       unsigned count) const;
+                       unsigned const N) const;
 
 private:
   // NESTED CLASSES AND TYPEDEFS
@@ -86,13 +85,14 @@ private:
   // DATA
 
   unsigned size_;
+
+#ifdef C4_MPI
   MPI_Group group_;
   MPI_Comm comm_;
+#endif // C4_MPI
 };
 
 } // end namespace rtt_c4
-
-#endif // C4_MPI
 
 #include "Processor_Group.i.hh"
 

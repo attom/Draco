@@ -168,9 +168,9 @@ superlu-dist/5.2.2-$mflavor trilinos/12.12.1-$mflavor"
     ;;
   power9*)
     cflavor="gcc-7.3.0"
-    mflavor="$cflavor-openmpi-3.1.2"
+    mflavor="$cflavor-openmpi-3.1.3"
     noflavor="git cmake gcc/7.3.0"
-    compflavor="random123 numdiff gsl/2.5-$cflavor netlib-lapack/3.8.0-$cflavor metis/5.1.0-$cflavor openmpi/p9/3.1.2-gcc_7.3.0"
+    compflavor="random123 numdiff gsl/2.5-$cflavor netlib-lapack/3.8.0-$cflavor metis/5.1.0-$cflavor openmpi/p9/3.1.3-gcc_7.3.0"
     mpiflavor="parmetis/4.0.3-$mflavor superlu-dist/5.2.2-${mflavor}-netlib trilinos/12.12.1-${mflavor}-netlib cuda/9.2"
     # These aren't built for power architectures?
     # ec_mf="ndi eospac/6.3.0"

@@ -181,7 +181,7 @@ void ensight_dump_test(rtt_dsxx::UnitTest &ut, bool const binary) {
   // build another ensight translator; this should overwrite the existing
   // directories
   Ensight_Translator translator2(prefix, gd_wpath, vdata_names, cdata_names,
-                                 true, static_geom, binary);
+                                 false, static_geom, binary);
 
   translator2.ensight_dump(icycle, time, dt, ipar, iel_type, rgn_index, pt_coor,
                            vrtx_data, cell_data, rgn_data, rgn_name);
@@ -196,9 +196,9 @@ void ensight_dump_test(rtt_dsxx::UnitTest &ut, bool const binary) {
   translator3.ensight_dump(2, .05, dt, ipar, iel_type, rgn_index, pt_coor,
                            vrtx_data, cell_data, rgn_data, rgn_name);
 
-  // make yet a fourth translator that will append
+  // make yet a fourth translator that will append from the reset time
   Ensight_Translator translator4(prefix, gd_wpath, vdata_names, cdata_names,
-                                 false, static_geom, binary);
+                                 false, static_geom, binary, .05);
 
   // add yet another dump to the existing data
   translator4.ensight_dump(3, .10, dt, ipar, iel_type, rgn_index, pt_coor,

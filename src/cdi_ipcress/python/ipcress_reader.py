@@ -62,9 +62,10 @@ def interpolate_mg_opacity_data(T_grid, rho_grid, hnu_grid, op_data, \
   if (target_rho  > np.max(rho_grid)):  target_rho = np.max(rho_grid)
   if (target_T    < np.min(T_grid)):    target_T = np.min(T_grid)
   if (target_T    > np.max(T_grid)):    target_T = np.max(T_grid)
-  print( \
-    "Interpolating {0}--Target rho: {1} , target T: {2}".format( \
-    print_str, target_rho, target_T))
+  if (print_str is not None):
+    print( \
+      "Interpolating {0}--Target rho: {1} , target T: {2}".format( \
+      print_str, target_rho, target_T))
 
   # get correct index of adjacent density points
   rho_L = 1000; rho_G =0
@@ -110,7 +111,8 @@ def interpolate_mg_opacity_data(T_grid, rho_grid, hnu_grid, op_data, \
 ###############################################################################
 
 ################################################################################
-def interpolate_gray_opacity_data(T_grid, rho_grid, op_data, target_rho, target_T):
+def interpolate_gray_opacity_data(T_grid, rho_grid, op_data, target_rho, \
+    target_T, print_str = ""):
   n_rho = len(rho_grid)
   n_T = len(T_grid)
 
@@ -119,7 +121,10 @@ def interpolate_gray_opacity_data(T_grid, rho_grid, op_data, target_rho, target_
   if (target_rho  > np.max(rho_grid)):  target_rho = np.max(rho_grid)
   if (target_T    < np.min(T_grid)):    target_T = np.min(T_grid)
   if (target_T    > np.max(T_grid)):    target_T = np.max(T_grid)
-  print("Target rho: {0} , target T: {1}".format(target_rho, target_T))
+  if (print_str is not None):
+    print( \
+      "Interpolating {0}--Target rho: {1} , target T: {2}".format( \
+      print_str, target_rho, target_T))
 
   rho_L = 1000; rho_G =0
   for rho_i, rho in enumerate(rho_grid[:-1]):
@@ -228,7 +233,12 @@ def read_information_from_file(ipcress_file):
         if (j==0): temp_property.append(three_string[2].strip() )
         elif (j==1): temp_property.append(three_string[0].strip())
         else: temp_property.append(i) #index of data table containing values
-      mat_property.append(temp_property)
+      try:
+        temp_property = [temp_property[0].decode('ascii'), \
+                         temp_property[1].decode('ascii'), temp_property[2]]
+        mat_property.append(temp_property)
+      except:
+        mat_property.append(temp_property)
 
   materials = []
   for m in range(num_mats):

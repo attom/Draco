@@ -12,6 +12,12 @@
 #define device_config_h
 
 #include <string>
+#cmakedefine CUDA_DEVICE
+#ifdef CUDA_DEVICE
+  #define HOST_AND_DEVICE_FUNCTION __host__ __device__
+#else
+  #define HOST_AND_DEVICE_FUNCTION 
+#endif
 
 namespace rtt_device
 {

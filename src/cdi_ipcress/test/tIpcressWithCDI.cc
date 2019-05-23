@@ -63,8 +63,8 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
   } catch (rtt_dsxx::assertion const &excpt) {
     FAILMSG(excpt.what());
     ostringstream message;
-    message << "Aborting tests because unable to instantiate "
-            << "IpcressFile object";
+    message << "Aborting tests because unable to instantiate IpcressFile "
+            << "object";
     FAILMSG(message.str());
     return;
   }
@@ -76,8 +76,8 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
   // Create a IpcressGrayOpacity object. //
   // ----------------------------------- //
 
-  // Material identifier.  This data file has two materials: Al and
-  // BeCu.  Al has the id tag "10001".
+  // Material identifier.  This data file has two materials: First has mat tag
+  // "10001".
   int const matid = 10001;
 
   // Create a smart pointer to an opacity object.
@@ -91,8 +91,7 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
     ostringstream message;
     message
         << "Failed to create shared_ptr to new IpcressGrayOpacity object for "
-        << "Al_BeCu.ipcress data." << endl
-        << "\t" << excpt.what();
+        << "two-mats.ipcress data.\n\t" << excpt.what();
     FAILMSG(message.str());
     FAILMSG("Aborting tests.");
     return;
@@ -101,8 +100,8 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
   // If we get here then the object was successfully instantiated.
   {
     ostringstream message;
-    message << "shared_ptr to new IpcressGrayOpacity object created "
-            << "for analyticOpacities.ipcress.";
+    message << "shared_ptr to new IpcressGrayOpacity object created for "
+            << "analyticOpacities.ipcress.";
     PASSMSG(message.str());
   }
 
@@ -175,11 +174,9 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
   }
 
   // STL-like accessor
-
-  // The virtual base class does not support STL-like accessors
-  // so we don't test this feature.
-
-  // Currently, KCC does not allow pure virtual + templates.
+  //
+  // The virtual base class does not support STL-like accessors so we don't test
+  // this feature.
 
   // ----------------------------------------- //
   // Create a IpcressMultigorupOpacity object. //
@@ -195,8 +192,7 @@ void test_ipcress_CDI(rtt_dsxx::ScalarUnitTest &ut) {
   } catch (rtt_dsxx::assertion const &excpt) {
     ostringstream message;
     message << "Failed to create shared_ptr to new IpcressMultigroupOpacity "
-            << "object for Al_BeCu.ipcress data." << endl
-            << "\t" << excpt.what();
+            << "object for two-mats.ipcress data.\n\t" << excpt.what();
     FAILMSG(message.str());
     FAILMSG("Aborting tests.");
     return;

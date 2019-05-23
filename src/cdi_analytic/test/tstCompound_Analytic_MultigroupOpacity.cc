@@ -1,16 +1,16 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   cdi_analytic/test/tstnGray_Analytic_MultigroupOpacity.cc
+ * \file   cdi_analytic/test/tstCompound_Analytic_MultigroupOpacity.cc
  * \author Thomas M. Evans
  * \date   Tue Nov 13 17:24:12 2001
- * \brief  nGray_Analytic_MultigroupOpacity test.
+ * \brief  Compound_Analytic_MultigroupOpacity test.
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "cdi_analytic_test.hh"
 #include "cdi/CDI.hh"
-#include "cdi_analytic/nGray_Analytic_MultigroupOpacity.hh"
+#include "cdi_analytic/Compound_Analytic_MultigroupOpacity.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 #include <memory>
@@ -21,8 +21,8 @@ using namespace std;
 using rtt_cdi::CDI;
 using rtt_cdi::MultigroupOpacity;
 using rtt_cdi_analytic::Analytic_Opacity_Model;
+using rtt_cdi_analytic::Compound_Analytic_MultigroupOpacity;
 using rtt_cdi_analytic::Constant_Analytic_Opacity_Model;
-using rtt_cdi_analytic::nGray_Analytic_MultigroupOpacity;
 using rtt_cdi_analytic::Polynomial_Analytic_Opacity_Model;
 using rtt_dsxx::soft_equiv;
 
@@ -53,11 +53,12 @@ void multigroup_test(rtt_dsxx::UnitTest &ut) {
   models[2].reset(new rtt_cdi_analytic::Constant_Analytic_Opacity_Model(3.0));
 
   // make an analytic multigroup opacity object for absorption
-  nGray_Analytic_MultigroupOpacity opacity(groups, models, rtt_cdi::ABSORPTION);
+  Compound_Analytic_MultigroupOpacity opacity(groups, models,
+                                              rtt_cdi::ABSORPTION);
 
   // check the interface to multigroup opacity
   {
-    string desc = "nGray Multigroup Absorption";
+    string desc = "Compound Multigroup Absorption";
 
     if (opacity.data_in_tabular_form())
       ITFAILS;
@@ -88,15 +89,15 @@ void multigroup_test(rtt_dsxx::UnitTest &ut) {
       ITFAILS;
   }
   {
-    nGray_Analytic_MultigroupOpacity anal_opacity(groups, models,
-                                                  rtt_cdi::SCATTERING);
-    if (anal_opacity.getDataDescriptor() != "nGray Multigroup Scattering")
+    Compound_Analytic_MultigroupOpacity anal_opacity(groups, models,
+                                                     rtt_cdi::SCATTERING);
+    if (anal_opacity.getDataDescriptor() != "Compound Multigroup Scattering")
       ITFAILS;
   }
   {
-    nGray_Analytic_MultigroupOpacity anal_opacity(groups, models,
-                                                  rtt_cdi::TOTAL);
-    if (anal_opacity.getDataDescriptor() != "nGray Multigroup Total")
+    Compound_Analytic_MultigroupOpacity anal_opacity(groups, models,
+                                                     rtt_cdi::TOTAL);
+    if (anal_opacity.getDataDescriptor() != "Compound Multigroup Total")
       ITFAILS;
   }
 
@@ -208,8 +209,9 @@ void test_CDI(rtt_dsxx::UnitTest &ut) {
   models[2].reset(new rtt_cdi_analytic::Constant_Analytic_Opacity_Model(3.0));
 
   // make an analytic multigroup opacity object for absorption
-  shared_ptr<const MultigroupOpacity> mg(new nGray_Analytic_MultigroupOpacity(
-      groups, models, rtt_cdi::ABSORPTION));
+  shared_ptr<const MultigroupOpacity> mg(
+      new Compound_Analytic_MultigroupOpacity(groups, models,
+                                              rtt_cdi::ABSORPTION));
 
   // make a CDI object
   CDI cdi;
@@ -280,21 +282,22 @@ void packing_test(rtt_dsxx::UnitTest &ut) {
     models[2].reset(new rtt_cdi_analytic::Constant_Analytic_Opacity_Model(3.0));
 
     // make an analytic multigroup opacity object for absorption
-    shared_ptr<const MultigroupOpacity> mg(new nGray_Analytic_MultigroupOpacity(
-        groups, models, rtt_cdi::ABSORPTION));
+    shared_ptr<const MultigroupOpacity> mg(
+        new Compound_Analytic_MultigroupOpacity(groups, models,
+                                                rtt_cdi::ABSORPTION));
 
     // pack it
     packed = mg->pack();
   }
 
   // now unpack it
-  nGray_Analytic_MultigroupOpacity opacity(packed);
+  Compound_Analytic_MultigroupOpacity opacity(packed);
 
   // now check it
 
   // check the interface to multigroup opacity
   {
-    string desc = "nGray Multigroup Absorption";
+    string desc = "Compound Multigroup Absorption";
 
     if (opacity.data_in_tabular_form())
       ITFAILS;
@@ -372,8 +375,9 @@ void packing_test(rtt_dsxx::UnitTest &ut) {
     models[2].reset(new rtt_cdi_analytic::Constant_Analytic_Opacity_Model(3.0));
 
     // make an analytic multigroup opacity object for absorption
-    shared_ptr<const MultigroupOpacity> mg(new nGray_Analytic_MultigroupOpacity(
-        groups, models, rtt_cdi::ABSORPTION));
+    shared_ptr<const MultigroupOpacity> mg(
+        new Compound_Analytic_MultigroupOpacity(groups, models,
+                                                rtt_cdi::ABSORPTION));
 
     packed = mg->pack();
   }
@@ -382,7 +386,7 @@ void packing_test(rtt_dsxx::UnitTest &ut) {
   // Marshak_Model is not registered in rtt_cdi::Opacity_Models
   bool caught = false;
   try {
-    nGray_Analytic_MultigroupOpacity nmg(packed);
+    Compound_Analytic_MultigroupOpacity nmg(packed);
   } catch (const rtt_dsxx::assertion &ass) {
     caught = true;
     ostringstream message;
@@ -408,5 +412,5 @@ int main(int argc, char *argv[]) {
 }
 
 //---------------------------------------------------------------------------//
-// end of tstnGray_Analytic_MultigroupOpacity.cc
+// end of tstCompound_Analytic_MultigroupOpacity.cc
 //---------------------------------------------------------------------------//

@@ -17,7 +17,9 @@
 #include <vector>
 
 // GPU kernels
-#include "device/test/vector_add.cu"
+#include "device/test/basic_kernels.hh"
+
+using namespace rtt_device_test;
 
 //----------------------------------------------------------------------------//
 // Tests

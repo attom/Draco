@@ -48,7 +48,7 @@ if test -n "$MODULESHOME"; then
       x86_64)
         cflavor="gcc-7.3.0"
         mflavor="$cflavor-openmpi-3.1.2"
-        noflavor="emacs git cmake gcc/7.3.0 ack"
+        noflavor="emacs git cmake/3.14.0-$cflavor gcc/7.3.0 ack"
         compflavor="gsl/2.5-$cflavor netlib-lapack/3.8.0-$cflavor numdiff/5.9.0-$cflavor random123/1.09-$cflavor metis/5.1.0-$cflavor eospac/6.3.1-$cflavor openmpi/3.1.2-gcc_7.3.0"
         mpiflavor="parmetis/4.0.3-$mflavor superlu-dist/5.2.2-$mflavor-netlib trilinos/12.12.1-$mflavor-netlib"
         ec_mf="ndi"
@@ -82,10 +82,11 @@ superlu-dist/5.2.2-$mflavor trilinos/12.12.1-$mflavor"
 #         ;;
       power9*)
         cflavor="gcc-7.3.0"
-        mflavor="$cflavor-openmpi-3.1.2"
+        mflavor="$cflavor-openmpi-3.1.3"
+        lflavor="lapack-3.8.0"
         noflavor="git cmake gcc/7.3.0"
-        compflavor="random123 numdiff gsl/2.5-$cflavor netlib-lapack/3.8.0-$cflavor metis/5.1.0-$cflavor openmpi/p9/3.1.2-gcc_7.3.0"
-        mpiflavor="parmetis/4.0.3-$mflavor superlu-dist/5.2.2-${mflavor}-netlib trilinos/12.12.1-${mflavor}-netlib"
+        compflavor="random123 numdiff gsl/2.5-$cflavor netlib-lapack/3.8.0-$cflavor metis/5.1.0-$cflavor openmpi/p9/3.1.3-gcc_7.3.0"
+        mpiflavor="parmetis/4.0.3-$mflavor superlu-dist/5.2.2-${mflavor}-$lflavor trilinos/12.14.1-${mflavor}-$lflavor"
         # These aren't built for power architectures?
         # ec_mf="ndi eospac/6.3.0"
         ;;

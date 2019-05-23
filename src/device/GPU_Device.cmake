@@ -15,6 +15,7 @@
 
 set( TEST_KERNEL_BINDIR ${PROJECT_BINARY_DIR}/test CACHE PATH
   "GPU kernel binary install location" )
+set( CUDA_DEVICE ON)
 configure_file( config.h.in ${PROJECT_BINARY_DIR}/device/config.h )
 
 # ---------------------------------------------------------------------------- #
@@ -23,12 +24,12 @@ configure_file( config.h.in ${PROJECT_BINARY_DIR}/device/config.h )
 
 set( sources
    GPU_Device.cc
-   GPU_Module.cc )
+   )
 set( headers
    GPU_Device.hh
-   GPU_Module.hh
    ${PROJECT_BINARY_DIR}/device/config.h
-   device_cuda.h )
+   device_cuda.h
+   )
 
 # ---------------------------------------------------------------------------- #
 # Build package library
@@ -38,11 +39,14 @@ add_component_library(
    TARGET       Lib_device
    TARGET_DEPS  Lib_dsxx
    LIBRARY_NAME device
+   LIBRARY_TYPE STATIC
    SOURCES      "${sources}"
    HEADERS      "${headers}" )
 target_include_directories( Lib_device
   PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
-  PUBLIC $<BUILD_INTERFACE:${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}> )
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}>
+  )
+set_property(TARGET Lib_device PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions

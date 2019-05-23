@@ -1,15 +1,15 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   cdi_analytic/nGray_Analytic_Odfmg_Opacity.cc
+ * \file   cdi_analytic/Compound_Analytic_Odfmg_Opacity.cc
  * \author Thomas M. Evans
  * \date   Tue Nov 13 11:19:59 2001
- * \brief  nGray_Analytic_Odfmg_Opacity class member definitions.
+ * \brief  Compound_Analytic_Odfmg_Opacity class member definitions.
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-#include "nGray_Analytic_Odfmg_Opacity.hh"
-#include "nGray_Analytic_MultigroupOpacity.hh"
+#include "Compound_Analytic_Odfmg_Opacity.hh"
+#include "Compound_Analytic_MultigroupOpacity.hh"
 #include "ds++/Packing_Utils.hh"
 #include "ds++/dbc.hh"
 
@@ -22,13 +22,13 @@ namespace rtt_cdi_analytic {
  * \brief Constructor for an analytic multigroup opacity model.
  *
  * This constructor builds an opacity model defined by the
- * rtt_cdi_analytic::nGray_Analytic_Opacity_Model derived class argument.
+ * rtt_cdi_analytic::Compound_Analytic_Opacity_Model derived class argument.
  *
  * The reaction type for this instance of the class is determined by the
  * rtt_cdi::Reaction argument.
  *
  * The group structure (in keV) must be provided by the groups argument.  The
- * number of nGray_Analytic_Opacity_Model objects given in the models argument
+ * number of Compound_Analytic_Opacity_Model objects given in the models argument
  * must be equal to the number of groups.
  *
  * \param groups vector containing the group boundaries in keV from lowest to
@@ -40,7 +40,7 @@ namespace rtt_cdi_analytic {
  * \param reaction_in rtt_cdi::Reaction type (enumeration)
  * \param model_in An enumeration for the model.
  */
-nGray_Analytic_Odfmg_Opacity::nGray_Analytic_Odfmg_Opacity(
+Compound_Analytic_Odfmg_Opacity::Compound_Analytic_Odfmg_Opacity(
     const sf_double &groups, const sf_double &bands,
     const sf_Analytic_Model &models, rtt_cdi::Reaction reaction_in,
     rtt_cdi::Model model_in)
@@ -56,12 +56,12 @@ nGray_Analytic_Odfmg_Opacity::nGray_Analytic_Odfmg_Opacity(
 /*!
  * \brief Unpacking constructor.
  *
- * This constructor rebuilds and nGray_Analytic_Odfmg_Opacity from a
+ * This constructor rebuilds and Compound_Analytic_Odfmg_Opacity from a
  * vector<char> that was created by a call to pack().  It can only rebuild
  * Analytic_Model types that have been registered in the
  * rtt_cdi_analytic::Opacity_Models enumeration.
  */
-nGray_Analytic_Odfmg_Opacity::nGray_Analytic_Odfmg_Opacity(
+Compound_Analytic_Odfmg_Opacity::Compound_Analytic_Odfmg_Opacity(
     const sf_char &packed)
     : Analytic_Odfmg_Opacity(packed), group_models() {
   // the packed size must be at least 5 integers (number of groups, number of
@@ -131,15 +131,15 @@ nGray_Analytic_Odfmg_Opacity::nGray_Analytic_Odfmg_Opacity(
  * Given a scalar temperature and density, return the group opacities
  * (vector<double>) for the reaction type specified by the constructor.  The
  * analytic opacity model is specified in the constructor
- * (nGray_Analytic_Odfmg_Opacity()).
+ * (Compound_Analytic_Odfmg_Opacity()).
  *
  * \param targetTemperature material temperature in keV
  * \param targetDensity material density in g/cm^3
  * \return group opacities (coefficients) in cm^2/g
  */
 std::vector<std::vector<double>>
-nGray_Analytic_Odfmg_Opacity::getOpacity(double targetTemperature,
-                                         double targetDensity) const {
+Compound_Analytic_Odfmg_Opacity::getOpacity(double targetTemperature,
+                                            double targetDensity) const {
   Require(targetTemperature >= 0.0);
   Require(targetDensity >= 0.0);
 
@@ -180,7 +180,7 @@ nGray_Analytic_Odfmg_Opacity::getOpacity(double targetTemperature,
  *        single density value.
  */
 std::vector<std::vector<std::vector<double>>>
-nGray_Analytic_Odfmg_Opacity::getOpacity(
+Compound_Analytic_Odfmg_Opacity::getOpacity(
     const std::vector<double> &targetTemperature, double targetDensity) const {
   std::vector<std::vector<std::vector<double>>> opacity(
       targetTemperature.size());
@@ -198,7 +198,7 @@ nGray_Analytic_Odfmg_Opacity::getOpacity(
  *        density values.
  */
 std::vector<std::vector<std::vector<double>>>
-nGray_Analytic_Odfmg_Opacity::getOpacity(
+Compound_Analytic_Odfmg_Opacity::getOpacity(
     double targetTemperature, const std::vector<double> &targetDensity) const {
   std::vector<std::vector<std::vector<double>>> opacity(targetDensity.size());
 
@@ -214,12 +214,12 @@ nGray_Analytic_Odfmg_Opacity::getOpacity(
  * \brief Pack an analytic odfmg opacity.
  *
  * This function will pack up the Analytic_Mulitgroup_Opacity into a char array
- * (represented by a vector<char>).  The nGray_Analytic_Opacity_Model derived
+ * (represented by a vector<char>).  The Compound_Analytic_Opacity_Model derived
  * class must have a pack function; this is enforced by the virtual
- * nGray_Analytic_Opacity_Model base class.
+ * Compound_Analytic_Opacity_Model base class.
  */
-nGray_Analytic_Odfmg_Opacity::sf_char
-nGray_Analytic_Odfmg_Opacity::pack() const {
+Compound_Analytic_Odfmg_Opacity::sf_char
+Compound_Analytic_Odfmg_Opacity::pack() const {
   // make a packer
   rtt_dsxx::Packer packer;
 
@@ -268,5 +268,5 @@ nGray_Analytic_Odfmg_Opacity::pack() const {
 } // end namespace rtt_cdi_analytic
 
 //---------------------------------------------------------------------------//
-// end of nGray_Analytic_Odfmg_Opacity.cc
+// end of Compound_Analytic_Odfmg_Opacity.cc
 //---------------------------------------------------------------------------//

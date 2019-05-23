@@ -427,7 +427,7 @@ class UnitTest:
   #------------------------------------------------------------------------------#
 
   #------------------------------------------------------------------------------#
-  # Check output for capsaicin pass/fail criteria
+  # Check output for client pass/fail criteria
   def capsaicin_output_check(self, driver="serrano", ignore_error_N=False):
 
     print("Parsing {0} output".format(driver))

@@ -11,8 +11,8 @@
 #include "cdi_analytic_test.hh"
 #include "c4/ParallelUnitTest.hh"
 #include "cdi/CDI.hh"
+#include "cdi_analytic/Compound_Analytic_Odfmg_Opacity.hh"
 #include "cdi_analytic/Pseudo_Line_Analytic_Odfmg_Opacity.hh"
-#include "cdi_analytic/nGray_Analytic_Odfmg_Opacity.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 #include "parser/Constant_Expression.hh"
@@ -74,8 +74,8 @@ void odfmg_test(UnitTest &ut) {
   models[2].reset(new rtt_cdi_analytic::Constant_Analytic_Opacity_Model(3.0));
 
   // make an analytic multigroup opacity object for absorption
-  nGray_Analytic_Odfmg_Opacity opacity(groups, bands, models,
-                                       rtt_cdi::ABSORPTION);
+  Compound_Analytic_Odfmg_Opacity opacity(groups, bands, models,
+                                          rtt_cdi::ABSORPTION);
 
   // check the interface to multigroup opacity
   {
@@ -122,8 +122,8 @@ void odfmg_test(UnitTest &ut) {
 
   {
     // make an analytic multigroup opacity object for scattering
-    nGray_Analytic_Odfmg_Opacity opac(groups, bands, models,
-                                      rtt_cdi::SCATTERING);
+    Compound_Analytic_Odfmg_Opacity opac(groups, bands, models,
+                                         rtt_cdi::SCATTERING);
     string desc = "Analytic Odfmg Scattering";
 
     if (opac.getDataDescriptor() != desc)
@@ -131,7 +131,7 @@ void odfmg_test(UnitTest &ut) {
   }
   {
     // make an analytic multigroup opacity object for scattering
-    nGray_Analytic_Odfmg_Opacity opac(groups, bands, models, rtt_cdi::TOTAL);
+    Compound_Analytic_Odfmg_Opacity opac(groups, bands, models, rtt_cdi::TOTAL);
     string desc = "Analytic Odfmg Total";
 
     if (opac.getDataDescriptor() != desc)
@@ -257,7 +257,7 @@ void test_CDI(UnitTest &ut) {
   models[2].reset(new rtt_cdi_analytic::Constant_Analytic_Opacity_Model(3.0));
 
   // make an analytic multigroup opacity object for absorption
-  std::shared_ptr<const OdfmgOpacity> odfmg(new nGray_Analytic_Odfmg_Opacity(
+  std::shared_ptr<const OdfmgOpacity> odfmg(new Compound_Analytic_Odfmg_Opacity(
       groups, bands, models, rtt_cdi::ABSORPTION));
 
   // make a CDI object
@@ -332,15 +332,16 @@ void packing_test(UnitTest &ut) {
     models[2].reset(new rtt_cdi_analytic::Constant_Analytic_Opacity_Model(3.0));
 
     // make an analytic multigroup opacity object for absorption
-    std::shared_ptr<const OdfmgOpacity> odfmg(new nGray_Analytic_Odfmg_Opacity(
-        groups, bands, models, rtt_cdi::ABSORPTION));
+    std::shared_ptr<const OdfmgOpacity> odfmg(
+        new Compound_Analytic_Odfmg_Opacity(groups, bands, models,
+                                            rtt_cdi::ABSORPTION));
 
     // pack it
     packed = odfmg->pack();
   }
 
   // now unpack it
-  nGray_Analytic_Odfmg_Opacity opacity(packed);
+  Compound_Analytic_Odfmg_Opacity opacity(packed);
 
   // now check it
 
@@ -434,8 +435,9 @@ void packing_test(UnitTest &ut) {
     models[2].reset(new rtt_cdi_analytic::Constant_Analytic_Opacity_Model(3.0));
 
     // make an analytic multigroup opacity object for absorption
-    std::shared_ptr<const OdfmgOpacity> odfmg(new nGray_Analytic_Odfmg_Opacity(
-        groups, bands, models, rtt_cdi::ABSORPTION));
+    std::shared_ptr<const OdfmgOpacity> odfmg(
+        new Compound_Analytic_Odfmg_Opacity(groups, bands, models,
+                                            rtt_cdi::ABSORPTION));
 
     packed = odfmg->pack();
   }
@@ -444,7 +446,7 @@ void packing_test(UnitTest &ut) {
   // Marshak_Model is not registered in rtt_cdi::Opacity_Models
   bool caught = false;
   try {
-    nGray_Analytic_Odfmg_Opacity nmg(packed);
+    Compound_Analytic_Odfmg_Opacity nmg(packed);
   } catch (const rtt_dsxx::assertion &err) {
     caught = true;
     ostringstream message;

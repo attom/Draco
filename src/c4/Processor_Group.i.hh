@@ -1,8 +1,6 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
  * \file   c4/Processor_Group.i.hh
- * \author Kent Budge
- * \date   Fri Oct 20 13:49:10 2006
  * \brief  Template method definitions of class Processor_Group
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
  *         All rights reserved. */
@@ -11,13 +9,16 @@
 #ifndef c4_Processor_Group_i_hh
 #define c4_Processor_Group_i_hh
 
+#ifdef C4_MPI
 #include "MPI_Traits.hh"
+#endif // C4_MPI
+
 #include "Processor_Group.hh"
 #include "ds++/Assert.hh"
 
-#ifdef C4_MPI
-
 namespace rtt_c4 {
+
+#ifdef C4_MPI
 
 //---------------------------------------------------------------------------//
 template <typename RandomAccessContainer>
@@ -78,9 +79,45 @@ void Processor_Group::assemble_vector(T const *local, T *global,
   Insist(status == 0, "MPI_Gather failed");
 }
 
-} // end namespace rtt_c4
+#else // not C4_MPI
+
+//---------------------------------------------------------------------------//
+template <typename RandomAccessContainer>
+void Processor_Group::sum(RandomAccessContainer & /*x*/) {
+  // noop
+}
+
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Assemble a set of local vectors into global vectors (container-based
+ *        version).
+ *
+ * \param[in]  local  Points to a region of storage of size N.
+ * \param[out] global Points to a region of storage of size N*this->size()
+ */
+template <typename T>
+void Processor_Group::assemble_vector(std::vector<T> const &local,
+                                      std::vector<T> &global) const {
+  global = local;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+ * \brief Assemble a set of local vectors into global vectors (pointer-based
+ *        version).
+ *
+ * \param[in]  local  Points to a region of storage of size N.
+ * \param[out] global Points to a region of storage of size N*this->size()
+ * \param[in]  N      Number of local quantities to assemble.
+ */
+template <typename T>
+void Processor_Group::assemble_vector(T const *local, T *global,
+                                      unsigned const N) const {
+  std::copy(local, local + N, global);
+}
 
 #endif // C4_MPI
+} // end namespace rtt_c4
 
 #endif // c4_Processor_Group_i_hh
 

@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*----------------------------------//
 /*! \file   UnitSystemType.hh
  *  \author Kelly Thompson
- *  \brief  Aggregates a collection of FundUnits to create a complete 
+ *  \brief  Aggregates a collection of FundUnits to create a complete
  *          UnitSystemType.
  *  \date   Fri Oct 24 15:04:41 2003
  *  \note   Copyright (C) 2016-2019 Triad National Security, LLC.
@@ -16,10 +16,10 @@
 namespace rtt_units {
 
 //============================================================================//
-/*! 
+/*!
  * \class UnitSystemType
  *
- * \brief Aggregates a collection of FundUnits to create a complete 
+ * \brief Aggregates a collection of FundUnits to create a complete
  *        UnitSystemType.  Also provides a tool for constructing UnitSystems
  *        on the fly.
  *
@@ -28,7 +28,7 @@ namespace rtt_units {
  * \sa test/tstUnitSystem.cc - a demonstration of using UnitSystemTypoe
  *
  * Different ways to construct a UnitSystem
- 
+
  * \verbatim
  * using rtt_units::UnitSystemType;
  * using rtt_units::UnitSystem;
@@ -43,7 +43,7 @@ namespace rtt_units {
  */
 //============================================================================//
 
-class DLL_PUBLIC_units UnitSystemType {
+class UnitSystemType {
 public:
   // CONSTRUCTORS AND DESTRUCTOR
 

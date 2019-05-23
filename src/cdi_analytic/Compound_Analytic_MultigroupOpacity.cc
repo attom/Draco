@@ -1,14 +1,12 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   cdi_analytic/nGray_Analytic_MultigroupOpacity.cc
- * \author Thomas M. Evans
- * \date   Tue Nov 13 11:19:59 2001
- * \brief  nGray_Analytic_MultigroupOpacity class member definitions.
+ * \file   cdi_analytic/Compound_Analytic_MultigroupOpacity.cc
+ * \brief  Compound_Analytic_MultigroupOpacity class member definitions.
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-#include "nGray_Analytic_MultigroupOpacity.hh"
+#include "Compound_Analytic_MultigroupOpacity.hh"
 #include "ds++/Packing_Utils.hh"
 #include "ds++/dbc.hh"
 
@@ -27,7 +25,7 @@ namespace rtt_cdi_analytic {
  * rtt_cdi::Reaction argument.
  *
  * The group structure (in keV) must be provided by the groups argument.  The
- * number of Analytic_Opacity_Model objects given in the models argument must 
+ * number of Analytic_Opacity_Model objects given in the models argument must
  * be equal to the number of groups.
  *
  * \param groups vector containing the group boundaries in keV from lowest to
@@ -37,7 +35,7 @@ namespace rtt_cdi_analytic {
  * \param reaction_in rtt_cdi::Reaction type (enumeration)
  * \param model_in Enum specifying CDI model.
  */
-nGray_Analytic_MultigroupOpacity::nGray_Analytic_MultigroupOpacity(
+Compound_Analytic_MultigroupOpacity::Compound_Analytic_MultigroupOpacity(
     const sf_double &groups, const sf_Analytic_Model &models,
     rtt_cdi::Reaction reaction_in, rtt_cdi::Model model_in)
     : Analytic_MultigroupOpacity(groups, reaction_in, model_in),
@@ -45,18 +43,20 @@ nGray_Analytic_MultigroupOpacity::nGray_Analytic_MultigroupOpacity(
   Require(groups.size() - 1 == models.size());
   Require(
       rtt_dsxx::is_strict_monotonic_increasing(groups.begin(), groups.end()));
+
+  Ensure(check_class_invariant());
 }
 
 //---------------------------------------------------------------------------//
 /*!
  * \brief Unpacking constructor.
  *
- * This constructor rebuilds and nGray_Analytic_MultigroupOpacity from a
+ * This constructor rebuilds and Compound_Analytic_MultigroupOpacity from a
  * vector<char> that was created by a call to pack().  It can only rebuild
  * Analytic_Model types that have been registered in the
  * rtt_cdi_analytic::Opacity_Models enumeration.
  */
-nGray_Analytic_MultigroupOpacity::nGray_Analytic_MultigroupOpacity(
+Compound_Analytic_MultigroupOpacity::Compound_Analytic_MultigroupOpacity(
     const sf_char &packed)
     : Analytic_MultigroupOpacity(packed), group_models() {
   // get the number of group boundaries
@@ -108,7 +108,11 @@ nGray_Analytic_MultigroupOpacity::nGray_Analytic_MultigroupOpacity(
     Ensure(group_models[i]);
   }
 
-  Ensure(num_groups == group_models.size());
+  Ensure(check_class_invariant());
+}
+//---------------------------------------------------------------------------//
+bool Compound_Analytic_MultigroupOpacity::check_class_invariant() const {
+  return group_models.size() + 1 == getGroupBoundaries().size();
 }
 
 //---------------------------------------------------------------------------//
@@ -120,16 +124,16 @@ nGray_Analytic_MultigroupOpacity::nGray_Analytic_MultigroupOpacity(
  * Given a scalar temperature and density, return the group opacities
  * (vector<double>) for the reaction type specified by the constructor.  The
  * analytic opacity model is specified in the constructor
- * (nGray_Analytic_MultigroupOpacity()).
+ * (Compound_Analytic_MultigroupOpacity()).
  *
  * \param temperature material temperature in keV
  * \param density material density in g/cm^3
  * \return group opacities (coefficients) in cm^2/g
  *
  */
-nGray_Analytic_MultigroupOpacity::sf_double
-nGray_Analytic_MultigroupOpacity::getOpacity(double temperature,
-                                             double density) const {
+Compound_Analytic_MultigroupOpacity::sf_double
+Compound_Analytic_MultigroupOpacity::getOpacity(double temperature,
+                                                double density) const {
   Require(temperature >= 0.0);
   Require(density >= 0.0);
 
@@ -137,11 +141,15 @@ nGray_Analytic_MultigroupOpacity::getOpacity(double temperature,
   sf_double opacities(group_models.size(), 0.0);
 
   // loop through groups and get opacities
+  auto nu = getGroupBoundaries();
+  Check(nu.size() == group_models.size() + 1);
+
   for (size_t i = 0; i < opacities.size(); ++i) {
     Check(group_models[i]);
 
     // assign the opacity based on the group model
-    opacities[i] = group_models[i]->calculate_opacity(temperature, density);
+    opacities[i] = group_models[i]->calculate_opacity(temperature, density,
+                                                      nu[i], nu[i + 1]);
 
     Check(opacities[i] >= 0.0);
   }
@@ -170,9 +178,9 @@ nGray_Analytic_MultigroupOpacity::getOpacity(double temperature,
  * \return std::vector<std::vector> of multigroup opacities (coefficients) in
  * cm^2/g indexed [temperature][group]
  */
-nGray_Analytic_MultigroupOpacity::vf_double
-nGray_Analytic_MultigroupOpacity::getOpacity(const sf_double &temperature,
-                                             double density) const {
+Compound_Analytic_MultigroupOpacity::vf_double
+Compound_Analytic_MultigroupOpacity::getOpacity(const sf_double &temperature,
+                                                double density) const {
   Require(density >= 0.0);
 
   // define the return opacity field (same size as temperature field); each
@@ -219,9 +227,9 @@ nGray_Analytic_MultigroupOpacity::getOpacity(const sf_double &temperature,
  * \return std::vector<std::vector> of multigroup opacities (coefficients) in
  * cm^2/g indexed [density][group]
  */
-nGray_Analytic_MultigroupOpacity::vf_double
-nGray_Analytic_MultigroupOpacity::getOpacity(double temperature,
-                                             const sf_double &density) const {
+Compound_Analytic_MultigroupOpacity::vf_double
+Compound_Analytic_MultigroupOpacity::getOpacity(
+    double temperature, const sf_double &density) const {
   Require(temperature >= 0.0);
 
   // define the return opacity field (same size as density field); each
@@ -256,8 +264,8 @@ nGray_Analytic_MultigroupOpacity::getOpacity(double temperature,
  * class must have a pack function; this is enforced by the virtual
  * Analytic_Opacity_Model base class.
  */
-nGray_Analytic_MultigroupOpacity::sf_char
-nGray_Analytic_MultigroupOpacity::pack() const {
+Compound_Analytic_MultigroupOpacity::sf_char
+Compound_Analytic_MultigroupOpacity::pack() const {
   // make a packer
   rtt_dsxx::Packer packer;
 
@@ -306,5 +314,5 @@ nGray_Analytic_MultigroupOpacity::pack() const {
 } // end namespace rtt_cdi_analytic
 
 //---------------------------------------------------------------------------//
-// end of nGray_Analytic_MultigroupOpacity.cc
+// end of Compound_Analytic_MultigroupOpacity.cc
 //---------------------------------------------------------------------------//

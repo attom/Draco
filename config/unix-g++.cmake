@@ -24,7 +24,7 @@ include_guard(GLOBAL)
 # Declare CMake options related to GCC
 #
 if( NOT DEFINED GCC_ENABLE_ALL_WARNINGS )
-  option( GCC_ENABLE_ALL_WARNINGS "Add \"-Weffc++\" to the compile options." 
+  option( GCC_ENABLE_ALL_WARNINGS "Add \"-Weffc++\" to the compile options."
     OFF )
 endif()
 if( NOT DEFINED GCC_ENABLE_GLIBCXX_DEBUG )
@@ -41,7 +41,7 @@ check_c_compiler_flag(   "-march=native" HAS_MARCH_NATIVE )
 if( DEFINED CMAKE_CXX_COMPILER_ID )
   check_cxx_compiler_flag( "-Wnoexcept"    HAS_WNOEXCEPT )
   check_cxx_compiler_flag( "-Wsuggest-attribute=const" HAS_WSUGGEST_ATTRIBUTE )
-  check_cxx_compiler_flag( "-Wunused-local-typedefs"   
+  check_cxx_compiler_flag( "-Wunused-local-typedefs"
     HAS_WUNUSED_LOCAL_TYPEDEFS )
   #check_cxx_compiler_flag( "-Wunused-macros" HAS_WUNUSED_MACROS )
   #check_cxx_compiler_flag( "-Wzero-as-null-pointer-constant"
@@ -102,9 +102,6 @@ if( NOT CXX_FLAGS_INITIALIZED )
   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0 )
     # See https://gcc.gnu.org/gcc-5/changes.html
     # UndefinedBehaviorSanitizer gained a few new sanitization options:
-    #  -fsanitize=float-divide-by-zero: detect floating-point division by 0
-    #  -fsanitize=float-cast-overflow: check that the result of floating-point
-    #             type to integer conversions do not overflow;
     #  -fsanitize=alignment: enable alignment checking, detect various
     #             misaligned objects;
     #  -fsanitize=object-size: enable object size checking, detect various
@@ -148,10 +145,9 @@ if( NOT CXX_FLAGS_INITIALIZED )
   endif()
   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 8.0 )
     # See https://gcc.gnu.org/gcc-8/changes.html
-    # -Wold-style-cast diagnostic can now emit fix-it hints telling you when you
-    #                  can use a static_cast, const_cast, or reinterpret_cast.
-    # -fdiagnostics-show-template-tree visualizes such mismatching templates in
-    #                  a hierarchical form:
+    # -fsanitize=pointer-compare warn about subtraction (or comparison) of
+    #                  pointers that point to a different memory object.
+    # -fsanitize=pointer-subtract
     string( APPEND CMAKE_CXX_FLAGS_DEBUG " -Wold-style-cast")
     string( APPEND CMAKE_CXX_FLAGS_DEBUG " -fdiagnostics-show-template-tree")
   endif()

@@ -48,10 +48,7 @@ namespace rtt_device {
  * \endcode
  *
  * \example device/test/gpu_hello_rt_api.cu
- * Test of GPU_Device for CUDA runtime environment.
- *
- * \example device/test/gpu_hello_driver_api.cc
- * Test of GPU_Device for CUDA driver environment.
+ * Test of GPU_Device for with CUDA runtime API.
  */
 //===========================================================================//
 
@@ -106,17 +103,6 @@ public:
    *  textureAlign bytes do not need an offset applied to texture fetches */
   int textureAlign(int devId = 0) const { return m_texturealign[devId]; }
 
-  //! Return the device handle
-  CUdevice deviceHandle(int idevice) const {
-    Require(idevice < deviceCount);
-    return device_handle[idevice];
-  }
-  //! Return the context handle
-  CUcontext contextHandle(int idevice) const {
-    Require(idevice < deviceCount);
-    return context[idevice];
-  }
-
   // SERVICES
   //! Print a summary of idevice's features to ostream out.
   void printDeviceSummary(int const idevice,
@@ -127,17 +113,17 @@ public:
     return (offset + alignment - 1) & ~(alignment - 1);
   }
   //! Check cuda return code and throw an Insist on error.
-  static std::string getErrorMessage(cudaError_enum const err);
+  static std::string getErrorMessage(cudaError_t const err);
   //! Check the value of the return code for CUDA calls.
-  static void checkForCudaError(cudaError_enum const errorCode);
+  static void checkForCudaError(cudaError_t const errorCode);
   //! Wrap the cuMemAlloc call to include error checking
-  static CUdeviceptr MemAlloc(unsigned const nbytes);
+  static void *MemAlloc(unsigned const nbytes);
   //! Wrap cuMemcpyHtoD() to include error checking.
-  static void MemcpyHtoD(CUdeviceptr ptr, void const *loc, unsigned nbytes);
+  static void MemcpyHtoD(void *ptr, void const *loc, unsigned nbytes);
   //! Wrap cuMemcpyDtoH() to include error checking.
-  static void MemcpyDtoH(void *loc, CUdeviceptr ptr, unsigned nbytes);
+  static void MemcpyDtoH(void *loc, void *ptr, unsigned nbytes);
   //! Wrap cuMemFree() to include error checking.
-  static void MemFree(CUdeviceptr ptr);
+  static void MemFree(void *ptr);
 
 protected:
   // IMPLEMENTATION
@@ -163,16 +149,6 @@ private:
   std::vector<int> m_regsperblock;
   std::vector<int> m_clockrate;
   std::vector<int> m_texturealign;
-
-  //! Device handles (one per device)
-  std::vector<CUdevice> device_handle;
-  /*! Device context (one per handle)
-   *
-   * Current implementation only allows 1 context per GPU.  However, the CUDA
-   * Driver API provides for the concept of pushing and poping various contexts
-   * on the GPU.
-   */
-  std::vector<CUcontext> context;
 };
 
 } // end namespace rtt_device

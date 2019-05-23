@@ -7,6 +7,11 @@
 ##         All rights are reserved.
 ##---------------------------------------------------------------------------##
 
+# Run from ccscs2
+if [[ `uname -n | sed -e 's/[.].*//'` != "ccscs2" ]]; then
+  die "This script should be run from ccscs2."
+fi
+
 # switch to group 'ccsrad' and set umask
 if [[ $(id -gn) != ccsrad ]]; then
   exec sg ccsrad "$0 $*"
@@ -19,7 +24,12 @@ scriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Redirect all output to a log file.
 timestamp=`date +%Y%m%d-%H%M`
 target="`uname -n | sed -e s/[.].*//`"
-logdir="$( cd $scriptdir/../../logs && pwd )"
+if [[ $USER == "kellyt" ]]; then
+  logdir="$( cd $scriptdir/../../logs && pwd )"
+else
+  logdir=$HOME/logs
+fi
+if ! [[ -d $logdir ]]; mkdir -p $logdir; fi
 logfile=$logdir/push_repositories_xf-$target-$timestamp.log
 exec > $logfile
 exec 2>&1
@@ -48,7 +58,7 @@ if [[ $USER == "kellyt" ]] ; then
 fi
 
 # Sanity check
-if test `klist -l | grep -c $USER` = 0; then
+if [[ `klist -l | grep -c $USER` == 0 ]]; then
     die "You must have an active kerberos ticket to run this script."
 fi
 

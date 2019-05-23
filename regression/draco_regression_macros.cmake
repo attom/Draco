@@ -671,7 +671,7 @@ macro( setup_for_code_coverage )
             # Process and save lines of code
             message( "Generating lines of code statistics...
 /scratch/vendors/bin/cloc
-               --exclude-dir=heterogeneous,chimpy
+             #  --exclude-dir=heterogeneous,chimpy
                --exclude-list-file=$ENV{rscriptdir}/cloc-exclude.cfg
                --exclude-lang=Text,Postscript
                --categorize=cloc-categorize.log
@@ -684,7 +684,6 @@ macro( setup_for_code_coverage )
             ")
             execute_process(
                COMMAND /scratch/vendors/bin/cloc
-               --exclude-dir=heterogeneous,chimpy
                --exclude-list-file=$ENV{rscriptdir}/cloc-exclude.cfg
                --exclude-lang=Text,Postscript
                --categorize=cloc-categorize.log
@@ -701,7 +700,7 @@ macro( setup_for_code_coverage )
             message( "Lines of code data at ${CTEST_BINARY_DIRECTORY}/lines-of-code.log")
             message( "Generating lines of code statistics (omitting test directories)
 /scratch/vendors/bin/cloc
-               --exclude-dir=heterogeneous,chimpy,test
+               # --exclude-dir=heterogeneous,chimpy,test
                --exclude-list-file=/scratch/regress/draco/regression/cloc-exclude.cfg
                --exclude-lang=Text,Postscript
                --categorize=cloc-categorize-notest.log
@@ -714,7 +713,6 @@ macro( setup_for_code_coverage )
             ")
             execute_process(
                COMMAND /scratch/vendors/bin/cloc
-               --exclude-dir=heterogeneous,chimpy,test
                --exclude-list-file=/scratch/regress/draco/regression/cloc-exclude.cfg
                --exclude-lang=Text,Postscript
                --categorize=cloc-categorize.log
@@ -742,7 +740,11 @@ macro( setup_for_code_coverage )
             ctest_upload( FILES
             #  "${CMAKE_CURRENT_BINARY_DIR}/redmine.url"
               "${CTEST_BINARY_DIRECTORY}/lines-of-code.log"
-              "${CTEST_BINARY_DIRECTORY}/lines-of-code-notest.log" )
+              "${CTEST_BINARY_DIRECTORY}/lines-of-code-notest.log"
+              "${CTEST_BINARY_DIRECTORY}/cloc-categorize.log"
+              "${CTEST_BINARY_DIRECTORY}/cloc-counted.log"
+              "${CTEST_BINARY_DIRECTORY}/cloc-ignored"
+              "${CTEST_BINARY_DIRECTORY}/covdir.log" )
 
          endif()
       endif()

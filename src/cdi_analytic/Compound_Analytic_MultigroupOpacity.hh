@@ -1,15 +1,15 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   cdi_analytic/nGray_Analytic_MultigroupOpacity.hh
+ * \file   cdi_analytic/Compound_Analytic_MultigroupOpacity.hh
  * \author Thomas M. Evans
  * \date   Tue Nov 13 11:19:59 2001
- * \brief  nGray_Analytic_MultigroupOpacity class definition.
+ * \brief  Compound_Analytic_MultigroupOpacity class definition.
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
  *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
-#ifndef __cdi_analytic_nGray_Analytic_MultigroupOpacity_hh__
-#define __cdi_analytic_nGray_Analytic_MultigroupOpacity_hh__
+#ifndef __cdi_analytic_Compound_Analytic_MultigroupOpacity_hh__
+#define __cdi_analytic_Compound_Analytic_MultigroupOpacity_hh__
 
 #include "Analytic_MultigroupOpacity.hh"
 
@@ -17,11 +17,11 @@ namespace rtt_cdi_analytic {
 
 //===========================================================================//
 /*!
- * \class nGray_Analytic_MultigroupOpacity
+ * \class Compound_Analytic_MultigroupOpacity
  *
  * \brief Derived Analytic_MultigroupOpacity class for analytic opacities.
  *
- * The nGray_Analytic_MultigroupOpacity class is a derived
+ * The Compound_Analytic_MultigroupOpacity class is a derived
  * Analytic_MultigroupOpacity class.  It provides analytic opacity data. The
  * specific analytic opacity model is derived from the
  * rtt_cdi_analytic::Analytic_Opacity_Model base class.  Several pre-built
@@ -56,14 +56,14 @@ namespace rtt_cdi_analytic {
  * Analytic_MultigroupOpacity and can be used with rtt_cdi::CDI to get
  * analytic opacities.
  *
- * \example cdi_analytic/test/tstnGray_Analytic_MultigroupOpacity.cc
+ * \example cdi_analytic/test/tstCompound_Analytic_MultigroupOpacity.cc
  *
- * Example usage of nGray_Analytic_MultigroupOpacity, Analytic_Opacity_Model,
+ * Example usage of Compound_Analytic_MultigroupOpacity, Analytic_Opacity_Model,
  * and their incorporation into rtt_cdi::CDI.
  */
 //===========================================================================//
 
-class nGray_Analytic_MultigroupOpacity : public Analytic_MultigroupOpacity {
+class Compound_Analytic_MultigroupOpacity : public Analytic_MultigroupOpacity {
 public:
   // Useful typedefs.
   typedef std::shared_ptr<Analytic_Opacity_Model> SP_Analytic_Model;
@@ -80,13 +80,16 @@ private:
 
 public:
   // Constructor.
-  nGray_Analytic_MultigroupOpacity(const sf_double &groups,
-                                   const sf_Analytic_Model &models,
-                                   rtt_cdi::Reaction reaction_in,
-                                   rtt_cdi::Model model_in = rtt_cdi::ANALYTIC);
+  Compound_Analytic_MultigroupOpacity(
+      const sf_double &groups, const sf_Analytic_Model &models,
+      rtt_cdi::Reaction reaction_in,
+      rtt_cdi::Model model_in = rtt_cdi::ANALYTIC);
 
   // Constructor for packed Analytic_Multigroup_Opacities
-  explicit nGray_Analytic_MultigroupOpacity(const sf_char &packed);
+  explicit Compound_Analytic_MultigroupOpacity(const sf_char &packed);
+
+  // Check that the class invariant is not violated.
+  bool check_class_invariant() const;
 
   // >>> ACCESSORS
   const_Model get_Analytic_Model(size_t g) const { return group_models[g - 1]; }
@@ -105,7 +108,7 @@ public:
   // Get the data description of the opacity.
   inline std_string getDataDescriptor(void) const;
 
-  // Pack the nGray_Analytic_MultigroupOpacity into a character string.
+  // Pack the Compound_Analytic_MultigroupOpacity into a character string.
   sf_char pack(void) const;
 };
 
@@ -113,22 +116,22 @@ public:
 // INLINE FUNCTIONS
 //---------------------------------------------------------------------------//
 //! Return a string describing the opacity model.
-nGray_Analytic_MultigroupOpacity::std_string
-nGray_Analytic_MultigroupOpacity::getDataDescriptor() const {
+Compound_Analytic_MultigroupOpacity::std_string
+Compound_Analytic_MultigroupOpacity::getDataDescriptor() const {
   std_string descriptor;
 
   rtt_cdi::Reaction const rxn = getReactionType();
 
   if (rxn == rtt_cdi::TOTAL)
-    descriptor = "nGray Multigroup Total";
+    descriptor = "Compound Multigroup Total";
   else if (rxn == rtt_cdi::ABSORPTION)
-    descriptor = "nGray Multigroup Absorption";
+    descriptor = "Compound Multigroup Absorption";
   else if (rxn == rtt_cdi::SCATTERING)
-    descriptor = "nGray Multigroup Scattering";
+    descriptor = "Compound Multigroup Scattering";
   else {
     Insist(rxn == rtt_cdi::TOTAL || rxn == rtt_cdi::ABSORPTION ||
                rxn == rtt_cdi::SCATTERING,
-           "Invalid nGray multigroup model opacity!");
+           "Invalid Compound multigroup model opacity!");
   }
 
   return descriptor;
@@ -136,8 +139,8 @@ nGray_Analytic_MultigroupOpacity::getDataDescriptor() const {
 
 } // namespace rtt_cdi_analytic
 
-#endif // __cdi_analytic_nGray_Analytic_MultigroupOpacity_hh__
+#endif // __cdi_analytic_Compound_Analytic_MultigroupOpacity_hh__
 
 //---------------------------------------------------------------------------//
-// end of cdi_analytic/nGray_Analytic_MultigroupOpacity.hh
+// end of cdi_analytic/Compound_Analytic_MultigroupOpacity.hh
 //---------------------------------------------------------------------------//

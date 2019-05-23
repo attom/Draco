@@ -27,6 +27,7 @@
 #endif
 
 #include <cuda.h>
+#include <cuda_runtime.h>
 
 #if defined __GNUC__
 #pragma GCC system_header

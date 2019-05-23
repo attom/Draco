@@ -3,20 +3,16 @@
  * \file   units/test/tstFundUnit.cc
  * \author Kelly Thompson
  * \date   Wed Oct  8 13:50:19 2003
- * \brief  
+ * \brief
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
-
-#include <sstream>
 
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 #include "ds++/Soft_Equivalence.hh"
 #include "units/FundUnit.hh"
+#include <sstream>
 
 //---------------------------------------------------------------------------//
 // TESTS

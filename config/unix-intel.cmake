@@ -47,8 +47,7 @@ if( NOT CXX_FLAGS_INITIALIZED )
   set( CMAKE_C_FLAGS_RELWITHDEBINFO
     "-g -debug inline-debug-info -O3 -pthread -fp-model precise -fp-speculation safe -fno-omit-frame-pointer" )
 
-  set( CMAKE_CXX_FLAGS
-    "${CMAKE_C_FLAGS} -std=c++11" )
+  set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
   set( CMAKE_CXX_FLAGS_DEBUG
     "${CMAKE_C_FLAGS_DEBUG} -early-template-check")
   set( CMAKE_CXX_FLAGS_RELEASE
