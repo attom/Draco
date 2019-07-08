@@ -17,17 +17,17 @@ include( setupMPI ) # defines the macros setupMPILibrariesUnix|Windows
 macro( setupPython )
 
   message( STATUS "Looking for Python...." )
-  find_package(PythonInterp 2.7 QUIET REQUIRED)
-  #  PYTHONINTERP_FOUND - Was the Python executable found
-  #  PYTHON_EXECUTABLE  - path to the Python interpreter
+  find_package(Python QUIET REQUIRED COMPONENTS Interpreter)
+  #  Python_Interpreter_FOUND - Was the Python executable found
+  #  Python_EXECUTABLE  - path to the Python interpreter
   set_package_properties( PythonInterp PROPERTIES
     URL "https://www.python.org"
     DESCRIPTION "Python interpreter"
     TYPE REQUIRED
     PURPOSE "Required for running tests and accessing features that rely on matplotlib."
     )
-  if( PYTHONINTERP_FOUND )
-    message( STATUS "Looking for Python....found ${PYTHON_EXECUTABLE}" )
+  if( Python_Interpreter_FOUND )
+    message( STATUS "Looking for Python....found ${Python_EXECUTABLE}" )
   else()
     message( STATUS "Looking for Python....not found" )
   endif()

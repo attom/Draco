@@ -82,12 +82,12 @@ if [[ ${SLURM_JOB_PARTITION} == "knl" ]]; then
   module swap craype-haswell craype-mic-knl
 fi
 
-dracomodules="git cmake numdiff gsl metis eospac random123 parmetis \
+dracomodules="git cmake/3.14.0 numdiff gsl metis eospac random123 parmetis \
 superlu-dist trilinos"
 
 if [[ ${CRAY_CPU_TARGET} =~ haswell ]] || [[ ${CRAY_CPU_TARGET} =~ knl ]]; then
 
-  dracomodules="$dracomodules clang-format"
+  dracomodules="$dracomodules clang-format python/3.6-anaconda-5.0.1"
 
   if [[ -d ${VENDOR_DIR}-ec ]]; then
     group_for_vendor_ec=`\ls -aFld ${VENDOR_DIR}-ec | awk '{ print $4 }'`
@@ -127,6 +127,10 @@ function dracoenv ()
   for m in $dracomodules; do
     module load $m
   done
+  if [[ `echo $LOADEDMODULES | grep -c hugepages` != 0 ]]; then
+    modname=`echo $LOADEDMODULES | sed -e 's/.*craype-hugepages/craype-hugepages/' | sed -e 's/[:].*//'`
+    module unload $modname
+  fi
   export CXX=CC
   export CC=cc
   export FC=ftn

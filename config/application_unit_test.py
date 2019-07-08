@@ -528,7 +528,8 @@ class UnitTest:
       if self.gold.strip():
         clean_run_args.append(self.gold.strip())
       for arg in numdiff_args.split():
-        if arg: clean_run_args.append(arg)
+        if arg:
+          clean_run_args.insert(-2,arg)
 
       # run numdiff command, redirecting stdout and stderr, get a unique
       # filename for the numdiff output and error files

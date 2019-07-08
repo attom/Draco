@@ -99,7 +99,7 @@ function establish_permissions
       if [[ `groups | grep -c dacodes` = 1 ]]; then
         install_group="dacodes"
         install_permissions="g+rwX,o-rwX"
-        elif [[ `groups | grep -c draco` = 1 ]]; then
+      elif [[ `groups | grep -c draco` = 1 ]]; then
         install_group="draco"
         install_permissions="g-rwX,o-rwX"
       fi
@@ -138,10 +138,19 @@ function osName
   osName=${osName="unknown"}
   if [[ -f /usr/projects/hpcsoft/utilities/bin/sys_os ]]; then
     osName=`/usr/projects/hpcsoft/utilities/bin/sys_os`
-  elif [[ -d /projects/darwin ]]; then
-    osName=darwin
-  elif test -d /usr/gapps/jayenne; then
-    osName=`uname -p`
+    if [[ $? != 0 ]]; then
+      osName="unknown"
+    fi
+  fi
+  if [[ ${osName} == "unknown" ]]; then
+    if [[ -d /projects/darwin ]] ; then
+      osName=darwin
+      if [[ -f /projects/draco/vendors/bin/target_arch ]]; then
+        osName=darwin-`/projects/draco/vendors/bin/target_arch`
+      fi
+    elif [[ -d /usr/gapps/jayenne ]]; then
+      osName=`uname -p`
+    fi
   fi
   if [[ "$osName" == "unknown" ]]; then
     die "Unable to determine system OS, please edit scripts/common.sh."
@@ -200,9 +209,10 @@ function flavor
       fi
       ;;
     darwin*)
+      platform=$os # e.g.: darwin-power9
       if [[ $MPIARCH ]]; then
-        if [[ $MPI_ROOT ]]; then
-          LMPIVER=`echo $MPI_ROOT | sed -r 's%.*/([0-9]+)[.]([0-9]+)[.]([0-9]+).*%\1.\2.\3%'`
+        if [[ $MPIRUN ]]; then
+          LMPIVER=`echo $MPIRUN | sed -r 's%.*/([0-9]+)[.]([0-9]+)[.]([0-9]+).*%\1.\2.\3%'`
         else
           LMPIVER=''
         fi
@@ -210,8 +220,10 @@ function flavor
       else
         mpiflavor="unknown"
       fi
-      if [[ $LCOMPILER ]]; then
-        compilerflavor=$LCOMPILER-$LCOMPILERVER
+      if [[ $CC ]]; then
+        if [[ $CC =~ "gcc" ]]; then
+          compilerflavor=gnu-`$CC --version | head -n 1 | sed -r 's%.* %%'`
+        fi
       else
         compilerflavor="unknown"
       fi
@@ -239,7 +251,14 @@ function flavor
       ;;
 
     ppc64le)
-      mpiflavor=`echo $OPAL_PREFIX | sed -e 's%.*/%%'`
+      if [[ -n $OPAL_PREFIX ]]; then
+        mpiflavor=`echo $OPAL_PREFIX | sed -e 's%.*/%%'`
+      elif [[ -n $LMOD_MPI_NAME ]]; then
+        mpiver=`echo $LMOD_MPI_VERSION | sed -e 's%-.*%%'`
+        mpiflavor=$LMOD_MPI_NAME-$mpiver
+      else
+        mpiflavor=unknown
+      fi
       case $CC in
       *gcc*)
           LCOMPILER=gnu
@@ -248,7 +267,7 @@ function flavor
           ;;
       *xlc*)
           LCOMPILER=ibm
-          LCOMPILERVER=`$CC -qversion | head -n 1 | sed -e 's/.*V\([0-9][0-9][.][0-9][.][0-9]\) .*/\1/'`
+          LCOMPILERVER=`$CC --version | head -n 1 | sed -e 's/.*V\([0-9][0-9][.][0-9][.][0-9]\) .*/\1/'`
           compilerflavor=$LCOMPILER-$LCOMPILERVER
           ;;
       *) compiler_flavor=unknown-unknown ;;
@@ -368,10 +387,10 @@ function npes_build
 
 function npes_test
 {
-  # assume no parallel testing capability
+  # assume no parallel testing capability.
   local np=1
 
-  # allow specializations per machien (if needed)
+  # allow specialization per machine (if needed)
   local target="`uname -n | sed -e s/[.].*//`"
   case ${target} in
 

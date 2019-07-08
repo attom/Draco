@@ -459,7 +459,7 @@ namespace rtt_cdi {
  */
 //===========================================================================//
 
-class DLL_PUBLIC_cdi CDI {
+class CDI {
   // NESTED CLASSES AND TYPEDEFS
   typedef std::shared_ptr<const GrayOpacity> SP_GrayOpacity;
   typedef std::shared_ptr<const MultigroupOpacity> SP_MultigroupOpacity;

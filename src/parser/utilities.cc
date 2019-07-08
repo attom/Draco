@@ -36,24 +36,24 @@ using namespace std;
  * utility routines. For example, if the double parse_quantity function is given
  * the text "2.7 cm", it will return a value of 0.027. The function
  * set_common_unit_system can be used to change the internal unit system, for
- * example, to cgs, so that if the double parse_quantity function is given the
+ * example, to CGS, so that if the double parse_quantity function is given the
  * text "2.7 cm", it will return a value of 2.7.
  *
  * Similarly, by default,the Expression parse_quantity function assumes that all
  * input quantities to the Expression it constructs will be in SI units, but
- * this will be overriden if set_common_unit_system is used to change the
+ * this will be overridden if set_common_unit_system is used to change the
  * internal unit system. Thus, if Expression parse_quantity is given the text
  * "0.5*(t+2*x*s/cm)*erg" then by default it will construct an Expression that
  * computes 0.5e-7*(t+200*x). However, if set_internal_unit_system had
- * previously been called to set the internal unit system to cgs, the Expression
+ * previously been called to set the internal unit system to CGS, the Expression
  * constructed would compute 0.5*(t+2*x).
  *
  * This function will normally be called once at the beginning of a parse, since
  * if the internal unit system changes halfway through a parse, there is rarely
  * any easy way to go back and convert quantities parsed earlier to the new
  * internal unit system. For example, if an input file is allowed to specify the
- * internal unit system, this specification should normally be requred to be the
- * first line in the input file.
+ * internal unit system, this specification should normally be required to be
+ * the first line in the input file.
  *
  * There is no delete associated with the new global static value. It remains in
  * scope until the program terminates.
@@ -78,21 +78,21 @@ void free_internal_unit_system() {
  *
  * By default,the parse_quantity routines expect the texts they parse to be of
  * the form "2.99792e10 cm/s", that is, a real number followed by a unit
- * expression. However, set_are_unit_expressions_required can be used to
- * either turn on or turn off the mandatory unit expression. Quantities can
- * always have a unit expression, and the quantity will then be converted to
- * the internal unit system, but if the mandatory unit expression flag is
- * turned off, quantities may optionally omit the unit expression and will be
- * assumed to be expressed in the internal unit system.
+ * expression. However, set_are_unit_expressions_required can be used to either
+ * turn on or turn off the mandatory unit expression. Quantities can always have
+ * a unit expression, and the quantity will then be converted to the internal
+ * unit system, but if the mandatory unit expression flag is turned off,
+ * quantities may optionally omit the unit expression and will be assumed to be
+ * expressed in the internal unit system.
  *
- * Thus, if unit expessions are mandatory and the internal unit system has been
- * set to cgs, then "2.7 m" will be read by double parse_quantity as 270 while
+ * Thus, if unit expressions are mandatory and the internal unit system has been
+ * set to CGS, then "2.7 m" will be read by double parse_quantity as 270 while
  * "2.7" will be an error. If unit expressions are not mandatory and the
- * internal unit system has been set to cgs, then "2.7 m" will still be read by
+ * internal unit system has been set to CGS, then "2.7 m" will still be read by
  * double parse_quantity as 270, but "2.7" will be read as 2.7.
  *
  * It should be clear that mandatory unit expressions are preferable when humans
- * are writing the input files being parsed, since input files that consistenly
+ * are writing the input files being parsed, since input files that consistently
  * use unit expressions will be less ambiguous, better documented, and more
  * likely to be free from error. The ability to turn off mandatory unit
  * expressions is targeted primarily at situations where it is programs that are
@@ -115,7 +115,7 @@ void set_unit_expressions_are_required(bool const b) {
  * There is no delete associated with the new global static value. It remains in
  * scope until the program terminates.
  */
-DLL_PUBLIC_parser rtt_units::UnitSystem const &get_internal_unit_system() {
+rtt_units::UnitSystem const &get_internal_unit_system() {
   if (internal_unit_system == nullptr)
     internal_unit_system = new rtt_units::UnitSystem();
   return *internal_unit_system;
@@ -756,7 +756,7 @@ double parse_quantity(Token_Stream &tokens, Unit const &target_unit,
  *
  * It is very common for transport researchers to specify a temperature in units
  * of energy, using Boltzmann's constant as the conversion factor.  This
- * function is useful for parsers that accomodate this convention.
+ * function is useful for parsers that accommodate this convention.
  *
  * \param tokens Token stream from which to parse the specification.
  * \return The parsed temperature.
@@ -797,7 +797,7 @@ double parse_temperature(Token_Stream &tokens) {
  *
  * It is very common for transport researchers to specify a temperature in units
  * of energy, using Boltzmann's constant as the conversion factor.  This
- * function is useful for parsers that accomodate this convention.
+ * function is useful for parsers that accommodate this convention.
  *
  * This version of the function parses a temperature expression containing
  * user-defined variables.

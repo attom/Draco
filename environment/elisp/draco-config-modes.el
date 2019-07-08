@@ -83,7 +83,7 @@ auto-mode-alist."
 auto-mode-alist."
   (interactive)
       (progn
-      (autoload 'python-mode "python-mode" "Python editing mode." t)
+      (autoload 'python "python" "Python editing mode." t)
       (setq auto-mode-alist
 	    (cons '("\\.py$" . python-mode) auto-mode-alist))
       (defun draco-python-mode-hook ()

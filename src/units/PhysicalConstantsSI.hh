@@ -37,7 +37,7 @@ namespace rtt_units {
  *
  * - Fundamental constants are listed first.
  * - Derived constants are listed second.
- * - Actual data is placed in a user-defined type for C-interoperatbility.
+ * - Actual data is placed in a user-defined type for C-interoperability.
  */
 //----------------------------------------------------------------------------//
 
@@ -69,7 +69,7 @@ static double constexpr boltzmannSI = 1.380648800E-23; // J K^-1
  * \brief [e] ELECTRON CHARGE (COULOMBS)
  *
  * Wikipedia (2013-12-3) == NIST Codata 2010 (eps = 2.2e-8)
- * \note If this changes you msut update the Enumerated Temperature Type in
+ * \note If this changes you must update the Enumerated Temperature Type in
  *       UnitSystemEnusm.hh!
  */
 static double constexpr electronChargeSI = 1.602176565e-19; // Amp / sec

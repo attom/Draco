@@ -235,7 +235,7 @@ DLL_PUBLIC_dsxx std::string verbose_error(std::string const &message);
  * \endcode
  *
  * If the assertion fails, the code should just bomb.  Philosophically, it
- * should be used to feret out bugs in preceding code, making sure that prior
+ * should be used to ferret out bugs in preceding code, making sure that prior
  * results are within reasonable bounds before proceeding to use those results
  * in further computation, etc.
  *
@@ -265,10 +265,10 @@ DLL_PUBLIC_dsxx std::string verbose_error(std::string const &message);
  * control.  If the user makes a poor choice, we "insist" that it be corrected,
  * providing a corrective hint.
  *
- * \note We provide a way to eliminate assertions, but not insistings.  The idea
+ * \note We provide a way to eliminate assertions, but not insists.  The idea
  * is that \c Assert is used to perform sanity checks during program
  * development, which you might want to eliminate during production runs for
- * performance sake.  Insist is used for things which really really must be
+ * performance sake.  Insist is used for things which really must be
  * true, such as "the file must've been opened", etc.  So, use \c Assert for
  * things which you want taken out of production codes (like, the check might
  * inhibit inlining or something like that), but use Insist for those things you

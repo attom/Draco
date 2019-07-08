@@ -13,6 +13,13 @@
 #include "ds++/Assert.hh"
 #include <algorithm>
 #include <iostream>
+#include <numeric>
+
+//! \bug this can be fixed when [1] is fixed via C++17 'constexpr if'
+#if defined(MSVC)
+#pragma warning(push)
+#pragma warning(disable : 4702)
+#endif
 
 namespace rtt_mesh {
 
@@ -28,8 +35,6 @@ template <typename FRT>
 Draco_Mesh_Builder<FRT>::Draco_Mesh_Builder(std::shared_ptr<FRT> reader_)
     : reader(reader_) {
   Require(reader_ != nullptr);
-  // \todo remove constraint of 2 dimensions
-  Insist(reader->get_numdim() == 2, "Mesh must be 2D.");
 }
 
 //---------------------------------------------------------------------------//
@@ -46,19 +51,14 @@ template <typename FRT>
 std::shared_ptr<Draco_Mesh>
 Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
 
-  // \todo: Should geometry be to RTT format parsing?
-  // \todo: Generate ghost node and cell data for domain-decomposed meshes.
-
   Require(geometry != rtt_mesh_element::END_GEOMETRY);
-  // \todo: Eventually allow spherical geometry
-  Require(geometry != rtt_mesh_element::SPHERICAL);
 
   // >>> GENERATE MESH CONSTRUCTOR ARGUMENTS
 
   // get the number of dimensions
   unsigned dimension = reader->get_numdim();
-  // \todo: Eventually allow dim = 1, 3
-  Check(dimension == 2);
+  Check(dimension >= 1);
+  Check(dimension <= 3);
 
   // get the number of cells
   size_t num_cells = reader->get_numcells();
@@ -131,10 +131,6 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
   Check(num_nodes >= num_cells);
   Check(num_nodes <= cn_linkage_size);
 
-  // \todo: add global node numbers to RTT mesh reader?
-  // \todo: or, remove global_node_number from mesh constructor?
-  // assume domain is not decomposed, for now
-
   // generate the global node number serialized vector of coordinates
   std::vector<unsigned> global_node_number(num_nodes);
   std::vector<double> coordinates(dimension * num_nodes);
@@ -152,6 +148,36 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
       coordinates[dimension * node + d] = node_coord[d];
   }
 
+  std::vector<unsigned> face_type;
+
+  /*! \bug [1] this should be a 'constexpr if' to avoid build warnings from 
+   *           MSVC. Remove MSVC pragma from top of file when fixed. */
+  if (reader->get_use_face_types()) {
+
+    // reserve some space for face_type
+    face_type.reserve(std::accumulate(cell_type.begin(), cell_type.end(), 0u));
+
+    // generate face_type vector
+    unsigned cf_counter = 0;
+    for (size_t cell = 0; cell < num_cells; ++cell) {
+      for (unsigned face = 0; face < cell_type[cell]; ++face) {
+
+        // store number of nodes for this face
+        face_type.push_back(static_cast<unsigned>(
+            reader->get_cellfacenodes(cell, face).size()));
+
+        // increment counter
+        cf_counter++;
+      }
+    }
+  }
+
+  // assume parallel face data is empty
+  const std::vector<unsigned> ghost_cell_type;
+  const std::vector<unsigned> ghost_cell_to_node_linkage;
+  const std::vector<int> ghost_cell_number;
+  const std::vector<int> ghost_cell_rank;
+
   Remember(auto cn_minmax = std::minmax_element(cell_to_node_linkage.begin(),
                                                 cell_to_node_linkage.end()));
   Remember(auto sn_minmax = std::minmax_element(side_to_node_linkage.begin(),
@@ -166,12 +192,18 @@ Draco_Mesh_Builder<FRT>::build_mesh(rtt_mesh_element::Geometry geometry) {
 
   std::shared_ptr<Draco_Mesh> mesh(new Draco_Mesh(
       dimension, geometry, cell_type, cell_to_node_linkage, side_set_flag,
-      side_node_count, side_to_node_linkage, coordinates, global_node_number));
+      side_node_count, side_to_node_linkage, coordinates, global_node_number,
+      ghost_cell_type, ghost_cell_to_node_linkage, ghost_cell_number,
+      ghost_cell_rank, face_type));
 
   return mesh;
 }
 
 } // end namespace rtt_mesh
+
+#if defined(MSVC)
+#pragma warning(pop)
+#endif
 
 //---------------------------------------------------------------------------//
 // end of mesh/Draco_Mesh_Builder.t.hh

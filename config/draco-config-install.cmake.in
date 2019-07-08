@@ -6,7 +6,7 @@
 # note   Copyright (C) 2016-2019, Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
-
+list( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}" )
 get_filename_component( _SELF_DIR "${CMAKE_CURRENT_LIST_FILE}"  PATH )
 include( "${_SELF_DIR}/draco-targets.cmake" )
 
@@ -76,8 +76,8 @@ set( WITH_CUDA "@WITH_CUDA@" )
 
 
 # Python
-set( PYTHONINTERP_FOUND "@PYTHONINTERP_FOUND@" )
-set( PYTHON_EXECUTABLE "@PYTHON_EXECUTABLE@" )
+set( Python_Interpreter_FOUND "@Python_Interpreter_FOUND@" )
+set( Python_EXECUTABLE "@Python_EXECUTABLE@" )
 
 ## ---------------------------------------------------------------------------
 ## Set useful general variables

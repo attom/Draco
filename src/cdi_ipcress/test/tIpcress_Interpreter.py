@@ -87,7 +87,7 @@ try:
 
     # Diff the output vs a gold file.
     # - use no extra options for numdiff
-    tIpcress_Interpreter.aut_numdiff()
+    tIpcress_Interpreter.aut_numdiff("-r 1.0e-7")
 
   ##---------------------------------------------------------------------------##
   elif tIpcress_Interpreter.testname == \

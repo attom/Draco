@@ -468,7 +468,7 @@ void CellDef::redefineCellDef(vector_uint const &new_side_types,
       // coordinate system. The transformed cell may be rotated about it's
       // outward normal relative to the input cell definition.
       node_map[0] = 0;
-      // The right hand rule has to apply, so only the ordering of thenodes
+      // The right hand rule has to apply, so only the ordering of the nodes
       // (edges) can change for a two-dimensional cell.
       size_t old_node = 0;
       size_t new_node = 0;

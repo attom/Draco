@@ -60,7 +60,8 @@ function( setMPIflavorVer )
     foreach( line ${TEMP} )
 
       # extract the version...
-      if( ${line} MATCHES "Version" OR ${line} MATCHES "OpenRTE")
+      if( ${line} MATCHES "Version" OR ${line} MATCHES "OpenRTE" OR
+          ${line} MATCHES "Open MPI" OR ${line} MATCHES "Spectrum MPI")
         set(DBS_MPI_VER "${line}")
         if( "${DBS_MPI_VER}" MATCHES "[0-9]+[.][0-9]+[.][0-9]+" )
           string( REGEX REPLACE ".*([0-9]+)[.]([0-9]+)[.]([0-9]+).*" "\\1"
@@ -336,7 +337,7 @@ macro( setupCrayMPI )
   #           stomp on the same cores.
 
   set(postflags "-N 1 --cpu_bind=verbose,cores ")
-  string(APPEND postflags " --exclusive")
+  string(APPEND postflags " --exclusive --gres=craynetwork:0")
   set( MPIEXEC_POSTFLAGS ${postflags} CACHE STRING
     "extra mpirun flags (list)." FORCE)
 
