@@ -55,9 +55,8 @@ set( file_list
   ${Draco_BINARY_DIR}/CMakeFiles/draco-config.cmake
   ${Draco_SOURCE_DIR}/autodoc/html/doxygen.css)
 
-install( FILES ${file_list}  DESTINATION cmake/draco )
-install( FILES ${CMake_AFSD}
-  DESTINATION cmake/draco/CMakeAddFortranSubdirectory )
+install( FILES ${file_list}  DESTINATION cmake )
+install( FILES ${CMake_AFSD} DESTINATION cmake/CMakeAddFortranSubdirectory )
 
 ##---------------------------------------------------------------------------##
 ## End of config/CMakeLists.txt

@@ -133,8 +133,8 @@ macro( dbsSetDefaults )
   endif()
 
   if( "${DRACO_LIBRARY_TYPE}" MATCHES "SHARED" )
-     # Set replacement RPATH for installed libraries and executables
-     # See http://www.cmake.org/Wiki/CMake_RPATH_handling
+     # Set replacement RPATH for installed libraries and executables. See
+     # http://www.cmake.org/Wiki/CMake_RPATH_handling
 
      # Do not skip the full RPATH for the build tree
      set( CMAKE_SKIP_BUILD_RPATH OFF )
@@ -142,8 +142,8 @@ macro( dbsSetDefaults )
      # installing)
      set( CMAKE_BUILD_WITH_INSTALL_RPATH OFF )
 
-     # For libraries created within the build tree, replace the RPATH
-     # in the installed files with the install location.
+     # For libraries created within the build tree, replace the RPATH in the
+     # installed files with the install location.
      set( CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH
        "RPATH to embed in dynamic libraries and executables when
 targets are installed." FORCE )
@@ -159,7 +159,7 @@ endmacro()
 ## dbsInitExportTargets
 ##
 ## These fields are constructed during Draco configure and are
-## saved/installed to lib/cmake/draco-X.X/draco-config.cmake.
+## saved/installed to cmake/draco-config.cmake.
 ##---------------------------------------------------------------------------##
 macro( dbsInitExportTargets PREFIX )
   # Data for exporting during install

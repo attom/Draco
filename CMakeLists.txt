@@ -127,7 +127,7 @@ add_custom_target( uninstall
 # Export targets
 install(
   EXPORT draco-targets
-  DESTINATION cmake/draco
+  DESTINATION cmake
   EXPORT_LINK_INTERFACE_LIBRARIES )
 
 ##---------------------------------------------------------------------------##

@@ -54,7 +54,7 @@ if( "${numproc}notfound" STREQUAL "notfound" )
 endif()
 
 if( NOT CXX_FLAGS_INITIALIZED )
-  set( CXX_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using draco settings." )
+  set( CXX_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using Draco settings." )
 
   # Alternative for per-directory, or per-target specific flags:
   # add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/MP>")
@@ -63,9 +63,9 @@ if( NOT CXX_FLAGS_INITIALIZED )
   # - /wd 4251 disable warning #4251: 'identifier' : class 'type' needs to have
   #   dll-interface to be used by clients of class 'type2'
   # - /arch:[SSE|SSE2|AVX|AVX2|IA32]
-  # - /W[1234] Warning levels. Draco is currently using /W4 (see 
+  # - /W[1234] Warning levels. Draco is currently using /W4 (see
   #            src/CMakeLists.txt), but clients default to /W2.
-  # - /std:c++14 (should be added by cmake in compilerEnv.cmake)
+  # - /std:c++14 (should be added by CMake in compilerEnv.cmake)
   # - /showIncludes
   # - /FC
   set( CMAKE_C_FLAGS "/W2 /Gy /fp:precise /DWIN32 /D_WINDOWS /MP /wd4251" )
@@ -85,7 +85,7 @@ if( NOT CXX_FLAGS_INITIALIZED )
     #        "${CMAKE_C_FLAGS_DEBUG} /D_HAS_ITERATOR_DEBUGGING=0" )
   endif()
 
-  # If building static libraries, inlcude debugging information in the library.
+  # If building static libraries, include debugging information in the library.
   if( ${DRACO_LIBRARY_TYPE} MATCHES "STATIC" )
     string( APPEND CMAKE_C_FLAGS_DEBUG " /Z7"   )
   endif()

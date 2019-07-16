@@ -719,32 +719,40 @@ void test_planck_integration(rtt_dsxx::UnitTest &ut) {
     if (!soft_equiv(planck[0], 0.0, tol))
       ITFAILS;
   }
-  // Extreme case 4a. T < numeric_limits<double>::min() --> follow special logic
-  // and return zero.
-  {
+  // Extreme case 4a. T < numeric_limits<double>::min() --> catch the thrown
+  // exception
+  caught = true;
+  Remember(caught = false;);
+  try {
     std::vector<double> const bounds = {1.0, 3.0, 30.0};
     double const T_eval = 1.0e-308;
     std::vector<double> planck;
     CDI::integrate_Planckian_Spectrum(bounds, T_eval, planck);
-    // make sure the alternate calling method returns the same values
-    auto planck_alt = CDI::integrate_Planckian_Spectrum(bounds, T_eval);
-    if (planck_alt != planck)
-      ITFAILS;
-    if (!soft_equiv(planck, std::vector<double>(planck.size(), 0.0), tol))
-      ITFAILS;
+  } catch (const rtt_dsxx::assertion &error) {
+    ostringstream message;
+    message << "Good, we caught the following exception: \n" << error.what();
+    PASSMSG(message.str());
+    caught = true;
   }
-  // Extreme case 4b. T < numeric_limits<double>::min() --> follow special logic
-  // and return zero. Also, let v_0 == 0.0
+  if (!caught) {
+    ostringstream message;
+    message
+        << "Failed to catch an exception when passing a denorm temperature.";
+  }
+
+  // Extreme case 4b. bounds < numeric_limits<double>::min() --> return 1.0, 0.0
   {
     std::vector<double> const bounds = {0.0, 3.0, 30.0};
-    double const T_eval = 1.0e-308;
+    double const T_eval = 1.0e-300;
     std::vector<double> planck;
     CDI::integrate_Planckian_Spectrum(bounds, T_eval, planck);
     // make sure the alternate calling method returns the same values
     auto planck_alt = CDI::integrate_Planckian_Spectrum(bounds, T_eval);
     if (planck_alt != planck)
       ITFAILS;
-    if (!soft_equiv(planck, std::vector<double>(planck.size(), 0.0), tol))
+    if (!soft_equiv(planck[0], 1.0, tol))
+      ITFAILS;
+    if (!soft_equiv(planck[1], 0.0, tol))
       ITFAILS;
   }
 
@@ -836,21 +844,6 @@ void test_planck_integration(rtt_dsxx::UnitTest &ut) {
       ITFAILS;
   }
   if (planck_alt != planck)
-    ITFAILS;
-
-  // Test zero temperature special case
-  CDI::integrate_Planckian_Spectrum(group_bounds, 0.0, planck);
-  // make sure the alternate calling method returns the same values
-  auto planck_alt_zero = CDI::integrate_Planckian_Spectrum(group_bounds, 0.0);
-
-  for (int group_index = 1; group_index <= 3; ++group_index) {
-
-    double planck_g = CDI::integratePlanckSpectrum(group_index, 1.0);
-
-    if (!soft_equiv(planck[group_index - 1], planck_g))
-      ITFAILS;
-  }
-  if (planck_alt_zero == planck)
     ITFAILS;
 
   if (ut.numFails == 0)
@@ -1127,14 +1120,25 @@ void test_rosseland_integration(rtt_dsxx::UnitTest &ut) {
   }
   // Extreme case 2. T < numeric_limits<double>::min() --> follow special logic
   // and return zero.
-  {
+  bool caught = true;
+  Remember(caught = false;);
+  try {
     std::vector<double> const bounds = {0.1, 0.3, 1.0, 3.0, 30.0};
     double const T_eval = 1.0e-308;
     std::vector<double> lrosseland;
     CDI::integrate_Rosseland_Spectrum(bounds, T_eval, lrosseland);
-    if (!soft_equiv(lrosseland, std::vector<double>(lrosseland.size(), 0.0)))
-      ITFAILS;
+  } catch (const rtt_dsxx::assertion &error) {
+    ostringstream message;
+    message << "Good, we caught the following exception: \n" << error.what();
+    PASSMSG(message.str());
+    caught = true;
   }
+  if (!caught) {
+    ostringstream message;
+    message
+        << "Failed to catch an exception when passing a denorm temperature.";
+  }
+
   // Extreme case 3. This should do the normal computation, but the result is
   // zero.
   {
@@ -1151,17 +1155,25 @@ void test_rosseland_integration(rtt_dsxx::UnitTest &ut) {
   }
   // Extreme case 4. T < numeric_limits<double>::min() --> follow special logic
   // and return zero.
-  {
+  caught = true;
+  Remember(caught = false;);
+  try {
     std::vector<double> const bounds = {0.1, 0.3, 1.0, 3.0, 30.0};
     double const T_eval = 1.0e-308;
     std::vector<double> lplanck;
     std::vector<double> lrosseland;
     CDI::integrate_Rosseland_Planckian_Spectrum(bounds, T_eval, lplanck,
                                                 lrosseland);
-    if (!soft_equiv(lrosseland, std::vector<double>(lrosseland.size(), 0.0)))
-      ITFAILS;
-    if (!soft_equiv(lplanck, std::vector<double>(lplanck.size(), 0.0)))
-      ITFAILS;
+  } catch (const rtt_dsxx::assertion &error) {
+    ostringstream message;
+    message << "Good, we caught the following exception: \n" << error.what();
+    PASSMSG(message.str());
+    caught = true;
+  }
+  if (!caught) {
+    ostringstream message;
+    message
+        << "Failed to catch an exception when passing a denorm temperature.";
   }
 
   if (ut.numFails == 0) {

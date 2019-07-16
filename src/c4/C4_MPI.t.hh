@@ -263,12 +263,11 @@ int scatterv(T *send_buffer, int *send_sizes, int *send_displs,
 //---------------------------------------------------------------------------//
 
 template <typename T> void global_sum(T &x) {
-  // copy data into send buffer
-  T y = x;
 
   // do global MPI reduction (result is on all processors) into x
-  Remember(int check =) MPI_Allreduce(&y, &x, 1, MPI_Traits<T>::element_type(),
-                                      MPI_SUM, communicator);
+  Remember(int check =)
+      MPI_Allreduce(MPI_IN_PLACE, &x, 1, MPI_Traits<T>::element_type(), MPI_SUM,
+                    communicator);
   Check(check == MPI_SUCCESS);
   return;
 }
@@ -289,33 +288,27 @@ void global_isum(T &send_buffer, T &recv_buffer, C4_Req &request) {
 
 //---------------------------------------------------------------------------//
 template <typename T> void global_prod(T &x) {
-  // copy data into send buffer
-  T y = x;
 
   // do global MPI reduction (result is on all processors) into x
-  MPI_Allreduce(&y, &x, 1, MPI_Traits<T>::element_type(), MPI_PROD,
+  MPI_Allreduce(MPI_IN_PLACE, &x, 1, MPI_Traits<T>::element_type(), MPI_PROD,
                 communicator);
 }
 
 //---------------------------------------------------------------------------//
 
 template <typename T> void global_min(T &x) {
-  // copy data into send buffer
-  T y = x;
 
   // do global MPI reduction (result is on all processors) into x
-  MPI_Allreduce(&y, &x, 1, MPI_Traits<T>::element_type(), MPI_MIN,
+  MPI_Allreduce(MPI_IN_PLACE, &x, 1, MPI_Traits<T>::element_type(), MPI_MIN,
                 communicator);
 }
 
 //---------------------------------------------------------------------------//
 
 template <typename T> void global_max(T &x) {
-  // copy data into send buffer
-  T y = x;
 
   // do global MPI reduction (result is on all processors) into x
-  MPI_Allreduce(&y, &x, 1, MPI_Traits<T>::element_type(), MPI_MAX,
+  MPI_Allreduce(MPI_IN_PLACE, &x, 1, MPI_Traits<T>::element_type(), MPI_MAX,
                 communicator);
 }
 
@@ -324,12 +317,10 @@ template <typename T> void global_max(T &x) {
 template <typename T> void global_sum(T *x, int n) {
   Require(x != nullptr);
   Require(n > 0);
-  // copy data into a send buffer
-  std::vector<T> send_buffer(x, x + n);
 
   // do a element-wise global reduction (result is on all processors) into
   // x
-  MPI_Allreduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(), MPI_SUM,
+  MPI_Allreduce(MPI_IN_PLACE, x, n, MPI_Traits<T>::element_type(), MPI_SUM,
                 communicator);
 }
 
@@ -338,12 +329,10 @@ template <typename T> void global_sum(T *x, int n) {
 template <typename T> void global_prod(T *x, int n) {
   Require(x != nullptr);
   Require(n > 0);
-  // copy data into a send buffer
-  std::vector<T> send_buffer(x, x + n);
 
   // do a element-wise global reduction (result is on all processors) into
   // x
-  MPI_Allreduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(), MPI_PROD,
+  MPI_Allreduce(MPI_IN_PLACE, x, n, MPI_Traits<T>::element_type(), MPI_PROD,
                 communicator);
 }
 
@@ -352,12 +341,10 @@ template <typename T> void global_prod(T *x, int n) {
 template <typename T> void global_min(T *x, int n) {
   Require(x != nullptr);
   Require(n > 0);
-  // copy data into a send buffer
-  std::vector<T> send_buffer(x, x + n);
 
   // do a element-wise global reduction (result is on all processors) into
   // x
-  MPI_Allreduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(), MPI_MIN,
+  MPI_Allreduce(MPI_IN_PLACE, x, n, MPI_Traits<T>::element_type(), MPI_MIN,
                 communicator);
 }
 
@@ -366,12 +353,10 @@ template <typename T> void global_min(T *x, int n) {
 template <typename T> void global_max(T *x, int n) {
   Require(x != nullptr);
   Require(n > 0);
-  // copy data into a send buffer
-  std::vector<T> send_buffer(x, x + n);
 
   // do a element-wise global reduction (result is on all processors) into
   // x
-  MPI_Allreduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(), MPI_MAX,
+  MPI_Allreduce(MPI_IN_PLACE, x, n, MPI_Traits<T>::element_type(), MPI_MAX,
                 communicator);
 }
 
