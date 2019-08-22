@@ -126,7 +126,7 @@ endfunction()
 macro( setupDracoMPIVars )
 
   # Set Draco build system variables based on what we know about MPI.
-  if( MPI_CXX_FOUND )
+  if( MPI_CXX_FOUND OR MPI_C_FOUND )
     set( DRACO_C4 "MPI" )
   else()
     set( DRACO_C4 "SCALAR" )

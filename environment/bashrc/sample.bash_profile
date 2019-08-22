@@ -75,7 +75,7 @@ if [[ "$INTERACTIVE" = true ]]; then
   # export BSTINPUTS=$mydir:$BSTINPUTS
   # export BIBINPUTS=$mydir:$BIBINPUTS
 
-fi  # [[ "$INTERACTIVE" = "true" ]]
+fi
 
 #------------------------------------------------------------------------------#
 # end ~/.bash_profile

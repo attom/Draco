@@ -332,6 +332,10 @@ macro( add_component_library )
     INTERPROCEDURAL_OPTIMIZATION_RELEASE;${USE_IPO}
     WINDOWS_EXPORT_ALL_SYMBOLS ON
     )
+  if( DEFINED DRACO_LINK_OPTIONS )
+    set_target_properties( ${acl_TARGET} PROPERTIES 
+      LINK_OPTIONS ${DRACO_LINK_OPTIONS} )
+  endif()
 
   #
   # Generate properties related to library dependencies
@@ -871,14 +875,17 @@ macro( add_scalar_tests test_sources )
     # Some properties are set at a global scope in compilerEnv.cmake:
     # - C_STANDARD, C_EXTENSIONS, CXX_STANDARD, CXX_EXTENSIONS,
     #   CXX_STANDARD_REQUIRED, and POSITION_INDEPENDENT_CODE
-    set_target_properties( Ut_${compname}_${testname}_exe
-      PROPERTIES
+    set_target_properties( Ut_${compname}_${testname}_exe PROPERTIES
       OUTPUT_NAME ${testname}
       VS_KEYWORD  ${testname}
       FOLDER      ${compname}_test
       INTERPROCEDURAL_OPTIMIZATION_RELEASE;${USE_IPO}
       COMPILE_DEFINITIONS "PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\";PROJECT_BINARY_DIR=\"${PROJECT_BINARY_DIR}\""
       )
+    if( DEFINED DRACO_LINK_OPTIONS )
+      set_target_properties( Ut_${compname}_${testname}_exe PROPERTIES 
+        LINK_OPTIONS ${DRACO_LINK_OPTIONS} )
+    endif()
     # Do we need to use the Fortran compiler as the linker?
     if( addscalartest_LINK_WITH_FORTRAN )
       set_target_properties( Ut_${compname}_${testname}_exe
@@ -1008,9 +1015,7 @@ macro( add_parallel_tests )
     get_filename_component( testname ${file} NAME_WE )
     if( lverbose )
       message( "   add_executable( Ut_${compname}_${testname}_exe ${file} )
-   set_target_properties(
-      Ut_${compname}_${testname}_exe
-      PROPERTIES
+   set_target_properties( Ut_${compname}_${testname}_exe PROPERTIES
       OUTPUT_NAME ${testname}
       VS_KEYWORD  ${testname}
       FOLDER      ${compname}_test
@@ -1022,15 +1027,17 @@ macro( add_parallel_tests )
     # Some properties are set at a global scope in compilerEnv.cmake:
     # - C_STANDARD, C_EXTENSIONS, CXX_STANDARD, CXX_EXTENSIONS,
     #   CXX_STANDARD_REQUIRED, and POSITION_INDEPENDENT_CODE
-    set_target_properties(
-      Ut_${compname}_${testname}_exe
-      PROPERTIES
+    set_target_properties( Ut_${compname}_${testname}_exe PROPERTIES
       OUTPUT_NAME ${testname}
       VS_KEYWORD  ${testname}
       FOLDER      ${compname}_test
       INTERPROCEDURAL_OPTIMIZATION_RELEASE;${USE_IPO}
       COMPILE_DEFINITIONS "PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\";PROJECT_BINARY_DIR=\"${PROJECT_BINARY_DIR}\""
       )
+    if( DEFINED DRACO_LINK_OPTIONS )
+      set_target_properties( Ut_${compname}_${testname}_exe PROPERTIES 
+        LINK_OPTIONS ${DRACO_LINK_OPTIONS} )
+    endif()
     if( addparalleltest_MPI_PLUS_OMP )
       if( ${CMAKE_GENERATOR} MATCHES Xcode )
         set_target_properties( Ut_${compname}_${testname}_exe

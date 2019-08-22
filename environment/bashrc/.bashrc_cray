@@ -1,6 +1,6 @@
 ##-*- Mode: sh -*-
 ##---------------------------------------------------------------------------##
-## File  : environment/bashrc/.bashrc_tt
+## File  : environment/bashrc/.bashrc_cray
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
 ## Note  : Copyright (C) 2016-2019, Triad National Security, LLC.
@@ -9,10 +9,10 @@
 ## Bash configuration file for Cray HPC machines.
 ##---------------------------------------------------------------------------##
 
-# verbose=true
+#verbose=true
 
 if test -n "$verbose"; then
-   echo "In draco/environment/bashrc/.bashrc_tt"
+   echo "In draco/environment/bashrc/.bashrc_cray"
 fi
 
 ##---------------------------------------------------------------------------##
@@ -33,9 +33,10 @@ add_to_path $VENDOR_DIR/bin
 # If LESS is set, is should include '-R' so that git diff's color
 # displays correctly.
 if [[ -n "${LESS}" ]]; then
-  if test `echo $LESS | grep -c R` = 0; then
-    export LESS="${LESS} -R"
-  fi
+  unset LESS
+#  if test `echo $LESS | grep -c R` = 0; then
+#    export LESS="${LESS} -R"
+#  fi
 fi
 
 #
@@ -70,43 +71,36 @@ arch=`uname -m`
 
 # Use modules found in the draco directory
 sysname=`/usr/projects/hpcsoft/utilities/bin/sys_name`
-if test -d $HOME/modulefiles/$sysname; then
-  export ucmf=$HOME/modulefiles
-  module use --append ~/modulefiles/$sysname
-else
+#if test -d $HOME/modulefiles/$sysname; then
+#  export ucmf=$HOME/modulefiles
+#  module use --append ~/modulefiles/$sysname
+#else
   module load user_contrib
-fi
+#fi
 module load friendly-testing
-module use --append ${VENDOR_DIR}-ec/modulefiles
 if [[ ${SLURM_JOB_PARTITION} == "knl" ]]; then
   module swap craype-haswell craype-mic-knl
 fi
 
-dracomodules="git cmake/3.14.0 numdiff gsl metis eospac random123 parmetis \
-superlu-dist trilinos"
-
 if [[ ${CRAY_CPU_TARGET} =~ haswell ]] || [[ ${CRAY_CPU_TARGET} =~ knl ]]; then
 
-  dracomodules="$dracomodules clang-format python/3.6-anaconda-5.0.1"
-
-  if [[ -d ${VENDOR_DIR}-ec ]]; then
-    group_for_vendor_ec=`\ls -aFld ${VENDOR_DIR}-ec | awk '{ print $4 }'`
-    if [[ `groups | grep -c $group_for_vendor_ec` != 0 ]]; then
-      dracomodules="$dracomodules csk ndi"
-    fi
-  fi
+  module use --append ${VENDOR_DIR}-ec/modulefiles
+  dracomodules="git cmake/3.14.0 numdiff gsl metis eospac random123 parmetis \
+superlu-dist trilinos clang-format python/3.6-anaconda-5.0.1"
 
 elif [[ ${CRAY_CPU_TARGET} =~ arm ]]; then
 
-  dracomodules="$dracomodules cray-python/3.6.5.6"
+  module use --append ${VENDOR_DIR}-ec/modulefiles-capulin
+  dracomodules="git/2.20.1 cmake numdiff gsl metis eospac random123 parmetis \
+superlu-dist trilinos cray-python/3.6.5.6 qt"
 
-#  if [[ -d ${VENDOR_DIR}-ec ]]; then
-#    group_for_vendor_ec=`\ls -aFld ${VENDOR_DIR}-ec | awk '{ print $4 }'`
-#    if [[ `groups | grep -c $group_for_vendor_ec` != 0 ]]; then
-#      dracomodules="$dracomodules csk ndi"
-#    fi
-#  fi
+fi
 
+if [[ -d ${VENDOR_DIR}-ec ]]; then
+  group_for_vendor_ec=`\ls -aFld ${VENDOR_DIR}-ec | awk '{ print $4 }'`
+  if [[ `groups | grep -c $group_for_vendor_ec` != 0 ]]; then
+    dracomodules="$dracomodules csk ndi"
+  fi
 fi
 
 export dracomodules
@@ -173,5 +167,5 @@ function rmdracoenv ()
 shopt -s direxpand
 
 ##---------------------------------------------------------------------------##
-## end of .bashrc_tt
+## end of .bashrc_cray
 ##---------------------------------------------------------------------------##

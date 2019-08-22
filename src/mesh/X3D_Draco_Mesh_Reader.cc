@@ -26,15 +26,13 @@ namespace rtt_mesh {
  * \param[in] bdy_filenames_ names of files with lists of side node indexes
  * \param[in] bdy_flags_ unsigned int indicating B.C. per side file
  *           (bdy_filenames_)
- * \param[in] use_face_types_ provide dimension-independent connectivity data
- *            to Draco_Mesh_Builder.
  */
 X3D_Draco_Mesh_Reader::X3D_Draco_Mesh_Reader(
     const std::string &filename_,
     const std::vector<std::string> &bdy_filenames_,
-    const std::vector<unsigned> &bdy_flags_, const bool use_face_types_)
-    : filename(filename_), bdy_filenames(bdy_filenames_), bdy_flags(bdy_flags_),
-      use_face_types(use_face_types_) {
+    const std::vector<unsigned> &bdy_flags_)
+    : filename(filename_), bdy_filenames(bdy_filenames_),
+      bdy_flags(bdy_flags_) {
   // check for valid file name
   Insist(filename_.size() > 0, "No file name supplied.");
   Insist(bdy_flags_.size() <= bdy_filenames_.size(),
@@ -154,30 +152,15 @@ void X3D_Draco_Mesh_Reader::read_mesh() {
  */
 unsigned X3D_Draco_Mesh_Reader::get_celltype(size_t cell) const {
 
-  if (!use_face_types) {
+  // x3d file's node, face, and cell indexes start from 1
+  Check(cell + 1 < INT_MAX);
+  const std::vector<int> &cell_data =
+      x3d_cellface_map.at(static_cast<int>(cell + 1));
+  const size_t num_faces = cell_data[0];
 
-    // get the list of cell nodes
-    const std::vector<unsigned> node_indexes = get_cellnodes(cell);
-
-    // merely the size of the vector of unique nodes
-    size_t num_nodes_pc = node_indexes.size();
-
-    Ensure(num_nodes_pc > 0);
-    Ensure(num_nodes_pc < UINT_MAX);
-    return static_cast<unsigned>(num_nodes_pc);
-
-  } else {
-
-    // x3d file's node, face, and cell indexes start from 1
-    Check(cell + 1 < INT_MAX);
-    const std::vector<int> &cell_data =
-        x3d_cellface_map.at(static_cast<int>(cell + 1));
-    const size_t num_faces = cell_data[0];
-
-    Ensure(num_faces > 0);
-    Ensure(num_faces < UINT_MAX);
-    return static_cast<unsigned>(num_faces);
-  }
+  Ensure(num_faces > 0);
+  Ensure(num_faces < UINT_MAX);
+  return static_cast<unsigned>(num_faces);
 }
 
 //---------------------------------------------------------------------------//
@@ -212,15 +195,8 @@ std::vector<unsigned> X3D_Draco_Mesh_Reader::get_cellnodes(size_t cell) const {
     std::vector<unsigned> tmp_vec = get_facenodes(face);
 
     // insert into the cell vector
-    if (!use_face_types) {
-      for (auto j : tmp_vec) {
-        if (node_index_set.insert(j).second)
-          node_indexes.push_back(j);
-      }
-    } else {
-      for (auto j : tmp_vec)
-        node_indexes.push_back(j);
-    }
+    for (auto j : tmp_vec)
+      node_indexes.push_back(j);
   }
 
   // subtract 1 to get base 0 nodes

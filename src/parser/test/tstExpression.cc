@@ -303,6 +303,18 @@ void tstExpression(UnitTest &ut) {
     else
       FAILMSG("units NOT correctly set");
   }
+
+  {
+    tokens = String_Token_Stream(
+        "(log(1.0) + cos(2.0) + exp(3.0) + sin(4.0))/(jerk*sh)");
+
+    std::shared_ptr<Expression> lexpression =
+        Expression::parse(4, variable_map, tokens);
+
+    ut.check(soft_equiv((*lexpression)(xs),
+                        (cos(2.0) + exp(3.0) + sin(4.0)) / (1e9 * 1e-8)),
+             "parse of exotic units");
+  }
 }
 
 //---------------------------------------------------------------------------//

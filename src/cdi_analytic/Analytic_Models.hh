@@ -622,7 +622,7 @@ public:
  *
  * where the coefficient has the following units:
  *
- * \arg alpha = [kJ/g/K/s]
+ * \arg alpha = [kJ/cc/keV/s]
  */
 class Constant_Analytic_EICoupling_Model : public Analytic_EICoupling_Model {
 private:
@@ -639,7 +639,7 @@ public:
   //! Constructor for packed state.
   explicit Constant_Analytic_EICoupling_Model(const sf_char &packed);
 
-  //! Calculate the ei_coupling in units of kJ/g/K/s.
+  //! Calculate the ei_coupling in units of kJ/cc/keV/s.
   double calculate_ei_coupling(double /*Te*/, double /*Ti*/, double /*rho*/,
                                double /*w_e*/, double /*w_i*/) const {
     return ei_coupling;

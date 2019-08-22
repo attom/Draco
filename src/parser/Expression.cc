@@ -942,6 +942,9 @@ static pE parse_primary(unsigned const number_of_variables,
           unit_map["pound"] = pound;
 
           unit_map["keV"] = keV;
+
+          unit_map["sh"] = sh;
+          unit_map["jerk"] = jerk;
         }
 
         map<string, Unit>::const_iterator ii = unit_map.find(variable.text());

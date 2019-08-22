@@ -304,6 +304,9 @@ Unit const eV = {2, 1, -2, 0, 0, 0, 0, 0, 0, rtt_units::electronChargeSI};
 Unit const keV = {2, 1, -2, 0, 0,
                   0, 0, 0,  0, 1e3 * rtt_units::electronChargeSI};
 
+Unit const sh = {0, 0, 1, 0, 0, 0, 0, 0, 0, 1e-8};   //!< shake
+Unit const jerk = {2, 1, -2, 0, 0, 0, 0, 0, 0, 1e9}; //!< jerk
+
 // Numbers for which no conversion is requested
 Unit const constant = {0, 0, 0, 0, 0,
                        0, 0, 0, 0, 1.0}; //!< used for numbers with no units

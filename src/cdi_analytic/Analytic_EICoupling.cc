@@ -133,7 +133,7 @@ double Analytic_EICoupling::getElectronIonCoupling(const double eTemperature,
  *     Brown, Preston, and Singleton, 'Physics Reports', V410, Issue 4, 2005)
  * \param[in] vw_i is the average plasma ion frequency (as defined by Eq. 3.61 in
  *     Brown, Preston, and Singleton, 'Physics Reports', V410, Issue 4, 2005)
- * \return A vector of electron-ion coupling coeffiecent (1/s).
+ * \return A vector of electron-ion coupling coeffiecent (kJ/cc/keV/s).
 
  */
 Analytic_EICoupling::sf_double Analytic_EICoupling::getElectronIonCoupling(

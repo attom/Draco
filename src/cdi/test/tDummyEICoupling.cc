@@ -45,8 +45,8 @@ void test_EICoupling(rtt_dsxx::UnitTest &ut) {
   // EoS Tests //
   // --------- //
 
-  double etemperature = 1.0; // Kelvin
-  double itemperature = 2.0; // Kelvin
+  double etemperature = 1.0; // keV
+  double itemperature = 2.0; // keV
   double density = 3.0;      // g/cm^3
   double w_e = 4.0;
   double w_i = 5.0;

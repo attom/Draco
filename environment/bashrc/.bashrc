@@ -185,7 +185,7 @@ if [[ ${INTERACTIVE} ]]; then
 
   # Common bash functions and alias definitions
   source ${DRACO_ENV_DIR}/bin/bash_functions.sh
-  source ${DRACO_ENV_DIR}/../regression/scripts/common.sh
+  source ${DRACO_ENV_DIR}/../tools/common.sh
 
   # aliases and bash functions for working with slurm
   if !  [[ `which squeue 2>&1 | grep -c "no squeue"` == 1 ]] &&

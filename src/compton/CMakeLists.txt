@@ -2,7 +2,7 @@
 # file   src/compton/CMakeLists.txt
 # author Kendra Keady
 # date   2017 February 28
-# brief  Instructions for building compton Makefiles.
+# brief  Instructions for building Compton Makefiles.
 # note   Copyright (C) 2017-2019 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
@@ -64,7 +64,7 @@ if( TARGET COMPTON::compton )
 
 else()
 
-  # If no compton library, only install headers (stubs).
+  # If no Compton library, only install headers (stubs).
   install( FILES ${headers} DESTINATION ${DBSCFGDIR}include/compton )
 
 endif()

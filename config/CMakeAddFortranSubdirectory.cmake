@@ -479,14 +479,22 @@ function( cafs_create_imported_targets targetName libName targetPath linkLang)
   #
   # Generate the imported library target and set properties...
   #
+  if( DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY )
+    set(dll_loc "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" )
+    set(dll_loc_debug "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" )
+  else()
+    set(dll_loc "${libloc}" )
+    set(dll_loc_debug "${libloc_debug}" )
+  endif() 
+  
   add_library( ${targetName} SHARED IMPORTED GLOBAL)
   set_target_properties( ${targetName} PROPERTIES
-    IMPORTED_LOCATION "${libloc}/${CMAKE_SHARED_LIBRARY_PREFIX}${libName}${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION "${dll_loc}/${CMAKE_SHARED_LIBRARY_PREFIX}${libName}${CMAKE_SHARED_LIBRARY_SUFFIX}"
     IMPORTED_LINK_INTERFACE_LANGUAGES ${linkLang}
     )
   if( lib_debug )
     set_target_properties( ${targetName} PROPERTIES
-      IMPORTED_LOCATION_DEBUG "${libloc_debug}/${CMAKE_SHARED_LIBRARY_PREFIX}${libName}${CMAKE_SHARED_LIBRARY_SUFFIX}" )
+      IMPORTED_LOCATION_DEBUG "${dll_loc_debug}/${CMAKE_SHARED_LIBRARY_PREFIX}${libName}${CMAKE_SHARED_LIBRARY_SUFFIX}" )
   endif()
 
   # platform specific properties

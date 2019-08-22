@@ -19,12 +19,12 @@ export rscriptdir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" )
 if ! [[ -d $rscriptdir ]]; then
   export rscriptdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 fi
-if [[ -f $rscriptdir/scripts/common.sh ]]; then
-  source $rscriptdir/scripts/common.sh
+if [[ -f $rscriptdir/common.sh ]]; then
+  source $rscriptdir/common.sh
 else
   echo " "
   echo "FATAL ERROR: Unable to locate Draco's bash functions: "
-  echo "   looking for .../regression/scripts/common.sh"
+  echo "   looking for .../tools/common.sh"
   echo "   searched rscriptdir = $rscriptdir"
   exit 1
 fi

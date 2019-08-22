@@ -60,9 +60,6 @@ private:
   //! Boundary conditions per boundary file (optional data)
   const std::vector<unsigned> bdy_flags;
 
-  //! Switch for providing dimension-agnostic data to mesh builder
-  const bool use_face_types;
-
   //! Vector of all parsed key-value data pairs (includes valueless delimiters)
   Parsed_Elements parsed_pairs;
 
@@ -91,17 +88,13 @@ public:
   //! Constructor
   X3D_Draco_Mesh_Reader(const std::string &filename_,
                         const std::vector<std::string> &bdy_filenames_ = {},
-                        const std::vector<unsigned> &bdy_flags_ = {},
-                        const bool use_face_types = false);
+                        const std::vector<unsigned> &bdy_flags_ = {});
 
   // >>> SERVICES
 
   void read_mesh();
 
   // >>> ACCESSORS
-
-  // reader type
-  bool get_use_face_types() const { return use_face_types; }
 
   // header data
   unsigned get_process() const {

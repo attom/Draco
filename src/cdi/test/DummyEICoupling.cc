@@ -61,7 +61,7 @@ DummyEICoupling::~DummyEICoupling() {
  *        requested (g/cm^3).
  * \param[in] w_e the electron screening coeffiecent [1/s]
  * \param[in] w_i the ion screening coeffiecent [1/s]
- * \return An electron-ion coupling coeffient [KJ/g/K/s].
+ * \return An electron-ion coupling coeffient [kJ/cc/keV/s].
  */
 double DummyEICoupling::getElectronIonCoupling(const double etemperature,
                                                const double itemperature,
@@ -89,7 +89,7 @@ double DummyEICoupling::getElectronIonCoupling(const double etemperature,
  *        requested (g/cm^3).
  * \param[in] w_e the electron screening coeffiecent vector [1/s]
  * \param[in] w_i the ion screening coeffiecent vector [1/s]
- * \return An electron-ion coupling coeffient vector [kJ/g/K/s].
+ * \return An electron-ion coupling coeffient vector [kJ/cc/keV/s].
  */
 std::vector<double> DummyEICoupling::getElectronIonCoupling(
     const std::vector<double> &etemperature,

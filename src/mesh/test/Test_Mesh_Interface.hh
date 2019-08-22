@@ -54,8 +54,7 @@ public:
   Test_Mesh_Interface(const size_t num_xdir_, const size_t num_ydir_,
                       const std::vector<unsigned> &global_node_number_ = {},
                       const double xdir_offset_ = 0.0,
-                      const double ydir_offset_ = 0.0,
-                      const bool use_face_types = false);
+                      const double ydir_offset_ = 0.0);
 
   // >>> SERVICES
 
@@ -73,7 +72,7 @@ public:
 Test_Mesh_Interface::Test_Mesh_Interface(
     const size_t num_xdir_, const size_t num_ydir_,
     const std::vector<unsigned> &global_node_number_, const double xdir_offset_,
-    const double ydir_offset_, const bool use_face_types)
+    const double ydir_offset_)
     : dim(2), num_cells(num_xdir_ * num_ydir_),
       num_nodes((num_xdir_ + 1) * (num_ydir_ + 1)),
       num_sides(2 * (num_xdir_ + num_ydir_)), num_nodes_per_cell(4),
@@ -87,21 +86,11 @@ Test_Mesh_Interface::Test_Mesh_Interface(
   const size_t poff = num_xdir + num_ydir; // parallel side offset
 
   // use two dimensions and Cartesian geometry
-  if (use_face_types) {
-    cell_type.resize(num_cells, num_faces_per_cell);
-  } else {
-    cell_type.resize(num_cells, num_nodes_per_cell);
-  }
+  cell_type.resize(num_cells, num_faces_per_cell);
 
   // size cell-node linkage based on whether or not face types are being used
-  if (use_face_types) {
-
-    face_type.resize(num_cells * 4, 2);
-    cell_to_node_linkage.resize(num_cells * 2 * num_faces_per_cell);
-
-  } else {
-    cell_to_node_linkage.resize(num_cells * num_nodes_per_cell);
-  }
+  face_type.resize(num_cells * 4, 2);
+  cell_to_node_linkage.resize(num_cells * 2 * num_faces_per_cell);
 
   // set the cell-to-node linkage counterclockwise about each cell
   for (size_t j = 0; j < num_ydir; ++j) {
@@ -112,40 +101,26 @@ Test_Mesh_Interface::Test_Mesh_Interface(
 
       // set each node entry per cell
       Check(cell + num_xdir + 1 + j + 1 < UINT_MAX);
-      if (use_face_types) {
 
-        // 1st face
-        cell_to_node_linkage[8 * cell] = static_cast<unsigned>(cell + j);
-        cell_to_node_linkage[8 * cell + 1] =
-            static_cast<unsigned>(cell + j + 1);
+      // 1st face
+      cell_to_node_linkage[8 * cell] = static_cast<unsigned>(cell + j);
+      cell_to_node_linkage[8 * cell + 1] = static_cast<unsigned>(cell + j + 1);
 
-        // 2nd face
-        cell_to_node_linkage[8 * cell + 2] =
-            static_cast<unsigned>(cell + j + 1);
-        cell_to_node_linkage[8 * cell + 3] =
-            static_cast<unsigned>(cell + num_xdir + 1 + j + 1);
+      // 2nd face
+      cell_to_node_linkage[8 * cell + 2] = static_cast<unsigned>(cell + j + 1);
+      cell_to_node_linkage[8 * cell + 3] =
+          static_cast<unsigned>(cell + num_xdir + 1 + j + 1);
 
-        // 3rd face
-        cell_to_node_linkage[8 * cell + 4] =
-            static_cast<unsigned>(cell + num_xdir + 1 + j + 1);
-        cell_to_node_linkage[8 * cell + 5] =
-            static_cast<unsigned>(cell + num_xdir + 1 + j);
+      // 3rd face
+      cell_to_node_linkage[8 * cell + 4] =
+          static_cast<unsigned>(cell + num_xdir + 1 + j + 1);
+      cell_to_node_linkage[8 * cell + 5] =
+          static_cast<unsigned>(cell + num_xdir + 1 + j);
 
-        // 4th face
-        cell_to_node_linkage[8 * cell + 6] =
-            static_cast<unsigned>(cell + num_xdir + 1 + j);
-        cell_to_node_linkage[8 * cell + 7] = static_cast<unsigned>(cell + j);
-
-      } else {
-
-        cell_to_node_linkage[4 * cell] = static_cast<unsigned>(cell + j);
-        cell_to_node_linkage[4 * cell + 1] =
-            static_cast<unsigned>(cell + j + 1);
-        cell_to_node_linkage[4 * cell + 2] =
-            static_cast<unsigned>(cell + num_xdir + 1 + j + 1);
-        cell_to_node_linkage[4 * cell + 3] =
-            static_cast<unsigned>(cell + num_xdir + 1 + j);
-      }
+      // 4th face
+      cell_to_node_linkage[8 * cell + 6] =
+          static_cast<unsigned>(cell + num_xdir + 1 + j);
+      cell_to_node_linkage[8 * cell + 7] = static_cast<unsigned>(cell + j);
     }
   }
 
@@ -254,11 +229,6 @@ Test_Mesh_Interface::flatten_cn_linkage(const Layout &layout,
                         lpair.second.end());
       }
     }
-
-    // sort and unique
-    std::sort(node_vec.begin(), node_vec.end());
-    auto last = std::unique(node_vec.begin(), node_vec.end());
-    node_vec.erase(last, node_vec.end());
 
     // insert unique nodes into linkage array
     cn_linkage.insert(cn_linkage.end(), node_vec.begin(), node_vec.end());

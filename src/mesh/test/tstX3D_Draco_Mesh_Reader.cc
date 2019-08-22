@@ -39,13 +39,8 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   std::shared_ptr<X3D_Draco_Mesh_Reader> x3d_reader(
       new X3D_Draco_Mesh_Reader(filename, bdy_filenames, bdy_flags));
 
-  // construct alternate reader using face types
-  std::shared_ptr<X3D_Draco_Mesh_Reader> x3d_reader_alt(
-      new X3D_Draco_Mesh_Reader(filename, bdy_filenames, bdy_flags, true));
-
-  // read meshes
+  // read mesh
   x3d_reader->read_mesh();
-  x3d_reader_alt->read_mesh();
 
   // >>> CHECK HEADER DATA
 
@@ -57,13 +52,9 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   // >>> CHECK CELL-NODE DATA
 
   FAIL_IF_NOT(x3d_reader->get_celltype(0) == 4);
-  FAIL_IF_NOT(x3d_reader_alt->get_celltype(0) == 4);
 
-  std::vector<unsigned> test_cellnodes = {0, 1, 3, 2};
+  std::vector<unsigned> test_cellnodes = {0, 1, 1, 3, 3, 2, 2, 0};
   FAIL_IF_NOT(x3d_reader->get_cellnodes(0) == test_cellnodes);
-
-  std::vector<unsigned> test_cellnodes_alt = {0, 1, 1, 3, 3, 2, 2, 0};
-  FAIL_IF_NOT(x3d_reader_alt->get_cellnodes(0) == test_cellnodes_alt);
 
   // >>> CHECK NODE-COORD DATA
 
@@ -75,7 +66,6 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   // >>> CHECK SIDE DATA
 
   FAIL_IF_NOT(x3d_reader->get_numsides() == 4);
-  FAIL_IF_NOT(x3d_reader_alt->get_numsides() == 4);
 
   std::vector<std::vector<unsigned>> test_sidenodes = {
       {0, 1}, {1, 3}, {2, 3}, {0, 2}};
@@ -85,16 +75,13 @@ void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
 
     // sides must always give 2 nodes per face in X3D
     FAIL_IF_NOT(x3d_reader->get_sidetype(side) == 2);
-    FAIL_IF_NOT(x3d_reader_alt->get_sidetype(side) == 2);
 
     // boundary conditions are not supplied in X3D
     // (note this check is specialized for the 1-cell mesh)
     FAIL_IF_NOT(x3d_reader->get_sideflag(side) == bdy_flags[side]);
-    FAIL_IF_NOT(x3d_reader_alt->get_sideflag(side) == bdy_flags[side]);
 
     // check node indices
     FAIL_IF_NOT(x3d_reader->get_sidenodes(side) == test_sidenodes[side]);
-    FAIL_IF_NOT(x3d_reader_alt->get_sidenodes(side) == test_sidenodes[side]);
   }
 
   // >>> CHECK BC-NODE MAP
@@ -132,7 +119,7 @@ void build_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
 
   // generate a constainer for data needed in mesh construction
   rtt_mesh_test::Test_Mesh_Interface mesh_iface(num_xdir, num_ydir, {}, 0.0,
-                                                0.0, true);
+                                                0.0);
 
   // short-cut to some arrays
   const std::vector<unsigned> &cell_type = mesh_iface.cell_type;
@@ -143,11 +130,11 @@ void build_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
       mesh_iface.side_to_node_linkage;
 
   // instantiate the mesh
-  std::shared_ptr<Draco_Mesh> ref_mesh(new Draco_Mesh(
-      mesh_iface.dim, geometry, cell_type, cell_to_node_linkage,
-      mesh_iface.side_set_flag, side_node_count, side_to_node_linkage,
-      mesh_iface.coordinates, mesh_iface.global_node_number, {}, {}, {}, {},
-      mesh_iface.face_type));
+  std::shared_ptr<Draco_Mesh> ref_mesh(
+      new Draco_Mesh(mesh_iface.dim, geometry, cell_type, cell_to_node_linkage,
+                     mesh_iface.side_set_flag, side_node_count,
+                     side_to_node_linkage, mesh_iface.coordinates,
+                     mesh_iface.global_node_number, mesh_iface.face_type));
 
   // >>> PARSE AND BUILD MESH
 
@@ -159,7 +146,7 @@ void build_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
 
   // construct reader
   std::shared_ptr<X3D_Draco_Mesh_Reader> x3d_reader(
-      new X3D_Draco_Mesh_Reader(filename, bdy_filenames, {}, true));
+      new X3D_Draco_Mesh_Reader(filename, bdy_filenames, {}));
 
   // read mesh
   x3d_reader->read_mesh();

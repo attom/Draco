@@ -13,7 +13,7 @@
 set -e
 
 cd ${SOURCE_DIR:-/home/travis/Draco}
-source regression/scripts/common.sh
+source tools/common.sh
 
 if [[ ${STYLE} ]]; then
   echo "checking style conformance..."
@@ -44,14 +44,14 @@ if [[ ${STYLE} ]]; then
   # clang-format is installed at /usr/bin.
   export PATH=$PATH:/usr/bin
   # extract the TPL list from the Dockerfile
-  export CLANG_FORMAT_VER="`grep \"ENV CLANG_FORMAT_VER\" regression/Dockerfile | sed -e 's/.*=//' | sed -e 's/\"//g'`"
-  regression/check_style.sh -t
+  export CLANG_FORMAT_VER="`grep \"ENV CLANG_FORMAT_VER\" tools/Dockerfile | sed -e 's/.*=//' | sed -e 's/\"//g'`"
+  tools/check_style.sh -t
 
 else
   echo "checking build and test..."
 
   # extract the TPL list from the Dockerfile
-  export DRACO_TPL="`grep \"ENV DRACO_TPL\" regression/Dockerfile | sed -e 's/.*=//' | sed -e 's/\"//g'`"
+  export DRACO_TPL="`grep \"ENV DRACO_TPL\" tools/Dockerfile | sed -e 's/.*=//' | sed -e 's/\"//g'`"
 
   # Environment setup for the build...
   for item in ${DRACO_TPL}; do
