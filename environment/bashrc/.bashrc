@@ -31,12 +31,13 @@ case ${-} in
     export INTERACTIVE=true
     if test -n "${verbose}"; then echo "in draco/environment/bashrc/.bashrc"; fi
 
-    # Turn on checkwinsize
+    # Shell options
     shopt -s checkwinsize # autocorrect window size
     shopt -s cdspell      # autocorrect spelling errors on cd command line.
     shopt -s histappend   # append to the history file, don't overwrite it
-    # shopt -s direxpand  # Doesn't work on toss22 machines. Move this command to
-                          # .bashrc_toss3 and .bashrc_cray
+    shopt -s cdspell
+
+    # More environment setup --------------------------------------------------#
 
     # don't put duplicate lines or lines starting with space in the history. See
     # bash(1) for more options
@@ -49,115 +50,21 @@ case ${-} in
     # Prevent creation of core files (ulimit -a to see all limits).
     # ulimit -c 0
 
+    # colored GCC warnings and errors
+    export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+    export TERM=xterm-256color
+
     ##------------------------------------------------------------------------##
     ## Common aliases
     ##------------------------------------------------------------------------##
 
-    # Generic Settings
-
-    alias ll='\ls -Flh'
-    alias lt='\ls -Flth'
-    alias ls='\ls -F'
-    alias la='\ls -A'
-    alias l.='\ls -hd .*'
-    alias lt.='ls -Flth .*'
-
-    # alias a2ps='a2ps --sides=duplex --medium=letter'
-    alias btar='tar --use-compress-program /usr/bin/bzip2'
-    alias cpuinfo='cat /proc/cpuinfo'
-    alias df='df -h'
-    alias dirs='dirs -v'
-    alias du='du -h --max-depth=1 --exclude=.snapshot'
-    alias less='/usr/bin/less -r'
-    alias mdstat='cat /proc/mdstat'
-    alias meminfo='cat /proc/meminfo'
-    alias mroe='more'
-    nodename=`uname -n | sed -e 's/[.].*//g'`
-    alias resettermtitle='echo -ne "\033]0;${nodename}\007"'
-
-    # Module related:
-    alias moduel='module'
-    alias ma='module avail'
-    alias mls='module list'
-    alias mld='module load'
-    alias mul='module unload'
-    alias msh='module show'
-
-    # set variable identifying the chroot you work in (used in the prompt below)
-    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-      debian_chroot=$(cat /etc/debian_chroot)
-    fi
+    source ${DRACO_ENV_DIR}/bashrc/bash_aliases.sh
 
     # If this is an xterm set the title to user@host:dir
     case "$TERM" in
-      xterm*|rxvt*)
-        # PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-        echo -ne "\033]0;${nodename}\007"
-        ;;
-      *)
-        ;;
+      xterm*|rxvt*) echo -ne "\033]0;${nodename}\007" ;;
+      *) ;;
     esac
-
-    # Provide special ls commands if this is a color-xterm or compatible
-    # terminal.
-
-    # 1. Does the current terminal support color?
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-      # We have color support; assume it's compliant with Ecma-48
-      # (ISO/IEC-6429). (Lack of such support is extremely rare, and such a case
-      # would tend to support setf rather than setaf.)
-      color_prompt=yes
-    fi
-
-    # 2. Override color_prompt for special values of $TERM
-    case "$TERM" in
-      xterm-color|*-256color) color_prompt=yes;;
-      emacs|dumb)
-        color_prompt=no
-        LS_COLORS=''
-        ;;
-    esac
-
-    # if ! [ -x /usr/bin/dircolors ]; then
-    #   color_prompt=no
-    # fi
-
-    if [[ "${color_prompt:-no}" == "yes" ]]; then
-
-      # Use custom colors if provided.
-      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-
-      # append --color option to some aliased commands
-
-      alias ll='\ls -Flh --color'
-      alias lt='\ls -Flth --color'
-      alias ls='\ls -F --color'
-      alias la='\ls -A --color'
-      alias l.='\ls -hd --color .*'
-      alias lt.='ls -Flth --color .*'
-
-      alias grep='grep --color=auto'
-      alias fgrep='fgrep --color=auto'
-      alias egrep='egrep --color=auto'
-
-      # colored GCC warnings and errors
-      export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-
-      # Colorized prompt (might need some extra debian_chroot stuff -- see wls
-      # example).
-      if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-        debian_chroot=$(cat /etc/debian_chroot)
-      fi
-
-      if [ "$color_prompt" = yes ]; then
-        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-      else
-        PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-      fi
-
-    fi
-    unset color_prompt
-
     ;; # end case 'interactive'
 
   ##---------------------------------------------------------------------------##
@@ -184,13 +91,13 @@ if [[ ${INTERACTIVE} ]]; then
   fi
 
   # Common bash functions and alias definitions
-  source ${DRACO_ENV_DIR}/bin/bash_functions.sh
+  source ${DRACO_ENV_DIR}/bashrc/bash_functions.sh
   source ${DRACO_ENV_DIR}/../tools/common.sh
 
   # aliases and bash functions for working with slurm
   if !  [[ `which squeue 2>&1 | grep -c "no squeue"` == 1 ]] &&
     [[ `which squeue | grep -c squeue` -gt 0 ]]; then
-    source ${DRACO_ENV_DIR}/bashrc/.bashrc_slurm
+    source ${DRACO_ENV_DIR}/bashrc/bashrc_slurm
   fi
 fi
 
@@ -205,24 +112,6 @@ if [[ ${SLURM_CLUSTER_NAME} == "darwin" ]]; then
 fi
 
 if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
-
-  # Clean up the default path to remove duplicates
-  tmpifs=$IFS
-  oldpath=$PATH
-  export PATH=/bin
-  IFS=:
-  for dir in $oldpath; do
-    if test -z "`echo $PATH | grep $dir`" && test -d $dir; then
-      export PATH=$PATH:$dir
-    fi
-  done
-  IFS=$tmpifs
-  unset tmpifs
-  unset oldpath
-
-  # Avoid double colon in PATH
-  export PATH=`echo ${PATH} | sed -e 's/[:]$//'`
-  export LD_LIBRARY_PATH=`echo ${LD_LIBRARY_PATH} | sed -e 's/[:]$//'`
 
   # Append PATHS (not linux specific, not ccs2 specific).
   add_to_path ${DRACO_ENV_DIR}/bin
@@ -274,7 +163,7 @@ if [[ ${DRACO_BASHRC_DONE:-no} == no ]] && [[ ${INTERACTIVE} == true ]]; then
 
     # Badger | Cyclone | Fire | Grizzly | Ice | Snow
     ba* | cy* | fi* | gr* | ic* | sn* )
-      source ${DRACO_ENV_DIR}/bashrc/.bashrc_toss3 ;;
+      source ${DRACO_ENV_DIR}/bashrc/.bashrc_cts1 ;;
 
     # wtrw and rfta
     red-wtrw* | rfta* | redcap* )
@@ -331,7 +220,6 @@ fi
 # provide some bash functions (dracoenv, rmdracoenv) for non-interactive
 # sessions.
 source ${DRACO_ENV_DIR}/bashrc/bash_functions2.sh
-
 
 if test -n "${verbose}"; then echo "done with draco/environment/bashrc/.bashrc"; fi
 

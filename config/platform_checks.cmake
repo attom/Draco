@@ -85,21 +85,6 @@ macro( query_craype )
       set( CRAY_PE ON CACHE BOOL
         "Are we building in a Cray Programming Environment?")
 
-      # override default compiler wrapper flags for linking so that dynamic
-      # libraries are allowed.  This does not prevent us from generating static
-      # libraries if requested with DRACO_LIBRARY_TYPE=STATIC.
-      # if( DEFINED ENV{CMAKE_EXE_LINKER_FLAGS} )
-      #   set( CMAKE_EXE_LINKER_FLAGS "$ENV{CMAKE_EXE_LINKER_FLAGS}")
-      # else()
-      #   if( DEFINED CMAKE_EXE_LINKER_FLAGS )
-      #     string( APPEND CMAKE_EXE_LINKER_FLAGS " -dynamic" )
-      #   else()
-      #     set( CMAKE_EXE_LINKER_FLAGS "-dynamic" )
-      #   endif()
-      # endif()
-      # set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}" CACHE STRING
-      #   "Extra flags for linking executables")
-
       # We expect developers to use the Cray compiler wrappers (especially in
       # setupMPI.cmake). See also
       # https://cmake.org/cmake/help/latest/module/FindMPI.html

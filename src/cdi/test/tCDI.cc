@@ -1291,10 +1291,10 @@ void test_mgopacity_collapse(rtt_dsxx::UnitTest &ut) {
         bounds, mgOpacities, rosseland_only_spectrum);
 
     std::vector<double> emission_group_cdf_ref(bounds.size() - 1);
-    emission_group_cdf_ref[0] = 0.0192441804600152;
-    emission_group_cdf_ref[1] = 0.291967514874147;
-    emission_group_cdf_ref[2] = 0.300902510426928;
-    double const opacity_pl_ref(0.300904405142659);
+    emission_group_cdf_ref[0] = 0.019244301636310527;
+    emission_group_cdf_ref[1] = 0.29196935332821244;
+    emission_group_cdf_ref[2] = 0.30090440514265909;
+    double const opacity_pl_ref(0.30090440514265909);
     double const opacity_pl_recip_ref(8.80345577340399);
     double const opacity_ross_ref(0.0778314764921229);
 

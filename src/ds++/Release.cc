@@ -94,7 +94,7 @@ const std::string release() {
  * added/removed. Because the git repository only includes code provided
  * starting at draco-6_0_0, all LOC were attributed to KT at draco-6_0_0 since
  * he converted the svn repo to git. The remaining numbers are computed by
- * couting LOC added/removed since draco-6_0_0.
+ * counting LOC added/removed since draco-6_0_0.
  */
 const std::string author_list(bool const use_doxygen_formatting) {
   std::stringstream alist;
@@ -102,22 +102,24 @@ const std::string author_list(bool const use_doxygen_formatting) {
   mmdevs current_developers;
   // not totally fair... KT got credit for LOC when svn repository was converted
   // to git.
-  current_developers.insert(fomdev(196420, "Kelly G. Thompson"));
-  current_developers.insert(fomdev(13761, "Kent G. Budge"));
-  current_developers.insert(fomdev(4006, "Ryan T. Wollaeger"));
-  current_developers.insert(fomdev(3564, "Alex R. Long"));
+  current_developers.insert(fomdev(188732, "Kelly G. Thompson"));
+  current_developers.insert(fomdev(13919, "Kent G. Budge"));
+  current_developers.insert(fomdev(3855, "Ryan T. Wollaeger"));
+  current_developers.insert(fomdev(3701, "Alex R. Long"));
   current_developers.insert(fomdev(2933, "James S. Warsa"));
-  current_developers.insert(fomdev(1509, "Matt A. Cleveland"));
-  current_developers.insert(fomdev(1255, "Kendra P. Long"));
-  current_developers.insert(fomdev(669, "Tim Kelley"));
+  current_developers.insert(fomdev(1518, "Matt A. Cleveland"));
+  current_developers.insert(fomdev(1247, "Kendra P. Long"));
+  current_developers.insert(fomdev(682, "Tim Kelley"));
   current_developers.insert(fomdev(398, "Jae H. Chang"));
-  current_developers.insert(fomdev(174, "Andrew T. Till"));
+  current_developers.insert(fomdev(173, "Andrew T. Till"));
+  current_developers.insert(fomdev(98, "Seth D. Cook"));
+  current_developers.insert(fomdev(1, "Ben R. Ryan"));
   current_developers.insert(fomdev(1, "David A. Dixon"));
 
   mmdevs prior_developers;
 
-  prior_developers.insert(fomdev(4018, "Gabriel M. Rockefeller"));
-  prior_developers.insert(fomdev(2231, "Allan B. Wollaber"));
+  prior_developers.insert(fomdev(4014, "Gabriel M. Rockefeller"));
+  prior_developers.insert(fomdev(2132, "Allan B. Wollaber"));
   prior_developers.insert(fomdev(524, "Rob B. Lowrie"));
   prior_developers.insert(fomdev(307, "Paul W. Talbot"));
   prior_developers.insert(fomdev(262, "Katherine J. Wang"));
@@ -152,7 +154,7 @@ const std::string author_list(bool const use_doxygen_formatting) {
   alist << rtt_dsxx::print_devs(maxlinelen, line_name, current_developers);
   alist << "\n";
 
-  line_name = std::string("Prior Contributers: ");
+  line_name = std::string("Prior Contributors: ");
   if (use_doxygen_formatting) {
     alist << "\\par " << line_name << "\n\n";
     line_name = "";

@@ -120,7 +120,7 @@ void test_scalar(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(dt[0] == dt3[0]);
     FAIL_IF(&(dt[0]) == &(dt3[0]));
 
-    dt3 = dt3;
+    dt = dt3;
     FAIL_IF_NOT(dt[0] == dt3[0]);
     FAIL_IF(&(dt[0]) == &(dt3[0]));
   } catch (rtt_dsxx::assertion & /* error */) {

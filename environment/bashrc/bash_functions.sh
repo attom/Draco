@@ -1,6 +1,6 @@
 ## -*- Mode: sh -*-
 ##---------------------------------------------------------------------------##
-## File  : environment/bin/bash_functions.sh
+## File  : environment/bashrc/bash_functions.sh
 ## Date  : Tuesday, May 31, 2016, 14:48 pm
 ## Author: Kelly Thompson
 ## Note  : Copyright (C) 2016-2019, Triad National Security, LLC.
@@ -40,6 +40,8 @@
 ## qrm               - quick remove (for lustre filesystems).
 ##---------------------------------------------------------------------------##
 
+if test -n "${verbose}"; then echo "in draco/environment/bashrc/bash_functions.sh"; fi
+
 ##---------------------------------------------------------------------------##
 ## Find all matches in PATH (not just the first one)
 ##---------------------------------------------------------------------------##
@@ -47,11 +49,10 @@
 function whichall ()
 {
   for dir in ${PATH//:/ }; do
-    if [ -x $dir/$1 ]; then
-      echo $dir/$1;
-    fi;
+    if [ -x $dir/$1 ]; then echo $dir/$1; fi;
   done
 }
+export -f whichall
 
 ##---------------------------------------------------------------------------##
 ## Recursively delete all ~ files.
@@ -74,6 +75,7 @@ function cleanemacs
   fi;
   echo "done."
 }
+export -f cleanemacs
 
 ##---------------------------------------------------------------------------##
 ## Used for formatting PROMPT.
@@ -84,6 +86,7 @@ function cleanemacs
 parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
+export parse_git_branch
 
 function npwd()
 {
@@ -120,6 +123,7 @@ function npwd()
   fi
   echo ${newPWD}
 }
+export -f npwd
 
 # Alternate
 function npwd_alt()
@@ -140,6 +144,8 @@ function npwd_alt()
   fi
   echo ${newPWD}
 }
+export -f npwd_alt
+
 # Another alternate
 # PROMPT_COMMAND='DIR=`pwd|sed -e "s!$HOME!~!"`; if [ ${#DIR} -gt 30 ]; then CurDir=${DIR:0:12}...${DIR:${#DIR}-15}; else CurDir=$DIR; fi'
 # PS1="[\$CurDir] \$ "
@@ -174,6 +180,7 @@ function findsymbol()
   done
   echo " "
 }
+export -f findsymbol
 
 ##---------------------------------------------------------------------------##
 ## Transfer 2.0 (Mercury replacement)
@@ -189,6 +196,7 @@ function xfstatus()
 {
   ssh red@transfer.lanl.gov myfiles
 }
+export -f xfstatus
 
 ##---------------------------------------------------------------------------##
 ## If string is found in PATH, remove it.
@@ -197,6 +205,7 @@ function rm_from_path ()
 {
   export PATH=$(echo "$PATH" | sed -e 's%:${1}%%')
 }
+export -f rm_from_path
 
 ##---------------------------------------------------------------------------##
 ## If path is a directory add it to PATH (if not already in PATH)
@@ -221,6 +230,7 @@ function add_to_path ()
         PATH="${PATH:+${PATH}:}$1"; fi ;;
   esac
 }
+export -f add_to_path
 
 ##---------------------------------------------------------------------------##
 ## Toggle LANL proxies on/off
@@ -248,6 +258,7 @@ function proxy()
     unset NO_PROXY
   fi
 }
+export -f proxy
 
 ##---------------------------------------------------------------------------##
 ## Test to determine if named bash function exists in the current environment.
@@ -259,6 +270,7 @@ function fn_exists()
   echo $res
   return $res
 }
+export -f fn_exists
 
 ##---------------------------------------------------------------------------##
 ## Echo commands before execution (used in scripts)
@@ -267,6 +279,7 @@ function run () {
   echo $1
   if ! [ $dry_run ]; then eval $1; fi
 }
+export -f run
 
 ##---------------------------------------------------------------------------##
 ## Reset the draco developer environment
@@ -276,6 +289,7 @@ function rdde ()
   unset DRACO_BASHRC_DONE
   source ${DRACO_ENV_DIR}/bashrc/.bashrc
 }
+export -f rdde
 
 #------------------------------------------------------------------------------#
 # Quick remove: instead of 'rm -rf', mv the directory to .../trash/tmpname
@@ -324,7 +338,10 @@ function qrm ()
 
   done
 }
+export -f qrm
+
+if test -n "${verbose}"; then echo "done with draco/environment/bashrc/bash_functions.sh"; fi
 
 #------------------------------------------------------------------------------#
-# End environment/bin/.bash_functions
+# End environment/bashrc/bash_functions
 #------------------------------------------------------------------------------#

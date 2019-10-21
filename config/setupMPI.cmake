@@ -51,6 +51,10 @@ function( setMPIflavorVer )
     if( DEFINED ENV{CRAY_MPICH2_VER} )
       set( MPI_VERSION $ENV{CRAY_MPICH2_VER} )
     endif()
+  elseif( ${MPI_FLAVOR} STREQUAL "spectrum" )
+    if( DEFINED ENV{LMOD_MPI_VERSION} )
+      set( LMOD_MPI_VERSION $ENV{LMOD_MPI_VERSION} )
+    endif()
   else()
     execute_process( COMMAND ${MPIEXEC_EXECUTABLE} --version
       OUTPUT_VARIABLE DBS_MPI_VER_OUT
@@ -354,6 +358,20 @@ macro( setupSpectrumMPI )
   # Find cores/cpu, cpu/node, hyperthreading
   query_topology()
 
+  #
+  # Setup for OMP plus MPI
+  #
+
+  if( DEFINED ENV{OMP_NUM_THREADS} )
+    set( MPIEXEC_OMP_POSTFLAGS "-c $ENV{OMP_NUM_THREADS}" )
+  endif()
+
+  set( MPIEXEC_OMP_POSTFLAGS ${MPIEXEC_OMP_POSTFLAGS}
+    CACHE STRING "extra mpirun flags (list)." FORCE )
+
+  mark_as_advanced( MPI_CPUS_PER_NODE MPI_CORES_PER_CPU
+    MPI_PHYSICAL_CORES MPI_MAX_NUMPROCS_PHYSICAL MPI_HYPERTHREADING )
+
 endmacro()
 
 #------------------------------------------------------------------------------#
@@ -378,12 +396,21 @@ macro( setupMPILibrariesUnix )
         "Program to execute MPI parallel programs." )
     endif()
 
-    # If this is a Cray system and the Cray MPI compile wrappers are used,
-    # then do some special setup:
+    # If this is a Cray system and the Cray MPI compile wrappers are used, then
+    # do some special setup:
 
     if( CRAY_PE )
       if( NOT EXISTS ${MPIEXEC_EXECUTABLE} )
         find_program( MPIEXEC_EXECUTABLE srun )
+      endif()
+      set( MPIEXEC_EXECUTABLE ${MPIEXEC_EXECUTABLE} CACHE STRING
+        "Program to execute MPI parallel programs." FORCE )
+      set( MPIEXEC_NUMPROC_FLAG "-n" CACHE STRING
+        "mpirun flag used to specify the number of processors to use")
+    elseif( DEFINED ENV{SYS_TYPE} AND
+        "$ENV{SYS_TYPE}" MATCHES "ppc64le_ib_p9" ) # ATS-2
+      if( NOT EXISTS ${MPIEXEC_EXECUTABLE} )
+        find_program( MPIEXEC_EXECUTABLE jsrun )
       endif()
       set( MPIEXEC_EXECUTABLE ${MPIEXEC_EXECUTABLE} CACHE STRING
         "Program to execute MPI parallel programs." FORCE )

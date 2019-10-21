@@ -1,10 +1,10 @@
 ##-*- Mode: sh -*-
 ##---------------------------------------------------------------------------##
-## .bashrc_toss22 - my bash configuration file upon bash login
+## .bashrc_cts1 - my bash configuration file upon bash login
 ##---------------------------------------------------------------------------##
 
 if test -n "$verbose"; then
-   echo "In .bashrc_toss22"
+   echo "In .bashrc_cts1"
 fi
 
 ##---------------------------------------------------------------------------##
@@ -19,6 +19,11 @@ if [[ ! ${VENDOR_DIR} ]]; then
    fi
 fi
 
+# shell options
+# Do not escape $ for bash completion
+shopt -s direxpand
+alias salloc='salloc --x11'
+
 #
 # MODULES
 #
@@ -26,8 +31,8 @@ fi
 modcmd=`declare -f module`
 #    If not found, look for it in /usr/share/Modules (ML)
 if [[ ! ${modcmd} ]]; then
-   if test -f /usr/share/Modules/init/bash; then
-      source /usr/share/Modules/init/bash
+   if test -f /usr/share/lmod/lmod/init/bash; then
+      source /usr/share/lmod/lmod/init/bash
    else
       echo "ERROR: The module command was not found. No modules will be loaded."
    fi
@@ -44,23 +49,27 @@ else
   # to use his/her own checkout of user_contrib modulefiles.
   if test -d $HOME/modulefiles; then
     export ucmf=$HOME/modulefiles
-    module use --append $ucmf/`/usr/projects/hpcsoft/sys_name`
+    module use --append $ucmf/`/usr/projects/hpcsoft/utilities/bin/sys_name`
   else
     module load user_contrib
   fi
   module load friendly-testing
   module use --append ${VENDOR_DIR}-ec/modulefiles
 
-  export dracomodules="clang-format/3.9.0 intel/18.0.2 openmpi/2.1.2 mkl \
-trilinos superlu-dist/5.1.3 metis parmetis random123 eospac/6.3.0 subversion \
-cmake/3.12.1 numdiff git totalview emacs grace"
+  export dracomodules="ack htop clang-format python \
+intel/19.0.4 openmpi/2.1.2 mkl \
+cmake/3.14.6 numdiff git totalview trilinos/12.10.1 \
+superlu-dist/5.1.3 metis parmetis random123 eospac/6.4.0"
 
-if [[ `groups | grep -c ccsrad` != 0 ]]; then
-  draco_modules="$draco_modules csk ndi"
-fi
+  if [[ -d ${VENDOR_DIR}-ec ]]; then
+    group_for_vendor_ec=`\ls -aFld ${VENDOR_DIR}-ec | awk '{ print $4 }'`
+    if [[ `groups | grep -c $group_for_vendor_ec` != 0 ]]; then
+      dracomodules="$dracomodules csk ndi"
+    fi
+  fi
 
 fi
 
 ##---------------------------------------------------------------------------##
-## end of .bashrc_toss22
+## end of .bashrc_cts1
 ##---------------------------------------------------------------------------##

@@ -316,7 +316,7 @@ macro( setupCudaEnv )
       message(STATUS "CUDA Architecture: ${ARCH}")
       # CMAKE currently only allows up to C++14 as the NVCC language level
       set(CMAKE_CUDA_STANDARD "14")
-      set(CMAKE_CUDA_FLAGS "${ARCH} -g -G" CACHE STRING "Standard CUDA flags"
+      set(CMAKE_CUDA_FLAGS "${ARCH} -g -G --expt-relaxed-constexpr" CACHE STRING "Standard CUDA flags"
         FORCE)
       set(CMAKE_CUDA_FLAGS_DEBUG "-O0" CACHE STRING "CUDA debug flags" FORCE)
       set(CMAKE_CUDA_FLAGS_RELWITHDEBINFO "-O2 --generate-line-info" CACHE

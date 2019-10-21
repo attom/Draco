@@ -46,16 +46,26 @@ std::string rtt_dsxx::print_stacktrace(std::string const &error_message) {
   // Get our PID and build the name of the link in /proc
   pid_t const pid = getpid();
 
+  // Now read the symbolic link (process name)
+  unsigned const buf_size(512);
+  char buf[buf_size];
+#ifdef APPLE
+  int ret = -1; // This scheme won't work on OSX: no /proc fs
+#else
   // Build linkname
   std::string const linkname =
       std::string("/proc/") + st_to_string(pid) + std::string("/exe");
 
-  // Now read the symbolic link (process name)
-  unsigned const buf_size(512);
-  char buf[buf_size];
   auto ret = readlink(linkname.c_str(), buf, buf_size);
-  buf[ret] = 0;
+#endif
+  if (ret >= 0) /* readlink succeeded */
+  {
+    buf[ret] = 0;
+  }
   std::string process_name(buf);
+  if (ret < 0) {
+    process_name = "UNAVAILABLE";
+  }
 
   // retrieve current stack addresses
   int const max_frames = 64;

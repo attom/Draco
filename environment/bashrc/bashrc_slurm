@@ -1,7 +1,7 @@
 #!/bin/bash
 ##-*- Mode: bash -*-
 ##---------------------------------------------------------------------------##
-## File  : environment/bashrc/.bashrc_slurm
+## File  : environment/bashrc/bashrc_slurm
 ## Date  : Wednesday, Oct 11, 2017, 15:15 pm
 ## Author: Kelly Thompson
 ## Note  : Copyright (C) 2017, Triad National Security, LLC.
@@ -20,9 +20,7 @@
 case ${-} in
 *i*)
    export INTERACTIVE=true
-   if test -n "${verbose}"; then
-      echo "in draco/environment/bashrc/.bashrc_slurm"
-   fi
+   if test -n "${verbose}"; then echo "in draco/environment/bashrc/bashrc_slurm"; fi
 
    # Slurm related:
    # See http://hpcfaq.lanl.gov/faqs/view/58
@@ -57,6 +55,7 @@ case ${-} in
      echo -e "\nMore slurm related aliases can be found at /usr/projects/consult/public/SLURM/aliases/slurm_bash_alias."
      fi
    }
+   export -f slurmhelp
 
    alias hluser="egrep --color -E '.*${USER}.*|$'"
    boldface=$(tput bold)
@@ -94,6 +93,7 @@ case ${-} in
      fi
      echo " "
    }
+   export -f sq
    # alias sqshowme='squeue -u ${USER} -o "%.7i %.10u %.8T %.6D %.6C %.12L %S" -S "-t,-L"'
    alias sqshowme='sq -u ${USER}'
    alias showme='sqshowme'
@@ -115,6 +115,7 @@ case ${-} in
      sprio -u $USER -o "$formatstring" | head -n 1
      sprio -h -n -o "$formatstring" $* | sort -r -k 3,3
    }
+   export -f jobpriorities
    alias myjobpriorities='jobpriorities -u $USER'
    alias myusage='sreport -t Hours cluster AccountUtilizationByUser user=$LOGNAME start=1/1/10 end=`date +"%m/%d/%Y"`'
    function sqqos() {
@@ -122,6 +123,7 @@ case ${-} in
      if [ $1 ]; then myqos=$1; fi
      squeue --qos=$myqos -o "%.7i %.10u %.8T %.6D %.6C %.12L %S" -S "-t,-L"
    }
+   export -f sqqos
    # checkjob analogs
    function checkjob() {
      job=$1
@@ -139,6 +141,7 @@ case ${-} in
        # sprio -n -u $USER -j $job -o "%15i %.8u %.10Y %.10A %.10F %.10f %.10J %.10P %.10Q"
      fi
    }
+   export -f checkjob
    alias chk='checkjob'
    # Show me all the possible qos and accounts
    function showuser () {
@@ -157,6 +160,7 @@ case ${-} in
      echo -e "\n24-hour usage report:\n"
      sreport -t percent cluster UserUtilizationByAccount Users=$user
    }
+   export -f showuser
    alias suser='showuser'
    function drmgroups () {
      user=$1
@@ -165,9 +169,11 @@ case ${-} in
      fi
      sshare -m -u $user | grep $user | cut -f3 -d" " | uniq | sed '/^\s*$/d' | paste -d, -s
    }
+   export -f drmgroups
    function sreason () {
      squeue -o "%.7i %.10u %.10T %r" -t PD,S,CG,CD,CF,CA,F,TO,PR,NF -j $1
    }
+   export -f sreason
    function usercpuhrs () {
      if [[ $1 =~ [a-z].* ]]; then
        user=$1
@@ -180,6 +186,7 @@ case ${-} in
      [ -z "$user" ] && user=${USER}
      sreport -t Hours cluster AccountUtilizationByUser user=$user start=$fday end=$lday
    }
+   export -f sreason
 
    target="`uname -n | sed -e s/[.].*//`"
    case $target in
@@ -188,6 +195,9 @@ case ${-} in
      tt*|tr*)
        alias salloc='salloc --gres=craynetwork:0' ;;
    esac
+
+   if test -n "${verbose}"; then echo "done with draco/environment/bashrc/bashrc_slurm"; fi
+
    ;; # end case 'interactive'
 
 ##---------------------------------------------------------------------------##
@@ -200,5 +210,5 @@ case ${-} in
 esac
 
 ##---------------------------------------------------------------------------##
-## end of .bashrc_slurm
+## end of bashrc_slurm
 ##---------------------------------------------------------------------------##

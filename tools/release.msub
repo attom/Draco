@@ -20,15 +20,16 @@ export test_pe=`npes_test`
 verbose=1
 if test $verbose == 1; then
   echo
-  echo "Starting release build for $package - $version - $buildflavor - $TARGET:"
+  echo "Starting release build for $package - $rttversion - $buildflavor - $TARGET:"
   echo "================================================================================"
-  echo "install_prefix = $install_prefix/$version"
-  echo "build_prefix   = $build_prefix/$version"
+  echo "install_prefix = $install_prefix/$rttversion"
+  echo "build_prefix   = $build_prefix/$rttversion"
   echo
   echo "make command = make -j $build_pe -l $build_pe"
   echo "test command = ctest -j $test_pe"
   echo "steps        = ${steps}"
   echo "queue        = $access_queue"
+  echo "cmake opts   = $CONFIG_EXTRA"
   echo
 fi
 

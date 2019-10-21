@@ -161,6 +161,8 @@ if( NOT CXX_FLAGS_INITIALIZED )
       NOT CRAY_PE AND
       NOT "${sitename}" MATCHES "toolbox")
     string( APPEND CMAKE_C_FLAGS " -march=native" )
+  elseif( ${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+    string( APPEND CMAKE_C_FLAGS " -mcpu=powerpc64le -mtune=powerpc64le" )
   endif()
 
   set( CMAKE_CXX_FLAGS                "${CMAKE_C_FLAGS}")

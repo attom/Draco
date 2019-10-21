@@ -502,9 +502,12 @@ double CDI::collapseMultigroupOpacitiesPlanck(
   //                         int_{\nu_0}^{\nu_G}{d\nu * B(\nu,T)}
 
   double planck_opacity(0.0);
-  if (planck_integral > 0.0)
+  if (planck_integral > 0.0) {
     planck_opacity = sig_planck_sum / planck_integral;
-  else {
+    for (size_t g = 1; g < groupBounds.size(); ++g) {
+      emission_group_cdf[g - 1] /= planck_integral;
+    }
+  } else {
     // Weak check that the zero integrated Planck is due to a cold temperature
     // whose Planckian peak is below the lowest (first) group boundary.
     Check(rtt_dsxx::soft_equiv(sig_planck_sum, 0.0));

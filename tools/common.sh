@@ -10,6 +10,8 @@
 ##
 ## Summary: Misc bash functions useful during development of code.
 
+shopt -s extglob # Allow variable as case condition
+
 ##---------------------------------------------------------------------------##
 ## Helpful functions
 ##---------------------------------------------------------------------------##
@@ -69,47 +71,6 @@ function fn_exists ()
 # The script starts here
 #----------------------------------------------------------------------#
 
-function establish_permissions
-{
-  # Permissions - new files should be marked u+rwx,g+rwx,o+rx
-  # Group is set to $1 or draco
-  umask 0002
-
-  # Different permissions for jayenne/capsaicin vs. draco.  Trigger based on
-  # value of $package.
-  if ! [[ $package ]]; then
-    die "env(package) must be set before calling establish_permissions."
-  fi
-
-  case $package in
-    draco)
-      # Draco is open source - allow anyone to read.
-      if [[ `groups | grep -c draco` == 1 ]]; then
-        install_group="draco"
-      elif [[ `groups | grep -c dacodes` == 1 ]]; then
-        install_group="dacodes"
-      else
-        echo "FATAL_ERROR: expecting to use group draco|dacodes."
-        exit 1
-      fi
-      install_permissions="g+rwX,o=g-w"
-      ;;
-    cta | trt | npt | jayenne)
-      # Export controlled sources - limit access
-      if [[ `groups | grep -c dacodes` = 1 ]]; then
-        install_group="dacodes"
-        install_permissions="g+rwX,o-rwX"
-      elif [[ `groups | grep -c draco` = 1 ]]; then
-        install_group="draco"
-        install_permissions="g-rwX,o-rwX"
-      fi
-      ;;
-  esac
-
-  build_group="$USER"
-  build_permissions="g+rwX,o-rwX"
-}
-
 # Logic taken from /usr/projects/hpcsoft/templates/header
 function machineName
 {
@@ -158,6 +119,27 @@ function osName
   echo $osName
 }
 
+function machineFamily
+{
+  machfam=`uname -p`
+  case `osName` in
+    darwin*) machfam=`osName` ;;
+    cle*)
+      case `uname -n | sed -e 's/[.].*//'` in
+        tt* | tr* ) machfam="ats1" ;;
+        cp* | th* ) machfam="cray" ;;
+      esac
+      ;;
+    toss3) machfam="cts1" ;;
+    ppc64le)
+     case `uname -n | sed -e 's/[.].*//'` in
+       rzans* | sierra* ) machfam="ats2" ;;
+     esac
+     ;;
+  esac
+  echo $machfam
+}
+
 #------------------------------------------------------------------------------#
 # Generates a string of the form <platform>-<mpi+ver>-<compiler+ver>
 function flavor
@@ -185,22 +167,19 @@ function flavor
       fi
       # Try to determine the loaded compiler
       loadedmodules=`echo $LOADEDMODULES`
-      OLDIFS=$IFS
-      IFS=:
       # select modules that look like compilers
       unset compilermodules
-      for module in $loadedmodules; do
+      for module in ${loadedmodules//:/ }; do
         case $module in
           PrgEnv*)
             # Ingore PrgEnv matches.
             ;;
-          intel/* | pgi/* | cray/* | gnu/* )
+          cce/* | cray/* | gcc/* | gnu/* | intel/* | pgi/* )
             tmp=`echo $module | sed -e 's%/%-%'`
             compilermodules="$tmp $compilermodules"
             ;;
         esac
       done
-      IFS=$OLDIFS
       # pick the first compiler in the list
       compilerflavor=`echo $compilermodules | sed -e 's/ *//'`
       # append target if KNL
@@ -293,53 +272,53 @@ function flavor
 
 #------------------------------------------------------------------------------#
 # returns a path to a directory
-# function selectscratchdir
-# {
-#   # if df is too old this command won't work correctly, use an alternate form.
-#   local scratchdirs=`df --output=pcent,target 2>&1 | grep -c unrecognized`
-#   if [[ $scratchdirs == 0 ]]; then
-#     scratchdirs=`df --output=pcent,target | grep scratch | grep -v netscratch | sort -g`
-#     if [[ -z "$scratchdirs" ]]; then
-#       scratchdirs=`df --output=pcent,target | grep workspace | sort -g`
-#     fi
-#   else
-#     scratchdirs=`df -a 2> /dev/null | grep net/scratch | awk '{ print $4 " "$5 }' | sort -g`
-#     if [[ -z "$scratchdirs" ]]; then
-#       scratchdirs=`df -a 2> /dev/null | grep lustre/scratch | awk '{ print $4 " "$5 }' | sort -g`
-#     fi
-#   fi
-#   for item in $scratchdirs; do
-#     # omit entries that have a percent
-#     if [[ `echo $item | grep -c %` == 1 ]]; then continue; fi
-#     if [[ -d $item/users ]]; then
-#       item2="${item}/users"
-#       mkdir -p $item2/$USER &> /dev/null
-#       if [[ -w $item2/$USER ]]; then
-#         echo "$item2"
-#         return
-#       fi
-#     fi
-#     mkdir -p $item/$USER &> /dev/null
-#     if [[ -w $item/$USER ]]; then
-#       echo "$item"
-#       return
-#     fi
-#     # might need another directory level 'yellow'
-#     mkdir -p $item/yellow/$USER &> /dev/null
-#     if [[ -w $item/yellow/$USER ]]; then
-#       echo "$item/yellow"
-#       return
-#     fi
-#   done
+function selectscratchdir
+{
+  # if df is too old this command won't work correctly, use an alternate form.
+  local scratchdirs=`df --output=pcent,target 2>&1 | grep -c unrecognized`
+  if [[ $scratchdirs == 0 ]]; then
+    scratchdirs=`df --output=pcent,target | grep scratch | grep -v netscratch | sort -g`
+    if [[ -z "$scratchdirs" ]]; then
+      scratchdirs=`df --output=pcent,target | grep workspace | sort -g`
+    fi
+  else
+    scratchdirs=`df -a 2> /dev/null | grep net/scratch | awk '{ print $4 " "$5 }' | sort -g`
+    if [[ -z "$scratchdirs" ]]; then
+      scratchdirs=`df -a 2> /dev/null | grep lustre/scratch | awk '{ print $4 " "$5 }' | sort -g`
+    fi
+  fi
+  for item in $scratchdirs; do
+    # omit entries that have a percent
+    if [[ `echo $item | grep -c %` == 1 ]]; then continue; fi
+    if [[ -d $item/users ]]; then
+      item2="${item}/users"
+      mkdir -p $item2/$USER &> /dev/null
+      if [[ -w $item2/$USER ]]; then
+        echo "$item2"
+        return
+      fi
+    fi
+    mkdir -p $item/$USER &> /dev/null
+    if [[ -w $item/$USER ]]; then
+      echo "$item"
+      return
+    fi
+    # might need another directory level 'yellow'
+    mkdir -p $item/yellow/$USER &> /dev/null
+    if [[ -w $item/yellow/$USER ]]; then
+      echo "$item/yellow"
+      return
+    fi
+  done
 
-#   # if no writable scratch directory is located, then also try netscratch;
-#   item=/netscratch/$USER
-#   mkdir -p $item &> /dev/null
-#   if [[ -w $item ]]; then
-#     echo "$item"
-#     return
-#   fi
-# }
+  # if no writable scratch directory is located, then also try netscratch;
+  item=/netscratch/$USER
+  mkdir -p $item &> /dev/null
+  if [[ -w $item ]]; then
+    echo "$item"
+    return
+  fi
+}
 
 #------------------------------------------------------------------------------#
 function lookupppn()
@@ -395,7 +374,7 @@ function npes_test
   case ${target} in
 
     # current LSF only allows one executable to run under 'jsrun' at a time.
-    rzansel* | rzmanta* | sierra*) ppn=1 ;;
+    # rzansel* | rzmanta* | sierra*) ppn=1 ;;
 
     *)
 
@@ -457,8 +436,8 @@ function install_versions
   if test -z ${buildflavor}; then
     buildflavor=`flavor`
   fi
-  if test -z "${version}"; then
-    echo "You must provide variable version."
+  if test -z "${rttversion}"; then
+    echo "You must provide variable rttversion."
     # echo "E.g.: VERSIONS=( \"debug\" \"opt\" )"
     return
   fi
@@ -500,12 +479,12 @@ function install_versions
 
   echo
   echo
-  echo "# Begin release: $buildflavor/$version"
+  echo "# Begin release: $buildflavor/$rttversion"
   echo "# ------------"
   echo
 
   # Create install directory
-  install_dir="$install_prefix/$version"
+  install_dir="$install_prefix/$rttversion"
   if ! test -d $install_dir; then
     run "mkdir -p $install_dir" || die "Could not create $install_dir"
   fi
@@ -527,9 +506,10 @@ function install_versions
     exit 1
   fi
   # source_dir="$source_prefix/source/$package"
-  build_dir="$build_prefix/$version/${package:0:1}"
+  build_dir="$build_prefix/$rttversion/${package:0:1}"
 
-  # Purge any existing files before running cmake to configure the build directory.
+  # Purge any existing files before running cmake to configure the build
+  # directory.
   if test $config_step == 1; then
     if test -d ${build_dir}; then
       run "rm -rf ${build_dir}"
@@ -539,8 +519,7 @@ function install_versions
 
   run "cd $build_dir"
   if test $config_step == 1; then
-    run "cmake -DCMAKE_INSTALL_PREFIX=$install_dir \
-             $options $CONFIG_EXTRA $source_dir" \
+    run "cmake -DCMAKE_INSTALL_PREFIX=$install_dir $options $CONFIG_EXTRA $source_dir" \
       || die "Could not configure in $build_dir from source at $source_dir"
   fi
   if test $build_step == 1; then
@@ -554,6 +533,7 @@ function install_versions
       run "ctest -j $test_pe --output-on-failure --rerun-failed"
     fi
   fi
+  wait
   if ! test ${build_permissions:-notset} = "notset"; then
     run "chmod -R $build_permissions $build_dir"
   fi
@@ -568,12 +548,10 @@ function publish_release()
   echo "Waiting batch jobs to finish ..."
   echo "   Running jobs = $jobids"
 
-  establish_permissions
-
   case `osName` in
     toss* | cle* ) SHOWQ=squeue ;;
     darwin| ppc64) SHOWQ=squeue ;;
-    rzansel* | rzmanta* | sierra* ) SHOWQ=bjobs ;;
+    ppc64le )      SHOWQ=bjobs  ;;
   esac
 
   # wait for jobs to finish
@@ -786,20 +764,85 @@ matches_extension() {
 }
 
 ##----------------------------------------------------------------------------##
+# relcreatesymlinks
+#
+# Creates symlinks to an installation to satisfy requests from clients.  For
+# example:
+#
+#   cts1-openmpi-2.1.2-gcc-7.4.0    -> snow-openmpi-2.1.2-gcc-7.4.0
+#   grizzly-openmpi-2.1.2-gcc-7.4.0 -> snow-openmpi-2.1.2-gcc-7.4.0
+#
+# This function is designed to be called from release-<machine>.sh
+# The following variables should be set in the environment:
+#
+# - source_prefix :: e.g. /usr/projects/draco/draco-NN_NN_NN
+# - evironments   :: a list of bash function names. These functiosn should
+#                    establish build environments (see cts1-env.sh, etc.)
+# - siblings      :: a space delimited list of machine names that are considered
+#                    to be equivalent (e.g.: "fire ice cyclone")
+#
+##----------------------------------------------------------------------------##
+function relcreatesymlinks() {
+
+  OLDPWD=`pwd`
+  machfam=`machineFamily`
+
+  if ! [[ -d $source_prefix ]]; then
+    die "relcreatesymlinks:: Expected variable source_prefix to be set"
+  fi
+  if ! [[ $siblings ]]; then
+    die "relcreatesymlinks:: Expected variable siblings to be set"
+  fi
+  if ! [[ $environments ]]; then
+    die "relcreatesymlinks:: Expected variable environments to be set"
+  fi
+
+  run "cd $source_prefix"
+
+  for env in $environments; do
+
+    if ! [[ `fn_exists $env` ]]; then
+      die "relcreatesymlinks:: Attempted to load environment $env, but this function is not defined".
+    fi
+    # establish environment
+    $env
+    buildflavor=`flavor`
+
+    # create symlinks
+    me=`echo $buildflavor | sed -e 's/-.*//'`
+    familymatch=`echo $siblings | sed -e 's/[ ]/|/g'`
+    case $me in
+      @($familymatch) )
+        linkname=`echo $buildflavor | sed -e "s/${me}/${machfam}/"`
+        run "ln -s $buildflavor $linkname"
+        for m in $siblings; do
+          linkname=`echo $buildflavor | sed -e "s/${me}/${m}/"`
+          if ! [[ -d $source_prefix/$linkname ]]; then
+            run "ln -s $buildflavor $linkname"
+          fi
+        done
+        ;;
+    esac
+  done
+
+  run "cd $OLDPWD"
+}
+
+##----------------------------------------------------------------------------##
+export canonicalize_filename
 export die
-export run
-export establish_permissions
-export machineName
-export osName
 export flavor
-# export selectscratchdir
-export npes_build
-export npes_test
 export install_versions
 export job_launch_sanity_checks
-export version_gt
-export canonicalize_filename
+export machineName
 export matches_extension
+export npes_build
+export npes_test
+export osName
+export relcreatesymlinks
+export run
+export selectscratchdir
+export version_gt
 
 ##----------------------------------------------------------------------------##
 ## End common.sh
