@@ -54,6 +54,13 @@ case ${-} in
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
     export TERM=xterm-256color
 
+    # Attempt to find DRACO
+    if ! [[ $DRACO_SRC_DIR ]]; then
+      _BINDIR=`dirname "$BASH_ARGV"`
+      export DRACO_SRC_DIR=`(cd $_BINDIR/../..;pwd)`
+      export DRACO_ENV_DIR=${DRACO_SRC_DIR}/environment
+    fi
+
     ##------------------------------------------------------------------------##
     ## Common aliases
     ##------------------------------------------------------------------------##
@@ -82,13 +89,6 @@ esac
 
 # Bash functions are not inherited by subshells.
 if [[ ${INTERACTIVE} ]]; then
-
-  # Attempt to find DRACO
-  if ! [[ $DRACO_SRC_DIR ]]; then
-    _BINDIR=`dirname "$BASH_ARGV"`
-    export DRACO_SRC_DIR=`(cd $_BINDIR/../..;pwd)`
-    export DRACO_ENV_DIR=${DRACO_SRC_DIR}/environment
-  fi
 
   # Common bash functions and alias definitions
   source ${DRACO_ENV_DIR}/bashrc/bash_functions.sh
