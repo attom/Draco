@@ -172,10 +172,10 @@ void draco_walk_directory_tree(std::string const &dirname,
     // struct stat statbuf;
 
     dir = opendir(dirname.c_str());
-    Insist(dir != NULL, "Error opendir()");
+    Insist(dir != nullptr, "Error opendir()");
 
     // Loop over all entries in the current directory.
-    while ((entry = readdir(dir)) != NULL) {
+    while ((entry = readdir(dir)) != nullptr) {
       std::string d_name(entry->d_name);
 
       // Don't include "." or ".." entries.

@@ -42,7 +42,7 @@ template <typename IT>
 inline bool testit(const std::string & /*name*/, IT first, IT last) {
   rtt_dsxx::SortPermutation lfsp(first, last);
 
-  typedef typename std::iterator_traits<IT>::value_type value_type;
+  using value_type = typename std::iterator_traits<IT>::value_type;
   std::vector<value_type> vv1(first, last);
   std::vector<value_type> vv2;
 
@@ -80,7 +80,7 @@ inline bool testit(const std::string & /*name*/, IT first, IT last,
                    const CMP &comp) {
   rtt_dsxx::SortPermutation lfsp(first, last, comp);
 
-  typedef typename std::iterator_traits<IT>::value_type value_type;
+  using value_type = typename std::iterator_traits<IT>::value_type;
   std::vector<value_type> vv1(first, last);
   std::vector<value_type> vv2;
 
@@ -133,8 +133,8 @@ struct FooGT {
 
 template <typename F> struct evenIsLess {
   bool operator()(const F &f1, const F &f2) const {
-    int i1 = static_cast<int>(f1.d);
-    int i2 = static_cast<int>(f2.d);
+    auto i1 = static_cast<int>(f1.d);
+    auto i2 = static_cast<int>(f2.d);
 
     return i1 % 2 == 0 ? ((i2 % 2 == 0 ? i1 < i2 : true))
                        : (i2 % 2 == 0 ? false : i1 < i2);

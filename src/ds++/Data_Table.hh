@@ -30,7 +30,7 @@ namespace rtt_dsxx {
 //===========================================================================//
 template <typename T> class Data_Table {
 public:
-  typedef T const *const_iterator;
+  using const_iterator = const T *;
 
 public:
   //! copy constructor
@@ -43,7 +43,7 @@ public:
   //! Constructor
   constexpr inline explicit Data_Table(T const &value);
   //! Default constructor
-  constexpr inline Data_Table(void);
+  constexpr inline Data_Table();
   //! Access operator
   constexpr inline T const &operator[](const unsigned i) const;
   //! begin iterator
@@ -115,7 +115,7 @@ constexpr inline Data_Table<T>::Data_Table(T const &value)
 //---------------------------------------------------------------------------//
 template <typename T>
 constexpr inline Data_Table<T>::Data_Table()
-    : d_begin(0), d_end(0), d_value() {}
+    : d_begin(nullptr), d_end(nullptr), d_value() {}
 
 //---------------------------------------------------------------------------//
 template <typename T>

@@ -67,28 +67,28 @@ namespace rtt_dsxx {
 class Packer {
 public:
   // Typedefs.
-  typedef char *pointer;
-  typedef const char *const_pointer;
+  using pointer = char *;
+  using const_pointer = const char *;
 
 private:
   //! Size of packed stream.
-  uint64_t stream_size;
+  uint64_t stream_size{0};
 
   //! Pointer (mutable) into data stream.
-  pointer ptr;
+  pointer ptr{nullptr};
 
   //! Pointers to begin and end of buffers.
-  pointer begin_ptr;
-  pointer end_ptr;
+  pointer begin_ptr{nullptr};
+  pointer end_ptr{nullptr};
 
   //! If true, compute the stream_size required and do no packing.
-  bool size_mode;
+  bool size_mode{false};
 
 public:
   //! Constructor.
   Packer()
-      : stream_size(0), ptr(0), begin_ptr(0), end_ptr(0),
-        size_mode(false) { /*...*/
+
+  { /*...*/
   }
 
   // Sets the buffer and puts the packer into pack mode.
@@ -329,28 +329,26 @@ template <typename T> inline Packer &operator<<(Packer &p, const T &value) {
 class Unpacker {
 public:
   // Typedefs.
-  typedef char *pointer;
-  typedef const char *const_pointer;
+  using pointer = char *;
+  using const_pointer = const char *;
 
 private:
   // !Size of packed stream.
-  uint64_t stream_size;
+  uint64_t stream_size{0};
 
   // !Pointer (mutable) into data stream.
-  const_pointer ptr;
+  const_pointer ptr{nullptr};
 
   // !Pointers to begin and end of buffers.
-  const_pointer begin_ptr;
-  const_pointer end_ptr;
+  const_pointer begin_ptr{nullptr};
+  const_pointer end_ptr{nullptr};
 
   // !Should we convert the endian nature of the data?
   bool do_byte_swap;
 
 public:
   //! Constructor.
-  Unpacker(bool byte_swap = false)
-      : stream_size(0), ptr(0), begin_ptr(0), end_ptr(0),
-        do_byte_swap(byte_swap) { /*...*/
+  Unpacker(bool byte_swap = false) : do_byte_swap(byte_swap) { /*...*/
   }
 
   // Set the buffer.
@@ -540,7 +538,7 @@ void pack_data(FT const &field, std::vector<char> &packed) {
 
   // determine the size of the field
   Check(field.size() < INT_MAX);
-  int const field_size = static_cast<int>(field.size());
+  auto const field_size = static_cast<int>(field.size());
 
   // determine the number of bytes in the field
   int const size = field_size * sizeof(typename FT::value_type) + sizeof(int);
@@ -588,8 +586,7 @@ void pack_data(std::map<keyT, dataT> const &map, std::vector<char> &packed) {
   packer << numkeys;
 
   // iterate and pack
-  for (typename std::map<keyT, dataT>::const_iterator itr = map.begin();
-       itr != map.end(); itr++) {
+  for (auto itr = map.begin(); itr != map.end(); itr++) {
     packer << (*itr).first;
     packer << (*itr).second;
   }

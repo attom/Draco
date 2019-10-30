@@ -30,7 +30,7 @@ public:
   // CREATORS
 
   //! Default constructors.
-  Index_Set() : m_array_size(0) { /* ... */
+  Index_Set() { /* ... */
   }
 
   //! Construct with pointer to sizes
@@ -96,7 +96,7 @@ public:
 private:
   void compute_size();
 
-  unsigned m_array_size;    //!< Sizes of the whole index range
+  unsigned m_array_size{0}; //!< Sizes of the whole index range
   unsigned m_dimensions[D]; //!< Sizes of each dimension
 
 protected:

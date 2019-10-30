@@ -44,7 +44,7 @@ public:
   Index_Converter(const unsigned dimension) { set_size(dimension); }
 
   //! Destructor
-  virtual ~Index_Converter(void) { /*empty*/
+  ~Index_Converter() override { /*empty*/
   }
 
   //! Re-assignment operator

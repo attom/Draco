@@ -26,8 +26,8 @@
 //---------------------------------------------------------------------------//
 #ifdef FPETRAP_LINUX_X86
 
-#include <fenv.h>
-#include <signal.h>
+#include <cfenv>
+#include <csignal>
 
 /* Signal handler for floating point exceptions. */
 extern "C" void catch_sigfpe(int sig, siginfo_t *psSiginfo,
@@ -89,7 +89,7 @@ namespace rtt_dsxx {
  *
  * A \b false return value is typically because the platform is not supported.
  */
-bool fpe_trap::enable(void) {
+bool fpe_trap::enable() {
   struct sigaction act;
 
   // Choose to use Draco's DbC Insist.  If set to false, the compiler should
@@ -102,7 +102,7 @@ bool fpe_trap::enable(void) {
   act.sa_flags = SA_SIGINFO;   // want 3 args for handler
 
   // specify handler
-  Insist(!sigaction(SIGFPE, &act, NULL),
+  Insist(!sigaction(SIGFPE, &act, nullptr),
          "Unable to set floating point handler.");
 
   // The feenableexcept function is new for glibc 2.2.  See its description
@@ -137,7 +137,7 @@ bool fpe_trap::enable(void) {
 
 //----------------------------------------------------------------------------//
 //! Disable trapping of floating point errors.
-void fpe_trap::disable(void) {
+void fpe_trap::disable() {
   (void)fedisableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
   fpeTrappingActive = false;
   return;
@@ -173,7 +173,7 @@ namespace rtt_dsxx {
 
 //---------------------------------------------------------------------------//
 //!  Enable trapping of floating point errors.
-bool fpe_trap::enable(void) {
+bool fpe_trap::enable() {
   unsigned long csr = ieee_get_fp_control();
   csr |= IEEE_TRAP_ENABLE_INV | IEEE_TRAP_ENABLE_DZE | IEEE_TRAP_ENABLE_OVF;
   ieee_set_fp_control(csr);
@@ -188,7 +188,7 @@ bool fpe_trap::enable(void) {
 
 //---------------------------------------------------------------------------//
 //! Disable trapping of floating point errors.
-void fpe_trap::disable(void) {
+void fpe_trap::disable() {
   ieee_set_fp_control(0x00);
   fpeTrappingActive = false;
   return;
@@ -258,7 +258,7 @@ namespace rtt_dsxx {
 // - http://stackoverflow.com/questions/2769814/how-do-i-use-try-catch-to-catch-floating-point-errors
 // - See MSDN articles on fenv_access and _controlfp_s examples.
 // ----------------------------------------------------------------------------
-bool fpe_trap::enable(void) {
+bool fpe_trap::enable() {
   // Always call this before setting control words.
   _clearfp();
 
@@ -291,7 +291,7 @@ bool fpe_trap::enable(void) {
 
 //---------------------------------------------------------------------------//
 //! Disable trapping of floating point errors.
-void fpe_trap::disable(void) {
+void fpe_trap::disable() {
   // Always call this before setting control words.
   _clearfp();
 
@@ -712,7 +712,7 @@ namespace rtt_dsxx {
 
 //---------------------------------------------------------------------------//
 //! Enable trapping of floating point errors.
-bool fpe_trap::enable(void) {
+bool fpe_trap::enable() {
   _mm_setcsr(_MM_MASK_MASK &
              ~(_MM_MASK_OVERFLOW | _MM_MASK_INVALID | _MM_MASK_DIV_ZERO));
 
@@ -725,7 +725,7 @@ bool fpe_trap::enable(void) {
 }
 //---------------------------------------------------------------------------//
 //! Disable trapping of floating point errors.
-void fpe_trap::disable(void) {
+void fpe_trap::disable() {
   _mm_setcsr(_MM_MASK_MASK & ~0x00);
   fpeTrappingActive = false;
   return;
@@ -783,7 +783,7 @@ static void catch_sigfpe(int sig) {
 
 namespace rtt_dsxx {
 //!  Enable trapping of floating point errors.
-bool fpe_trap::enable(void) {
+bool fpe_trap::enable() {
   pthread_t enabler;
   void *mts = reinterpret_cast<void *>(mach_thread_self());
   pthread_create(&enabler, NULL, fpe_enabler, mts);
@@ -799,7 +799,7 @@ bool fpe_trap::enable(void) {
 
 //---------------------------------------------------------------------------//
 //! Disable trapping of floating point errors.
-void fpe_trap::disable(void) {
+void fpe_trap::disable() {
   // (void)feenableexcept( 0x00 );
   Insist(0, "Please update darwin_ppc.cc to provide instructions for disabling "
             "fpe traps.");
@@ -820,7 +820,7 @@ namespace rtt_dsxx {
 
 //---------------------------------------------------------------------------//
 //!  Enable trapping of floating point errors.
-bool fpe_trap::enable(void) {
+bool fpe_trap::enable() {
   // (unsupported platform.  leave fag set to false.
   // (using abortWithInsist to silence unused variable warning)
   if (abortWithInsist)
@@ -833,7 +833,7 @@ bool fpe_trap::enable(void) {
 
 //---------------------------------------------------------------------------//
 //! Disable trapping of floating point errors.
-void fpe_trap::disable(void) { return; }
+void fpe_trap::disable() { return; }
 
 } // end namespace rtt_dsxx
 

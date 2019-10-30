@@ -128,10 +128,10 @@ private:
   // IMPLEMENTATION
 
   //! Copy constructor: not implemented
-  Homogeneous_New(const Homogeneous_New &rhs);
+  Homogeneous_New(const Homogeneous_New &rhs) = delete;
 
   //! Assignment operator for Homogeneous_New: not implemented.
-  Homogeneous_New &operator=(const Homogeneous_New &rhs);
+  Homogeneous_New &operator=(const Homogeneous_New &rhs) = delete;
 
   void allocate_block_(unsigned const block_size);
 

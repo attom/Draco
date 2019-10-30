@@ -91,11 +91,14 @@ generate_dll_declspec( "ds++" "c4;cdi;cdi_test;cdi_analytic;cdi_eospac;cdi_ipcre
 file( GLOB template_implementations *.t.hh *.i.hh )
 file( GLOB sources *.cc )
 file( GLOB explicit_instantiations *_pt.cc )
-file( GLOB headers *.hh )
-list( APPEND headers
+file( GLOB dsxx_headers *.hh )
+list( APPEND dsxx_headers
    ${PROJECT_BINARY_DIR}/ds++/config.h
    ${PROJECT_BINARY_DIR}/ds++/dll_declspec.h )
-list( REMOVE_ITEM headers ${template_implementations} )
+set( dsxx_terminal_headers
+   ${PROJECT_SOURCE_DIR}/terminal/terminal.h
+   ${PROJECT_SOURCE_DIR}/terminal/terminal_base.h )
+list( REMOVE_ITEM dsxx_headers ${template_implementations} )
 
 if( ${CMAKE_GENERATOR} MATCHES "Xcode" )
   # Xcode does not support per file, per configuration compile definitions, so
@@ -114,8 +117,7 @@ add_component_library(
    TARGET       Lib_dsxx
    LIBRARY_NAME ds++
    SOURCES      "${sources}"
-   HEADERS      "${headers}"
-   )
+   HEADERS      "${dsxx_headers};${dsxx_terminal_headers}" )
 target_link_libraries( Lib_dsxx ${Lib_win_winsock} )
 target_include_directories( Lib_dsxx
   # source directory or install location
@@ -130,8 +132,13 @@ target_include_directories( Lib_dsxx
 # ---------------------------------------------------------------------------- #
 
 install( TARGETS Lib_dsxx EXPORT draco-targets DESTINATION ${DBSCFGDIR}lib )
-install( FILES ${headers} ${template_implementations} DESTINATION
+install( FILES ${dsxx_headers} ${template_implementations} DESTINATION
   ${DBSCFGDIR}include/ds++ )
+install( FILES
+    ${dsxx_terminal_headers}
+    ${PROJECT_SOURCE_DIR}/terminal/LICENSE
+    ${PROJECT_SOURCE_DIR}/terminal/README.md
+  DESTINATION ${DBSCFGDIR}include/terminal )
 
 # ---------------------------------------------------------------------------- #
 # Unit tests

@@ -64,7 +64,7 @@ namespace rtt_dsxx {
 
 template <> class Field_Traits<labeled> {
 public:
-  typedef unlabeled unlabeled_type;
+  using unlabeled_type = unlabeled;
 };
 } // namespace rtt_dsxx
 

@@ -59,7 +59,7 @@ public:
   ScalarUnitTest(const ScalarUnitTest &rhs) = delete;
 
   //! Destructor.
-  ~ScalarUnitTest(void) {
+  ~ScalarUnitTest() override {
     out << resultMessage() << std::endl;
     return;
   };

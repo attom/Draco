@@ -47,7 +47,7 @@ namespace rtt_dsxx {
  * Mac OSX:
  *     \c HOST_NAME_MAX set to \c _POSIX_HOST_NAME_MAX in config.h
  */
-std::string draco_gethostname(void) {
+std::string draco_gethostname() {
 // Windows: gethostname from <winsock2.h>
 #ifdef WIN32
   char hostname[HOST_NAME_MAX];
@@ -78,7 +78,7 @@ std::string draco_gethostname(void) {
  *
  * Catamount systems do not have getpid().  This function will return -1.
  */
-int draco_getpid(void) {
+int draco_getpid() {
 #ifdef WIN32
   int i = _getpid();
   return i;
@@ -98,18 +98,18 @@ int draco_getpid(void) {
  *
  *  This should always return a trailing directory separator.
  */
-std::string draco_getcwd(void) {
+std::string draco_getcwd() {
 // Identify the current working directory.
 #ifdef WIN32
   char *buffer;
-  Insist((buffer = _getcwd(NULL, 0)) != NULL,
+  Insist((buffer = _getcwd(nullptr, 0)) != nullptr,
          std::string("getcwd failed: " + std::string(strerror(errno))));
   std::string cwd(buffer, buffer + strnlen(buffer, MAXPATHLEN));
   free(buffer);
 #else
   char curr_path[MAXPATHLEN];
   curr_path[0] = '\0';
-  Insist(getcwd(curr_path, MAXPATHLEN) != NULL,
+  Insist(getcwd(curr_path, MAXPATHLEN) != nullptr,
          std::string("getcwd failed: " + std::string(strerror(errno))));
   std::string cwd(curr_path);
 #endif
@@ -221,10 +221,11 @@ std::string draco_getrealpath(std::string const &path) {
   char buffer[MAXPATHLEN]; // _MAX_PATH
 #ifdef WIN32
   // http://msdn.microsoft.com/en-us/library/506720ff%28v=vs.100%29.aspx
-  Insist(_fullpath(buffer, path.c_str(), MAXPATHLEN) != NULL, "Invalid path.");
+  Insist(_fullpath(buffer, path.c_str(), MAXPATHLEN) != nullptr,
+         "Invalid path.");
   std::string retVal(buffer);
 #else
-  Insist((realpath(path.c_str(), buffer)) != NULL, "Invalid path.");
+  Insist((realpath(path.c_str(), buffer)) != nullptr, "Invalid path.");
   // realpath trims the trailing slash, append now.
   std::string retVal(buffer);
   retVal += std::string(&dirSep, 1);

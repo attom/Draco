@@ -85,7 +85,7 @@ private:
 
   // If true, last datatype written was a char.  Used only in non-binary
   // mode.
-  bool d_last_was_char;
+  bool d_last_was_char{false};
 
   // If true, in binary mode.
   bool d_binary;
@@ -114,8 +114,8 @@ private:
   // NOT IMPLEMENTED.
 
   // ofstream doesn't implemenet copy ctor and assignment, so we won't either.
-  File_Output(const File_Output &);
-  File_Output &operator=(const File_Output &);
+  File_Output(const File_Output &) = delete;
+  File_Output &operator=(const File_Output &) = delete;
 };
 
 //===========================================================================//
@@ -146,10 +146,10 @@ private:
 
   // Location within d_line to read type char.  Used only in non-binary
   // mode.
-  int d_char_line;
+  int d_char_line{-1};
 
   // If true, in binary mode.
-  bool d_binary;
+  bool d_binary{false};
 
 public:
   // Constructor.
@@ -174,8 +174,8 @@ private:
   // NOT IMPLEMENTED
 
   // ifstream doesn't implemenet copy ctor and assignment, so we won't either.
-  File_Input(const File_Input &);
-  File_Input &operator=(const File_Input &);
+  File_Input(const File_Input &) = delete;
+  File_Input &operator=(const File_Input &) = delete;
 };
 
 //---------------------------------------------------------------------------//

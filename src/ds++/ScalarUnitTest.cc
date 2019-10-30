@@ -38,7 +38,7 @@ ScalarUnitTest::ScalarUnitTest(int &argc, char **&argv, string_fp_void release_,
   using std::string;
 
   Require(argc > 0);
-  Require(release != NULL);
+  Require(release != nullptr);
 
   // header
   out << "\n============================================="

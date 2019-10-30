@@ -31,7 +31,7 @@ public:
   //! Field types can be "labeled." For example, a value-plus-derivatives class
   //! has a field value that is labeled with its derivatives. The following
   //! typedef specifies the unlabeled type, by default the field type itself.
-  typedef Field unlabeled_type;
+  using unlabeled_type = Field;
 
   //! Return the unique zero element of the field. By default, this is
   //! convertible from double 0.
@@ -53,7 +53,7 @@ public:
   //! Field types can be "labeled." For example, a value-plus-derivatives class
   //! has a field value that is labeled with its derivatives. The following
   //! typedef specifies the unlabeled type, by default the field type itself.
-  typedef double unlabeled_type;
+  using unlabeled_type = double;
 
   //! Return the unique zero element of the field. By default, this is
   //! convertible from double 0.

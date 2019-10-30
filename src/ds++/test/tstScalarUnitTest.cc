@@ -35,7 +35,7 @@ using namespace rtt_dsxx;
 // Helper
 //---------------------------------------------------------------------------//
 char *convert_string_to_char_ptr(std::string const &s) {
-  char *pc = new char[s.size() + 1];
+  auto *pc = new char[s.size() + 1];
   std::strcpy(pc, s.c_str());
   return pc;
 }
@@ -74,7 +74,9 @@ void tstTwo(UnitTest &unitTest) {
 //---------------------------------------------------------------------------//
 void tstTwoCheck(UnitTest &unitTest, ostringstream &msg) {
   bool verbose(true);
-  map<string, unsigned> word_list(rtt_dsxx::get_word_count(msg, verbose));
+  std::ostringstream const msg_nocolor(rtt_dsxx::remove_color(msg.str()));
+  map<string, unsigned> word_list(
+      rtt_dsxx::get_word_count(msg_nocolor, verbose));
 
   // Check the list of occurrences against the expected values
   if (word_list[string("Test")] == 9)
@@ -126,9 +128,8 @@ void tstGetWordCountFile(UnitTest &unitTest) {
   // Some output
   cout << "The world_list has the following statistics (word, count):\n"
        << endl;
-  for (map<string, unsigned>::iterator it = word_list.begin();
-       it != word_list.end(); ++it)
-    cout << it->first << "\t::\t" << it->second << endl;
+  for (auto &it : word_list)
+    cout << it.first << "\t::\t" << it.second << endl;
 
   // Spot checks on file contents:
   if (word_list[string("This")] != 1)
@@ -228,7 +229,7 @@ void tstVersion(UnitTest &unitTest, char *test) {
 
   // Initialize the argument list
   std::vector<std::string> vs_arguments = {test, "a", "--version"};
-  int argc = static_cast<int>(vs_arguments.size());
+  auto argc = static_cast<int>(vs_arguments.size());
 
   // Convert to 'char *'
   // We can then use &vc[0] as type char**
@@ -250,8 +251,8 @@ void tstVersion(UnitTest &unitTest, char *test) {
   }
 
   // clean-up memory
-  for (size_t i = 0; i < vc.size(); i++)
-    delete[] vc[i];
+  for (auto &i : vc)
+    delete[] i;
   return;
 }
 

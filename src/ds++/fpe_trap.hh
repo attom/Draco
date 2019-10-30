@@ -66,19 +66,18 @@ class DLL_PUBLIC_dsxx fpe_trap {
 public:
   //! constructor
   fpe_trap(bool const abortWithInsist_in = true)
-      : fpeTrappingActive(false),
-        abortWithInsist(abortWithInsist_in){/* emtpy */};
-  ~fpe_trap(void){/* empty */};
+      : abortWithInsist(abortWithInsist_in){/* emtpy */};
+  ~fpe_trap(){/* empty */};
 
   //! Enable trapping of fpe signals.
-  bool enable(void);
+  bool enable();
   //! Disable trapping of fpe signals.
-  void disable(void);
+  void disable();
   //! Query if trapping of fpe signals is active.
-  bool active(void) const { return fpeTrappingActive; }
+  bool active() const { return fpeTrappingActive; }
 
 private:
-  bool fpeTrappingActive;
+  bool fpeTrappingActive{false};
   bool abortWithInsist;
 };
 } // end namespace rtt_dsxx

@@ -23,7 +23,7 @@ using rtt_dsxx::UnitTest;
  * from any other thread.
  */
 void thread_action(std::atomic<double> &d, size_t N, size_t tid) {
-  double const did = static_cast<double>(tid);
+  auto const did = static_cast<double>(tid);
   double d_i = 1;
   for (size_t i = 0; i < N; ++i) {
     double addend = did * d_i;
@@ -98,7 +98,7 @@ void test_fetch_add_atomic_1e6(UnitTest &ut) {
  * one of the thread's write (+=) overwrites the other's.
  */
 void thread_action_pod(double &d, size_t N, size_t tid) {
-  double const did = static_cast<double>(tid);
+  auto const did = static_cast<double>(tid);
   double d_i = 1;
   for (size_t i = 0; i < N; ++i) {
     double addend = did * d_i;
@@ -160,7 +160,7 @@ void test_fetch_add_not_atomic(UnitTest & /*ut*/) {
  * negative of the preceding test.
  */
 void thread_action_sub(std::atomic<double> &d, size_t N, size_t tid) {
-  double const did = static_cast<double>(tid);
+  auto const did = static_cast<double>(tid);
   double d_i = 1;
   for (size_t i = 0; i < N; ++i) {
     double addend = did * d_i;

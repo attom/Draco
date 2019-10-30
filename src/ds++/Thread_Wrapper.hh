@@ -36,7 +36,7 @@ public:
   std::thread &get() { return t_; }
 
   /**\brief Default ctor*/
-  Thread_Wrapper() : action_(action::join), t_(std::thread()) {}
+  Thread_Wrapper() : t_(std::thread()) {}
 
   /**\brief Move ctor (note: no copy ctor on std::threads. */
   Thread_Wrapper(std::thread &&t, action a) : action_(a), t_(std::move(t)) {}
@@ -53,7 +53,7 @@ public:
   } // dtor
 
 private:
-  action const action_;
+  action const action_{action::join};
   std::thread t_;
 };
 } // namespace rtt_dsxx

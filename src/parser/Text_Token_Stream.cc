@@ -584,7 +584,7 @@ void Text_Token_Stream::character_push_back_(char const c) {
  * child class must implement this function, but part of its implementation
  * must be to include
  *
- * \code 
+ * \code
  *    Text_Token_Stream::push_include(include_file_name);
  * \endcode
  *
@@ -627,7 +627,7 @@ void Text_Token_Stream::push_include(std::string &file_name) {
  * must be to reset the line number by directly calling the base version. That
  * is, every child class must include
  *
- * \code 
+ * \code
  *    Text_Token_Stream::pop_include(include_file_name);
  * \endcode
  *
@@ -774,7 +774,10 @@ Token Text_Token_Stream::scan_manifest_string() {
   text += '"';
   pop_char_();
 
+  //! \cond doxygen_ignore_block
   Ensure(check_class_invariants());
+  //! \endcond
+
   return {STRING, give(text), give(token_location)};
 }
 

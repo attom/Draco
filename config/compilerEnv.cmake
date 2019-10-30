@@ -328,7 +328,9 @@ endmacro()
 # - CMAKE_CXX_CPPLINT
 # - CMAKE_CXX_LINK_WHAT_YOU_USE
 
-# Ref: https://blog.kitware.com/static-checks-with-cmake-cdash-iwyu-clang-tidy-lwyu-cpplint-and-cppcheck/
+# Refs:
+# - https://blog.kitware.com/static-checks-with-cmake-cdash-iwyu-clang-tidy-lwyu-cpplint-and-cppcheck/
+# - https://github.com/KratosMultiphysics/Kratos/wiki/How-to-use-Clang-Tidy-to-automatically-correct-code
 #------------------------------------------------------------------------------#
 macro(dbsSetupStaticAnalyzers)
 
@@ -339,18 +341,57 @@ macro(dbsSetupStaticAnalyzers)
   if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
 
     # clang-tidy
+    # Ex: cmake -DDRACO_STATIC_ANALYZER=clang-tidy \
+             #  -DCLANG_TIDY_CHECKS="-checks=generate-*" ...
     # https://clang.llvm.org/extra/clang-tidy/
-    if( ${DRACO_STATIC_ANALYZER} STREQUAL "clang-tidy" )
-      find_program( CMAKE_CXX_CLANG_TIDY clang-tidy )
+    if( "${DRACO_STATIC_ANALYZER}" MATCHES "clang-tidy" )
+      if( NOT CMAKE_CXX_CLANG_TIDY )
+        find_program( CMAKE_CXX_CLANG_TIDY clang-tidy )
+        get_filename_component(CT_BPATH ${CMAKE_CXX_CLANG_TIDY} DIRECTORY )
+        get_filename_component(CT_BPATH "${CT_BPATH}" DIRECTORY )
+        string(CONCAT CLANG_TIDY_IPATH ${CT_BPATH} "/include/c++/v1")
+        unset( CT_BPATH )
+      endif()
       if( CMAKE_CXX_CLANG_TIDY )
-        if( NOT "${CMAKE_CXX_CLANG_TIDY}" MATCHES "[-]checks[=]" )
-          set( CMAKE_CXX_CLANG_TIDY "${CMAKE_CXX_CLANG_TIDY};-checks=mpi-*,bugprone-*,performance-*"
+        if( NOT CLANG_TIDY_OPTIONS )
+          set( CLANG_TIDY_OPTIONS "-header-filter=.*[.]hh" )
+        endif()
+        set( CLANG_TIDY_OPTIONS "${CLANG_TIDY_OPTIONS}" CACHE STRING
+          "clang-tidy extra options (eg: -header-filter=.*[.]hh;-fix)" FORCE )
+
+        if( NOT CLANG_TIDY_CHECKS )
+          # -checks=mpi-*,bugprone-*,performance-*,modernize-*
+          # See full list: `clang-tidy -check=* -list-checks'
+          set( CLANG_TIDY_CHECKS "-checks=modernize-*" )
+        endif()
+        set( CLANG_TIDY_CHECKS "${CLANG_TIDY_CHECKS}" CACHE STRING
+          "clang-tidy check options (eg: -checks=bugprone-*,mpi-*)" FORCE )
+
+        set( CLANG_TIDY_IPATH "${CLANG_TIDY_IPATH}" CACHE STRING
+          "clang-tidy extra include directories" FORCE )
+        if( NOT "${CLANG_TIDY_CHECKS}" MATCHES "[-]checks[=]" )
+          message( FATAL_ERROR "Option CLANG_TIDY_CHECKS string must start"
+                   " with the string '-check='")
+        endif()
+        # re-create clang-tidy command
+        if( "${CMAKE_CXX_CLANG_TIDY}" MATCHES "[-]checks[=]" )
+          list( GET CMAKE_CXX_CLANG_TIDY 0 CMAKE_CXX_CLANG_TIDY )
+        endif()
+        set( CMAKE_CXX_CLANG_TIDY
+            "${CMAKE_CXX_CLANG_TIDY};${CLANG_TIDY_CHECKS};${CLANG_TIDY_OPTIONS}"
             CACHE STRING "Run clang-tidy on each source file before compile."
             FORCE)
-        endif()
       else()
         unset( CMAKE_CXX_CLANG_TIDY )
         unset( CMAKE_CXX_CLANG_TIDY CACHE )
+      endif()
+      # Sanity check
+      if( NOT CLANG_TIDY_IPATH OR NOT CLANG_TIDY_CHECKS OR NOT CMAKE_CXX_CLANG_TIDY )
+        message(FATAL_ERROR "clang-tidy mode requested but some required"
+          " variables were not found:
+           - CLANG_TIDY_IPATH     = ${CLANG_TIDY_IPATH}
+           - CLANG_TIDY_CHECKS    = ${CLANG_TIDY_CHECKS}
+           - CMAKE_CXX_CLANG_TIDY = ${CMAKE_CXX_CLANG_TIDY}")
       endif()
     endif()
 

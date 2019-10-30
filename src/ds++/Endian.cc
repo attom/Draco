@@ -16,7 +16,7 @@ namespace rtt_dsxx {
  * \brief Does this platform use big or little endianness
  * \return true if platform uses big endian format
  */
-bool is_big_endian(void) {
+bool is_big_endian() {
   union {
     uint32_t i;
     char c[4];
@@ -34,7 +34,7 @@ bool is_big_endian(void) {
  *
  * \return true if we support IEEE float representation.
  */
-bool has_ieee_float_representation(void) {
+bool has_ieee_float_representation() {
   // start by assume IEEE platform (i.e.: not a Cray machine).
   bool i_am_ieee(true);
 

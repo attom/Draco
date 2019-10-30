@@ -10,6 +10,7 @@
 #ifndef RTT_dsxx_Assert_HH
 #define RTT_dsxx_Assert_HH
 
+#include "DracoTerminal.hh"
 #include "ds++/config.h"
 #include <stdexcept>
 #include <string>
@@ -124,7 +125,7 @@ namespace rtt_dsxx {
  */
 //===========================================================================//
 
-class DLL_PUBLIC_dsxx assertion : public std::logic_error {
+class assertion : public std::logic_error {
 public:
   /*!
    * \brief Default constructor for ds++/assertion class.
@@ -162,7 +163,7 @@ public:
 
   /*! \brief Destructor for ds++/assertion class.
    * We do not allow the destructor to throw! */
-  virtual ~assertion() throw();
+  ~assertion() noexcept override;
 
   /*! Helper function to build error message that includes source file name and
    *  line number. */

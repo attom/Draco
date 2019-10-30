@@ -34,23 +34,23 @@ namespace rtt_dsxx {
 
 template <typename Ran> class Slice {
 private:
-  typedef typename std::iterator_traits<Ran> traits;
+  typedef typename std::iterator_traits<Ran> traits; // NOLINT
 
 public:
   // NESTED CLASSES AND TYPEDEFS
 
-  typedef typename traits::value_type value_type;
+  using value_type = typename traits::value_type;
   // no allocator type
-  typedef unsigned size_type;
-  typedef typename traits::difference_type difference_type;
+  using size_type = unsigned int;
+  using difference_type = typename traits::difference_type;
 
   class iterator {
   public:
-    typedef typename traits::iterator_category iterator_category;
-    typedef typename traits::value_type value_type;
-    typedef typename traits::difference_type difference_type;
-    typedef typename traits::pointer pointer;
-    typedef typename traits::reference reference;
+    using iterator_category = typename traits::iterator_category;
+    using value_type = typename traits::value_type;
+    using difference_type = typename traits::difference_type;
+    using pointer = typename traits::pointer;
+    using reference = typename traits::reference;
 
     Ran first() const { return first_; }
     difference_type offset() const { return offset_; }
@@ -107,11 +107,11 @@ public:
 
   class const_iterator {
   public:
-    typedef typename traits::iterator_category iterator_category;
-    typedef typename traits::value_type value_type;
-    typedef typename traits::difference_type difference_type;
-    typedef typename traits::pointer pointer;
-    typedef typename traits::reference reference;
+    using iterator_category = typename traits::iterator_category;
+    using value_type = typename traits::value_type;
+    using difference_type = typename traits::difference_type;
+    using pointer = typename traits::pointer;
+    using reference = typename traits::reference;
 
     Ran first() const { return first_; }
     difference_type offset() const { return offset_; }
@@ -169,13 +169,13 @@ public:
     unsigned stride_;
   };
 
-  typedef std::reverse_iterator<iterator> reverse_iterator;
-  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  using reverse_iterator = std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-  typedef typename traits::pointer pointer;
-  typedef typename traits::reference reference;
-  typedef value_type const *const_pointer;
-  typedef value_type const &const_reference;
+  using pointer = typename traits::pointer;
+  using reference = typename traits::reference;
+  using const_pointer = const value_type *;
+  using const_reference = const value_type &;
 
   // CREATORS
 

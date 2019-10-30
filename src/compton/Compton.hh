@@ -71,8 +71,7 @@ public:
   //! Constructor to build a multigroup library from an existing pointwise file
   Compton(const std::string &file, const std::vector<double> &group_bounds,
           const std::string &opac_type, const std::string &wt_func,
-          const bool induced, const bool det_bal = false,
-          const size_t n_xi = 0);
+          const bool induced, const bool det_bal = false, const size_t nxi = 0);
 
   //! Dtor - defined in .cc file to prevent incomplete_type issues
   ~Compton();

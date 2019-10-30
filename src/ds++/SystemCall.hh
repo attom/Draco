@@ -64,13 +64,13 @@ std::string const exeExtension("");
 //===========================================================================//
 
 //! Return the local hostname
-DLL_PUBLIC_dsxx std::string draco_gethostname(void);
+std::string draco_gethostname();
 
 //! Return the local process id
-DLL_PUBLIC_dsxx int draco_getpid(void);
+int draco_getpid();
 
 //! Return the current working directory
-DLL_PUBLIC_dsxx std::string draco_getcwd(void);
+std::string draco_getcwd();
 
 //! Return the stat value for a file
 class DLL_PUBLIC_dsxx draco_getstat {
@@ -88,10 +88,10 @@ public:
   //! constructor
   explicit draco_getstat(std::string const &fqName);
   //! If the call to stat failed, this function will return false.
-  bool valid(void) { return stat_return_code == 0; };
-  bool isreg(void);
-  bool isdir(void);
-  int errorCode(void) { return stat_return_code; }
+  bool valid() { return stat_return_code == 0; };
+  bool isreg();
+  bool isdir();
+  int errorCode() { return stat_return_code; }
   /*!
    * \brief Determine if the file has the requested permission bits set.
    * \note The leading zero for the mask is important.
@@ -100,10 +100,10 @@ public:
 };
 
 //! Use Linux realpath to resolve symlinks
-DLL_PUBLIC_dsxx std::string draco_getrealpath(std::string const &path);
+std::string draco_getrealpath(std::string const &path);
 
 //! Create a directory
-DLL_PUBLIC_dsxx void draco_mkdir(std::string const &path);
+void draco_mkdir(std::string const &path);
 
 /*!
  * \brief Remove file or directory (not recursive)
@@ -111,7 +111,7 @@ DLL_PUBLIC_dsxx void draco_mkdir(std::string const &path);
  * For recursive directory delete, see path.hh's walk_directory_tree and
  * the functor wdtOpRemove.
  */
-DLL_PUBLIC_dsxx void draco_remove(std::string const &path);
+void draco_remove(std::string const &path);
 
 } // namespace rtt_dsxx
 

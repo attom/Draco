@@ -21,7 +21,7 @@ using namespace rtt_dsxx;
 
 class sum_predicate_Test_Predicate {
 public:
-  typedef double Return_Type;
+  using Return_Type = double;
 
   double operator()(const std::pair<double, char *> &p) { return p.first; }
 };
@@ -98,7 +98,7 @@ void dbc_test(UnitTest &ut) {
             string("incorrectly reported length=1 container monotonic."));
 
   if (std::find_if(sum_test_array, sum_test_array + 6,
-                   bind2nd(greater<double>(), 2.)) != sum_test_array + 1)
+                   [](double x) { return x > 2.0; }) != sum_test_array + 1)
     FAILMSG("std::bind2nd or std::greater function templates FAILED");
   else
     PASSMSG("std::bind2nd or std::greater function templates ok");
