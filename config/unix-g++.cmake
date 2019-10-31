@@ -37,6 +37,7 @@ endif()
 #
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
+# arm --> -mcpu=thunderx2t99 ??? Darwin volta nodes?
 check_c_compiler_flag(   "-march=native" HAS_MARCH_NATIVE )
 if( DEFINED CMAKE_CXX_COMPILER_ID )
   check_cxx_compiler_flag( "-Wnoexcept"    HAS_WNOEXCEPT )

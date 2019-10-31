@@ -1,4 +1,28 @@
+//----------------------------------------------------------------------------//
+// Draco supressions
+//----------------------------------------------------------------------------//
 // clang-format off
+
+#include "ds++/config.h"
+
+#ifdef __GNUC__
+#if (DBS_GNUC_VERSION >= 40204) && !defined(__ICC) && !defined(NVCC)
+// Suppress GCC's "unused variable" warning.
+#if (DBS_GNUC_VERSION >= 40600)
+#pragma GCC diagnostic push
+#endif
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#endif
+#endif
+
+#ifdef __CUDACC__
+// https://stackoverflow.com/questions/14831051/how-to-disable-a-specific-nvcc-compiler-warnings
+// http://www.ssl.berkeley.edu/~jimm/grizzly_docs/SSL/opt/intel/cc/9.0/lib/locale/en_US/mcpcom.msg
+#pragma diag_suppress unsigned_compare_with_negative
+#endif
+
+
+//----------------------------------------------------------------------------//
 
 #ifndef TERMINAL_H
 #define TERMINAL_H
@@ -13,7 +37,6 @@
  *
  * https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
  */
-
 
 #include "terminal_base.h"
 
@@ -754,4 +777,24 @@ public:
 } // namespace Term
 
 #endif // TERMINAL_H
+
+//----------------------------------------------------------------------------//
+// Draco supressions
+//----------------------------------------------------------------------------//
+
+// This is defined by <termios.h> but causes conflicts with some TRT code.
+#undef B0
+
+#ifdef __CUDACC__
+#pragma diag_default unsigned_compare_with_negative
+#endif
+
+#ifdef __GNUC__
+#if (DBS_GNUC_VERSION >= 40600)
+// Restore GCC diagnostics to previous state.
+#pragma GCC diagnostic pop
+#endif
+#endif
 // clang-format on
+
+//----------------------------------------------------------------------------//
