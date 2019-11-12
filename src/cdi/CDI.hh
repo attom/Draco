@@ -11,6 +11,7 @@
 #ifndef rtt_cdi_CDI_hh
 #define rtt_cdi_CDI_hh
 
+#include "CPEloss.hh"
 #include "EICoupling.hh"
 #include "EoS.hh"
 #include "GrayOpacity.hh"
@@ -20,6 +21,7 @@
 #include "ds++/Soft_Equivalence.hh"
 #include <algorithm>
 #include <limits>
+#include <map>
 #include <memory>
 
 //---------------------------------------------------------------------------//
@@ -467,13 +469,19 @@ class CDI {
   typedef std::shared_ptr<const OdfmgOpacity> SP_OdfmgOpacity;
   typedef std::shared_ptr<const EoS> SP_EoS;
   typedef std::shared_ptr<const EICoupling> SP_EICoupling;
+  typedef std::shared_ptr<const CPEloss> SP_CPEloss;
   typedef std::vector<SP_GrayOpacity> SF_GrayOpacity;
   typedef std::vector<SF_GrayOpacity> VF_GrayOpacity;
   typedef std::vector<SP_MultigroupOpacity> SF_MultigroupOpacity;
   typedef std::vector<SF_MultigroupOpacity> VF_MultigroupOpacity;
   typedef std::vector<SP_OdfmgOpacity> SF_OdfmgOpacity;
   typedef std::vector<SF_OdfmgOpacity> VF_OdfmgOpacity;
+  typedef std::vector<SP_CPEloss> SF_CPEloss;
   typedef std::string std_string;
+  // Typedefs for CPT mapping:
+  typedef const std::pair<int32_t, int32_t> pt_zaid_pair;
+  typedef std::map<pt_zaid_pair, size_t> index_pt_map;
+  typedef index_pt_map::const_iterator map_it;
 
   // DATA
 
@@ -502,6 +510,10 @@ class CDI {
   //! Array that stores the list of possible OdfmgOpacity types.
   VF_OdfmgOpacity odfmgOpacities;
 
+  //! Array that stores CP Eloss types.
+  SF_CPEloss CPElosses;
+  //! Map vector index -> particle/target pair
+  index_pt_map CPEloss_map;
   /*!
    * \brief Frequency group boundaries for multigroup data.
    *
@@ -574,6 +586,9 @@ public:
   //! Register a gray opacity (rtt_cdi::GrayOpacity) with CDI.
   void setGrayOpacity(const SP_GrayOpacity &spGOp);
 
+  //! Register a gray opacity (rtt_cdi::CPEloss) with CDI.
+  void setCPEloss(const SP_CPEloss &spCPEp);
+
   //! Register a multigroup opacity (rtt_cdi::MultigroupOpacity) with CDI.
   void setMultigroupOpacity(const SP_MultigroupOpacity &spMGOp);
 
@@ -595,6 +610,8 @@ public:
   SP_GrayOpacity gray(rtt_cdi::Model m, rtt_cdi::Reaction r) const;
   SP_MultigroupOpacity mg(rtt_cdi::Model m, rtt_cdi::Reaction r) const;
   SP_OdfmgOpacity odfmg(rtt_cdi::Model m, rtt_cdi::Reaction r) const;
+  SP_CPEloss eloss(rtt_cdi::CPModel m, int32_t proj_zaid,
+                   int32_t targ_zaid) const;
   SP_EoS eos(void) const;
   SP_EICoupling ei_coupling(void) const;
 
@@ -658,6 +675,7 @@ public:
   bool isGrayOpacitySet(rtt_cdi::Model, rtt_cdi::Reaction) const;
   bool isMultigroupOpacitySet(rtt_cdi::Model, rtt_cdi::Reaction) const;
   bool isOdfmgOpacitySet(rtt_cdi::Model, rtt_cdi::Reaction) const;
+  bool isCPElossSet(rtt_cdi::CPModel, int32_t pz, int32_t tz) const;
   bool isEoSSet() const;
   bool isEICouplingSet() const;
 

@@ -36,6 +36,13 @@ enum Opacity_Models {
 
 //----------------------------------------------------------------------------//
 /*!
+ * \brief Enumeration describing the charged particle eloss models available.
+ *
+ */
+enum CP_Models { ANALYTIC_KP_ALPHA_ELOSS_MODEL };
+
+//----------------------------------------------------------------------------//
+/*!
  * \brief Enumeration describing the eos  models that are available.
  *
  * Only EoS models that have been registered here can be unpacked by the
@@ -650,6 +657,69 @@ public:
 
   //! Pack up the class for persistence.
   sf_char pack() const;
+};
+
+//===========================================================================//
+/*!
+ * \class Analytic_Eloss_Model
+ * \brief Analytic_Eloss_Model base class.
+ *
+ * This is a base class that defines the interface given to
+ * Analytic_Eloss_Model constructors.  The user
+ * can define any derived model class that will work with these analytic opacity
+ * generation classes as long as it implements the functions required, namely
+ *
+ * \arg double calculate_eloss(double T, double rho)
+ * \arg sf_double get_parameters()
+ *
+ * This class is a pure virtual base class.
+ *
+ * The returned eloss coefficient is a rate, and should have units of shk^-1.
+ */
+//===========================================================================//
+
+class Analytic_Eloss_Model {
+public:
+  // Typedefs.
+  typedef std::vector<char> sf_char;
+  typedef std::vector<double> sf_double;
+
+public:
+  //! Virtual destructor for proper inheritance destruction.
+  virtual ~Analytic_Eloss_Model() { /*...*/
+  }
+
+  //! Interface for derived analytic eloss models.
+  virtual double calculate_eloss(const double T, const double rho,
+                                 const double v0) const = 0;
+};
+
+//---------------------------------------------------------------------------//
+/*!
+ * \class Analytic_KP_Alpha_Eloss_Model
+ * \brief Derived CP energy loss class using analytic Kirkpatrick model for 
+ *        alpha particles in DT.
+ *
+ * This is designed to return energy loss rates based on the range fit
+ * calculated in:
+ * 
+ * Kirkpatrick, R. C. and Wheeler, J. A. (1981).
+ * ``The Physics of DT Ignition In Small Fusion Targets.'' 
+ * Nuclear Fusion, 21(3):389–401.
+ * 
+ * Equation (2) gives the range formula. We then convert this to an 
+ * energy loss rate per unit time for ease of use in transport.
+ */
+class Analytic_KP_Alpha_Eloss_Model : public Analytic_Eloss_Model {
+private:
+public:
+  //! Constructor
+  Analytic_KP_Alpha_Eloss_Model(){};
+
+  //! Calculate the eloss rate in units of shk^-1;
+  //! T given in keV, rho in g/cc, v0 in cm/shk
+  double calculate_eloss(const double T, const double rho,
+                         const double v0) const;
 };
 
 } // end namespace rtt_cdi_analytic

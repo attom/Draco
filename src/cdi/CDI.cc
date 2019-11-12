@@ -43,7 +43,7 @@ CDI::CDI(const std_string &id)
                           SF_MultigroupOpacity(constants::num_Reactions)),
       odfmgOpacities(constants::num_Models,
                      SF_OdfmgOpacity(constants::num_Reactions)),
-      spEoS(SP_EoS()), spEICoupling(SP_EICoupling()), matID(id) {
+      CPElosses(), spEoS(SP_EoS()), spEICoupling(SP_EICoupling()), matID(id) {
   Ensure(grayOpacities.size() == constants::num_Models);
   Ensure(multigroupOpacities.size() == constants::num_Models);
   Ensure(odfmgOpacities.size() == constants::num_Models);
@@ -64,7 +64,6 @@ std::vector<double> CDI::opacityCdfBandBoundaries = std::vector<double>();
 //---------------------------------------------------------------------------//
 // STATIC FUNCTIONS
 //---------------------------------------------------------------------------//
-
 /*!
  * \brief Return the frequency group boundaries.
  *
@@ -875,6 +874,28 @@ double CDI::collapseOdfmgReciprocalOpacitiesPlanck(
 // SET FUNCTIONS
 //---------------------------------------------------------------------------//
 /*!
+ * \brief Register a charged particle eloss (rtt_cdi::CPEloss) with CDI.
+ *
+ * You cannot overwrite
+ * registered objects with the setCPEloss() function!
+ *
+ * \param spCPp smart pointer to an Eloss object
+ */
+void CDI::setCPEloss(const SP_CPEloss &spCPp) {
+  Require(spCPp);
+
+  // Store the particle / target pair
+  CPEloss_map.emplace(std::make_pair<pt_zaid_pair, size_t>(
+      std::make_pair(spCPp->getProjectileZAID(), spCPp->getTargetZAID()),
+      CPElosses.size()));
+
+  // assign the smart pointer
+  CPElosses.push_back(spCPp);
+
+  Ensure(CPElosses.back());
+}
+
+/*!
  * \brief Register a gray opacity (rtt_cdi::GrayOpacity) with CDI.
  *
  * This function sets a gray opacity object of type rtt_cdi::GrayOpacity with
@@ -1115,6 +1136,29 @@ CDI::SP_OdfmgOpacity CDI::odfmg(rtt_cdi::Model m, rtt_cdi::Reaction r) const {
   return odfmgOpacities[m][r];
 }
 
+//----------------------------------------------------------------------------//
+/*!
+ * \brief This fuction returns the charged particle energy loss object.
+ *
+ * \code
+ * size_t numGroups = spCDI1->mg()->getNumGroupBoundaries();
+ * \endcode
+ *
+ * The appropriate charged particle eloss is returned for the given model/ trio.
+ *
+ * \param m rtt_cdi::CPModel specifying the desired CP physics model
+ * \param pz int32_t specifying the desired particle type.
+ * \param tz int32_t specifying the desired target type.
+ */
+CDI::SP_CPEloss CDI::eloss(rtt_cdi::CPModel m, int32_t pz, int32_t tz) const {
+  map_it entry = CPEloss_map.find(std::make_pair(pz, tz));
+  Insist(entry != CPEloss_map.end(), "Undefined CPEloss!");
+  // Be sure model type is what the user expected.
+  Require(CPElosses[entry->second]->getModel() == m);
+
+  return CPElosses[entry->second];
+}
+
 //---------------------------------------------------------------------------//
 /*!
  * \brief This fuction returns the EoS object.
@@ -1230,6 +1274,18 @@ bool CDI::isMultigroupOpacitySet(rtt_cdi::Model m, rtt_cdi::Reaction r) const {
  */
 bool CDI::isOdfmgOpacitySet(rtt_cdi::Model m, rtt_cdi::Reaction r) const {
   return static_cast<bool>(odfmgOpacities[m][r]);
+}
+
+/*!
+ * \brief Query to see if an odf multigroup opacity is set.
+ */
+bool CDI::isCPElossSet(rtt_cdi::CPModel m, int32_t pz, int32_t tz) const {
+  // Look up this particle / target zaid pair in the stored map:
+  map_it entry = CPEloss_map.find(std::make_pair(pz, tz));
+
+  // return true if particle/target pair is in map, and model matches input:
+  return (entry != CPEloss_map.end() &&
+          CPElosses[entry->second]->getModel() == m);
 }
 
 /*!
