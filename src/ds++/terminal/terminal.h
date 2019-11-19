@@ -11,7 +11,8 @@
 #if (DBS_GNUC_VERSION >= 40600)
 #pragma GCC diagnostic push
 #endif
-#pragma GCC diagnostic ignored "-Wtype-limits"
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wshadow"
 #endif
 #endif
 

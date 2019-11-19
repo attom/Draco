@@ -5,10 +5,7 @@
  * \date   Wed Feb  5 17:29:59 2003
  * \brief  SP test.
  * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
- *         All rights reserved.
- */
-//---------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //---------------------------------------------------------------------------//
 
 #include "ds++/Release.hh"
@@ -674,7 +671,7 @@ void type_X_test(rtt_dsxx::UnitTest &ut) {
       CHECK_N_OBJECTS(3, 3, 0, 0);
 
       // assign SPfoo2 to itself
-      spfoo2 = spfoo2;
+      // spfoo2 = spfoo2; // modern compilers flag this at compile time.
       CHECK_N_OBJECTS(3, 3, 0, 0);
     }
     // still have 2 object
