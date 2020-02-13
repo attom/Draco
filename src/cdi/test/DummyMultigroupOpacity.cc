@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi/test/DummyMultigroupOpacity.cc
  * \author Kelly Thompson
  * \date   Mon Jan 8 15:17:16 2001
  * \brief  DummyMultigroupOpacity templated class implementation file.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "DummyMultigroupOpacity.hh"
 #include <cmath> // pow(x,n)
@@ -141,6 +141,6 @@ std::vector<std::vector<double>> DummyMultigroupOpacity::getOpacity(
 
 } // end namespace rtt_cdi_test
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of DummyMultigroupOpacity.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

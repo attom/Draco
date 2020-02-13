@@ -3,7 +3,7 @@
  * author: Kelly Thompson
  * date  : Wednesday, Nov 23, 2011, 08:42 am
  * brief : wrapper for omp.h
- * note  : Copyright (C) 2016-2019 Triad National Security, LLC.
+ * note  : Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
 /*---------------------------------------------------------------------------*/
 

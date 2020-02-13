@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   parser/utilities.hh
  * \author Kent G. Budge
  * \brief  Declarations of a number of useful parsing utilities.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  *
  * This file declares functions that parse certain common constructs in a
  * uniform way.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef parser_utilities_hh
 #define parser_utilities_hh
@@ -103,6 +103,6 @@ std::shared_ptr<Class> parse_class(Token_Stream &tokens,
 #endif
 // parser_utilities_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of utilities.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

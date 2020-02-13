@@ -1,4 +1,4 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi/CPCommon.hh
  * \author Kendra Long
@@ -6,10 +6,10 @@
  * \brief  Datatypes needed in CPEloss classes
  * \note   Copyright (C) 2016-2019 Los Alamos National Securty, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_CPCommon_hh__
-#define __cdi_CPCommon_hh__
+#ifndef rtt_cdi_CPCommon_hh
+#define rtt_cdi_CPCommon_hh
 
 #include <cstdint>
 
@@ -20,9 +20,10 @@ namespace constants {
 unsigned int const num_CPModels(3);
 } // namespace constants
 
-enum class CPModel {
-  ELOSS = 0,        /*!< energy loss model */
-  LA_SCATTERING = 1 /*!< large-angle scattering model */
+enum class CPModelAngleCutoff {
+  NONE = 0,  /*!< no angle cutoff */
+  TNBURN = 1 /*!< cutoff angle formula from "TN Burn Project: Minimum Impact 
+             parameter Scattering Angle Cutoff/Nuclear Interactions */
 };
 
 enum class CPModelType {

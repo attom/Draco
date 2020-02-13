@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   c4/Global_Timer.hh
  * \author Kent G. Budge
  * \date   Mon Mar 25 17:35:07 2002
  * \brief  Define class Global_Timer, a POSIX standard timer.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __c4_Global_Timer_hh__
-#define __c4_Global_Timer_hh__
+#ifndef rtt_c4_Global_Timer_hh
+#define rtt_c4_Global_Timer_hh
 
 #include "Timer.hh"
 #include <map>
@@ -17,7 +17,7 @@
 
 namespace rtt_c4 {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Global_Timer
  *
@@ -35,7 +35,7 @@ namespace rtt_c4 {
  *
  * Global_Timers are only active on processor 0.
  */
-//===========================================================================//
+//============================================================================//
 
 class Global_Timer : public Timer {
 private:
@@ -97,7 +97,7 @@ public:
 
   // static bool is_global_active() { return global_active_; }
 
-  /*! 
+  /*!
    *  \bug no documentation!
    */
   static void set_global_activity(bool active);
@@ -112,8 +112,8 @@ public:
 
 } // end namespace rtt_c4
 
-#endif // __c4_Global_Timer_hh__
+#endif // rtt_c4_Global_Timer_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of c4/Global_Timer.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

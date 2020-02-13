@@ -1,4 +1,4 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/DracoTerminal.hh
  * \author Kelly Thompson
@@ -9,7 +9,7 @@
  * \todo Consider an enum class for colors that derives from $LS_COLORS on
  *       Linux.  This would allow color selection based on users's terminal
  *       colors (e.g.: light vs dark scheme). */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef dsxx_dracoterminal_hh
 #define dsxx_dracoterminal_hh
@@ -19,7 +19,7 @@
 
 namespace Term {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class DracoTerminal
  * \brief Global scope singleton object to ensure terminal setup/teardown is
@@ -95,6 +95,6 @@ std::string ccolor(std::vector<uint32_t> const &value);
 
 #endif // dsxx_dracoterminal_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ds++/DracoTerminal.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

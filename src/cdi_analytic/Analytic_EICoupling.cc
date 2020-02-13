@@ -1,21 +1,21 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_analytic/Analytic_EICoupling.cc
  * \author Mathew Cleveland
  * \date   March 2019
  * \brief  Analytic_EICoupling member definitions.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "Analytic_EICoupling.hh"
 #include "ds++/Packing_Utils.hh"
 
 namespace rtt_cdi_analytic {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // CONSTRUCTOR
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Constructor for an analytic EICoupling model.
  *
@@ -30,7 +30,7 @@ Analytic_EICoupling::Analytic_EICoupling(SP_Analytic_Model model_in)
   Ensure(analytic_model);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Unpacking constructor.
  *
@@ -82,9 +82,9 @@ Analytic_EICoupling::Analytic_EICoupling(const sf_char &packed)
   Ensure(analytic_model);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // EICoupling INTERFACE FUNCTIONS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief EICoupling accessor that returns a single electron-ion coupling
  *        coefficient.
@@ -166,7 +166,7 @@ Analytic_EICoupling::sf_double Analytic_EICoupling::getElectronIonCoupling(
   return ei_coupling;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Pack an analytic EICoupling.
  *
@@ -208,6 +208,6 @@ Analytic_EICoupling::sf_char Analytic_EICoupling::pack() const {
 
 } // end namespace rtt_cdi_analytic
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of Analytic_EICoupling.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,20 +1,20 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_analytic/Analytic_CP_Eloss.cc
  * \author Kendra P. Long
  * \date   Fri Aug  2 14:28:08 2019
  * \brief  Analytic_CP_Eloss member definitions.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "Analytic_CP_Eloss.hh"
 
 namespace rtt_cdi_analytic {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // CONSTRUCTORS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Constructor for an analytic gray eloss model.
  *
@@ -24,24 +24,30 @@ namespace rtt_cdi_analytic {
  * The reaction type for this instance of the class is determined by the
  * rtt_cdi::Reaction argument.
  *
- * \param model_in shared_ptr to a derived
+ * \param[in] model_in shared_ptr to a derived
  *                 rtt_cdi_analytic::Analytic_Eloss_Model object
- * \param target_zaid_in int32_t target particle zaid
- * \param projectile_zaid_in int32_t transporting particle zaid
+ * \param[in] target_in int32_t target particle
+ * \param[in] projectile_in int32_t particle being transported
+ * \param[in] model_angle_cutoff_in rtt_cdi::CPModelAngleCutoff the angle
+ *                 separating the stopping power approximation from analog 
+ *                 scattering
  */
-Analytic_CP_Eloss::Analytic_CP_Eloss(SP_Analytic_Model model_in,
-                                     int32_t target_zaid_in,
-                                     int32_t projectile_zaid_in)
-    : analytic_model(model_in), projectile_zaid(projectile_zaid_in),
-      target_zaid(target_zaid_in) {
+Analytic_CP_Eloss::Analytic_CP_Eloss(
+    SP_Analytic_Model model_in, rtt_cdi::CParticle target_in,
+    rtt_cdi::CParticle projectile_in,
+    rtt_cdi::CPModelAngleCutoff model_angle_cutoff_in)
+    : rtt_cdi::CPEloss(target_in, projectile_in,
+                       rtt_cdi::CPModelType::ANALYTIC_ETYPE,
+                       model_angle_cutoff_in),
+      analytic_model(model_in) {
   Ensure(analytic_model);
 }
 
-//---------------------------------------------------------------------------//
-// OPACITY INTERFACE FUNCTIONS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// ELOSS INTERFACE FUNCTIONS
+//----------------------------------------------------------------------------//
 /*!
- * \brief Return a scalar eloss given a scalar temperature, density, and 
+ * \brief Return a scalar eloss given a scalar temperature, density, and
  *        particle speed.
  *
  * Given a scalar temperature/density/speed, return an eloss for the reaction
@@ -68,3 +74,7 @@ double Analytic_CP_Eloss::getEloss(double temperature, double density,
 }
 
 } // namespace rtt_cdi_analytic
+
+//----------------------------------------------------------------------------//
+// End cdi_analytic/Analytic_CP_Eloss.cc
+//----------------------------------------------------------------------------//

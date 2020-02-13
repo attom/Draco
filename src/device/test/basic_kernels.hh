@@ -1,13 +1,13 @@
-///----------------------------------*-C++-*----------------------------------//
+///----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   device/test/basic_kernels.hh
  * \author Alex R. Long
  * \date   Mon Mar 25 2019
  * \brief  Simple kernels for basic GPU tests
- * \note   Copyright (C) 2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
  *         All rights reserved.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef rtt_device_test_basic_kernels_hh
 #define rtt_device_test_basic_kernels_hh
@@ -29,6 +29,6 @@ __global__ void sum(int *dest, int a, int b);
 
 #endif // rtt_device_test_basic_kernels_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of device/test/basic_kernels.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

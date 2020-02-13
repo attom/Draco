@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/UnitTest.cc
  * \author Kelly Thompson
  * \date   Thu May 18 15:46:19 2006
  * \brief  Implementation file for UnitTest.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "UnitTest.hh"
 #include "path.hh"
@@ -19,7 +19,7 @@
 
 namespace rtt_dsxx {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Constructor for UnitTest object.
  *
@@ -71,7 +71,7 @@ UnitTest::UnitTest(int & /* argc */, char **&argv, string_fp_void release_,
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //! Build the final message that will be desplayed when UnitTest is destroyed.
 std::string UnitTest::resultMessage() const {
   using DT = Term::DracoTerminal;
@@ -91,7 +91,7 @@ std::string UnitTest::resultMessage() const {
   return msg.str();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!\brief Increment the failure count and print a message with the source line
  *        number.
  * \param[in] line The line number of the source code where the failure was
@@ -105,7 +105,7 @@ bool UnitTest::failure(int line) {
   return false;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Increment the failure count and print a message with the source line
  *        number.
@@ -120,7 +120,7 @@ bool UnitTest::failure(int line, char const *file) {
   return false;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Increment the pass count and print a message that a test passed.
  * \param passmsg The message to be printed to the iostream \c UnitTest::out.
@@ -134,7 +134,7 @@ bool UnitTest::passes(const std::string &passmsg) {
   return true;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Increment either the pass or fail count and print a test description.
  *
@@ -185,7 +185,7 @@ bool UnitTest::check(bool const good, std::string const &passmsg,
   return true;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Increment the failure count and print a message that a test failed.
  * \param failmsg The message to be printed to the iostream \c UnitTest::out.
@@ -200,6 +200,6 @@ bool UnitTest::failure(const std::string &failmsg) {
 
 } // end namespace rtt_dsxx
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of UnitTest.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

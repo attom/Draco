@@ -62,12 +62,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma GCC diagnostic ignored "-Wshadow"
 #endif
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif
+
 #include <Random123/MicroURNG.hpp>
 #include <Random123/conventional/Engine.hpp>
 #include <cstring>
 #include <map>
 #include <stdexcept>
 #include <utility>
+
+#ifdef __clang__
+// Restore clang diagnostics to previous state.
+#pragma clang diagnostic pop
+#endif
 
 #if (DBS_GNUC_VERSION >= 40600)
 // Restore GCC diagnostics to previous state.
@@ -248,6 +258,6 @@ void host_execute_tests(kat_instance *tests, size_t ntests) {
   dev_execute_tests(tests, (unsigned)ntests);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end kat_cpp.cpp
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

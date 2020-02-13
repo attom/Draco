@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   timestep/fixed_ts_advisor.cc
  * \author John McGhee
  * \date   Mon Apr  6 17:22:53 1998
  * \brief  Defines the fixed time-step advisor.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "fixed_ts_advisor.hh"
 #include "c4/C4_Functions.hh"
@@ -14,7 +14,7 @@
 
 namespace rtt_timestep {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 fixed_ts_advisor::fixed_ts_advisor(const std::string &name_,
                                    const usage_flag usage_,
                                    const double fixed_value_,
@@ -24,13 +24,13 @@ fixed_ts_advisor::fixed_ts_advisor(const std::string &name_,
   Ensure(invariant_satisfied());
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 double fixed_ts_advisor::get_dt_rec(const ts_manager & /*tsm*/) const {
   Require(invariant_satisfied());
   return fixed_value;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void fixed_ts_advisor::print_state(std::ostream &out) const {
   using std::endl;
 
@@ -49,13 +49,13 @@ void fixed_ts_advisor::print_state(std::ostream &out) const {
   out << endl;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 bool fixed_ts_advisor::invariant_satisfied() const {
   return ts_advisor::invariant_satisfied() && 0. < fixed_value;
 }
 
 } // namespace rtt_timestep
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of fixed_ts_advisor.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

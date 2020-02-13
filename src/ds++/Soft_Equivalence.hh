@@ -1,22 +1,22 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/Soft_Equivalence.hh
  * \author Thomas M. Evans and Todd Urbatsch
  * \date   Wed Nov  7 14:10:55 2001
  * \brief  Soft_Equivalence functions for floating point comparisons.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef rtt_dsxx_Soft_Equivalence_hh
 #define rtt_dsxx_Soft_Equivalence_hh
 
-//===========================================================================//
+//============================================================================//
 // Soft_Equivalence
 //
 // Purpose : checks that two reals or fields of reals are within a tolerance
 // of each other.
-//===========================================================================//
+//============================================================================//
 
 #include "Assert.hh"
 #include <cmath>
@@ -27,9 +27,9 @@
 
 namespace rtt_dsxx {
 
-//===========================================================================//
+//============================================================================//
 // SCALAR SOFT EQUIVALENCE FUNCTIONS
-//===========================================================================//
+//============================================================================//
 /*!
  * \brief Compare two floating point scalars for equivalence to a specified
  *        tolerance.
@@ -74,9 +74,9 @@ constexpr inline
   return passed;
 }
 
-//===========================================================================//
+//============================================================================//
 // FIELD SOFT EQUIVALENCE FUNCTIONS
-//===========================================================================//
+//============================================================================//
 /*!
  * \brief Object that allows multilevel STL containers of floating point values
  *        to be compared within a tolerance.
@@ -166,9 +166,9 @@ public:
   }
 };
 
-//===========================================================================//
+//============================================================================//
 // FIELD SOFT EQUIVALENCE FUNCTIONS
-//===========================================================================//
+//============================================================================//
 /*!
  * \brief Compare two floating point fields for equivalence to a specified
  *        tolerance.
@@ -198,7 +198,7 @@ inline bool soft_equiv(
                                          precision);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // [2015-05-14 KT] Originally, I tried to define the following 3
 // specializations with template FPT instead of 'double'.  However, these
 // overloads did not work as indended.  The MSVC compiler could not
@@ -219,27 +219,27 @@ inline bool soft_equiv(
 // To get around the problem, I provided fully specified (no template
 // parameters) overloads...
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Specialiations for vector<double>
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline bool soft_equiv(const std::vector<double> &value,
                        const std::vector<double> &ref,
                        const double precision = 1.0e-12) {
   return soft_equiv_deep<1, double>().equiv(value.begin(), value.end(),
                                             ref.begin(), ref.end(), precision);
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Specialiation for vector<vector<T>>
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline bool soft_equiv(const std::vector<std::vector<double>> &value,
                        const std::vector<std::vector<double>> &ref,
                        const double precision = 1.0e-12) {
   return soft_equiv_deep<2, double>().equiv(value.begin(), value.end(),
                                             ref.begin(), ref.end(), precision);
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Specialiation for vector<vector<vector<T>>>
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline bool
 soft_equiv(const std::vector<std::vector<std::vector<double>>> &value,
            const std::vector<std::vector<std::vector<double>>> &ref,
@@ -252,6 +252,6 @@ soft_equiv(const std::vector<std::vector<std::vector<double>>> &value,
 
 #endif // rtt_dsxx_Soft_Equivalence_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ds++/Soft_Equivalence.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

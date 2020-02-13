@@ -125,6 +125,7 @@ if( NOT APPLE )
   add_app_unit_test(
     DRIVER    ${CMAKE_CURRENT_SOURCE_DIR}/tstYthi.py
     APP       $<TARGET_FILE_DIR:Exe_ythi>/$<TARGET_FILE_NAME:Exe_ythi>
+    TEST_ARGS 2
     PE_LIST   "1;2" )
 endif()
 

@@ -35,7 +35,7 @@ Prior Contributers: Gabriel M. Rockefeller, Allan B. Wollaber, Rob B. Lowrie,
      John McGhee, Kris C. Garrett, Mike Buksas, Nick Myers, Paul Henning,
      Randy Roberts, Seth Johnson, Todd Adams, Tom Evans, and Lori Pritchett-Sheats.
 
-Copyright (C) 2016-2019 Triad National Security, LLC. (C19028, LA-CC-16-016),
+Copyright (C) 2016-2020 Triad National Security, LLC. (C19028, LA-CC-16-016),
      Released under a 3-Clause BSD License.
 
 For information, send e-mail to draco@lanl.gov.

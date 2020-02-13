@@ -1,16 +1,16 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   dummy_package.cc
  * \author John McGhee
  * \date   Thu Aug 27 07:48:41 1998
  * \brief  A dummy package to exercize the time-step controller field
  *         advisors.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "dummy_package.hh"
 #include "../field_ts_advisor.hh"
@@ -83,7 +83,7 @@ void dummy_package::advance_state() {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 std::vector<double>
 dummy_package::element_wise_multiply(double const a,
@@ -96,7 +96,7 @@ dummy_package::element_wise_multiply(double const a,
   return results;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 //! \brief Provide recommended dt values (TE).
 double dummy_package::get_dt_rec_te() const { return sp_te->get_dt_rec(tsm); }
@@ -109,6 +109,6 @@ double dummy_package::get_dt_rec_ri() const { return sp_ri->get_dt_rec(tsm); }
 
 } // end namespace rtt_timestep_test
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of dummy_package.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

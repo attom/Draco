@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_analytic/Analytic_EoS.hh
  * \author Thomas M. Evans
  * \date   Tue Oct  2 16:22:32 2001
  * \brief  Analytic_EoS class definition.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_analytic_Analytic_EoS_hh__
-#define __cdi_analytic_Analytic_EoS_hh__
+#ifndef rtt_cdi_analytic_Analytic_EoS_hh
+#define rtt_cdi_analytic_Analytic_EoS_hh
 
 #include "Analytic_Models.hh"
 #include "cdi/EoS.hh"
@@ -17,7 +17,7 @@
 
 namespace rtt_cdi_analytic {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Analytic_EoS
  *
@@ -42,7 +42,7 @@ namespace rtt_cdi_analytic {
 // -----------------
 // 0) original
 //
-//===========================================================================//
+//============================================================================//
 
 class DLL_PUBLIC_cdi_analytic Analytic_EoS : public rtt_cdi::EoS {
 public:
@@ -110,8 +110,8 @@ public:
 
 } // end namespace rtt_cdi_analytic
 
-#endif // __cdi_analytic_Analytic_EoS_hh__
+#endif // rtt_cdi_analytic_Analytic_EoS_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi_analytic/Analytic_EoS.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

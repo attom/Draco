@@ -1,7 +1,7 @@
 #-----------------------------*-cmake-*----------------------------------------#
 # file   config/unix-clang.cmake
 # brief  Establish flags for Unix clang
-# note   Copyright (C) 2010-2019 Triad National Security, LLC.
+# note   Copyright (C) 2010-2020 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -34,7 +34,7 @@ endif()
 if( NOT CXX_FLAGS_INITIALIZED )
   set( CXX_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using draco settings." )
 
-  set( CMAKE_C_FLAGS                "-Wcast-align -Wpointer-arith -Wall -Wno-long-long -pedantic" )
+  set( CMAKE_C_FLAGS                "-Wcast-align -Wpointer-arith -Wall -Wno-long-long -Wreserved-id-macro -pedantic" )
   if (NOT ${CMAKE_GENERATOR} MATCHES Xcode AND HAS_MARCH_NATIVE)
     set( CMAKE_C_FLAGS             "${CMAKE_C_FLAGS} -march=native" )
   endif()

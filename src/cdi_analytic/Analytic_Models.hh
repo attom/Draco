@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_analytic/Analytic_Models.hh
  * \author Thomas M. Evans
  * \date   Wed Aug 29 16:46:52 2001
  * \brief  Analytic_Model definitions
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_analytic_Analytic_Models_hh__
-#define __cdi_analytic_Analytic_Models_hh__
+#ifndef rtt_cdi_analytic_Analytic_Models_hh
+#define rtt_cdi_analytic_Analytic_Models_hh
 
 #include "cdi/OpacityCommon.hh"
 #include "ds++/Assert.hh"
@@ -18,9 +18,9 @@
 
 namespace rtt_cdi_analytic {
 
-//===========================================================================//
+//============================================================================//
 // ENUMERATIONS
-//===========================================================================//
+//============================================================================//
 
 /*!
  * \brief Enumeration describing the opacity models that are available.
@@ -61,7 +61,7 @@ enum EoS_Models { POLYNOMIAL_SPECIFIC_HEAT_ANALYTIC_EOS_MODEL };
  */
 enum EICoupling_Models { CONSTANT_ANALYTIC_EICOUPLING_MODEL };
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Analytic_Opacity_Model
  * \brief Analytic_Opacity_Model base class.
@@ -84,7 +84,7 @@ enum EICoupling_Models { CONSTANT_ANALYTIC_EICOUPLING_MODEL };
  *
  * The returned opacity should have units of cm^2/g.
  */
-//===========================================================================//
+//============================================================================//
 
 class Analytic_Opacity_Model {
 public:
@@ -118,7 +118,7 @@ public:
   virtual sf_char pack() const = 0;
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \class Constant_Analytic_Opacity_Model
  * \brief Derived Analytic_Opacity_Model class that defines a constant opacity.
@@ -166,7 +166,7 @@ public:
   sf_char pack() const;
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \class Polynomial_Analytic_Opacity_Model
  * \brief Derived Analytic_Opacity_Model class that defines a polynomial
@@ -280,7 +280,7 @@ public:
   sf_char pack() const;
 };
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Analytic_EoS_Model
  * \brief Analytic_EoS_Model base class.
@@ -315,7 +315,7 @@ public:
  *
  * This class is a pure virtual base class.
  */
-//===========================================================================//
+//============================================================================//
 
 class Analytic_EoS_Model {
 public:
@@ -369,7 +369,7 @@ public:
   virtual sf_char pack() const = 0;
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \class Polynomial_Specific_Heat_Analytic_EoS_Model
  * \brief Derived Analytic_EoS_Model class that defines polymomial functions for
@@ -570,7 +570,7 @@ struct find_elec_temperature_functor {
   }
 };
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Analytic_EICoupling_Model
  * \brief Analytic_EICoupling_Model base class.
@@ -593,7 +593,7 @@ struct find_elec_temperature_functor {
  *
  * The returned opacity should have units of cm^2/g.
  */
-//===========================================================================//
+//============================================================================//
 
 class Analytic_EICoupling_Model {
 public:
@@ -618,7 +618,7 @@ public:
   virtual sf_char pack() const = 0;
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \class Constant_Analytic_EICoupling_Model
  * \brief Derived electron-ion coupling class that defines a constant coupling.
@@ -659,7 +659,7 @@ public:
   sf_char pack() const;
 };
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Analytic_Eloss_Model
  * \brief Analytic_Eloss_Model base class.
@@ -676,7 +676,7 @@ public:
  *
  * The returned eloss coefficient is a rate, and should have units of shk^-1.
  */
-//===========================================================================//
+//============================================================================//
 
 class Analytic_Eloss_Model {
 public:
@@ -694,20 +694,20 @@ public:
                                  const double v0) const = 0;
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \class Analytic_KP_Alpha_Eloss_Model
- * \brief Derived CP energy loss class using analytic Kirkpatrick model for 
+ * \brief Derived CP energy loss class using analytic Kirkpatrick model for
  *        alpha particles in DT.
  *
  * This is designed to return energy loss rates based on the range fit
  * calculated in:
- * 
+ *
  * Kirkpatrick, R. C. and Wheeler, J. A. (1981).
- * ``The Physics of DT Ignition In Small Fusion Targets.'' 
+ * ``The Physics of DT Ignition In Small Fusion Targets.''
  * Nuclear Fusion, 21(3):389–401.
- * 
- * Equation (2) gives the range formula. We then convert this to an 
+ *
+ * Equation (2) gives the range formula. We then convert this to an
  * energy loss rate per unit time for ease of use in transport.
  */
 class Analytic_KP_Alpha_Eloss_Model : public Analytic_Eloss_Model {
@@ -724,8 +724,8 @@ public:
 
 } // end namespace rtt_cdi_analytic
 
-#endif // __cdi_analytic_Analytic_Models_hh__
+#endif // rtt_cdi_analytic_Analytic_Models_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi_analytic/Analytic_Models.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

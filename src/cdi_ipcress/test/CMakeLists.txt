@@ -15,8 +15,7 @@ project( cdi_ipcress_test CXX )
 set( test_sources
   tIpcressFile.cc
   tIpcressOpacity.cc
-  tIpcressWithCDI.cc
-  tIpcressOdfmgOpacity.cc )
+  tIpcressWithCDI.cc )
 
 # ---------------------------------------------------------------------------- #
 # Build Unit tests
@@ -25,11 +24,6 @@ set( test_sources
 add_scalar_tests(
   SOURCES "${test_sources}"
   DEPS    "Lib_cdi_ipcress" )
-
-add_scalar_tests(
-  SOURCES "ReadOdfIpcressFile.cc"
-  DEPS    "Lib_cdi_ipcress"
-  TEST_ARGS "-u" )
 
 include( ApplicationUnitTest )
 # Test multi-group opacities found in an ipcressfile

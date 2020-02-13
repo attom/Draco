@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   mesh/test/tstX3D_Draco_Mesh_Reader.cc
  * \author Ryan Wollaeger <wollaeger@lanl.gov>
  * \date   Tuesday, Jul 10, 2018, 10:23 am
  * \brief  X3D_Draco_Mesh_Reader class unit test.
- * \note   Copyright (C) 2018-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2018-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "Test_Mesh_Interface.hh"
 #include "c4/ParallelUnitTest.hh"
@@ -19,9 +19,9 @@ using rtt_mesh::Draco_Mesh;
 using rtt_mesh::Draco_Mesh_Builder;
 using rtt_mesh::X3D_Draco_Mesh_Reader;
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // TESTS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 // Parse an X3D file format and compare to reference
 void read_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
@@ -208,7 +208,7 @@ void build_x3d_mesh_2d(rtt_c4::ParallelUnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, rtt_dsxx::release);
   try {
@@ -219,6 +219,6 @@ int main(int argc, char *argv[]) {
   UT_EPILOG(ut);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of mesh/test/tstX3D_Draco_Mesh_Reader.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

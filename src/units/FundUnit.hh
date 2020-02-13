@@ -1,14 +1,14 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*! \file   FundUnit.hh
  *  \author Kelly Thompson
  *  \brief  This file defines a fundamental unit type.
  *  \date   Mon Oct 27 16:24:31 2003
- *  \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ *  \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *          All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __units_FundUnit_hh__
-#define __units_FundUnit_hh__
+#ifndef rtt_units_FundUnit_hh
+#define rtt_units_FundUnit_hh
 
 #include "UnitSystemEnums.hh"
 
@@ -54,8 +54,8 @@ private:
 
 } // end namespace rtt_units
 
-#endif // __units_FundUnit_hh__
+#endif // rtt_units_FundUnit_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of FundUnit.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

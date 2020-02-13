@@ -1,13 +1,13 @@
-///----------------------------------*-C++-*----------------------------------//
+///----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   device/test/Dual_Call.hh
  * \author Alex R. Long
  * \date   Mon Mar 25 2019
  * \brief  Show how code can be called from GPU and host
- * \note   Copyright (C) 2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
  *         All rights reserved.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef rtt_device_test_Dual_Call_hh
 #define rtt_device_test_Dual_Call_hh
@@ -34,6 +34,6 @@ __global__ void cuda_conserve_calc_num_src_particles(
 
 #endif // rtt_device_test_Dual_Call_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of device/test/Dual_Call.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

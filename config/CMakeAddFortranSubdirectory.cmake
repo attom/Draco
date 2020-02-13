@@ -25,11 +25,12 @@
 #
 #   cmake_add_fortran_subdirectory(
 #    <subdir>                # name of subdirectory
-#    PROJECT <project_name>  # project name in subdir top CMakeLists.txt
+#    PROJECT <project_name>  # project name in subdirectories's top 
+#                            # CMakeLists.txt
 #                            # recommendation: use the same project name as
 #                            # listed in <subdir>/CMakeLists.txt
-#    ARCHIVE_DIR <dir>       # dir where project places .lib files
-#    RUNTIME_DIR <dir>       # dir where project places .dll files
+#    ARCHIVE_DIR <dir>       # directory where project places .lib files
+#    RUNTIME_DIR <dir>       # directory where project places .dll files
 #    LIBRARIES <lib>...      # names of library targets to import
 #    TARGET_NAMES <string>...# target names assigned to the libraries listed
 #                            # above available in the primary project.
@@ -249,15 +250,8 @@ function(cmake_add_fortran_subdirectory subdir)
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=${ep_build_type}
                       -P ${build_dir}/config_cafs_proj.cmake
     BUILD_COMMAND     ${CMAKE_COMMAND} -P ${build_dir}/build_cafs_proj.cmake
+    BUILD_ALWAYS 1
     INSTALL_COMMAND   ""
-    )
-  # make the external project always run make with each build
-  externalproject_add_step(${project_name}_build forcebuild
-    COMMAND ${CMAKE_COMMAND} -E remove
-         ${CMAKE_CURRENT_BUILD_DIR}/${project_name}-prefix/src/${project_name}-stamp/${project_name}-build
-    DEPENDEES configure
-    DEPENDERS build
-    ALWAYS 1
     )
   # create imported targets for all libraries
   set(idx 0)
@@ -401,16 +395,24 @@ endfunction()
 #-----------------------------------------------------------------------------#
 function( cafs_fix_mpi_library )
 
-  # MS-MPI and gfortran do not play nice together...
-  if(WIN32)
+  set(verbose FALSE)
 
+  # MS-MPI and gfortran do not play nice together...
+  if(WIN32 AND "${DRACO_C4}" STREQUAL "MPI")
+    if(verbose)
+      message("CAFS: MPI_Fortran_LIBRARIES= ${MPI_Fortran_LIBRARIES}")
+    endif()
     if( NOT MPI_Fortran_LIBRARIES OR
         "${MPI_Fortran_LIBRARIES}" MATCHES "msmpi.lib" )
-      # should be located at
-      # C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\[x86|x64]
+      # msmpi.lib should be located one of:
+      # - C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\[x86|x64]
+      # - %vcpkg%/installed/x64-windows/[debug]/lib
       if( MPI_msmpi_LIBRARY )
         # FindMPI.cmake should have set $MPI_msmpi_LIBRARY.
         get_filename_component( MSMPI_SDK_DIR ${MPI_msmpi_LIBRARY} DIRECTORY)
+        if(verbose)
+          message("CAFS: MSMPI_SDK_DIR = ${MSMPI_SDK_DIR}")
+        endif()
         find_library( MPI_gfortran_LIBRARIES
           NAMES "libmsmpi.a"
           HINTS ${MSMPI_SDK_DIR} )
@@ -449,8 +451,10 @@ function( cafs_fix_mpi_library )
       set( CMAKE_Fortran_${comp_opt} "${CMAKE_Fortran_${comp_opt}}"
         CACHE STRING "Compiler flags." FORCE )
     endforeach()
-
-  endif(WIN32)
+    if(verbose)
+      message("CAFS: MPI_gfortran_LIBRARIES= ${MPI_gfortran_LIBRARIES}")
+    endif()
+  endif()
 
 endfunction(cafs_fix_mpi_library)
 

@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_analytic/test/tstAnalytic_CP_Eloss.cc
  * \author Kendra P. Long
  * \date   Fri Aug  2 14:28:08 2019
  * \brief  Analytic_CP_Eloss test.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "cdi_analytic_test.hh"
 #include "cdi/CDI.hh"
@@ -22,29 +22,38 @@ using namespace std;
 using rtt_cdi::CDI;
 using rtt_cdi_analytic::Analytic_CP_Eloss;
 using rtt_cdi_analytic::Analytic_Eloss_Model;
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // TESTS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 void KP_alpha_test(rtt_dsxx::UnitTest &ut) {
 
   // Deuterium:
-  int32_t target_in = 1002;
+  int deuterium_zaid = 1002;
+  double deuterium_mass = 3.34358e-24;
+  rtt_cdi::CParticle target_in(deuterium_zaid, deuterium_mass);
   // Alpha particle:
-  int32_t projectile_in = 2004;
+  int alpha_zaid = 2004;
+  double alpha_mass = 6.64424e-24;
+  rtt_cdi::CParticle projectile_in(alpha_zaid, alpha_mass);
 
   std::shared_ptr<Analytic_Eloss_Model> model_in(
       new rtt_cdi_analytic::Analytic_KP_Alpha_Eloss_Model());
 
-  Analytic_CP_Eloss eloss_mod(model_in, target_in, projectile_in);
+  Analytic_CP_Eloss eloss_mod(model_in, target_in, projectile_in,
+                              rtt_cdi::CPModelAngleCutoff::NONE);
 
   // Check that basic accessors return correct result:
+  // Analytic model should match that passed to constructor
+  FAIL_IF_NOT(rtt_dsxx::soft_equiv(
+      eloss_mod.getEloss(1., 10., 1.),
+      eloss_mod.get_Analytic_Model()->calculate_eloss(1., 10., 1.), 1.0e-3));
+
   // Model type better be analytic:
   FAIL_IF_NOT(eloss_mod.getModelType() == rtt_cdi::CPModelType::ANALYTIC_ETYPE);
-  FAIL_IF_NOT(eloss_mod.getModel() == rtt_cdi::CPModel::ELOSS);
 
   // NOT tabular data
-  FAIL_IF(eloss_mod.data_in_tabular_form());
+  FAIL_IF(eloss_mod.is_data_in_tabular_form());
 
   // All sizes should be 0 (again, not tabular data)
   FAIL_IF_NOT(eloss_mod.getTemperatureGrid().size() ==
@@ -56,8 +65,12 @@ void KP_alpha_test(rtt_dsxx::UnitTest &ut) {
   FAIL_IF_NOT(eloss_mod.getDataFilename().empty());
 
   // Check that accessors return the correct target and projectile:
-  FAIL_IF_NOT(target_in == eloss_mod.getTargetZAID());
-  FAIL_IF_NOT(projectile_in == eloss_mod.getProjectileZAID());
+  FAIL_IF_NOT(target_in.get_zaid() == eloss_mod.getTarget().get_zaid());
+  FAIL_IF_NOT(projectile_in.get_zaid() == eloss_mod.getProjectile().get_zaid());
+
+  // Check that accessor returns the correct model angle cutoff
+  FAIL_IF_NOT(eloss_mod.getModelAngleCutoff() ==
+              rtt_cdi::CPModelAngleCutoff::NONE);
 
   // Get eloss values for some sample data:
   {
@@ -101,7 +114,7 @@ void KP_alpha_test(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 int main(int argc, char *argv[]) {
   rtt_dsxx::ScalarUnitTest ut(argc, argv, rtt_dsxx::release);
@@ -111,6 +124,6 @@ int main(int argc, char *argv[]) {
   UT_EPILOG(ut);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of tstAnalytic_CP_Eloss.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

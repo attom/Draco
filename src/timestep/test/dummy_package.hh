@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   dummy_package.hh
  * \author John McGhee
  * \date   Thu Aug 27 07:48:41 1998
  * \brief  A dummy package to exercize the field time-step advisors.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __timestep_test_dummy_package_hh__
-#define __timestep_test_dummy_package_hh__
+#ifndef rtt_timestep_test_dummy_package_hh
+#define rtt_timestep_test_dummy_package_hh
 
 #include "ds++/config.h"
 #include <memory>
@@ -24,16 +24,16 @@ class field_ts_advisor;
 
 namespace rtt_timestep_test {
 
-//===========================================================================//
-/*! 
- * \class dummy_package 
+//============================================================================//
+/*!
+ * \class dummy_package
  * \brief Exercizes the field time-step advisors.
  *
  * This class serves as an example of how any particular package can make use
  * of the time-step manaager/advisor utility. It also exercizes the field
  * time-step advisors.
  */
-//===========================================================================//
+//============================================================================//
 
 class DLL_PUBLIC_timestep_test dummy_package {
 public:
@@ -70,8 +70,8 @@ private:
 
 } // end namespace rtt_timestep_test
 
-#endif // __timestep_test_dummy_package_hh__
+#endif // rtt_timestep_test_dummy_package_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of dummy_package.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

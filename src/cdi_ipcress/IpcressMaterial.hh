@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_ipcress/IpcressMaterial.hh
  * \author Kelly Thompson
  * \date   Tue Aug 22 15:15:49 2000
  * \brief  Header file for IpcressMaterial class
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_ipcress_IpcressMaterial_hh__
-#define __cdi_ipcress_IpcressMaterial_hh__
+#ifndef rtt_cdi_ipcress_IpcressMaterial_hh
+#define rtt_cdi_ipcress_IpcressMaterial_hh
 
 #include "ds++/Assert.hh"
 #include <algorithm>
@@ -20,7 +20,7 @@
 
 namespace rtt_cdi_ipcress {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class IpcressMaterial
  *
@@ -61,7 +61,7 @@ namespace rtt_cdi_ipcress {
  * of empty IpcressMaterials is created (length = num materials) and then the
  * data for each material is stored via the add_field() member function.
  */
-//===========================================================================//
+//============================================================================//
 
 class IpcressMaterial {
 
@@ -160,8 +160,8 @@ private:
 
 } // end namespace rtt_cdi_ipcress
 
-#endif // __cdi_ipcress_IpcressFile_hh__
+#endif // rtt_cdi_ipcress_IpcressFile_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi_ipcress/IpcressFile.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

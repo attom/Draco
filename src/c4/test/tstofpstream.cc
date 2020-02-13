@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   c4/test/tstofpstream.cc
  * \author Kent Budge
  * \date   Wed Apr 28 09:31:51 2010
  * \brief  Test c4::determinate_swap and c4::indeterminate_swap functions
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"
 #include "c4/ofpstream.hh"
@@ -17,9 +17,9 @@ using namespace std;
 using namespace rtt_dsxx;
 using namespace rtt_c4;
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // TESTS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 void tstofpstream(UnitTest &ut) {
 
@@ -37,7 +37,7 @@ void tstofpstream(UnitTest &ut) {
   PASSMSG("completed serialized write without hanging or segfaulting");
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void tstofpstream_bin(UnitTest &ut) {
 
   int pid = rtt_c4::node();
@@ -68,7 +68,7 @@ void tstofpstream_bin(UnitTest &ut) {
   PASSMSG("completed serialized binary write without hanging or segfaulting");
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, release);
   try {
@@ -78,6 +78,6 @@ int main(int argc, char *argv[]) {
   UT_EPILOG(ut);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of tstofpstream.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -15,6 +15,8 @@ project( lapack_wrap CXX )
 # 2. We are targeting an Xcode solution (necessary cmake logic is missing).
 #------------------------------------------------------------------------------#
 
+if( HAVE_Fortran )
+
 if( NOT TARGET lapack OR ${CMAKE_GENERATOR} MATCHES Xcode)
   message( STATUS
     "NOTE: Skipping lapack_wrap component because LAPACK is not found (or
@@ -103,6 +105,8 @@ if( EXISTS ${PROJECT_BINARY_DIR}/lapack_wrap/config.h )
 else()
   message("   lapack_wrap - skipped because FortranCInterface failed.")
 endif()
+
+endif( HAVE_Fortran )
 
 #------------------------------------------------------------------------------#
 # End lapack_wrap/CMakeLists.txt

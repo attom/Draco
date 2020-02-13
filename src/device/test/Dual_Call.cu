@@ -1,19 +1,19 @@
-///----------------------------------*-C++-*----------------------------------//
+///----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   device/test/Dual_Call.cu
  * \author Alex R. Long
  * \date   Mon Mar 25 2019
  * \brief  Show how code can be called from GPU and host
- * \note   Copyright (C) 2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
  *         All rights reserved.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "Dual_Call.hh"
 
 namespace rtt_device_test {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Calculate the number of source particles for a range of cells
  *
@@ -69,7 +69,7 @@ __host__ __device__ unsigned long long sub_conserve_calc_num_src_particles(
   return ntot;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Launch a kernel to calculate the number of source particles
  *
@@ -107,6 +107,6 @@ __global__ void cuda_conserve_calc_num_src_particles(
 
 } // namespace rtt_device_test
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of device/test/Dual_Call.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

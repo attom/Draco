@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/XGetopt.cc
  * \author Kelly Thompson, Katherine Wang
  * \date   Tuesday, Oct 27, 2016, 15:17 pm
  * \brief  Command line argument handling similar to getopt.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "XGetopt.hh"
 #include <algorithm>
@@ -14,7 +14,7 @@
 
 namespace rtt_dsxx {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Convert a string into easy-to-parse vectors and strip colons.
  * \param[in] shortopts A string of character and optional colons. Each
@@ -40,7 +40,7 @@ std::vector<char> XGetopt::decompose_shortopts(std::string const &shortopts) {
   return vso;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Convert a map<char,string> into easy-to-parse vectors and strip
  *        colons.
@@ -73,7 +73,7 @@ XGetopt::csmap XGetopt::store_longopts(csmap const &longopts_) {
   return retValue;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Convert long/short option map argument into state data for class.
  *
@@ -105,7 +105,7 @@ std::vector<char> XGetopt::decompose_longopts(csmap const &longopts_) {
   return vso;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Match provided command line arguments to registered options.
  *
@@ -197,7 +197,7 @@ void XGetopt::match_args_to_options() {
 //     }
 // };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Construct a help/use message that can be printed by the main program.
  *
@@ -343,6 +343,6 @@ std::string XGetopt::display_help(std::string const &appName) const {
 
 } // end namespace rtt_dsxx
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of XGetopt.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

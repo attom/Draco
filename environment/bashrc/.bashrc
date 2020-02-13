@@ -35,7 +35,6 @@ case ${-} in
     shopt -s checkwinsize # autocorrect window size
     shopt -s cdspell      # autocorrect spelling errors on cd command line.
     shopt -s histappend   # append to the history file, don't overwrite it
-    shopt -s cdspell
 
     # More environment setup --------------------------------------------------#
 

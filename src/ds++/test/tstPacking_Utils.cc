@@ -1,13 +1,13 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/test/tstPacking_Utils.cc
  * \author Thomas M. Evans
  * \date   Wed Nov  7 15:58:08 2001
  * \brief  Test the routines used for serializing and de-serializing C++
  *         objects.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "ds++/Packing_Utils.hh"
 #include "ds++/Release.hh"
@@ -23,9 +23,9 @@ using rtt_dsxx::soft_equiv;
 using rtt_dsxx::unpack_data;
 using rtt_dsxx::Unpacker;
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // TESTS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 void do_some_packing(Packer &p, vector<double> const &vd,
                      vector<int> const &vi) {
@@ -36,7 +36,7 @@ void do_some_packing(Packer &p, vector<double> const &vd,
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void compute_buffer_size_test(rtt_dsxx::UnitTest &ut) {
   // make data
 
@@ -127,7 +127,7 @@ void compute_buffer_size_test(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void packing_test(rtt_dsxx::UnitTest &ut) {
 
   double const eps = std::numeric_limits<double>::epsilon();
@@ -327,7 +327,7 @@ void packing_test(rtt_dsxx::UnitTest &ut) {
   delete[] buffer;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void packing_test_c90(rtt_dsxx::UnitTest &ut) {
   using std::vector;
 
@@ -415,7 +415,7 @@ void packing_test_c90(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void std_string_test(rtt_dsxx::UnitTest &ut) {
   vector<char> pack_string;
 
@@ -476,7 +476,7 @@ void std_string_test(rtt_dsxx::UnitTest &ut) {
   }
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void packing_functions_test(rtt_dsxx::UnitTest &ut) {
 
   // Data to pack:
@@ -603,7 +603,7 @@ void packing_functions_test(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void endian_conversion_test(rtt_dsxx::UnitTest &ut) {
 
   Packer p;
@@ -650,7 +650,7 @@ void endian_conversion_test(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void packing_map_test(rtt_dsxx::UnitTest &ut) {
   std::cout << "\nTesting packing/unpacking std::maps..." << std::endl;
 
@@ -737,7 +737,7 @@ void packing_map_test(rtt_dsxx::UnitTest &ut) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
   rtt_dsxx::ScalarUnitTest ut(argc, argv, rtt_dsxx::release);
   try {
@@ -752,6 +752,6 @@ int main(int argc, char *argv[]) {
   UT_EPILOG(ut);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of tstPacking_Utils.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/DracoMath.hh
  * \author Kent G. Budge
  * \date   Wed Jan 22 15:18:23 MST 2003
  * \brief  New or overloaded cmath or cmath-like functions.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef rtt_dsxx_DracoMath_hh
 #define rtt_dsxx_DracoMath_hh
@@ -20,7 +20,7 @@
 
 namespace rtt_dsxx {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // isFinite.hh
 //
 // Try to use the C++11/C99 functions isinf, isnan and isfinite defined in
@@ -49,7 +49,7 @@ template <typename T> bool isFinite(T a) { return std::isfinite(a); }
 
 #endif
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Return the conjugate of a quantity.
  *
@@ -67,7 +67,7 @@ template <> inline std::complex<double> conj(const std::complex<double> &arg) {
   return std::conj(arg);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Return the cube of a value.
  *
@@ -105,7 +105,7 @@ inline Ordered_Group_Element dim(Ordered_Group_Element a,
     return a - b;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Return the square of a value.
  *
@@ -119,7 +119,7 @@ template <typename Semigroup> inline Semigroup square(const Semigroup &x) {
   return x * x;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Compute the hypotenuse of a right triangle.
  *
@@ -146,7 +146,7 @@ template <typename Real> inline double pythag(Real a, Real b) {
     return absb * std::sqrt(1.0 + square(absa / absb));
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief  Transfer the sign of the second argument to the first argument.
  *
@@ -172,7 +172,7 @@ inline Ordered_Group sign(Ordered_Group a, Ordered_Group b) {
     return abs(a);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Do a linear interpolation between two values.
  *
@@ -228,6 +228,6 @@ ceil_int_division(T const n, T const d) {
 
 #endif // rtt_dsxx_DracoMath_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of DracoMath.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

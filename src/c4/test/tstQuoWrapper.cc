@@ -4,7 +4,7 @@
  * \author Kelly Thompson
  * \date   Friday, Nov 29, 2019, 19:48 pm
  * \brief  C4 QuoWrapper test.
- * \note   Copyright (C) 2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
  *         All rights reserved. */
 //----------------------------------------------------------------------------//
 

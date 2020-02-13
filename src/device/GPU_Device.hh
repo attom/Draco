@@ -1,11 +1,11 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   device/GPU_Device.hh
  * \author Kelly (KT) Thompson
  * \brief  Define class GPU_Device
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef device_GPU_Device_hh
 #define device_GPU_Device_hh
@@ -19,7 +19,7 @@
 
 namespace rtt_device {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class GPU_Device
  * \brief A wrapper for the CUDA environment.
@@ -50,7 +50,7 @@ namespace rtt_device {
  * \example device/test/gpu_hello_rt_api.cu
  * Test of GPU_Device for with CUDA runtime API.
  */
-//===========================================================================//
+//============================================================================//
 
 class GPU_Device {
 public:
@@ -83,7 +83,7 @@ public:
     return m_maxgridsize[devId][dim];
   }
   //! the total amount of shared memory available per block in bytes
-  int sharedMemPerBlock(int devId = 0) const {
+  size_t sharedMemPerBlock(size_t devId = 0) const {
     return m_sharedmemperblock[devId];
   }
   //! the total amount of constant memory available on the device in bytes;
@@ -94,7 +94,7 @@ public:
   int SIMDWidth(int devId = 0) const { return m_simdwidth[devId]; }
   /*! the maximum pitch allowed by the memory copy functions that involve memory
    *  regions allocated through cuMemAllocPitch() */
-  int memPitch(int devId = 0) const { return m_mempitch[devId]; }
+  size_t memPitch(size_t devId = 0) const { return m_mempitch[devId]; }
   //! the total number of registers available per block
   int regsPerBlock(int devId = 0) const { return m_regsperblock[devId]; }
   //! the clock frequency in kilohertz
@@ -142,10 +142,10 @@ private:
   std::vector<int> m_maxthreadsperblock;
   std::vector<std::array<int, 3>> m_maxthreadsdim;
   std::vector<std::array<int, 3>> m_maxgridsize;
-  std::vector<int> m_sharedmemperblock;
+  std::vector<size_t> m_sharedmemperblock;
   std::vector<int> m_totalconstantmemory;
   std::vector<int> m_simdwidth;
-  std::vector<int> m_mempitch;
+  std::vector<size_t> m_mempitch;
   std::vector<int> m_regsperblock;
   std::vector<int> m_clockrate;
   std::vector<int> m_texturealign;
@@ -155,6 +155,6 @@ private:
 
 #endif // device_GPU_Device_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of device/GPU_Device.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

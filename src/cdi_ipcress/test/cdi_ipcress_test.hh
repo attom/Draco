@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_ipcress/test/cdi_ipcress_test.hh
  * \author Thomas M. Evans
  * \date   Fri Oct 12 15:36:36 2001
  * \brief  cdi_ipcress test function headers.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_ipcress_test_hh__
-#define __cdi_ipcress_test_hh__
+#ifndef rtt_cdi_ipcress_test_hh
+#define rtt_cdi_ipcress_test_hh
 
 #include "ds++/ScalarUnitTest.hh"
 #include "ds++/Soft_Equivalence.hh"
@@ -17,9 +17,9 @@
 
 namespace rtt_cdi_ipcress_test {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // COMPARISON FUNCTIONS USED IN IPCRESS OPACITY TESTS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 template <typename temperatureType, typename densityType,
           typename testValueType, typename opacityClassType>
@@ -53,7 +53,7 @@ bool opacityAccessorPassed(rtt_dsxx::ScalarUnitTest &ut,
   return true;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 template <typename opacityClassType>
 void testTemperatureGridAccessor(rtt_dsxx::ScalarUnitTest &ut,
@@ -95,7 +95,7 @@ void testTemperatureGridAccessor(rtt_dsxx::ScalarUnitTest &ut,
   }
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 template <typename opacityClassType>
 void testDensityGridAccessor(rtt_dsxx::ScalarUnitTest &ut,
@@ -137,7 +137,7 @@ void testDensityGridAccessor(rtt_dsxx::ScalarUnitTest &ut,
   }
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename opacityClassType>
 void testEnergyBoundaryAccessor(rtt_dsxx::ScalarUnitTest &ut,
                                 opacityClassType const spOpacity) {
@@ -191,8 +191,8 @@ void testEnergyBoundaryAccessor(rtt_dsxx::ScalarUnitTest &ut,
 
 } // end namespace rtt_cdi_ipcress_test
 
-#endif // __cdi_ipcress_test_hh__
+#endif // rtt_cdi_ipcress_test_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi_ipcress/test/cdi_ipcress_test.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

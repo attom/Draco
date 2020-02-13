@@ -3,7 +3,7 @@
 # author Kendra Keady
 # date   2017 February 28
 # brief  Instructions for building Compton Makefiles.
-# note   Copyright (C) 2017-2019 Triad National Security, LLC.
+# note   Copyright (C) 2017-2020 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)

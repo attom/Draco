@@ -4,7 +4,7 @@
  * \author Alex R. Long
  * \date   Tue July 2 16:56:16 2019
  * \brief  Constexpr versions of math calls
- * \note   Copyright (C) 2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
  *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
@@ -52,6 +52,6 @@ double constexpr ce_sqrt(double const x) {
 
 #endif // rtt_dsxx_Constexpr_Functions_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ds++/Constexpr_Functions.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

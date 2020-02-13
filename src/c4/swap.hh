@@ -1,16 +1,16 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   c4/swap.hh
  * \author Thomas M. Evans
  * \date   Thu Mar 21 11:42:03 2002
  * \brief  Data swap functions
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  *
  * This file contains the declarations for determinate and indeterminate data
  * swap functions.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef c4_swap_hh
 #define c4_swap_hh
@@ -20,7 +20,7 @@
 #include <vector>
 
 namespace rtt_c4 {
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Send and receive a known pattern of messages of known size.
  *
@@ -51,7 +51,7 @@ void determinate_swap(std::vector<unsigned> const &outgoing_pid,
                       std::vector<std::vector<T>> &incoming_data,
                       int tag = C4_Traits<T *>::tag);
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Send and receive a known pattern of messages of known size.
  *
@@ -76,7 +76,7 @@ void determinate_swap(std::vector<std::vector<T>> const &outgoing_data,
                       std::vector<std::vector<T>> &incoming_data,
                       int tag = C4_Traits<T *>::tag);
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Send and receive a known pattern of messages of unknown size.
  *
@@ -105,7 +105,7 @@ void semideterminate_swap(std::vector<unsigned> const &outgoing_pid,
                           std::vector<std::vector<T>> &incoming_data,
                           int tag = C4_Traits<T *>::tag);
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Send and receive an unknown pattern of messages of unknown size.
  *
@@ -138,6 +138,6 @@ void indeterminate_swap(std::vector<unsigned> const &outgoing_pid,
 
 #endif // c4_swap_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of c4/swap.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

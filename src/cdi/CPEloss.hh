@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi/CPEloss.hh
  * \author Kendra Long
  * \date   Fri Aug  2 14:28:08 2019
  * \brief  CPEloss class header file (an abstract class)
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_CPEloss_hh__
-#define __cdi_CPEloss_hh__
+#ifndef rtt_cdi_CPEloss_hh
+#define rtt_cdi_CPEloss_hh
 
 #include "CPCommon.hh"
 #include "ds++/config.h"
@@ -34,6 +34,10 @@ namespace rtt_cdi {
 
 class CPEloss {
 public:
+  CPEloss(CParticle target_in, CParticle projectile_in,
+          CPModelType model_type_in, CPModelAngleCutoff model_angle_cutoff_in)
+      : projectile(projectile_in), target(target_in), model_type(model_type_in),
+        model_angle_cutoff(model_angle_cutoff_in) {}
   // ---------- //
   // Destructor //
   // ---------- //
@@ -51,14 +55,14 @@ public:
   // --------- //
 
   /*!
-   * \brief Eloss accessor that returns a single eloss that 
+   * \brief Eloss accessor that returns a single eloss that
    *     corresponds to the provided temperature, density, and
    *     incident particle speed.
    *
    * \param targetTemperature The temperature value for which an
    *     eloss value is being requested (keV).
    *
-   * \param targetDensity The density value for which an eloss 
+   * \param targetDensity The density value for which an eloss
    *     value is being requested (g/cm^3).
    *
    * \param partSpeed The incident speed of the particle (cm/shk).
@@ -71,22 +75,8 @@ public:
   /*!
    * \brief Query whether the data is in tables or functional form.
    */
-  virtual bool data_in_tabular_form() const = 0;
+  //virtual static constexpr bool is_data_in_tabular_form() = 0;
 
-  /*!
-   * \brief Query to determine the target species type.
-   */
-  virtual int32_t getTargetZAID() const = 0;
-
-  /*!
-   * \brief Query to determine the transporting particle type.
-   */
-  virtual int32_t getProjectileZAID() const = 0;
-
-  /*!
-   * \brief Query to determine the CP Model type.
-   */
-  virtual rtt_cdi::CPModel getModel() const = 0;
   /*!
    * \brief Returns the name of the associated data file (if any).
    */
@@ -115,7 +105,7 @@ public:
    */
   virtual size_t getNumTemperatures() const = 0;
 
-  /*! 
+  /*!
    * \brief Returns the size of the density grid.
    */
   virtual size_t getNumDensities() const = 0;
@@ -126,10 +116,37 @@ public:
   virtual size_t getNumEnergies() const = 0;
 
   /*!
-	 * \brief Returns the general Eloss model type (Analytic),
-	 * defined in the enum at the top of this file.
-	 */
-  virtual rtt_cdi::CPModelType getModelType() const = 0;
+   * \brief Query to determine the transporting particle type.
+   */
+  CParticle getProjectile() const { return projectile; }
+
+  /*!
+   * \brief Query to determine the target species type.
+   */
+  CParticle getTarget() const { return target; }
+
+  /*!
+   * \brief Query to determine the CP Model type.
+   */
+  CPModelType getModelType() const { return model_type; }
+
+  /*!
+   * \brief Query to determine the angle cutoff used by the CP model.
+   */
+  CPModelAngleCutoff getModelAngleCutoff() const { return model_angle_cutoff; }
+
+protected:
+  // Particle being transported i.e. subject to energy loss
+  const CParticle projectile;
+
+  // Target particle
+  const CParticle target;
+
+  // CP Model type
+  const CPModelType model_type;
+
+  // CP Model angle cutoff
+  const CPModelAngleCutoff model_angle_cutoff;
 };
 
 } // namespace rtt_cdi

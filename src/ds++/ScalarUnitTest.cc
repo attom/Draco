@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/ScalarUnitTest.cc
  * \author Kelly Thompson
  * \date   Thu May 18 17:08:54 2006
  * \brief  Provide services for scalar unit tests.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "ScalarUnitTest.hh"
 #include "Assert.hh"
@@ -15,7 +15,7 @@
 #include <sstream>
 
 namespace rtt_dsxx {
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Constructor for ScalarUnitTest
  * \arg argc The number of command line arguments
@@ -84,6 +84,6 @@ ScalarUnitTest::ScalarUnitTest(int &argc, char **&argv, string_fp_void release_,
 
 } // end namespace rtt_dsxx
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ScalarUnitTest.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

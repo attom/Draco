@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   quadrature/Ordinate_Set_Mapper.hh
  * \author Allan Wollaber
  * \date   Mon Mar  7 10:42:56 EST 2016
  * \brief  Declarations for the class rtt_quadrature::Ordinate_Set_Mapper.
- * \note   Copyright (C)  2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C)  2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef quadrature_OrdinateSetMapper_hh
 #define quadrature_OrdinateSetMapper_hh
@@ -15,13 +15,13 @@
 
 namespace rtt_quadrature {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Ordinate_Set_Mapper
  *
  * \brief Provides services to map an angle ordinate onto an ordinate set
  */
-//===========================================================================//
+//============================================================================//
 
 class Ordinate_Set_Mapper {
 public:
@@ -122,6 +122,6 @@ private:
 
 #endif // quadrature_OrdinateSetMapper_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of quadrature/OrdinateSetMapper.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,16 +1,16 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_eospac/SesameTables.hh
  * \author Kelly Thompson
  * \date   Fri Apr  6 08:57:48 2001
  * \brief  Header file for SesameTables (mapping material IDs
  *         to Sesame table indexes).
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_eospac_SesameTables_hh__
-#define __cdi_eospac_SesameTables_hh__
+#ifndef rtt_cdi_eospac_SesameTables_hh
+#define rtt_cdi_eospac_SesameTables_hh
 
 #include "eos_Interface.h"
 #include <map>
@@ -19,7 +19,7 @@
 
 namespace rtt_cdi_eospac {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class SesameTables
  *
@@ -38,7 +38,7 @@ namespace rtt_cdi_eospac {
  *
  * \sa cdi_eospac/test/tEospac.cc
  */
-//===========================================================================//
+//============================================================================//
 
 class SesameTables {
   // DATA
@@ -204,8 +204,8 @@ public:
 
 } // end namespace rtt_cdi_eospac
 
-#endif // __cdi_eospac_SesameTables_hh__
+#endif // rtt_cdi_eospac_SesameTables_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi_eospac/SesameTables.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

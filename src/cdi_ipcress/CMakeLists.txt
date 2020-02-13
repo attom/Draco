@@ -18,7 +18,6 @@ set( sources
    IpcressDataTable.cc
    IpcressGrayOpacity.cc
    IpcressMultigroupOpacity.cc
-   IpcressOdfmgOpacity.cc
 )
 set( headers
    IpcressFile.hh
@@ -27,7 +26,6 @@ set( headers
    IpcressDataTable.hh
    IpcressGrayOpacity.hh
    IpcressMultigroupOpacity.hh
-   IpcressOdfmgOpacity.hh
 )
 
 # ---------------------------------------------------------------------------- #
@@ -41,14 +39,11 @@ add_component_library(
   HEADERS      "${headers}"
   SOURCES      "${sources}" )
 
-
 add_component_executable(
   TARGET      Exe_Ipcress_Interpreter
   TARGET_DEPS "Lib_cdi_ipcress"
-  VENDOR_LIBS "${IPCRESS_LIBRARY};${IPCRESS_GFORTRAN_LIBRARY}"
   SOURCES     ${PROJECT_SOURCE_DIR}/IpcressInterpreter.cc
-  PREFIX       Draco
-  )
+  PREFIX       Draco )
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions

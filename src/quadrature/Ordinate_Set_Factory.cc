@@ -1,13 +1,13 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   quadrature/Ordinate_Set_Factory.cc
  * \author Allan Wollaber
  * \date   Mon Mar  7 10:42:56 EST 2016
  * \brief  Implementation file for the class
  *         rtt_quadrature::Ordinate_Set_Factory.
- * \note   Copyright (C)  2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C)  2016-2020 Triad National Security, LLC.
  *         All rights reserved.  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "Ordinate_Set_Factory.hh"
 #include "Gauss_Legendre.hh"
@@ -25,7 +25,7 @@
 
 namespace rtt_quadrature {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Primary service method to create an Ordinate_Set
  *
@@ -134,6 +134,6 @@ std::shared_ptr<Ordinate_Set> Ordinate_Set_Factory::get_Ordinate_Set() const {
 
 } // end namespace rtt_quadrature
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of quadrature/Ordinate_Set_Factory.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

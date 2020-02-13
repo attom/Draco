@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file    timestep/ts_manager.hh
  * \author  John McGhee
  * \date    Mon Apr  6 17:22:53 1998
  * \brief   Header file for the manager utility for time-step advisors.
- * \note    Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note    Copyright (C) 2016-2020 Triad National Security, LLC.
  *          All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __timestep_ts_manager_hh__
-#define __timestep_ts_manager_hh__
+#ifndef rtt_timestep_ts_manager_hh
+#define rtt_timestep_ts_manager_hh
 
 #include "ts_advisor.hh"
 #include <list>
@@ -17,7 +17,7 @@
 
 namespace rtt_timestep {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \brief Manages a list of time-step advisors.
  *
@@ -29,7 +29,7 @@ namespace rtt_timestep {
  * component advisors (i.e. electron energy, radiation energy, ion energy, max
  * allowed change, etc...).
  */
-//===========================================================================//
+//============================================================================//
 class DLL_PUBLIC_timestep ts_manager {
 
   // NESTED CLASSES AND TYPEDEFS
@@ -137,8 +137,8 @@ public:
 
 } // namespace rtt_timestep
 
-#endif // __timestep_ts_manager_hh__
+#endif // rtt_timestep_ts_manager_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ts_manager.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

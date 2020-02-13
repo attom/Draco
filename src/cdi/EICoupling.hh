@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi/EICoupling.hh
  * \author Mathew Cleveland
  * \date   March 2019
  * \brief  EICoupling class header file (an abstract class)
- * \note   Copyright (C) 2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_EICoupling_hh__
-#define __cdi_EICoupling_hh__
+#ifndef rtt_cdi_EICoupling_hh
+#define rtt_cdi_EICoupling_hh
 
 #include "ds++/config.h"
 #include <vector>
@@ -63,7 +63,7 @@ public:
    *     opacity value is being requested (keV).
    * \param iTemperature The electron temperature value for which an
    *     opacity value is being requested (keV).
-   * \param density The density value for which an opacity 
+   * \param density The density value for which an opacity
    *     value is being requested (g/cm^3).
    * \param w_e is the plasma electron frequency (1/s) (as defined by Eq. 3.41
    *     in Brown, Preston, and Singleton, 'Physics Reports', V410, Issue 4,
@@ -86,7 +86,7 @@ public:
    *    value is being requested (keV).
    * \param vitemperature The ion temperature value for which an opacity value
    *     is being requested (keV).
-   * \param vdensity The density value for which an opacity 
+   * \param vdensity The density value for which an opacity
    *     value is being requested (g/cm^3).
    * \param vw_e is the plasma electron frequency (1/s) (as defined by Eq. 3.41
    *     in Brown, Preston, and Singleton, 'Physics Reports', V410, Issue 4,
@@ -118,8 +118,8 @@ public:
 
 } // end namespace rtt_cdi
 
-#endif // __cdi_EICoupling_hh__
+#endif // rtt_cdi_EICoupling_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi/EICoupling.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

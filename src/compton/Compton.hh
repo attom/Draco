@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   compton/Compton.hh
  * \author Kendra Keady
  * \date   Mon Feb 27 2017
  * \brief  Header file for compton CSK_generator interface
- * \note   Copyright (C) 2017-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2017-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __compton_Compton_hh__
-#define __compton_Compton_hh__
+#ifndef rtt_compton_Compton_hh
+#define rtt_compton_Compton_hh
 
 #include "compton/config.h"
 
@@ -21,7 +21,7 @@
 #include <vector>
 
 namespace rtt_compton {
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Compton
  *
@@ -124,7 +124,7 @@ public:
 
 #endif // COMPTON_FOUND
 
-#endif // __compton_Compton_hh__
+#endif // rtt_compton_Compton_hh
 
 //----------------------------------------------------------------------------//
 // End compton/Compton.hh

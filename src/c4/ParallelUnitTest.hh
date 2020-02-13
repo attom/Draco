@@ -1,16 +1,16 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   c4/ParallelUnitTest.hh
  * \author Kelly Thompson
  * \date   Thu Jun  1 17:15:05 2006
  * \brief  Declaration file for encapsulation of Draco parallel unit tests.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  *
  * This file provides a definition for ParallelUnitTest.  The purpose of this
  * class is to encapsulate the keywords and behavior of DBS parallel unit tests.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef c4_ParallelUnitTest_hh
 #define c4_ParallelUnitTest_hh
@@ -20,7 +20,7 @@
 
 namespace rtt_c4 {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class ParallelUnitTest
  * \brief This class encapsulates services for parallel unit tests.
@@ -63,7 +63,7 @@ namespace rtt_c4 {
  * \example c4/test/tstParallelUnitTest.cc
  * This unit test demonstrates typical usage for ParallelUnitTest. *
  */
-//===========================================================================//
+//============================================================================//
 
 class ParallelUnitTest : public rtt_dsxx::UnitTest {
 public:
@@ -113,6 +113,6 @@ int do_parallel_unit_test(int argc, char *argv[], Release release,
 
 #endif // c4_ParallelUnitTest_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of c4/ParallelUnitTest.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

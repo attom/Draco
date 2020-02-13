@@ -272,52 +272,50 @@ function flavor
 
 #------------------------------------------------------------------------------#
 # returns a path to a directory
-function selectscratchdir
+function selectscratchdir ()
 {
-  # if df is too old this command won't work correctly, use an alternate form.
-  local scratchdirs=`df --output=pcent,target 2>&1 | grep -c unrecognized`
-  if [[ $scratchdirs == 0 ]]; then
-    scratchdirs=`df --output=pcent,target | grep scratch | grep -v netscratch | sort -g`
-    if [[ -z "$scratchdirs" ]]; then
-      scratchdirs=`df --output=pcent,target | grep workspace | sort -g`
+    local scratchdirs=`df --output=pcent,target 2>&1 | grep -c unrecognized`;
+    if [[ $scratchdirs == 0 ]]; then
+        scratchdirs=`df --output=pcent,target 2> /dev/null | grep scratch | grep -v netscratch | sort -g`;
+        if [[ -z "$scratchdirs" ]]; then
+            scratchdirs=`df --output=pcent,target 2> /dev/null | grep workspace | sort -g`;
+        fi;
+    else
+        scratchdirs=`df -a 2> /dev/null | grep net/scratch | awk '{ print $4 " "$5 }' | sort -g`;
+        if [[ -z "$scratchdirs" ]]; then
+            scratchdirs=`df -a 2> /dev/null | grep lustre/scratch | awk '{ print $4 " "$5 }' | sort -g`;
+        fi;
+    fi;
+    for item in $scratchdirs;
+    do
+        if [[ `echo $item | grep -c %` == 1 ]]; then
+            continue;
+        fi;
+        if [[ -d $item/users ]]; then
+            item2="${item}/users";
+            mkdir -p $item2/$USER &>/dev/null;
+            if [[ -w $item2/$USER ]]; then
+                echo "$item2";
+                return;
+            fi;
+        fi;
+        mkdir -p $item/$USER &>/dev/null;
+        if [[ -w $item/$USER ]]; then
+            echo "$item";
+            return;
+        fi;
+        mkdir -p $item/yellow/$USER &>/dev/null;
+        if [[ -w $item/yellow/$USER ]]; then
+            echo "$item/yellow";
+            return;
+        fi;
+    done;
+    item=/netscratch/$USER;
+    mkdir -p $item &>/dev/null;
+    if [[ -w $item ]]; then
+        echo "$item";
+        return;
     fi
-  else
-    scratchdirs=`df -a 2> /dev/null | grep net/scratch | awk '{ print $4 " "$5 }' | sort -g`
-    if [[ -z "$scratchdirs" ]]; then
-      scratchdirs=`df -a 2> /dev/null | grep lustre/scratch | awk '{ print $4 " "$5 }' | sort -g`
-    fi
-  fi
-  for item in $scratchdirs; do
-    # omit entries that have a percent
-    if [[ `echo $item | grep -c %` == 1 ]]; then continue; fi
-    if [[ -d $item/users ]]; then
-      item2="${item}/users"
-      mkdir -p $item2/$USER &> /dev/null
-      if [[ -w $item2/$USER ]]; then
-        echo "$item2"
-        return
-      fi
-    fi
-    mkdir -p $item/$USER &> /dev/null
-    if [[ -w $item/$USER ]]; then
-      echo "$item"
-      return
-    fi
-    # might need another directory level 'yellow'
-    mkdir -p $item/yellow/$USER &> /dev/null
-    if [[ -w $item/yellow/$USER ]]; then
-      echo "$item/yellow"
-      return
-    fi
-  done
-
-  # if no writable scratch directory is located, then also try netscratch;
-  item=/netscratch/$USER
-  mkdir -p $item &> /dev/null
-  if [[ -w $item ]]; then
-    echo "$item"
-    return
-  fi
 }
 
 #------------------------------------------------------------------------------#

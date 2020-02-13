@@ -1,16 +1,16 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   c4/gatherv.hh
  * \author Thomas M. Evans
  * \date   Thu Mar 21 11:42:03 2002
  * \brief  Data gatherv functions
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  *
  * This file contains the declarations for determinate and indeterminate
  * variable length gather functions.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef c4_gatherv_hh
 #define c4_gatherv_hh
@@ -20,7 +20,7 @@
 #include <vector>
 
 namespace rtt_c4 {
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Gather messages of known but processor-dependent size
  *
@@ -37,7 +37,7 @@ template <class T>
 void determinate_gatherv(std::vector<T> &outgoing_data,
                          std::vector<std::vector<T>> &incoming_data);
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Gather messages of unknown size
  *
@@ -60,6 +60,6 @@ void indeterminate_gatherv(std::string &outgoing_data,
 
 #endif // c4_gatherv_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of c4/gatherv.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

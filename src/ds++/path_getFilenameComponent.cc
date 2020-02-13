@@ -1,10 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/path_getFilenameComponent.cc
  * \brief  Encapsulate path information (path separator, etc.)
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "path.hh"
 #include <algorithm> // std::replace()
@@ -12,7 +12,7 @@
 
 namespace rtt_dsxx {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Helper function to extract path information from a filename.
  * \param fqName A fully qualified filename (/path/to/the/unit/test)
@@ -125,6 +125,6 @@ std::string getFilenameComponent(std::string const &fqName,
 
 } // end namespace rtt_dsxx
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of path_getFilenameComponent.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

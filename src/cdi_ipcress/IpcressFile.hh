@@ -1,21 +1,21 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_ipcress/IpcressFile.hh
  * \author Kelly Thompson
  * \date   Tue Aug 22 15:15:49 2000
  * \brief  Header file for IpcressFile class
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_ipcress_IpcressFile_hh__
-#define __cdi_ipcress_IpcressFile_hh__
+#ifndef rtt_cdi_ipcress_IpcressFile_hh
+#define rtt_cdi_ipcress_IpcressFile_hh
 
 #include "IpcressMaterial.hh"
 
 namespace rtt_cdi_ipcress {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class IpcressFile
  *
@@ -60,7 +60,7 @@ namespace rtt_cdi_ipcress {
  * \example cdi_ipcress/test/tIpcressFile.cc
  * Example of IpcressFile use independent of IpcressOpacity or CDI.
  */
-//===========================================================================//
+//============================================================================//
 
 class IpcressFile {
 
@@ -206,8 +206,8 @@ private:
 
 } // end namespace rtt_cdi_ipcress
 
-#endif // __cdi_ipcress_IpcressFile_hh__
+#endif // rtt_cdi_ipcress_IpcressFile_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi_ipcress/IpcressFile.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

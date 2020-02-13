@@ -1,22 +1,22 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_eospac/Eospac.hh
  * \author Kelly Thompson
  * \date   Mon Apr  2 14:14:29 2001
  * \brief
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __cdi_eospac_Eospac_hh__
-#define __cdi_eospac_Eospac_hh__
+#ifndef rtt_cdi_eospac_Eospac_hh
+#define rtt_cdi_eospac_Eospac_hh
 
 #include "SesameTables.hh"
 #include "cdi/EoS.hh"
 #include <iostream>
 
 namespace rtt_cdi_eospac {
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Eospac
  *
@@ -71,7 +71,7 @@ namespace rtt_cdi_eospac {
 // --------------------
 // 1. Add STL like accessors.
 
-//===========================================================================//
+//============================================================================//
 
 class Eospac : public rtt_cdi::EoS {
 
@@ -388,7 +388,7 @@ private:
    * Each of the public access functions calls either getF() or getdFdT() after
    * assigning the correct value to "returnType".
    *
-   * \param vdensity A vector of independent values (e.g. temperature or 
+   * \param vdensity A vector of independent values (e.g. temperature or
    *          density).
    * \param vtemperature A vector of independent values (e.g. temperature or
    *          density).
@@ -448,8 +448,8 @@ private:
 
 } // end namespace rtt_cdi_eospac
 
-#endif // __cdi_eospac_Eospac_hh__
+#endif // rtt_cdi_eospac_Eospac_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi_eospac/Eospac.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

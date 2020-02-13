@@ -1,21 +1,21 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/StackTrace.cc
  * \author Kelly Thompson
  * \date   Friday, Dec 20, 2013, 10:15 am
  * \brief  Linux/X86 implementation of stack trace functions.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "StackTrace.hh"
 #include <iostream>
 #include <sstream>
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Stack trace feature is only available on Unix-based systems when
 // compiled with Intel or GNU C++.
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 #ifdef UNIX
 
 #ifndef draco_isPGI
@@ -28,7 +28,7 @@
 #include <ucontext.h>
 #include <unistd.h> // readlink
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Helper functions
 std::string st_to_string(int const i) {
   std::ostringstream msg;
@@ -36,7 +36,7 @@ std::string st_to_string(int const i) {
   return msg.str();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Print a demangled stack backtrace of the caller function.
 std::string rtt_dsxx::print_stacktrace(std::string const &error_message) {
   // store/build the message here.  At the end of the function we return
@@ -173,13 +173,13 @@ std::string rtt_dsxx::print_stacktrace(std::string const &error_message) {
 
 #endif // UNIX
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Stack trace feature is also available on Win32-based systems when
 // compiled with Visual Studio.
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 #ifdef WIN32
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Print a demangled stack backtrace of the caller function.
 std::string rtt_dsxx::print_stacktrace(std::string const &error_message) {
   // store/build the message here.  At the end of the function we return
@@ -210,6 +210,6 @@ std::string rtt_dsxx::print_stacktrace(std::string const &error_message) {
 
 #endif // WIN32
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ds++/StackTrace.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

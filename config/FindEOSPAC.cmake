@@ -2,7 +2,7 @@
 # file   config/FindEOSPAC.cmake
 # date   2017 February 28
 # brief  Instructions for discovering the EOSPAC vendor libraries.
-# note   Copyright (C) 2016-2019 Triad National Security, LLC.
+# note   Copyright (C) 2016-2020 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 

@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   field_ts_advisor.t.hh
  * \author John McGhee
  * \date   Mon Aug 24 07:48:00 1998
  * \brief  Contains the template methods for the field ts_advisor class.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "field_ts_advisor.hh"
 #include "ts_manager.hh"
@@ -15,7 +15,7 @@
 
 namespace rtt_timestep {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class FT>
 void field_ts_advisor::set_floor(FT const &y1, double frac) {
   Require(invariant_satisfied());
@@ -39,7 +39,7 @@ void field_ts_advisor::set_floor(FT const &y1, double frac) {
   Ensure(invariant_satisfied());
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class FT>
 void field_ts_advisor::update_tstep(const ts_manager &tsm, const FT &q_old,
                                     const FT &q_new) {
@@ -116,6 +116,6 @@ void field_ts_advisor::update_tstep(const ts_manager &tsm, const FT &q_old,
 
 } // namespace rtt_timestep
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of field_ts_advisor.t.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

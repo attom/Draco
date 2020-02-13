@@ -51,7 +51,7 @@ if test -n "$MODULESHOME"; then
         mflavor="$cflavor-openmpi-3.1.3"
         lapackflavor="lapack-3.8.0"
         noflavor="emacs git ack gcc/7.3.0"
-        if [[ ${SLURM_JOB_PARTITION} =~ "volta" ]]; then
+        if [[ ${SLURM_JOB_PARTITION} =~ "volta" || ${SLURM_JOB_PARTITION} =~ "gpu" ]]; then
           # If we have GPUs on this node, then load the cuda toolkit module by default
           noflavor+=" cuda/10.1"
           cudaflavor="-cuda-10.1"

@@ -1,11 +1,11 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   c4/Compare.cc
  * \author Mike Buksas
  * \date   Thu May  1 14:42:10 2008
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "Compare.hh"
 #include "C4_Functions.hh"
@@ -13,7 +13,7 @@
 
 namespace rtt_c4 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Function to check the equivalence of an int across all processors.
  *
@@ -63,7 +63,7 @@ bool check_global_equiv(int local_value) {
   return pass;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Function to check the equivalence of an unsigned long 
  *        across all processors.
@@ -114,7 +114,7 @@ bool check_global_equiv(unsigned long local_value) {
   return pass;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Function to check the equivalence of an unsigned long long
  *        across all processors.
@@ -165,7 +165,7 @@ bool check_global_equiv(unsigned long long local_value) {
   return pass;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Function to check the equivalence of a long
  *        across all processors.
@@ -216,7 +216,7 @@ bool check_global_equiv(long local_value) {
   return pass;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Function to check the equivalence of a long long
  *        across all processors.
@@ -267,7 +267,7 @@ bool check_global_equiv(long long local_value) {
   return pass;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!  
  * \brief Function to check the equivalence of a double across all
  * processors.
@@ -320,6 +320,6 @@ bool check_global_equiv(double local_value, double eps) {
 
 } // end namespace rtt_c4
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of Compare.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

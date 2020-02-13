@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/SortPermutation.hh
  * \author Randy M. Roberts
  * \date   Mon Feb 14 14:18:27 2000
  * \brief  SortPermutation class definition.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __ds_SortPermutation_hh__
-#define __ds_SortPermutation_hh__
+#ifndef rtt_dsxx_SortPermutation_hh
+#define rtt_dsxx_SortPermutation_hh
 
 #include "Assert.hh"
 #include "isSorted.hh"
@@ -21,7 +21,7 @@
 
 namespace rtt_dsxx {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class SortPermutation
  *
@@ -63,7 +63,7 @@ namespace rtt_dsxx {
  *
  * Test of rtt_dsxx::SortPermutation and isSorted.hh functions.
  */
-//===========================================================================//
+//============================================================================//
 
 class SortPermutation {
 
@@ -262,8 +262,8 @@ private:
 
 } // end namespace rtt_dsxx
 
-#endif // __ds_SortPermutation_hh__
+#endif // rtt_dsxx_SortPermutation_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ds++/SortPermutation.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

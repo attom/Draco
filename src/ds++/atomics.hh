@@ -1,22 +1,22 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/atomics.hh
  * \author Tim Kelley
  * \date   Thursday, Sept. 6, 2018, 10:50 am
  * \brief  Header file for atomic functions on floatint-point (until C++20)
- * \note   Copyright (C) 2018-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2018-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __dsxx_Atomics_hh__
-#define __dsxx_Atomics_hh__
+#ifndef rtt_dsxx_Atomics_hh
+#define rtt_dsxx_Atomics_hh
 
 #include <atomic>
 #include <type_traits> // std::is_floating_point_v
 
 namespace rtt_dsxx {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /**\brief atomically add arg to a.
  * \tparam FpT: a floating point type (integer types in std lib since C++11).
  * \param a: an atomic of type FpT that will be updated.
@@ -41,7 +41,7 @@ FpT fetch_add(std::atomic<FpT> &a, FpT arg,
   return to_store;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /**\brief atomically subtract a from arg.
  * \tparam FpT: a floating point type (integer types in std lib since C++11).
  * \param a: an atomic of type FpT that will be updated.
@@ -68,8 +68,8 @@ FpT fetch_sub(std::atomic<FpT> &a, FpT arg,
 
 } // namespace rtt_dsxx
 
-#endif // __dsxx_Atomics_hh__
+#endif // rtt_dsxx_Atomics_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ds++/atomics.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

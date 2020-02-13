@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/Release.cc
  * \author Thomas Evans
  * \date   Thu Jul 15 09:31:44 1999
  * \brief  Provides the function definition for Release.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "Release.hh"
 #include "DracoTerminal.hh"
@@ -16,7 +16,7 @@
 
 namespace rtt_dsxx {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Format list of authors to do correct line breaks and ensures total
  *        line length is less than a specified maximum.
@@ -56,7 +56,7 @@ std::string print_devs(size_t const maxlinelen, std::string const &line_name,
   return msg.str();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // function definition for Release, define the local version number for this
 // library in the form ds_#.#.# in pkg_version variable
 const std::string release() {
@@ -87,7 +87,7 @@ const std::string release() {
   return pkg_release.str();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*! \brief Return a list of Draco contributing authors
  *
  * \param[in] use_doxygen_formatting If true, use extra decoration in the
@@ -105,26 +105,27 @@ const std::string author_list(bool const use_doxygen_formatting) {
   mmdevs current_developers;
   // not totally fair... KT got credit for LOC when svn repository was converted
   // to git.
-  current_developers.insert(fomdev(188732, "Kelly G. Thompson"));
-  current_developers.insert(fomdev(13919, "Kent G. Budge"));
-  current_developers.insert(fomdev(3855, "Ryan T. Wollaeger"));
-  current_developers.insert(fomdev(3701, "Alex R. Long"));
-  current_developers.insert(fomdev(2933, "James S. Warsa"));
-  current_developers.insert(fomdev(1518, "Matt A. Cleveland"));
-  current_developers.insert(fomdev(1247, "Kendra P. Long"));
-  current_developers.insert(fomdev(682, "Tim Kelley"));
-  current_developers.insert(fomdev(398, "Jae H. Chang"));
+  current_developers.insert(fomdev(191291, "Kelly G. Thompson"));
+  current_developers.insert(fomdev(13713, "Kent G. Budge"));
+  current_developers.insert(fomdev(3826, "Ryan T. Wollaeger"));
+  current_developers.insert(fomdev(3714, "Alex R. Long"));
+  current_developers.insert(fomdev(2894, "James S. Warsa"));
+  current_developers.insert(fomdev(1916, "Kendra P. Long"));
+  current_developers.insert(fomdev(1515, "Matt A. Cleveland"));
+  current_developers.insert(fomdev(639, "Tim Kelley"));
+  current_developers.insert(fomdev(530, "Ben R. Ryan"));
+  current_developers.insert(fomdev(390, "Jae H. Chang"));
   current_developers.insert(fomdev(173, "Andrew T. Till"));
   current_developers.insert(fomdev(98, "Seth D. Cook"));
-  current_developers.insert(fomdev(1, "Ben R. Ryan"));
+  current_developers.insert(fomdev(94, "Ondrej Certik"));
   current_developers.insert(fomdev(1, "David A. Dixon"));
 
   mmdevs prior_developers;
 
-  prior_developers.insert(fomdev(4014, "Gabriel M. Rockefeller"));
-  prior_developers.insert(fomdev(2132, "Allan B. Wollaber"));
-  prior_developers.insert(fomdev(524, "Rob B. Lowrie"));
-  prior_developers.insert(fomdev(307, "Paul W. Talbot"));
+  prior_developers.insert(fomdev(4007, "Gabriel M. Rockefeller"));
+  prior_developers.insert(fomdev(2107, "Allan B. Wollaber"));
+  prior_developers.insert(fomdev(515, "Rob B. Lowrie"));
+  prior_developers.insert(fomdev(304, "Paul W. Talbot"));
   prior_developers.insert(fomdev(262, "Katherine J. Wang"));
   prior_developers.insert(fomdev(78, "Peter Ahrens"));
   prior_developers.insert(fomdev(25, "Daniel Holladay"));
@@ -175,14 +176,14 @@ const std::string author_list(bool const use_doxygen_formatting) {
   return alist.str();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //! Print a Copyright note with an author list:
 const std::string copyright() {
   std::ostringstream msg;
 
   msg << author_list() << "\n"
       << Term::ccolor(Term::fg::green)
-      << "Copyright (C) 2016-2019 Triad National Security, LLC. "
+      << "Copyright (C) 2016-2020 Triad National Security, LLC. "
          "(C19028, LA-CC-16-016),\n     Released under a 3-Clause BSD License."
       << Term::ccolor(Term::fg::reset) << std::endl;
 
@@ -191,7 +192,7 @@ const std::string copyright() {
 
 } // namespace rtt_dsxx
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //! This version can be called by Fortran and wraps the C++ version.
 extern "C" void ec_release(char *release_string, size_t maxlen) {
   std::string tmp_rel = rtt_dsxx::release();
@@ -202,6 +203,6 @@ extern "C" void ec_release(char *release_string, size_t maxlen) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of Release.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   c4/QueryEnv.hh
  * \author Tim Kelley
  * \date   Fri Jun 7 08:06:53 2019
  * \brief  Functions for working with your environment
- * \note   Copyright (C) 2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef Query_Env_hh
 #define Query_Env_hh
@@ -72,16 +72,16 @@ std::pair<bool, T> get_env_val(std::string const &key, T default_value = T{}) {
 class SLURM_Task_Info {
 public:
   /**\brief Get SLURM_CPUS_PER_TASK */
-  int get_cpus_per_task() const { return cpus_per_task_; }
+  uint32_t get_cpus_per_task() const { return cpus_per_task_; }
 
   /**\brief Get SLURM_NTASKS */
-  int get_ntasks() const { return ntasks_; }
+  uint32_t get_ntasks() const { return ntasks_; }
 
   /**\brief Get SLURM_JOB_NUM_NODES */
-  int get_job_num_nodes() const { return job_num_nodes_; }
+  uint32_t get_job_num_nodes() const { return job_num_nodes_; }
 
   /**\brief Get SLURM_CPUS_ON_NODE */
-  int get_cpus_on_node() const { return cpus_on_node_; }
+  uint32_t get_cpus_on_node() const { return cpus_on_node_; }
 
   //! Return value of SLURM_NODELIST
   std::string get_nodelist() const { return nodelist_; }
@@ -114,22 +114,25 @@ public:
 
   // state
 private:
-  int cpus_per_task_{0xFFFFFFF};    //!< arg to -c
-  bool def_cpus_per_task_{false};   //!< whether SLURM_CPUS_PER_TASK was defined
-  int ntasks_{0xFFFFFFE};           //!< arg to -n
-  bool def_ntasks_{false};          //!< whether SLURM_NTASKS was defined
-  int job_num_nodes_{0xFFFFFFD};    //!< arg to -N
-  bool def_job_num_nodes_{false};   //!< whether SLURM_JOB_NUM_NODES was defined
-  int cpus_on_node_{0xFFFFFFD};     //!< SLURM_CPUS_ON_NODE
-  bool def_cpus_on_node_{false};    //!< was SLURM_CPUS_ON_NODE defined?
-  std::string nodelist_{"not set"}; //!< SLURM_NODELIST
-  bool def_nodelist_{false};        //!< was SLURM_NODELIST defined?
-};                                  // SLURM_Task_Info
+  uint32_t cpus_per_task_{0xFFFFFFF}; //!< arg to -c
+  //! whether SLURM_CPUS_PER_TASK was defined
+  bool def_cpus_per_task_{false};
+  uint32_t ntasks_{0xFFFFFFE};        //!< arg to -n
+  bool def_ntasks_{false};            //!< whether SLURM_NTASKS was defined
+  uint32_t job_num_nodes_{0xFFFFFFD}; //!< arg to -N
+  //! whether SLURM_JOB_NUM_NODES was defined
+  bool def_job_num_nodes_{false};
+  uint32_t cpus_on_node_{0xFFFFFFD}; //!< SLURM_CPUS_ON_NODE
+  bool def_cpus_on_node_{false};     //!< was SLURM_CPUS_ON_NODE defined?
+  std::string nodelist_{"not set"};  //!< SLURM_NODELIST
+  bool def_nodelist_{false};         //!< was SLURM_NODELIST defined?
+
+}; // SLURM_Task_Info
 
 } // namespace rtt_c4
 
 #endif // Query_Env_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of QueryEnv.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

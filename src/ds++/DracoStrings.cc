@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/DracoStrings.cc
  * \author Kelly G. Thompson <kgt@lanl.gov
  * \date   Wednesday, Aug 23, 2017, 12:48 pm
  * \brief  Encapsulates common string manipulations (implementation).
- * \note   Copyright (C) 2017-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2017-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "DracoStrings.hh"
 #include "Assert.hh"
@@ -214,6 +214,6 @@ std::map<std::string, unsigned> get_word_count(std::string const &filename,
 
 } // namespace rtt_dsxx
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of DracoStrings.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

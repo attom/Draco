@@ -4,7 +4,7 @@
 # date   2010 Dec 1
 # brief  Provide extra macros to simplify CMakeLists.txt for component
 #        directories.
-# note   Copyright (C) 2016-2019 Triad National Security, LLC.
+# note   Copyright (C) 2016-2020 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -27,11 +27,19 @@ endif()
 set(Draco_std_target_props_C
   C_STANDARD 11                # Force strict ANSI-C 11 standard
   C_EXTENSIONS OFF
-  C_STANDARD_REQUIRED ON)
+  C_STANDARD_REQUIRED ON )
 set(Draco_std_target_props_CXX
   CXX_STANDARD 14              # Force strict C++ 14 standard
   CXX_EXTENSIONS OFF
   CXX_STANDARD_REQUIRED ON )
+set(Draco_std_target_props_CUDA
+  CUDA_STANDARD 14              # Force strict C++ 14 standard
+  CUDA_EXTENSIONS OFF
+  CUDA_STANDARD_REQUIRED ON
+  CUDA_SEPARABLE_COMPILATION ON)
+#  CUDA_RESOLVE_DEVICE_SYMBOLS ON )
+# target_include_directories (my lib
+#     PUBLIC $<BUILD_INTERFACE:${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}> )
 set(Draco_std_target_props
   INTERPROCEDURAL_OPTIMIZATION_RELEASE ${USE_IPO}
   POSITION_INDEPENDENT_CODE ON )
@@ -47,7 +55,11 @@ function( dbs_std_tgt_props target )
     if( ${lang} STREQUAL "C" )
       set_target_properties( ${target} PROPERTIES ${Draco_std_target_props_C} )
     elseif( ${lang} STREQUAL "CXX" )
-      set_target_properties( ${target} PROPERTIES ${Draco_std_target_props_CXX} )
+      set_target_properties( ${target}
+        PROPERTIES ${Draco_std_target_props_CXX} )
+    elseif( ${lang} STREQUAL "CUDA" )
+      set_target_properties( ${target}
+        PROPERTIES ${Draco_std_target_props_CUDA} )
     endif()
     set_target_properties( ${target} PROPERTIES ${Draco_std_target_props} )
   endforeach()
@@ -335,8 +347,7 @@ macro( add_component_library )
     "NOEXPORT"
     "PREFIX;TARGET;LIBRARY_NAME;LIBRARY_NAME_PREFIX;LIBRARY_TYPE;LINK_LANGUAGE"
     "HEADERS;SOURCES;TARGET_DEPS;VENDOR_LIST;VENDOR_LIBS;VENDOR_INCLUDE_DIRS"
-    ${ARGV}
-    )
+    ${ARGV} )
 
   #
   # Defaults:
@@ -348,6 +359,10 @@ macro( add_component_library )
   # Default link language is C++
   if( NOT acl_LINK_LANGUAGE )
     set( acl_LINK_LANGUAGE CXX )
+  endif()
+  if( "${acl_LINK_LANGUAGE}" STREQUAL "CUDA" )
+    set_property( SOURCE ${acl_SOURCES} APPEND PROPERTY LANGUAGE CUDA )
+#    set( acl_LIBRARY_TYPE STATIC )
   endif()
 
   #
@@ -368,7 +383,7 @@ macro( add_component_library )
   # Create the library and set the properties
   #
 
-  # This is a test library.  Find the component name
+  # If this is a test library.  Find the component name
   string( REPLACE "_test" "" comp_target ${acl_TARGET} )
   # extract project name, minus leading "Lib_"
   string( REPLACE "Lib_" "" folder_name ${acl_TARGET} )
@@ -379,8 +394,12 @@ macro( add_component_library )
     OUTPUT_NAME ${acl_LIBRARY_NAME_PREFIX}${acl_LIBRARY_NAME}
     FOLDER      ${folder_name}
     WINDOWS_EXPORT_ALL_SYMBOLS ON )
+ if("${acl_LINK_LANGUAGE}" STREQUAL "CUDA")
+   set_property( TARGET ${acl_TARGET} APPEND PROPERTY
+     COMPILE_DEFINITIONS "USE_CUDA=ON" )
+ endif()
   if( DEFINED DRACO_LINK_OPTIONS AND NOT "${DRACO_LINK_OPTIONS}x" STREQUAL "x")
-    set_target_properties( ${acl_TARGET} PROPERTIES
+    set_property( TARGET ${acl_TARGET} APPEND PROPERTY
       LINK_OPTIONS ${DRACO_LINK_OPTIONS} )
   endif()
 
@@ -847,15 +866,35 @@ macro( add_scalar_tests test_sources )
   cmake_parse_arguments(
     addscalartest
     "APPLICATION_UNIT_TEST;LINK_WITH_FORTRAN;NONE"
-    "LABEL"
+    "LABEL;LINK_LANGUAGE"
     "DEPS;FAIL_REGEX;PASS_REGEX;RESOURCE_LOCK;RUN_AFTER;SOURCES;TEST_ARGS"
-    ${ARGV}
-    )
+    ${ARGV} )
+
+  # Sanity Checks
+  # ------------------------------------------------------------
+  if( "${addscalartest_SOURCES}none" STREQUAL "none" )
+    message( FATAL_ERROR "You must provide the keyword SOURCES and a list of "
+      "sources when using the add_scalar_tests macro.  Please see "
+      "draco/config/component_macros.cmake::add_scalar_tests() for more "
+      "information." )
+  endif()
+
+  # Defaults:
+  # ------------------------------------------------------------
+
+  # Default link language is C++
+  if( NOT addscalartest_LINK_LANGUAGE )
+    set( addscalartest_LINK_LANGUAGE CXX )
+  endif()
+ if( "${addscalartest_LINK_LANGUAGE}" STREQUAL "CUDA" )
+   set_source_files_properties( ${addscalartest_SOURCES}
+     PROPERTIES LANGUAGE CUDA )
+ endif()
 
   # Special Cases:
   # ------------------------------------------------------------
-  # On some platforms (Trinity), even scalar tests must be run underneath
-  # MPIEXEC_EXECUTABLE (aprun):
+  # On some platforms (Trinity, Sierra), even scalar tests must be run
+  # underneath MPIEXEC_EXECUTABLE (srun, jsrun, lrun):
   separate_arguments(MPIEXEC_POSTFLAGS)
   if( "${MPIEXEC_EXECUTABLE}" MATCHES "srun" OR
       "${MPIEXEC_EXECUTABLE}" MATCHES "jsrun" )
@@ -867,13 +906,6 @@ macro( add_scalar_tests test_sources )
   # Special cases for tests that use the ApplicationUnitTest
   # framework (see c4/ApplicationUnitTest.hh).
   if( addscalartest_APPLICATION_UNIT_TEST )
-    # This is a special case for Cray environments. For application unit tests,
-    # the main test runs on the 'login' node (1 rank only) and the real test is
-    # run under 'aprun'.  So we do not prefix the test command with 'aprun'.
-    if( "${MPIEXEC_EXECUTABLE}" MATCHES "aprun" )
-      unset( RUN_CMD )
-    endif()
-
     # If this is an ApplicationUnitTest based test then the TEST_ARGS will look
     # like "--np 1;--np 2;--np 4".  For the case where DRACO_C4 = SCALAR, we
     # will automatically demote these arguments to "--np scalar."
@@ -881,12 +913,6 @@ macro( add_scalar_tests test_sources )
       set( addscalartest_TEST_ARGS "--np scalar" )
     endif()
 
-  endif()
-
-  # Sanity Checks
-  # ------------------------------------------------------------
-  if( "${addscalartest_SOURCES}none" STREQUAL "none" )
-    message( FATAL_ERROR "You must provide the keyword SOURCES and a list of sources when using the add_scalar_tests macro.  Please see draco/config/component_macros.cmake::add_scalar_tests() for more information." )
   endif()
 
   # Pass/Fail criteria
@@ -907,6 +933,8 @@ macro( add_scalar_tests test_sources )
 
   # What is the component name (always use Lib_${compname} as a dependency).
   string( REPLACE "_test" "" compname ${PROJECT_NAME} )
+  string( REPLACE "_ftest" "" compname ${compname} )
+  string( REPLACE "_cudatest" "" compname ${compname} )
 
   # Loop over each test source files:
   # 1. Compile the executable
@@ -919,20 +947,28 @@ macro( add_scalar_tests test_sources )
     get_filename_component( testname ${file} NAME_WE )
     add_executable( Ut_${compname}_${testname}_exe ${file} )
     dbs_std_tgt_props( Ut_${compname}_${testname}_exe )
-    set_target_properties( Ut_${compname}_${testname}_exe PROPERTIES
-      OUTPUT_NAME ${testname}
-      VS_KEYWORD  ${testname}
-      FOLDER      ${compname}_test
-      COMPILE_DEFINITIONS "PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\";PROJECT_BINARY_DIR=\"${PROJECT_BINARY_DIR}\"" )
-    if( DEFINED DRACO_LINK_OPTIONS AND 
+    set_property( TARGET Ut_${compname}_${testname}_exe APPEND PROPERTY
+      OUTPUT_NAME ${testname} )
+    set_property( TARGET Ut_${compname}_${testname}_exe APPEND PROPERTY
+      VS_KEYWORD  ${testname} )
+    set_property( TARGET Ut_${compname}_${testname}_exe APPEND PROPERTY
+      FOLDER      ${compname}_test )
+    set_property( TARGET Ut_${compname}_${testname}_exe APPEND PROPERTY
+      COMPILE_DEFINITIONS "PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\"" )
+    set_property( TARGET Ut_${compname}_${testname}_exe APPEND PROPERTY
+      COMPILE_DEFINITIONS "PROJECT_BINARY_DIR=\"${PROJECT_BINARY_DIR}\"" )
+    if("${addscalartest_LINK_LANGUAGE}" STREQUAL "CUDA")
+      set_property( TARGET Ut_${compname}_${testname}_exe APPEND PROPERTY
+        COMPILE_DEFINITIONS "USE_CUDA=ON" )
+    endif()
+    if( DEFINED DRACO_LINK_OPTIONS AND
         NOT "${DRACO_LINK_OPTIONS}x" STREQUAL "x")
-      set_target_properties( Ut_${compname}_${testname}_exe PROPERTIES
+      set_property( TARGET Ut_${compname}_${testname}_exe APPEND PROPERTY
         LINK_OPTIONS ${DRACO_LINK_OPTIONS} )
     endif()
-    # Do we need to use the Fortran compiler as the linker?
     if( addscalartest_LINK_WITH_FORTRAN )
-      set_target_properties( Ut_${compname}_${testname}_exe
-        PROPERTIES LINKER_LANGUAGE Fortran )
+      set_property( TARGET Ut_${compname}_${testname}_exe APPEND
+        PROPERTY LINKER_LANGUAGE Fortran )
     endif()
     target_link_libraries(
       Ut_${compname}_${testname}_exe
@@ -1073,7 +1109,7 @@ macro( add_parallel_tests )
       VS_KEYWORD  ${testname}
       FOLDER      ${compname}_test
       COMPILE_DEFINITIONS "PROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\";PROJECT_BINARY_DIR=\"${PROJECT_BINARY_DIR}\"" )
-    if( DEFINED DRACO_LINK_OPTIONS AND 
+    if( DEFINED DRACO_LINK_OPTIONS AND
         NOT "${DRACO_LINK_OPTIONS}x" STREQUAL "x" )
       set_target_properties( Ut_${compname}_${testname}_exe PROPERTIES
         LINK_OPTIONS ${DRACO_LINK_OPTIONS} )

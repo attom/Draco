@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   quadrature/Galerkin_Ordinate_Space.hh
  * \author Kent Budge
  * \date   Mon Mar 26 16:11:19 2007
  * \brief  Definition of class Galerkin_Ordinate_Space
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef quadrature_Galerkin_Ordinate_Space_hh
 #define quadrature_Galerkin_Ordinate_Space_hh
@@ -16,7 +16,7 @@
 namespace rtt_quadrature {
 using std::ostream;
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Galerkin_Ordinate_Space
  * \brief Represents ordinate operators for a Galerkin moment space.
@@ -43,7 +43,7 @@ using std::ostream;
  * quadratures, such that it will be necessary to extend the method to include
  * square (product) quadratures.
  */
-//===========================================================================//
+//============================================================================//
 
 class Galerkin_Ordinate_Space : public Ordinate_Space {
 public:
@@ -140,6 +140,6 @@ private:
 
 #endif // quadrature_Galerkin_Ordinate_Space_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of quadrature/Galerkin_Ordinate_Space.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

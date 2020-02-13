@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi/CDI.hh
  * \author Kelly Thompson
  * \date   Thu Jun 22 16:22:06 2000
  * \brief  CDI class header file.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef rtt_cdi_CDI_hh
 #define rtt_cdi_CDI_hh
@@ -16,7 +16,6 @@
 #include "EoS.hh"
 #include "GrayOpacity.hh"
 #include "MultigroupOpacity.hh"
-#include "OdfmgOpacity.hh"
 #include "ds++/Constexpr_Functions.hh"
 #include "ds++/Soft_Equivalence.hh"
 #include <algorithm>
@@ -24,9 +23,9 @@
 #include <map>
 #include <memory>
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // UNNAMED NAMESPACE
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Nested unnamed namespace that holds data and services used by the Planckian
 // integration routines.  The data in this namespace is accessible by the
 // methods in this file only (internal linkage).
@@ -49,7 +48,7 @@ static double const coeff_21 = 43.867 / 107290978560589824.0;
 static double const coeff = 0.1539897338202651; // 15/pi^4
 static double const NORM_FACTOR = 0.25 * coeff; // 15/(4*pi^4);
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \fn inline double taylor_series_planck(double x)
  * \brief Computes the normalized Planck integral via a 21 term Taylor
@@ -199,7 +198,7 @@ static double polylog_series_minus_one_planck(double const x,
   return poly;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Compute the difference between an integrated Planck and Rosseland
  * curves over \f$ (0,\nu) \f$.
@@ -246,7 +245,7 @@ static double Planck2Rosseland(double const freq, double const exp_freq) {
 
 namespace rtt_cdi {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class CDI
  *
@@ -460,13 +459,12 @@ namespace rtt_cdi {
  * The test code also provides a mechanism to test the CDI independent of any
  * "real" data objects.
  */
-//===========================================================================//
+//============================================================================//
 
 class CDI {
   // NESTED CLASSES AND TYPEDEFS
   typedef std::shared_ptr<const GrayOpacity> SP_GrayOpacity;
   typedef std::shared_ptr<const MultigroupOpacity> SP_MultigroupOpacity;
-  typedef std::shared_ptr<const OdfmgOpacity> SP_OdfmgOpacity;
   typedef std::shared_ptr<const EoS> SP_EoS;
   typedef std::shared_ptr<const EICoupling> SP_EICoupling;
   typedef std::shared_ptr<const CPEloss> SP_CPEloss;
@@ -474,8 +472,6 @@ class CDI {
   typedef std::vector<SF_GrayOpacity> VF_GrayOpacity;
   typedef std::vector<SP_MultigroupOpacity> SF_MultigroupOpacity;
   typedef std::vector<SF_MultigroupOpacity> VF_MultigroupOpacity;
-  typedef std::vector<SP_OdfmgOpacity> SF_OdfmgOpacity;
-  typedef std::vector<SF_OdfmgOpacity> VF_OdfmgOpacity;
   typedef std::vector<SP_CPEloss> SF_CPEloss;
   typedef std::string std_string;
   // Typedefs for CPT mapping:
@@ -507,9 +503,6 @@ class CDI {
    */
   VF_MultigroupOpacity multigroupOpacities;
 
-  //! Array that stores the list of possible OdfmgOpacity types.
-  VF_OdfmgOpacity odfmgOpacities;
-
   //! Array that stores CP Eloss types.
   SF_CPEloss CPElosses;
   //! Map vector index -> particle/target pair
@@ -526,15 +519,6 @@ class CDI {
    * same energy group structure.
    */
   static std::vector<double> frequencyGroupBoundaries;
-
-  /*!
-   * \brief Band boundaries for odf multigroup data.
-   *
-   * This data is stored as static so that the same structure is guaranteed
-   * for all multigroup odf data sets.  Thus, each CDI object will have access
-   * to the same opacity band structure.
-   */
-  static std::vector<double> opacityCdfBandBoundaries;
 
   /*!
    * \brief Smart pointer to the equation of state object.
@@ -592,9 +576,6 @@ public:
   //! Register a multigroup opacity (rtt_cdi::MultigroupOpacity) with CDI.
   void setMultigroupOpacity(const SP_MultigroupOpacity &spMGOp);
 
-  //! Register an ODF Multigroup opacity (rtt_cdi::OdfmgOpacity) with CDI.
-  void setOdfmgOpacity(const SP_OdfmgOpacity &spMGOp);
-
   //! Register an EOS (rtt_cdi::Eos) with CDI.
   void setEoS(const SP_EoS &in_spEoS);
 
@@ -609,8 +590,7 @@ public:
 
   SP_GrayOpacity gray(rtt_cdi::Model m, rtt_cdi::Reaction r) const;
   SP_MultigroupOpacity mg(rtt_cdi::Model m, rtt_cdi::Reaction r) const;
-  SP_OdfmgOpacity odfmg(rtt_cdi::Model m, rtt_cdi::Reaction r) const;
-  SP_CPEloss eloss(rtt_cdi::CPModel m, int32_t proj_zaid,
+  SP_CPEloss eloss(rtt_cdi::CPModelAngleCutoff mAC, int32_t proj_zaid,
                    int32_t targ_zaid) const;
   SP_EoS eos(void) const;
   SP_EICoupling ei_coupling(void) const;
@@ -646,46 +626,21 @@ public:
       std::vector<double> const &opacity,
       std::vector<double> const &rosselendSpectrum);
 
-  //! Collapse Multigroup+Multiband data to single-interval data with Planck weighting.
-  static double collapseOdfmgOpacitiesPlanck(
-      std::vector<double> const &groupBounds,
-      // double              const & T,
-      std::vector<std::vector<double>> const &opacity,
-      std::vector<double> const &planckSpectrum,
-      std::vector<double> const &bandWidths,
-      std::vector<std::vector<double>> &emission_group_cdf);
-
-  //! Collapse Multigroup+Multiband data to single-interval reciprocal data with Planck weighting.
-  static double collapseOdfmgReciprocalOpacitiesPlanck(
-      std::vector<double> const &groupBounds,
-      std::vector<std::vector<double>> const &opacity,
-      std::vector<double> const &planckSpectrum,
-      std::vector<double> const &bandWidths);
-
-  //! Collapse Multigroup+Multiband data to single-interval data with Rosseland weighting.
-  static double collapseOdfmgOpacitiesRosseland(
-      std::vector<double> const &groupBounds,
-      std::vector<std::vector<double>> const &opacity,
-      std::vector<double> const &rosselendSpectrum,
-      std::vector<double> const &bandWidths);
-
   //! Return material ID string.
   const std_string &getMatID() const { return matID; }
 
   bool isGrayOpacitySet(rtt_cdi::Model, rtt_cdi::Reaction) const;
   bool isMultigroupOpacitySet(rtt_cdi::Model, rtt_cdi::Reaction) const;
-  bool isOdfmgOpacitySet(rtt_cdi::Model, rtt_cdi::Reaction) const;
-  bool isCPElossSet(rtt_cdi::CPModel, int32_t pz, int32_t tz) const;
+  bool isCPElossSet(rtt_cdi::CPModelAngleCutoff mAC, int32_t pz,
+                    int32_t tz) const;
   bool isEoSSet() const;
   bool isEICouplingSet() const;
 
   //! Copies the vector of the stored frequency group boundary vector
   static std::vector<double> getFrequencyGroupBoundaries();
-  static std::vector<double> getOpacityCdfBandBoundaries();
 
   //! Returns the number of frequency groups in the stored frequency vector.
   static size_t getNumberFrequencyGroups(void);
-  static size_t getNumberOpacityBands(void);
 
   // INTEGRATORS:
   // ===========
@@ -755,11 +710,11 @@ public:
       std::vector<double> &planck, std::vector<double> &rosseland);
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // INLINE FUNCTIONS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /**
  * \brief Integrate the normalized Planckian spectrum from 0 to \f$ x
  * (\frac{h\nu}{kT}) \f$.
@@ -773,7 +728,7 @@ double CDI::integrate_planck(double const scaled_freq) {
   return CDI::integrate_planck(scaled_freq, exp_scaled_freq);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /**
  * \brief Integrate the normalized Planckian spectrum from 0 to \f$ x
  *        (\frac{h\nu}{kT}) \f$.
@@ -815,7 +770,7 @@ double CDI::integrate_planck(double const scaled_freq,
   return integral;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*! \brief Integrate the normalized Planckian and Rosseland spectrums from 0 to
  *         \f$ x (\frac{h\nu}{kT}) \f$.
  *
@@ -851,6 +806,6 @@ void CDI::integrate_planck_rosseland(double const scaled_freq,
 
 #endif // rtt_cdi_CDI_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi/CDI.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

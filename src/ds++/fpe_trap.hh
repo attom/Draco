@@ -1,10 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/fpe_trap.hh
  * \author Rob Lowrie, Kelly Thompson
  * \date   Thu Oct 13 16:36:09 2005
  * \brief  Contains functions in the fpe_trap namespace.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  *
  * Copyright (C) 1994-2001  K. Scott Hunziker.
@@ -14,7 +14,7 @@
  * substantially on fpe/i686-pc-linux-gnu.c from algae-4.3.6, which is available
  * at http://algae.sourceforge.net/.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef fpe_trap_hh
 #define fpe_trap_hh
@@ -25,7 +25,7 @@
 
 namespace rtt_dsxx {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \class fpe_trap
  *
@@ -82,7 +82,7 @@ private:
 };
 } // end namespace rtt_dsxx
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /* WINDOWS X86
  *
  * Provide additional crash handlers for Win32 platforms. This code provides the
@@ -110,7 +110,7 @@ private:
  * The GetExceptionPointers() static method is used to retrieve exception
  * information.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 #ifdef FPETRAP_WINDOWS_X86
 #include <Windows.h> // EXCEPTION_POINTERS
 
@@ -177,6 +177,6 @@ public:
 
 #endif // fpe_trap_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ds++/fpe_trap.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

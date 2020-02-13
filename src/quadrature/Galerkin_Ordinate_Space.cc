@@ -4,7 +4,7 @@
  * \author Kent Budge
  * \date   Mon Mar 26 16:11:19 2007
  * \brief  Define methods of class Galerkin_Ordinate_Space
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
@@ -50,7 +50,7 @@ vector<Moment> Galerkin_Ordinate_Space::compute_n2lk_1Da_(Quadrature_Class,
   return result;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Creates a mapping between moment index n and the index pair (k,l).
  */
@@ -68,7 +68,7 @@ vector<Moment> Galerkin_Ordinate_Space::compute_n2lk_2D_(Quadrature_Class,
   return result;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Creates a mapping between moment index n and the index pair (k,l).
  */
@@ -91,7 +91,7 @@ vector<Moment> Galerkin_Ordinate_Space::compute_n2lk_2Da_(Quadrature_Class,
   return result;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Creates a mapping between moment index n and the index pair (k,l).
  */

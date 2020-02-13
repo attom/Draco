@@ -1,11 +1,11 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   memory/memory.cc
  * \author Kent G. Budge
  * \brief  memory diagnostic utilities
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "memory.hh"
 #include "ds++/Assert.hh"
@@ -14,8 +14,17 @@
 #include <limits>
 #include <map>
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif
+
 #ifndef _GLIBCXX_THROW
 #define _GLIBCXX_THROW(except) throw(except)
+#endif
+
+#ifdef __clang__
+#pragma clang diagnostic pop
 #endif
 
 namespace rtt_memory {
@@ -102,7 +111,7 @@ uint64_t peak_allocation() { return peak; }
 //----------------------------------------------------------------------------//
 uint64_t largest_allocation() { return largest; }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*! Print a report on possible leaks.
  *
  * This function prints a report in a human-friendly format on possible memory
@@ -229,7 +238,7 @@ void operator delete(void *ptr) throw() {
   }
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*! Deallocate memory with diagnostics
  *
  * C++14 introduces operator delete with a size_t argument, used in place of
@@ -242,7 +251,7 @@ void operator delete(void *ptr) throw() {
 void operator delete(void *ptr, size_t) throw() { operator delete(ptr); }
 #endif
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Provide a special action when an out-of-memory condition is
  *        encountered.
@@ -278,6 +287,6 @@ void rtt_memory::out_of_memory_handler(void) {
             << rtt_dsxx::print_stacktrace("bad_alloc");
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of memory.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

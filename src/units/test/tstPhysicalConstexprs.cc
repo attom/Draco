@@ -4,7 +4,7 @@
  * \author Ben R. Ryan <brryan@lanl.gov>
  * \date   2017 Feb 10
  * \brief  Implementation file for PhysicalConstexprs class test
- * \note   Copyright (C) 2017-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2017-2020 Triad National Security, LLC.
  *         All rights reserved. */
 //----------------------------------------------------------------------------//
 

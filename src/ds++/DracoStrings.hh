@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/DracoStrings.hh
  * \author Kelly G. Thompson <kgt@lanl.gov
  * \date   Wednesday, Aug 23, 2017, 12:48 pm
  * \brief  Encapsulates common string manipulations.
- * \note   Copyright (C) 2017-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2017-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef rtt_dsxx_DracoStrings_hh
 #define rtt_dsxx_DracoStrings_hh
@@ -269,6 +269,6 @@ inline std::string remove_color(std::string const &colored_string) {
 
 #endif // rtt_dsxx_DracoStrings_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of DracoStrings.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

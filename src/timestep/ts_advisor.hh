@@ -1,15 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   timestep/ts_advisor.hh
  * \author John McGhee
  * \date   Thu Apr  2 14:06:18 1998
  * \brief  Header file for the base class time-step advisor.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef __timestep_ts_advisor_hh__
-#define __timestep_ts_advisor_hh__
+#ifndef rtt_timestep_ts_advisor_hh
+#define rtt_timestep_ts_advisor_hh
 
 #include "ds++/config.h"
 #include <iostream>
@@ -22,21 +22,21 @@ namespace rtt_timestep {
 
 class ts_manager;
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \brief Defines the base class time-step advisor.
  *
- * \sa The ts_manager class provides a means to manage this advisor. The \ref 
+ * \sa The ts_manager class provides a means to manage this advisor. The \ref
  *     overview_timestep page gives a summary of the Draco time step control
  *     utilities.
  */
-//===========================================================================//
+//============================================================================//
 class DLL_PUBLIC_timestep ts_advisor {
 
   // NESTED CLASSES AND TYPEDEFS
 
 public:
-  /*! 
+  /*!
    * \brief Flag to determine how the recommended timestep is to be used.
    *
    * The recommended value "dt_rec" is to be used as indicated by the
@@ -112,7 +112,7 @@ public:
   /*!
    * \brief Determine if the advisor is fit to use in a time-step calculation
    *
-   * Derived classes will have parameter 'tsm', the timestep manager in which 
+   * Derived classes will have parameter 'tsm', the timestep manager in which
    * the advisor resides.
    */
   virtual bool advisor_usable(const ts_manager & /*tsm*/) const
@@ -147,8 +147,8 @@ public:
 
 } // namespace rtt_timestep
 
-#endif // __timestep_ts_advisor_hh__
+#endif // rtt_timestep_ts_advisor_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ts_advisor.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

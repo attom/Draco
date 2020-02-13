@@ -19,7 +19,7 @@ set( dll_declspec_content
  * file   dll_declspec.h
  * brief  Defined macros that are used as declarators to control dllexport
  *        or dllimport linkage for dll files.
- * note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *        All rights reserved.
  *
  * Provide toolset for hiding symbols from shared libraries.  By default MSVC

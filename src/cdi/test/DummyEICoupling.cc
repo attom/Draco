@@ -1,12 +1,12 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi/test/DummyEICoupling.cc
  * \author Mathew Cleveland
  * \date   March 2019
  * \brief  DummyEICoupling class header file (derived from ../EICoupling)
- * \note   Copyright (C) 2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
  *         All rights reserved.  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "DummyEICoupling.hh"
 #include <cmath>
@@ -17,7 +17,7 @@ namespace rtt_cdi_test {
 // Constructors & Destructors //
 // -------------------------- //
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Constructor for DummyEICoupling object.
  * 
@@ -29,7 +29,7 @@ DummyEICoupling::DummyEICoupling() {
   // empty
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Default DummyEICoupling() destructor.
  *
@@ -44,7 +44,7 @@ DummyEICoupling::~DummyEICoupling() {
 // Accessors //
 // --------- //
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief EICoupling accessor that returns a single electron-ion coupling
  * given an electron and ion temperature, the material density, and the
@@ -72,7 +72,7 @@ double DummyEICoupling::getElectronIonCoupling(const double etemperature,
          10000.0 * w_i;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief EICoupling accessor that returns a vector of electron-ion coupling
  * given an electron and ion temperature, the material density, and the
@@ -104,6 +104,6 @@ std::vector<double> DummyEICoupling::getElectronIonCoupling(
 
 } // end namespace rtt_cdi_test
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of cdi/test/DummyEICoupling.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

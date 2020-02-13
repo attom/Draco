@@ -1,16 +1,16 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   cdi_eospac/SesameTables.cc
  * \author Kelly Thompson
  * \date   Fri Apr  6 08:57:48 2001
  * \brief  Implementation file for SesameTables (mapping material IDs
  *         to Sesame table indexes).
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "SesameTables.hh"
 #include "ds++/Assert.hh"
@@ -20,7 +20,7 @@
 
 namespace rtt_cdi_eospac {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Construct from packed data stream
 SesameTables::SesameTables(std::vector<char> const &packed)
     : numReturnTypes(EOS_M_DT + 1), //  EOS_M_DT = 305 (see eos_Interface.h)
@@ -66,9 +66,9 @@ SesameTables::SesameTables(std::vector<char> const &packed)
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Set functions
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 SesameTables &SesameTables::addTable(EOS_INTEGER const tableID,
                                      unsigned const matID) {
@@ -247,7 +247,7 @@ SesameTables& SesameTables::Gs_D( unsigned matID )
 }
 #endif
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Get Functions
 
 // Return the enumerated data type associated with the provided integer index
@@ -275,7 +275,7 @@ unsigned SesameTables::matID(EOS_INTEGER returnType) const {
   return matMap.find(returnType)->second;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*! Pack a SesameTables object into a vector<char> stream.
  *
  * Packed data stream:
@@ -331,7 +331,7 @@ std::vector<char> SesameTables::pack(void) const {
   return packed;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void SesameTables::printEosTableList() const {
   std::cout << "List of EOS Tables:\n" << std::endl;
   for (size_t i = 0; i < tableName.size(); ++i)
@@ -340,7 +340,7 @@ void SesameTables::printEosTableList() const {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 std::vector<std::string>
 SesameTables::initializeTableNames(size_t const datasize) {
   // Create a mapping between the enum and a string name
@@ -548,9 +548,9 @@ SesameTables::initializeTableNames(size_t const datasize) {
   return tableName;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // Initialize the tableDescriptions database
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 std::vector<std::string>
 SesameTables::initializeTableDescriptions(size_t const datasize) {
   std::vector<std::string> tableDescription(datasize);
@@ -1044,6 +1044,6 @@ SesameTables::initializeTableDescriptions(size_t const datasize) {
 
 } // end namespace rtt_cdi_eospac
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of SesameTables.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

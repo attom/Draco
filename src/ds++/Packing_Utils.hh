@@ -1,10 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   ds++/Packing_Utils.hh
  * \author Thomas M. Evans, Tim Kelley <tkelley@lanl.gov>
  * \date   Thu Jul 19 11:27:46 2001
  * \brief  Packing Utilities, classes for packing stuff.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  *
  * This file contains classes and utilities that are used to "pack" data into
@@ -14,7 +14,7 @@
  * \arg \b Packer packing class
  * \arg \b Unpacker unpacking class
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef rtt_ds_Packing_Utils_hh
 #define rtt_ds_Packing_Utils_hh
@@ -26,7 +26,7 @@
 
 namespace rtt_dsxx {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Packer
  *
@@ -62,7 +62,7 @@ namespace rtt_dsxx {
  * \example ds++/test/tstPacking_Utils.cc
  * Test the Packer and Unpacker classes.
  */
-//===========================================================================//
+//============================================================================//
 
 class Packer {
 public:
@@ -134,7 +134,7 @@ public:
   uint64_t size() const { return stream_size; }
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Set an allocated buffer to write data into.
  *
@@ -173,7 +173,7 @@ void Packer::set_buffer(uint64_t size_in, pointer buffer) {
   end_ptr = begin_ptr + stream_size;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Depending on mode, pack data into a buffer, or compute increment
  * to buffer size.
@@ -240,7 +240,7 @@ template <typename T> void Packer::pack(T const &value) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /**
  * \brief Add data from another character stream of a given size.
  *
@@ -262,7 +262,7 @@ template <typename IT> void Packer::accept(uint64_t bytes, IT data) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /**
  * \brief Add the given number of blank bytes to the stream.
  *
@@ -274,7 +274,7 @@ void Packer::pad(uint64_t bytes) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Stream out (<<) operator for packing data.
  *
@@ -294,7 +294,7 @@ template <typename T> inline Packer &operator<<(Packer &p, const T &value) {
   return p;
 }
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Unpacker
  *
@@ -324,7 +324,7 @@ template <typename T> inline Packer &operator<<(Packer &p, const T &value) {
  *
  * This class is the complement to the Packer class.
  */
-//===========================================================================//
+//============================================================================//
 
 class Unpacker {
 public:
@@ -378,7 +378,7 @@ public:
   uint64_t size() const { return stream_size; }
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Set an allocated buffer to read data from.
  *
@@ -411,7 +411,7 @@ void Unpacker::set_buffer(uint64_t size_in, const_pointer buffer) {
   end_ptr = begin_ptr + stream_size;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Unpack data from the buffer.
  *
@@ -442,7 +442,7 @@ template <typename T> void Unpacker::unpack(T &value) {
   ptr += sizeof(T);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /**
  * \brief Skip a specified number of bytes forward in the data stream
  *
@@ -459,7 +459,7 @@ void Unpacker::skip(uint64_t bytes) {
   ptr += bytes;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /**
  * \brief Copy a piece of the data to memory referenced by the provided
  * iterator.
@@ -476,7 +476,7 @@ template <typename T> void Unpacker::extract(uint64_t bytes, T it) {
     *(it++) = *(ptr++);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Stream in (>>) operator for unpacking data.
  *
@@ -490,9 +490,9 @@ template <typename T> inline Unpacker &operator>>(Unpacker &u, T &value) {
   return u;
 }
 
-//===========================================================================//
+//============================================================================//
 // PACKING/UNPACKING SHORTCUT FUNCTIONS
-//===========================================================================//
+//============================================================================//
 /*!
  * \brief Packing function.
  *
@@ -564,7 +564,7 @@ void pack_data(FT const &field, std::vector<char> &packed) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename keyT, typename dataT>
 void pack_data(std::map<keyT, dataT> const &map, std::vector<char> &packed) {
   Require(packed.empty());
@@ -597,7 +597,7 @@ void pack_data(std::map<keyT, dataT> const &map, std::vector<char> &packed) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename keyT, typename dataT>
 void pack_data(std::map<keyT, std::vector<dataT>> const &map,
                std::vector<char> &packed) {
@@ -644,7 +644,7 @@ void pack_data(std::map<keyT, std::vector<dataT>> const &map,
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * \brief Unpacking function.
  *
@@ -710,7 +710,7 @@ void unpack_data(FT &field, std::vector<char> const &packed) {
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename keyT, typename dataT>
 void unpack_data(std::map<keyT, dataT> &unpacked_map,
                  std::vector<char> const &packed) {
@@ -738,7 +738,7 @@ void unpack_data(std::map<keyT, dataT> &unpacked_map,
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename keyT, typename dataT>
 void unpack_data(std::map<keyT, std::vector<dataT>> &unpacked_map,
                  std::vector<char> const &packed) {
@@ -773,9 +773,9 @@ void unpack_data(std::map<keyT, std::vector<dataT>> &unpacked_map,
   return;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // GLOBAL scope functions
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 /*!
  * \brief Pack an array into a char buffer while honoring endianess.
@@ -805,6 +805,6 @@ inline void pack_vec_double(double const *start, char *dest,
 
 #endif // rtt_ds_Packing_Utils_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of ds++/Packing_Utils.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

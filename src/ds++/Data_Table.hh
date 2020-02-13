@@ -1,11 +1,11 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file    Data_Table.hh
  * \author  Paul Henning
  * \brief   Declaration of class Data_Table
- * \note    Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note    Copyright (C) 2016-2020 Triad National Security, LLC.
  *          All rights reserved. */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 #ifndef dsxx_Data_Table_hh
 #define dsxx_Data_Table_hh
 
@@ -15,7 +15,7 @@
 
 namespace rtt_dsxx {
 
-//===========================================================================//
+//============================================================================//
 /*!
  * \class Data_Table
  *
@@ -27,7 +27,7 @@ namespace rtt_dsxx {
  * factors, but you always want to access it as an array. Because this class is
  * read only all of it's functions and constructor can be marked constexpr.
  */
-//===========================================================================//
+//============================================================================//
 template <typename T> class Data_Table {
 public:
   using const_iterator = const T *;
@@ -66,7 +66,7 @@ private:
   T const d_value;
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * Copy constructor, but update the pointers to point to the local d_value if
  * they pointed to the d_value in the RHS.
@@ -80,7 +80,7 @@ constexpr Data_Table<T>::Data_Table(Data_Table<T> const &rhs)
   }
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename T>
 constexpr Data_Table<T> &Data_Table<T>::operator=(Data_Table<T> const &rhs) {
   if (&rhs != this) {
@@ -96,7 +96,7 @@ constexpr Data_Table<T> &Data_Table<T>::operator=(Data_Table<T> const &rhs) {
   return *this;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename T>
 constexpr inline Data_Table<T>::Data_Table(const_iterator const begin,
                                            const_iterator const end)
@@ -104,7 +104,7 @@ constexpr inline Data_Table<T>::Data_Table(const_iterator const begin,
   Require(!(begin > end));
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*!
  * Copy the scalar into a local variable, and set the pointers to that copy.
  */
@@ -112,31 +112,31 @@ template <typename T>
 constexpr inline Data_Table<T>::Data_Table(T const &value)
     : d_begin(&d_value), d_end(&d_value + 1), d_value(value) {}
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename T>
 constexpr inline Data_Table<T>::Data_Table()
     : d_begin(nullptr), d_end(nullptr), d_value() {}
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename T>
 constexpr inline T const &Data_Table<T>::operator[](unsigned const i) const {
   Require(static_cast<int>(i) < (d_end - d_begin));
   return d_begin[i];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename T> constexpr inline T const &Data_Table<T>::front() const {
   Require((d_end - d_begin) > 0);
   return *d_begin;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename T> constexpr inline T const &Data_Table<T>::back() const {
   Require((d_end - d_begin) > 0);
   return *(d_end - 1);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <typename T> constexpr inline T *Data_Table<T>::access() {
   Require((d_end - d_begin) > 0);
   return const_cast<T *>(d_begin);
@@ -146,6 +146,6 @@ template <typename T> constexpr inline T *Data_Table<T>::access() {
 
 #endif // dsxx_Data_Table_hh
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of Data_Table.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

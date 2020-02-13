@@ -1,9 +1,9 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /*!
  * \file   memory/memory.hh
  * \author Kent G. Budge
  * \brief  Memory utilities for diagnostic purposes.
- * \note   Copyright (C) 2016-2019 Triad National Security, LLC.
+ * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved.
  *
  * The memory utilities were written to address a need to identify the memory
@@ -11,7 +11,7 @@
  * existing memory checking tools. Other capabilities gradually accreted
  * themselves to this set of utilities, such as leak characterization.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef memory_memory_hh
 #define memory_memory_hh
@@ -36,6 +36,6 @@ void out_of_memory_handler(void);
 
 #endif
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of memory/memory.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
