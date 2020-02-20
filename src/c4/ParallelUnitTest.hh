@@ -73,16 +73,18 @@ public:
   ParallelUnitTest(int &argc, char **&argv, string_fp_void release_,
                    std::ostream &out_ = std::cout, bool verbose_ = true);
 
-  //!  The copy constructor is disabled.
-  ParallelUnitTest(ParallelUnitTest const &rhs);
+  //!  The copy/move constructors are disabled.
+  ParallelUnitTest(ParallelUnitTest const &rhs) = delete;
+  ParallelUnitTest(ParallelUnitTest &&rhs) = delete;
 
   //! Destructor.
-  ~ParallelUnitTest();
+  virtual ~ParallelUnitTest();
 
   // MANIPULATORS
 
-  //! The assignment operator is disabled.
-  ParallelUnitTest &operator=(ParallelUnitTest const &rhs);
+  //! The copy/move assignment operators are disabled.
+  ParallelUnitTest &operator=(ParallelUnitTest const &rhs) = delete;
+  ParallelUnitTest &operator=(ParallelUnitTest &&rhs) = delete;
 
   // ACCESSORS
 

@@ -6,8 +6,6 @@
 ! Note:     Copyright (C) 2016-2020 Triad National Security, LLC.
 !           All rights reserved.
 !-----------------------------------------------------------------------------!
-! $Id: sub1.f90 6654 2012-07-11 15:53:22Z wollaber $
-!-----------------------------------------------------------------------------!
 
 ! http://gcc.gnu.org/onlinedocs/gfortran/Interoperable-Subroutines-and-Functions.html
 ! http://www.fortran.bcs.org/2002/interop.htm (Example of C calling Fortran)

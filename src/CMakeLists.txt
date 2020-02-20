@@ -68,6 +68,7 @@ message(" ")
 message( STATUS "Configuring Level 3 packages --" )
 add_dir_if_exists( cdi_CPEloss )  # needs cdi, units
 add_dir_if_exists( cdi_ipcress )  # needs cdi
+add_dir_if_exists( cdi_ndi )      # needs ds++, rng, cdi
 add_dir_if_exists( diagnostics )  # needs c4
 add_dir_if_exists( fit )          # needs linear
 add_dir_if_exists( FortranChecks ) # needs c4

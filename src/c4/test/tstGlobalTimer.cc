@@ -40,8 +40,13 @@ void test_Global_Timer(rtt_dsxx::UnitTest &ut) {
 
   rtt_c4::Global_Timer::set_global_activity(false);
 
-  PASSMSG("done");
+  {
+    // Test dynamic object creation and destruction
+    rtt_c4::Global_Timer *ptr_gt = new rtt_c4::Global_Timer("foo");
+    delete ptr_gt;
+  }
 
+  PASSMSG("done");
   return;
 }
 

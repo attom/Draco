@@ -159,6 +159,10 @@ uint32_t QuoWrapper::num_numanodes_per_node() {
 #ifdef HAVE_LIBQUO
   Remember(auto retval =) QUO_nnumanodes(quo, &n);
   Check(QUO_SUCCESS == retval);
+  // If n is set to zero above and no error is returned, then set n to 1.  This
+  // seems to occur for WLS2.
+  if (n == 0)
+    n = 1;
   Ensure(n > 0);
 #else
   n = 0;

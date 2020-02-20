@@ -592,6 +592,33 @@ macro( setupEOSPAC )
 endmacro()
 
 #------------------------------------------------------------------------------
+# Setup NDI (https://xweb.lanl.gov/projects/data/nuclear/ndi/ndi.html)
+#------------------------------------------------------------------------------
+macro( setupNDI )
+
+  if( NOT TARGET NDI::ndi )
+    message( STATUS "Looking for NDI..." )
+
+    find_package( NDI QUIET )
+
+    if( NDI_FOUND )
+      message( STATUS "Looking for NDI....found ${NDI_LIBRARY}" )
+    else()
+      message( STATUS "Looking for NDI....not found" )
+    endif()
+
+    #===========================================================================
+    # Include some information that can be printed by the build system.
+    set_package_properties( NDI PROPERTIES
+      URL "https://xweb.lanl.gov/projects/data/nuclear/ndi/ndi.html"
+      DESCRIPTION "Access nuclear data."
+      TYPE OPTIONAL
+      PURPOSE "Required for building the cdi_ndi component." )
+  endif()
+
+endmacro()
+
+#------------------------------------------------------------------------------
 # Setup COMPTON (https://gitlab.lanl.gov/keadyk/CSK_generator)
 #------------------------------------------------------------------------------
 macro( setupCOMPTON )
@@ -628,6 +655,7 @@ macro( SetupVendorLibrariesUnix )
   setupSuperLU_DIST()
   setupCOMPTON()
   setupEospac()
+  setupNDI()
   setupRandom123()
   setupPython()
   setupQt()
@@ -676,6 +704,7 @@ macro( SetupVendorLibrariesWindows )
   setupRandom123()
   setupCOMPTON()
   setupEospac()
+  setupNDI()
   setupPython()
   setupQt()
 

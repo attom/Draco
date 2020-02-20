@@ -25,8 +25,8 @@ using namespace rtt_c4;
  * Demonstrate that the normal access functions work as indended.
  */
 void tstMemberFunctions(ParallelUnitTest &ut, stringstream &output) {
-  // test check_all function for failing case. We put this first so we can
-  // flush output afterwards.
+  // test check_all function for failing case. We put this first so we can flush
+  // output afterwards.
   {
     string const msg("Testing the check_all member function for failing case.");
     ut.check_all(rtt_c4::node() == 0, msg);
@@ -115,17 +115,15 @@ int main(int argc, char *argv[]) {
       tstMemberFunctions(ut, output);
     } // closing scope should call the destructor for ParallelUnitTest
 
-    // Since we are capturing the output in a stringstream, we must echo
-    // the output to stdout so that ctest can pick up the 'passed'
-    // message.
+    // Since we are capturing the output in a stringstream, we must echo the
+    // output to stdout so that ctest can pick up the 'passed' message.
     cout << output.str() << endl;
   } catch (rtt_dsxx::assertion &err) {
     if (err.what() == string("Success")) // expected value for --verion
                                          // cmd line option
     {
-      // Since we are capturing the output in a stringstream, we must
-      // echo the output to stdout so that ctest can pick up the
-      // 'passed' message.
+      // Since we are capturing the output in a stringstream, we must echo the
+      // output to stdout so that ctest can pick up the 'passed' message.
       cout << output.str() << endl;
     } else {
       cout << "ERROR: While testing " << argv[0] << ", " << err.what() << endl;

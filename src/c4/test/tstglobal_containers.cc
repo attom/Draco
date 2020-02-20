@@ -72,6 +72,53 @@ void tstglobal_containers(UnitTest &ut) {
   }
 
   {
+    map<unsigned, int> local_map;
+    local_map[pid] = pid;
+    local_map[number_of_processors + pid] = 2 * pid;
+
+    global_merge(local_map);
+
+    if (local_map.size() == 2 * number_of_processors)
+      PASSMSG("Correct number of global elements");
+    else
+      FAILMSG("NOT correct number of global elements");
+
+    for (unsigned p = 0; p < number_of_processors; ++p) {
+      if (local_map.count(p) != 1 ||
+          local_map.count(number_of_processors + p) != 1) {
+        FAILMSG("WRONG element in map");
+      }
+      if (local_map[p] != static_cast<int>(p) ||
+          local_map[number_of_processors + p] != static_cast<int>(2 * p)) {
+        FAILMSG("WRONG element value in map");
+      }
+    }
+  }
+
+  {
+    map<unsigned, unsigned> local_map;
+    local_map[pid] = pid;
+    local_map[number_of_processors + pid] = 2 * pid;
+
+    global_merge(local_map);
+
+    if (local_map.size() == 2 * number_of_processors)
+      PASSMSG("Correct number of global elements");
+    else
+      FAILMSG("NOT correct number of global elements");
+
+    for (unsigned p = 0; p < number_of_processors; ++p) {
+      if (local_map.count(p) != 1 ||
+          local_map.count(number_of_processors + p) != 1) {
+        FAILMSG("WRONG element in map");
+      }
+      if (local_map[p] != p || local_map[number_of_processors + p] != 2 * p) {
+        FAILMSG("WRONG element value in map");
+      }
+    }
+  }
+
+  {
     map<unsigned, bool> local_map;
     local_map[pid] = false;
     local_map[number_of_processors + pid] = true;
@@ -107,15 +154,8 @@ int main(int argc, char *argv[]) {
     PASSMSG("Test inactive for scalar");
 
 #endif // C4_MPI
-  } catch (exception &err) {
-    cout << "ERROR: While testing tstglobal_containers, " << err.what() << endl;
-    ut.numFails++;
-  } catch (...) {
-    cout << "ERROR: While testing tstglobal_containers, "
-         << "An unknown exception was thrown." << endl;
-    ut.numFails++;
   }
-  return ut.numFails;
+  UT_EPILOG(ut);
 }
 
 //----------------------------------------------------------------------------//

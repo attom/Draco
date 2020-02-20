@@ -34,6 +34,12 @@ void tstofpstream(UnitTest &ut) {
   out.shrink_to_fit();
   out.send();
 
+  {
+    // Test dynamic object creation and destruction
+    ofpstream *ptr_out = new ofpstream("tstofpstreams.txt");
+    delete ptr_out;
+  }
+
   PASSMSG("completed serialized write without hanging or segfaulting");
 }
 

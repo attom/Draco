@@ -1,7 +1,7 @@
 #-----------------------------*-cmake-*----------------------------------------#
 # file   config/compilerEnv.cmake
 # brief  Default CMake build parameters
-# note   Copyright (C) 2019-2020 Triad National Security, LLC. 
+# note   Copyright (C) 2019-2020 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 
@@ -66,6 +66,9 @@ endmacro()
 #------------------------------------------------------------------------------#
 macro(dbsSetupCompilers)
 
+  if( NOT dbsSetupCompilers_done )
+  set(dbsSetupCompilers_done "ON")
+
   # Bad platform
   if( NOT WIN32 AND NOT UNIX)
     message( FATAL_ERROR "Unsupported platform (not WIN32 and not UNIX )." )
@@ -109,6 +112,55 @@ macro(dbsSetupCompilers)
     check_ipo_supported(RESULT USE_IPO)
   endif()
 
+  #----------------------------------------------------------------------------#
+  # Special build mode for Coverage (gcov+lcov+genthml)
+  # https://github.com/codecov/example-cpp11-cmake
+  #----------------------------------------------------------------------------#
+  option(CODE_COVERAGE "Enable coverage reporting" OFF)
+  if( NOT TARGET coverage_config )
+    add_library(coverage_config INTERFACE)
+  endif()
+  if( NOT CODE_COVERAGE )
+    message( STATUS "Code coverage build ... disabled (CODE_COVERAGE=OFF)" )
+  endif()
+  if( NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    message( STATUS "Code coverage build ... disabled (Compiler not GNU|Clang)")
+  endif()
+  if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    if( CMAKE_BUILD_TYPE STREQUAL Debug )
+      # Add required flags (GCC & LLVM/Clang)
+      target_compile_options(coverage_config INTERFACE
+        --coverage # sets all required flags
+        )
+      target_link_options(coverage_config INTERFACE --coverage)
+
+      find_program( LCOV NAMES lcov "$ENV{LCOV}" )
+      find_program( GCOV gcov "$ENV{GCOV}" )
+      if( EXISTS "${LCOV}" AND EXISTS "${GCOV}" )
+        # Add a custom target that prints the coverage report
+        set(lcovopts1 --gcov-tool ${GCOV})
+        set(lcovopts2 ${lcovopts1} --output-file coverage.info)
+        add_custom_target( covrep
+          COMMAND ${LCOV} ${lcovopts2} --capture --directory .
+          COMMAND ${LCOV} ${lcovopts2} --remove coverage.info '/usr/*'
+          COMMAND ${LCOV} ${lcovopts2} --remove coverage.info '*test/*'
+          COMMAND ${LCOV} ${lcovopts2} --remove coverage.info '*/opt/spack/*'
+          COMMAND ${LCOV} ${lcovopts2} --remove coverage.info '*terminal/*'
+          COMMAND genhtml coverage.info --demangle-cpp --output-directory cov-html
+          COMMAND ${LCOV} ${lcovopts1} --list coverage.info )
+          message( STATUS "Code coverage build ... enabled ('make covrep' to "
+            "see a text and/or a html report)")
+        else()
+          message( STATUS "Code coverage build ... disabled (lcov and/or gcov "
+            "not found)" )
+        endif()
+      else()
+        message( STATUS "Code coverage build ... disabled (CMAKE_BUILD_TYPE "
+          "!= Debug" )
+      endif()
+    endif()
+
+    endif() # dbsSetupCompilers_done
 endmacro()
 
 #------------------------------------------------------------------------------#

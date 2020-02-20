@@ -113,7 +113,7 @@ public:
   SesameTables& B_DT( unsigned matID );
   //! Shear Modulus (Gpa)
   SesameTables& Gs_D( unsigned matID );
-  //! Electron Conducitive Opacity (cm^2/g)
+  //! Electron Conductive Opacity (cm^2/g)
   SesameTables& Kc_DT( unsigned matID );
   //! Electrical Conductivity (1/s)
   SesameTables& Kec_DT( unsigned matID );
@@ -166,7 +166,7 @@ public:
   SesameTables& Ut_DPt( unsigned matID );
   //! Melt Specific-Internal-Energy (MJ/kg)
   SesameTables& Ut_DT( unsigned matID );
-  //! Mean Ion Charge (Opacity Modlel) (free electrons per atom)
+  //! Mean Ion Charge (Opacity Model) (free electrons per atom)
   SesameTables& Zfo_DT( unsigned matID );
 #endif
 

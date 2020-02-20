@@ -5,10 +5,7 @@
  * \date   Wed Apr 28 09:31:51 2010
  * \brief  Test c4::determinate_swap and c4::indeterminate_swap functions
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
- *         All rights reserved.
- */
-//----------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"
@@ -45,11 +42,16 @@ void tstopstream(UnitTest &ut) {
   if (pid == 0)
     cout << ": End of write" << endl;
 
-  ut.passes("completed serialized write without hanging or segfaulting");
+  {
+    // Test dynamic object creation and destruction
+    opstream *ptr_pout = new opstream;
+    delete ptr_pout;
+  }
+
+  PASSMSG("completed serialized write without hanging or segfaulting");
 }
 
 //----------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, release);
   try {

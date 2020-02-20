@@ -5,8 +5,7 @@
  * \date   Friday May 26 19:58:19 2017
  * \brief  Unit test for C4_Status class.
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
 #include "c4/ParallelUnitTest.hh"
@@ -23,12 +22,17 @@ using rtt_c4::C4_Status;
 
 void tst2Procs(rtt_dsxx::UnitTest &ut) {
 
-  if (rtt_c4::nodes() != 2)
-    return;
-
   PASSMSG("Running tst2Procs.");
 
   const int my_proc = rtt_c4::node();
+
+  {
+    const uint32_t my_nranks = rtt_c4::nranks();
+    const int my_nodes = rtt_c4::nodes();
+    FAIL_IF_NOT(static_cast<uint32_t>(my_nodes) == my_nranks);
+    FAIL_IF_NOT(rtt_c4::isMpiInit());
+  }
+
   C4_Status status;
   C4_Req request;
 

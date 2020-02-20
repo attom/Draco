@@ -6,10 +6,7 @@
  * \brief  Implementation file for SesameTables (mapping material IDs
  *         to Sesame table indexes).
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
- *         All rights reserved.
- */
-//----------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
 #include "SesameTables.hh"
@@ -78,9 +75,8 @@ SesameTables &SesameTables::addTable(EOS_INTEGER const tableID,
   // insert a new entry into the matMap.
   matMap[tableID] = matID;
   if (rtMap.count(matID)) {
-    // we've already used this mat ID so there should be an entry in the
-    // map.  Look to see if EOS_Ue_DT is already registered before adding
-    // it.
+    // we've already used this mat ID so there should be an entry in the map.
+    // Look to see if EOS_Ue_DT is already registered before adding it.
     bool found(false);
     for (size_t i = 0; i < rtMap[matID].size(); ++i)
       if (rtMap[matID][i] == tableID)
@@ -343,7 +339,7 @@ void SesameTables::printEosTableList() const {
 //----------------------------------------------------------------------------//
 std::vector<std::string>
 SesameTables::initializeTableNames(size_t const datasize) {
-  // Create a mapping between the enum and a string name
+  // Create a mapping between the Enum and a string name
   std::vector<std::string> tableName(datasize);
 
   tableName[EOS_NullTable] = std::string("EOS_NullTable");
