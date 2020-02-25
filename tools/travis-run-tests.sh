@@ -28,7 +28,7 @@ if [[ ${STYLE} ]]; then
 
   # Ensure the 'develop' branch is available.  In some cases (merge a branch
   # that lives at github.com/lanl), the develop branch is missing in the
-  # travis checkout. Since we only test files that are modified when comapred to
+  # Travis checkout. Since we only test files that are modified when compared to
   # the 'develop' branch, the develop branch must be available locally.
   num_dev_branches_found=`find_dev_branch`
   if [[ $num_dev_branches_found == 0 ]]; then
@@ -58,6 +58,11 @@ else
     run "spack load ${item}"
   done
 
+  # Provide a newer lcov that is compatible with gcc-8.
+  run "cp -r ${SOURCE_DIR}/tools/spack/lcov ${SPACK_ROOT}/var/spack/repos/builtin/packages/."
+  run "spack install lcov@1.14"
+  run "spack load lcov"
+
   if [[ $GCCVER ]]; then
     export CXX=`which g++-${GCCVER}`
     export CC=`which gcc-${GCCVER}`
@@ -72,9 +77,7 @@ else
   echo "GCCVER = ${GCCVER}"
   echo "CXX    = ${CXX}"
   echo "FC     = ${FC}"
-#  ls -1 /usr/bin/g*
-#  if ! [[ $FC ]]; then export FC=gfortran; fi
-  # ${FC} --version
+  echo "GCOV   = ${GCOV}"
 
   export OMP_NUM_THREADS=2
   if [[ ${WERROR} ]]; then
@@ -83,15 +86,14 @@ else
     done
   fi
   if [[ ${COVERAGE:-OFF} == "ON" ]]; then
-    for i in C CXX Fortran; do
-      eval export ${i}_FLAGS+=\" --coverage\"
-    done
+    CMAKE_OPTS="-DCODE_COVERAGE=ON"
   fi
 
-  # echo " "
-  # echo "========== printenv =========="
-  # printenv
-  # echo " "
+  #echo " "
+  #echo "========== printenv =========="
+  #printenv
+  #printenv | grep _FLAGS
+  echo " "
 
   if ! [[ $BUILD_DIR ]]; then die "BUILD_DIR not set by environment."; fi
   run "mkdir -p ${BUILD_DIR}"
@@ -103,7 +105,7 @@ else
     run "cat CMakeCache.txt"
   fi
   echo "========"
-  run "cmake -DDRACO_C4=${DRACO_C4} ${SOURCE_DIR}"
+  run "cmake -DDRACO_C4=${DRACO_C4} ${CMAKE_OPTS} ${SOURCE_DIR}"
   echo "========"
   if [[ "${AUTODOC}" == "ON" ]]; then
     run "make autodoc"
@@ -114,14 +116,13 @@ else
     # tstOMP_2 needs too many ppr (threads * cores) for Travis.
     run "ctest -j 2 -E \(c4_tstOMP_2\|c4_tstTermination_Detector_2\) --output-on-failure"
   fi
-  cd -
   if [[ ${COVERAGE} == "ON" ]]; then
-    echo "========"
-    #which codecov
-    #run "codecov --gcov-exec $GCOV"
-    # https://docs.codecov.io/docs/testing-with-docker
-    /bin/bash <(curl -s https://codecov.io/bash)
+    echo "========"   
+    run "make VERBOSE=1 covrep"
+    # Uploading report to CodeCov
+    bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
   fi
+  cd -
   echo "======== end .travis-run-tests.sh =========="
 fi
 

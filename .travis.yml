@@ -69,6 +69,9 @@ env:
   - WERROR=ON COVERAGE=ON DRACO_C4=MPI
   - WERROR=ON DRACO_C4=MPI AUTODOC=ON
 
+jobs:
+  fast_finish: true
+
 # matrix:
 #   allow_failures:
 #     - compiler: gcc

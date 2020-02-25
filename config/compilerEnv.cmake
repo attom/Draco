@@ -134,8 +134,9 @@ macro(dbsSetupCompilers)
         )
       target_link_options(coverage_config INTERFACE --coverage)
 
-      find_program( LCOV NAMES lcov "$ENV{LCOV}" )
-      find_program( GCOV gcov "$ENV{GCOV}" )
+      # If env variable is set use it, otherwise search for default name.
+      find_program( LCOV NAMES "$ENV{LCOV}" lcov )
+      find_program( GCOV NAMES "$ENV{GCOV}" gcov )
       if( EXISTS "${LCOV}" AND EXISTS "${GCOV}" )
         # Add a custom target that prints the coverage report
         set(lcovopts1 --gcov-tool ${GCOV})
