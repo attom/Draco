@@ -63,22 +63,22 @@ DracoInfo::DracoInfo(void)
 #ifdef DRACO_TIMING
   diagnostics_timing = true;
 #endif
-  if (build_type == std::string("Release")) {
+  if (build_type == std::string("RELEASE")) {
     cxx_flags += CMAKE_CXX_FLAGS_RELEASE;
     cc_flags += CMAKE_C_FLAGS_RELEASE;
-  } else if (build_type == std::string("RelWithDebInfo")) {
+  } else if (build_type == std::string("RELWITHDEBINFO")) {
     cxx_flags += CMAKE_CXX_FLAGS_RELWITHDEBINFO;
     cc_flags += CMAKE_C_FLAGS_RELWITHDEBINFO;
-  } else if (build_type == std::string("Debug")) {
+  } else if (build_type == std::string("DEBUG")) {
     cxx_flags += CMAKE_CXX_FLAGS_DEBUG;
     cc_flags += CMAKE_C_FLAGS_DEBUG;
   }
 #ifdef CMAKE_Fortran_COMPILER
   fc = CMAKE_Fortran_COMPILER;
   fc_flags = CMAKE_Fortran_FLAGS;
-  if (build_type == std::string("Release"))
+  if (build_type == std::string("RELEASE"))
     fc_flags += CMAKE_Fortran_FLAGS_RELEASE;
-  else if (build_type == std::string("Debug"))
+  else if (build_type == std::string("DEBUG"))
     fc_flags += CMAKE_Fortran_FLAGS_DEBUG;
 #endif
 }

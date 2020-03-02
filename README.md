@@ -75,7 +75,6 @@ Synopsis of Active Draco Packages
   input-streams.
 * shared_lib - Dynamically load/unload shared object libraries via dl load
 * special_functions - Specialized math functions like factorial and Dirac delta.
-* timestep - An object-oriented class that encapsulates a time step controller.
 * traits - A traits class used by viz.
 * units - Provides encapsulated unit systems, functions to convert between unit
   systems and physical constants.

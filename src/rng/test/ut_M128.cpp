@@ -136,16 +136,18 @@ int main(int, char **) {
   // in llvm.  However, if it shows up in other contexts, some
   // kind of #ifndef might be appropriate.  N.B.  There's a similar
   // exception test in ut_carray.cpp
+
+  bool b(false);
+#if ! ( defined(_MSC_VER) && ! defined(DEBUG) )
   rngRemember(bool caught);
   rngRemember(caught = false);
-  bool b(false);
   try {
     b = One < AnotherOne;
   } catch (std::runtime_error &) {
     rngRemember(caught = true);
   }
   assert(caught);
-
+  
   rngRemember(caught = false);
   try {
     b = One <= AnotherOne;
@@ -169,6 +171,7 @@ int main(int, char **) {
     rngRemember(caught = true);
   }
   assert(caught);
+#endif
 
   // assemble_from_u32<r123m128i>
 

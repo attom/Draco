@@ -777,10 +777,10 @@ void array_reduction(rtt_dsxx::UnitTest &ut) {
 
     // make a vector of ints
     vector<int> x(100);
-    vector<int> prod(100, 1.0);
-    vector<int> sum(100, 0.0);
-    vector<int> lmin(100, 0.0);
-    vector<int> lmax(100, 0.0);
+    vector<int> prod(100, 1);
+    vector<int> sum(100, 0);
+    vector<int> lmin(100, 0);
+    vector<int> lmax(100, 0);
 
     // fill it
     for (int i = 0; i < 100; i++) {
@@ -817,10 +817,10 @@ void array_reduction(rtt_dsxx::UnitTest &ut) {
 
     // make a vector of unsigned ints
     vector<unsigned int> x(100);
-    vector<unsigned int> prod(100, 1.0);
-    vector<unsigned int> sum(100, 0.0);
-    vector<unsigned int> lmin(100, 0.0);
-    vector<unsigned int> lmax(100, 0.0);
+    vector<unsigned int> prod(100, 1);
+    vector<unsigned int> sum(100, 0);
+    vector<unsigned int> lmin(100, 0);
+    vector<unsigned int> lmax(100, 0);
 
     // fill it
     for (int i = 0; i < 100; i++) {
@@ -857,10 +857,10 @@ void array_reduction(rtt_dsxx::UnitTest &ut) {
 
     // make a vector of unsigned longs
     vector<unsigned long> x(100);
-    vector<unsigned long> prod(100, 1.0);
-    vector<unsigned long> sum(100, 0.0);
-    vector<unsigned long> lmin(100, 0.0);
-    vector<unsigned long> lmax(100, 0.0);
+    vector<unsigned long> prod(100, 1);
+    vector<unsigned long> sum(100, 0);
+    vector<unsigned long> lmin(100, 0);
+    vector<unsigned long> lmax(100, 0);
 
     // fill it
     for (int i = 0; i < 100; i++) {
@@ -902,10 +902,10 @@ void array_reduction(rtt_dsxx::UnitTest &ut) {
 
     // make a vector of unsigned shorts
     vector<unsigned short> x(100);
-    vector<unsigned short> prod(100, 1.0);
-    vector<unsigned short> sum(100, 0.0);
-    vector<unsigned short> lmin(100, 0.0);
-    vector<unsigned short> lmax(100, 0.0);
+    vector<unsigned short> prod(100, 1);
+    vector<unsigned short> sum(100, 0);
+    vector<unsigned short> lmin(100, 0);
+    vector<unsigned short> lmax(100, 0);
 
     // fill it
     for (int i = 0; i < 100; i++) {
@@ -946,10 +946,10 @@ void array_reduction(rtt_dsxx::UnitTest &ut) {
 
     // make a vector of unsigned long longs
     vector<unsigned long long> x(100);
-    vector<unsigned long long> prod(100, 1.0);
-    vector<unsigned long long> sum(100, 0.0);
-    vector<unsigned long long> lmin(100, 0.0);
-    vector<unsigned long long> lmax(100, 0.0);
+    vector<unsigned long long> prod(100, 1);
+    vector<unsigned long long> sum(100, 0);
+    vector<unsigned long long> lmin(100, 0);
+    vector<unsigned long long> lmax(100, 0);
 
     // fill it
     for (int i = 0; i < 100; i++) {
@@ -986,10 +986,10 @@ void array_reduction(rtt_dsxx::UnitTest &ut) {
 
     // make a vector of long longs
     vector<long long> x(100);
-    vector<long long> prod(100, 1.0);
-    vector<long long> sum(100, 0.0);
-    vector<long long> lmin(100, 0.0);
-    vector<long long> lmax(100, 0.0);
+    vector<long long> prod(100, 1);
+    vector<long long> sum(100, 0);
+    vector<long long> lmin(100, 0);
+    vector<long long> lmax(100, 0);
 
     // fill it
     for (int i = 0; i < 100; i++) {
@@ -1026,10 +1026,10 @@ void array_reduction(rtt_dsxx::UnitTest &ut) {
 
     // make a vector of longs
     vector<long> x(100);
-    vector<long> prod(100, 1.0);
-    vector<long> sum(100, 0.0);
-    vector<long> lmin(100, 0.0);
-    vector<long> lmax(100, 0.0);
+    vector<long> prod(100, 1);
+    vector<long> sum(100, 0);
+    vector<long> lmin(100, 0);
+    vector<long> lmax(100, 0);
 
     // fill it
     for (int i = 0; i < 100; i++) {
@@ -1071,10 +1071,10 @@ void array_reduction(rtt_dsxx::UnitTest &ut) {
 
     // make a vector of shorts
     vector<short> x(100);
-    vector<short> prod(100, 1.0);
-    vector<short> sum(100, 0.0);
-    vector<short> lmin(100, 0.0);
-    vector<short> lmax(100, 0.0);
+    vector<short> prod(100, 1);
+    vector<short> sum(100, 0);
+    vector<short> lmin(100, 0);
+    vector<short> lmax(100, 0);
 
     // fill it
     for (int i = 0; i < 100; i++) {

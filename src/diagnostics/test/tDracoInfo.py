@@ -35,16 +35,19 @@ try:
   ## Examine the output to determine if the test passed
   ##--------------------------------------------------------------------------##
 
+  # Scan output for various strings
   found_copyright = \
     tDracoInfo.output_contains("Copyright (C)")
-
   found_system_type = \
     tDracoInfo.output_contains("System type")
-
   found_build_data = \
     tDracoInfo.output_contains("build date" )
+  found_draco_team = \
+    tDracoInfo.output_contains("Draco Team" )
+  found_help_string = \
+    tDracoInfo.output_contains("Options without arguments:")
 
-  # There are 3 versions of this test
+  # There are several versions of this test
   # version command
   if tDracoInfo.check_arg_value("ARGVALUE", "--version"):
     if(found_build_data):
@@ -74,8 +77,23 @@ try:
       else:
         tDracoInfo.passmsg( "Did not find system type id")
 
+  # author command
+  elif tDracoInfo.check_arg_value("ARGVALUE", "--author"):
+      if(found_draco_team):
+        tDracoInfo.passmsg( "Found CCS-2 Draco Team")
+      else:
+        tDracoInfo.failmsg( "Did not find CCS-2 Draco Team")
+
+  # author command
+  elif tDracoInfo.check_arg_value("ARGVALUE", "--help") or \
+      tDracoInfo.check_arg_value("ARGVALUE", "--foo"):
+      if(found_help_string):
+        tDracoInfo.passmsg( "Found expected help output")
+      else:
+        tDracoInfo.failmsg( "Did not find expected help output")
+
   # no arguments
-  else:
+  elif tDracoInfo.check_arg_value("ARGVALUE", ""):
     if(found_copyright):
       tDracoInfo.passmsg( "Found copyright date")
     else:
@@ -85,6 +103,12 @@ try:
       tDracoInfo.passmsg( "Found system type id")
     else:
       tDracoInfo.failmsg( "Did not find system type id")
+
+  else:
+    if(found_help_string):
+      tDracoInfo.passmsg( "Found expected help output")
+    else:
+      tDracoInfo.failmsg( "Did not find expected help output")
 
   ##--------------------------------------------------------------------------##
   ## Final report

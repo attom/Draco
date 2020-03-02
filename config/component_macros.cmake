@@ -431,7 +431,7 @@ macro( add_component_library )
 
   # the above command returns the location in the build tree.  We need to
   # convert this to the install location.
-  if( ${DRACO_SHARED_LIBS} )
+  if( DRACO_SHARED_LIBS )
     set( imploc "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${impname}${CMAKE_SHARED_LIBRARY_SUFFIX}" )
   else()
     set( imploc "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}${impname}${CMAKE_STATIC_LIBRARY_SUFFIX}" )
@@ -486,16 +486,18 @@ macro( add_component_library )
       list( REMOVE_DUPLICATES ${acl_PREFIX}_TPL_LIST )
     endif()
 
-    set( ${acl_PREFIX}_LIBRARIES "${${acl_PREFIX}_LIBRARIES}"  CACHE INTERNAL "List of component targets" FORCE)
-    set( ${acl_PREFIX}_PACKAGE_LIST "${${acl_PREFIX}_PACKAGE_LIST}"  CACHE INTERNAL
-      "List of known ${acl_PREFIX} targets" FORCE)
+    set( ${acl_PREFIX}_LIBRARIES "${${acl_PREFIX}_LIBRARIES}"  CACHE INTERNAL
+      "List of component targets" FORCE)
+    set( ${acl_PREFIX}_PACKAGE_LIST "${${acl_PREFIX}_PACKAGE_LIST}"  CACHE
+      INTERNAL "List of known ${acl_PREFIX} targets" FORCE)
     set( ${acl_PREFIX}_TPL_LIST "${${acl_PREFIX}_TPL_LIST}"  CACHE INTERNAL
       "List of third party libraries known by ${acl_PREFIX}" FORCE)
-    set( ${acl_PREFIX}_TPL_INCLUDE_DIRS "${${acl_PREFIX}_TPL_INCLUDE_DIRS}"  CACHE
-      INTERNAL "List of include paths used by ${acl_PREFIX} to find thrid party vendor header files."
+    set( ${acl_PREFIX}_TPL_INCLUDE_DIRS "${${acl_PREFIX}_TPL_INCLUDE_DIRS}"
+      CACHE INTERNAL
+      "List of include paths used by ${acl_PREFIX} to find third party vendor header files."
       FORCE)
-    set( ${acl_PREFIX}_TPL_LIBRARIES "${${acl_PREFIX}_TPL_LIBRARIES}"  CACHE INTERNAL
-      "List of third party libraries used by ${acl_PREFIX}." FORCE)
+    set( ${acl_PREFIX}_TPL_LIBRARIES "${${acl_PREFIX}_TPL_LIBRARIES}"  CACHE
+      INTERNAL "List of third party libraries used by ${acl_PREFIX}." FORCE)
     set( ${acl_PREFIX}_EXPORT_TARGET_PROPERTIES
       "${${acl_PREFIX}_EXPORT_TARGET_PROPERTIES}" PARENT_SCOPE)
 
@@ -661,7 +663,7 @@ function( copy_dll_link_libraries_to_build_dir target )
 
   # Debug dependencies for a particular target (uncomment the next line and
   # provide the targetname): "Ut_${compname}_${testname}_exe"
-  if( "Ut_rng_ut_gsl_exe_foo" STREQUAL ${target} )
+  if( "XX_cdi_eospac_tEospac_exe" STREQUAL ${target} )
      set(lverbose ON)
   endif()
   if( lverbose )

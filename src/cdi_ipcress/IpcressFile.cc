@@ -28,9 +28,8 @@ namespace rtt_cdi_ipcress {
  */
 IpcressFile::IpcressFile(const std::string &ipcressDataFilename)
     : dataFilename(locateIpcressFile(ipcressDataFilename)),
-      ipcress_word_size(8), // bytes per entry in file.
-      ipcressFileHandle(),
-      toc(24, 0), // 24 records in the table of contents
+      ipcress_word_size(8),            // bytes per entry in file.
+      ipcressFileHandle(), toc(24, 0), // 24 records in the table of contents
       matIDs(), dfo(), ds(), materialData() {
   //! \bug May need to determine if this machine uses IEEE floating point
   // numbers or Cray floating point format.

@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
     bool version(false);
     bool brief(false);
     bool author(false);
+    bool known_arg(false);
     bool use_doxygen_formatting(false);
     rtt_diagnostics::DracoInfo di;
 
@@ -44,30 +45,39 @@ int main(int argc, char *argv[]) {
       switch (c) {
       case 'a': // --author
         author = true;
-        break;
-
-      case 'd': // --use_doxygen_formatting
-        use_doxygen_formatting = true;
-        break;
-
-      case 'v': // --version
-        version = true;
+        known_arg = true;
         break;
 
       case 'b': // --brief
         brief = true;
+        known_arg = true;
         break;
 
-      case 'h':
-        std::cout << program_options.display_help("draco_info") << std::endl;
+      case 'd': // --use_doxygen_formatting
+        use_doxygen_formatting = true;
+        known_arg = true;
+        break;
+
+      case 'v': // --version
+        version = true;
+        known_arg = true;
+        break;
+
+      default: // same as option 'h':
+        known_arg = true;
+        cout << program_options.display_help("draco_info") << endl;
         return 0;
-        break;
-
-      default:
         break;
       }
     }
 
+    // If a bad argument is provided, print the help message and exit.
+    if (argc > 1 && !known_arg) {
+      cout << program_options.display_help("draco_info") << endl;
+      return 0;
+    }
+
+    // Otherwise generate and print the requested report.
     if (version)
       cout << di.versionReport();
     else if (brief)
@@ -76,21 +86,13 @@ int main(int argc, char *argv[]) {
       cout << rtt_dsxx::author_list(use_doxygen_formatting);
     else
       cout << di.fullReport();
-  } catch (rtt_dsxx::assertion &err) {
-    std::string msg = err.what();
-    std::cout << "ERROR: While running " << argv[0] << ", " << err.what()
-              << std::endl;
-    ;
-    return 1;
+    // -----------------------------------------------------------------------//
   } catch (std::exception &err) {
-    std::cout << "ERROR: While running " << argv[0] << ", " << err.what()
-              << std::endl;
-    ;
+    cout << "ERROR: While running " << argv[0] << ", " << err.what() << endl;
     return 1;
   } catch (...) {
-    std::cout << "ERROR: While running " << argv[0] << ", "
-              << "An unknown C++ exception was thrown" << std::endl;
-    ;
+    cout << "ERROR: While running " << argv[0] << ", "
+         << "An unknown C++ exception was thrown" << endl;
     return 1;
   }
 

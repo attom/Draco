@@ -84,7 +84,7 @@ find_path( NDI_INCLUDE_DIR
 #     set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.dylib")
 # endif()
 
-set( NDI_LIBRARY_NAME ndi)
+set( NDI_LIBRARY_NAME ndipic ndi)
 
 find_library(NDI_LIBRARY
   NAMES ${NDI_LIBRARY_NAME}

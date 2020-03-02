@@ -292,7 +292,7 @@ std::vector<double> NDI_TN::get_PDF(const int product_zaid,
     Remember(dist_sum += pdf[n]);
   }
 
-  Insist(rtt_dsxx::soft_equiv(dist_sum, 1., 1.e-10), "PDF not normalized!");
+  Require(rtt_dsxx::soft_equiv(dist_sum, 1., 1.e-10));
 
   return pdf;
 }

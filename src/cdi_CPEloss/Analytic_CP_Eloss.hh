@@ -1,6 +1,6 @@
 //----------------------------------*-C++-*-----------------------------------//
 /*!
- * \file   cdi_analytic/Analytic_CP_Eloss.hh
+ * \file   cdi_CPEloss/Analytic_CP_Eloss.hh
  * \author Kendra P. Long
  * \date   Fri Aug  2 14:28:08 2019
  * \brief  Analytic_CP_Eloss class definition.
@@ -8,15 +8,15 @@
  *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
-#ifndef rtt_cdi_analytic_Analytic_CP_Eloss_hh
-#define rtt_cdi_analytic_Analytic_CP_Eloss_hh
+#ifndef rtt_cdi_CPEloss_Analytic_CP_Eloss_hh
+#define rtt_cdi_CPEloss_Analytic_CP_Eloss_hh
 
-#include "Analytic_Models.hh"
+#include "Analytic_Eloss_Model.hh"
 #include "cdi/CPCommon.hh"
 #include "cdi/CPEloss.hh"
 #include <memory>
 
-namespace rtt_cdi_analytic {
+namespace rtt_cdi_cpeloss {
 //============================================================================//
 /*!
  * \class Analytic_CP_Eloss
@@ -104,10 +104,10 @@ public:
  */
 std::string Analytic_CP_Eloss::getDataFilename() const { return std_string(); }
 
-} // namespace rtt_cdi_analytic
+} // namespace rtt_cdi_cpeloss
 
 #endif
 
 //----------------------------------------------------------------------------//
-// End cdi_analytic/Analytic_CP_Eloss.hh
+// End cdi_CPEloss/Analytic_CP_Eloss.hh
 //----------------------------------------------------------------------------//
