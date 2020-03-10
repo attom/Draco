@@ -12,10 +12,9 @@
 #   https://rtt.lanl.gov/redmine/projects/draco/wiki/Common_Configure_Options
 
 cmake_minimum_required(VERSION 3.14.0 FATAL_ERROR)
-project( Draco
-  VERSION 7.4
-  DESCRIPTION "An object-oriented component library supporting radiation transport applications."
-  LANGUAGES CXX C )
+set(ddesc "An object-oriented component library supporting radiation")
+string(APPEND ddesc " transport applications.")
+project( Draco DESCRIPTION ${ddesc} VERSION 7.5 LANGUAGES CXX C)
 
 # Do not look for Fortran/CUDA for
 # 1. XCode based Generators, or

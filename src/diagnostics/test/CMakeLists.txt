@@ -11,14 +11,23 @@ project( diagnostics_test CXX )
 # ---------------------------------------------------------------------------- #
 # Source files
 # ---------------------------------------------------------------------------- #
-file( GLOB test_sources *.cc )
+set(scalar_test_sources
+    ${PROJECT_SOURCE_DIR}/tstDiagnostics.cc
+    ${PROJECT_SOURCE_DIR}/tstProcmon.cc
+    ${PROJECT_SOURCE_DIR}/tstTiming.cc)
+set(parallel_test_sources
+    ${PROJECT_SOURCE_DIR}/tstruntime_error.cc)
 
 # ---------------------------------------------------------------------------- #
 # Build Unit tests
 # ---------------------------------------------------------------------------- #
 add_scalar_tests(
-   SOURCES "${test_sources}"
+   SOURCES "${scalar_test_sources}"
    DEPS    Lib_diagnostics )
+add_parallel_tests(
+   SOURCES "${parallel_test_sources}"
+   DEPS    Lib_diagnostics
+   PE_LIST "1")
 
 include( ApplicationUnitTest )
 

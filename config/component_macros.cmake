@@ -252,8 +252,8 @@ or the target must be labeled NOEXPORT.")
   ")
   unset(iid)
 
-  # Only publish information to draco-config.cmake for non-test
-  # libraries.  Also, omit any libraries that are marked as NOEXPORT
+  # Only publish information to draco-config.cmake for non-test libraries.
+  # Also, omit any libraries that are marked as NOEXPORT
   if( NOT ${ace_NOEXPORT} AND
       NOT "${CMAKE_CURRENT_SOURCE_DIR}" MATCHES "test" )
 
@@ -274,17 +274,19 @@ or the target must be labeled NOEXPORT.")
       list( REMOVE_DUPLICATES ${ace_PREFIX}_EXECUTABLES )
     endif()
 
-    set( ${ace_PREFIX}_EXECUTABLES "${${ace_PREFIX}_EXECUTABLES}"  CACHE INTERNAL "List of component targets" FORCE)
+    set( ${ace_PREFIX}_EXECUTABLES "${${ace_PREFIX}_EXECUTABLES}"  CACHE
+      INTERNAL "List of component targets" FORCE)
     set( ${ace_PREFIX}_TPL_LIST "${${ace_PREFIX}_TPL_LIST}"  CACHE INTERNAL
       "List of third party libraries known by ${ace_PREFIX}" FORCE)
-    set( ${ace_PREFIX}_TPL_INCLUDE_DIRS "${${ace_PREFIX}_TPL_INCLUDE_DIRS}"  CACHE
-      INTERNAL "List of include paths used by ${ace_PREFIX} to find thrid party vendor header files."
-      FORCE)
-    set( ${ace_PREFIX}_TPL_LIBRARIES "${${ace_PREFIX}_TPL_LIBRARIES}"  CACHE INTERNAL
-      "List of third party libraries used by ${ace_PREFIX}." FORCE)
+    set(desc "List of include paths used by ${ace_PREFIX} to find third")
+    string(APPEND desc " party vendor header files.")
+    set( ${ace_PREFIX}_TPL_INCLUDE_DIRS "${${ace_PREFIX}_TPL_INCLUDE_DIRS}"
+      CACHE INTERNAL ${desc} FORCE)
+    set( ${ace_PREFIX}_TPL_LIBRARIES "${${ace_PREFIX}_TPL_LIBRARIES}" CACHE
+      INTERNAL "List of third party libraries used by ${ace_PREFIX}." FORCE)
     set( ${ace_PREFIX}_EXPORT_TARGET_PROPERTIES
       "${${ace_PREFIX}_EXPORT_TARGET_PROPERTIES}" PARENT_SCOPE)
-
+    unset(desc)
   endif()
 
   # If Win32, copy dll files into binary directory.
@@ -362,7 +364,7 @@ macro( add_component_library )
   endif()
   if( "${acl_LINK_LANGUAGE}" STREQUAL "CUDA" )
     set_property( SOURCE ${acl_SOURCES} APPEND PROPERTY LANGUAGE CUDA )
-#    set( acl_LIBRARY_TYPE STATIC )
+    set( acl_LIBRARY_TYPE STATIC )
   endif()
 
   #
@@ -431,7 +433,7 @@ macro( add_component_library )
 
   # the above command returns the location in the build tree.  We need to
   # convert this to the install location.
-  if( DRACO_SHARED_LIBS )
+  if( ${DRACO_SHARED_LIBS} )
     set( imploc "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${impname}${CMAKE_SHARED_LIBRARY_SUFFIX}" )
   else()
     set( imploc "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}${impname}${CMAKE_STATIC_LIBRARY_SUFFIX}" )
@@ -486,21 +488,22 @@ macro( add_component_library )
       list( REMOVE_DUPLICATES ${acl_PREFIX}_TPL_LIST )
     endif()
 
-    set( ${acl_PREFIX}_LIBRARIES "${${acl_PREFIX}_LIBRARIES}"  CACHE INTERNAL
+    set( ${acl_PREFIX}_LIBRARIES "${${acl_PREFIX}_LIBRARIES}" CACHE INTERNAL
       "List of component targets" FORCE)
-    set( ${acl_PREFIX}_PACKAGE_LIST "${${acl_PREFIX}_PACKAGE_LIST}"  CACHE
+    set( ${acl_PREFIX}_PACKAGE_LIST "${${acl_PREFIX}_PACKAGE_LIST}" CACHE
       INTERNAL "List of known ${acl_PREFIX} targets" FORCE)
     set( ${acl_PREFIX}_TPL_LIST "${${acl_PREFIX}_TPL_LIST}"  CACHE INTERNAL
       "List of third party libraries known by ${acl_PREFIX}" FORCE)
+    set(desc "List of include paths used by ${acl_PREFIX} to find third")
+    string(APPEND desc " party vendor header files.")
     set( ${acl_PREFIX}_TPL_INCLUDE_DIRS "${${acl_PREFIX}_TPL_INCLUDE_DIRS}"
-      CACHE INTERNAL
-      "List of include paths used by ${acl_PREFIX} to find third party vendor header files."
-      FORCE)
-    set( ${acl_PREFIX}_TPL_LIBRARIES "${${acl_PREFIX}_TPL_LIBRARIES}"  CACHE
+      CACHE INTERNAL ${desc} FORCE)
+    set( ${acl_PREFIX}_TPL_LIBRARIES "${${acl_PREFIX}_TPL_LIBRARIES}" CACHE
       INTERNAL "List of third party libraries used by ${acl_PREFIX}." FORCE)
     set( ${acl_PREFIX}_EXPORT_TARGET_PROPERTIES
       "${${acl_PREFIX}_EXPORT_TARGET_PROPERTIES}" PARENT_SCOPE)
 
+    unset(desc)
   endif()
 
 endmacro()
@@ -663,7 +666,7 @@ function( copy_dll_link_libraries_to_build_dir target )
 
   # Debug dependencies for a particular target (uncomment the next line and
   # provide the targetname): "Ut_${compname}_${testname}_exe"
-  if( "XX_cdi_eospac_tEospac_exe" STREQUAL ${target} )
+  if( "Ut_rng_ut_gsl_exe_foo" STREQUAL ${target} )
      set(lverbose ON)
   endif()
   if( lverbose )
@@ -1060,6 +1063,10 @@ macro( add_parallel_tests )
   if( "${addparalleltest_SOURCES}none" STREQUAL "none" )
     message( FATAL_ERROR "You must provide the keyword SOURCES and a list of sources when using the add_parallel_tests macro.  Please see draco/config/component_macros.cmake::add_parallel_tests() for more information." )
   endif()
+  if( "${addparalleltest_PE_LIST}none" STREQUAL "none" )
+    message( FATAL_ERROR "You must provide the keyword PE_LIST and a list containing the number of cores used to execute this test (e.g. \"PE_LIST  \"1;2;4\"\").  Please see draco/config/component_macros.cmake::add_parallel_tests() for more information." )
+  endif()
+
 
   # Pass/Fail criteria
   if( "${addparalleltest_PASS_REGEX}none" STREQUAL "none" )

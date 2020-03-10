@@ -80,6 +80,7 @@ endif()
 # Tests that expect exactly 4 PE (omit for DRACO_C4=SCALAR builds):
 set( four_pe_tests ${PROJECT_SOURCE_DIR}/tstQuoWrapper.cc )
 list( REMOVE_ITEM test_sources ${four_pe_tests} )
+
 if( NOT ${DRACO_C4} STREQUAL "SCALAR" )
   add_parallel_tests(
     SOURCES   "${four_pe_tests}"

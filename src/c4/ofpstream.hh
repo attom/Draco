@@ -68,6 +68,9 @@ public:
   //! Shrink the internal buffer to fit the data currently in buffer.
   void shrink_to_fit() { sb_.shrink_to_fit(); }
 
+  //! prevent default constructor
+  ofpstream() = delete;
+
 private:
   struct mpibuf : public std::streambuf {
 

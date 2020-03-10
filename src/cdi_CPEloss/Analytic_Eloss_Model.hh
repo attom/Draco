@@ -22,10 +22,10 @@ namespace rtt_cdi_cpeloss {
  * \class Analytic_Eloss_Model
  * \brief Analytic_Eloss_Model base class.
  *
- * This is a base class that defines the interface given to
- * Analytic_Eloss_Model constructors.  The user
- * can define any derived model class that will work with these analytic opacity
- * generation classes as long as it implements the functions required, namely
+ * This is a base class that defines the interface given to Analytic_Eloss_Model
+ * constructors.  The user can define any derived model class that will work
+ * with these analytic opacity generation classes as long as it implements the
+ * functions required, namely:
  *
  * \arg double calculate_eloss(double T, double rho)
  *
@@ -50,8 +50,9 @@ protected:
   Analytic_Eloss_Model(const rtt_cdi::CParticle &target,
                        const rtt_cdi::CParticle &projectile)
       : zaidt(target.get_zaid()), mt(target.get_mass()),
-        qtabs(fabs(target.get_z()) * pc.e()), zaidp(target.get_zaid()),
-        mp(projectile.get_mass()), qpabs(fabs(projectile.get_z()) * pc.e()) {}
+        qtabs(std::abs(target.get_z()) * pc.e()), zaidp(target.get_zaid()),
+        mp(projectile.get_mass()),
+        qpabs(std::abs(projectile.get_z()) * pc.e()) {}
 
 protected:
   //! Unit system (use cgs internally)

@@ -51,11 +51,11 @@ bool is_active = false;
 #if DRACO_DIAGNOSTICS & 2
 
 struct alloc_t {
-  unsigned size;  // size of allocation
-  unsigned count; // number of allocations of this size
+  std::size_t size; // size of allocation
+  unsigned count;   // number of allocations of this size
 
   alloc_t() {}
-  alloc_t(unsigned my_size, unsigned my_count)
+  alloc_t(std::size_t my_size, unsigned my_count)
       : size(my_size), count(my_count) {}
 };
 
@@ -223,8 +223,9 @@ void operator delete(void *ptr) throw() {
   if (is_active) {
     map<void *, alloc_t>::iterator i = st.alloc_map.find(ptr);
     if (i != st.alloc_map.end()) {
-      total -= i->second.size;
-      if (i->second.size >= check_large) {
+      size_t const n = i->second.size;
+      total -= n;
+      if (n >= check_large) {
         // This is where the programmer should set his breakpoint if he wishes
         // to pause execution when an allocation larger than check_large is
         // deallocated. check_large is typically also set in the debugger by the

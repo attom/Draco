@@ -358,6 +358,26 @@ macro( setupSpectrumMPI )
   # Find cores/cpu, cpu/node, hyper-threading
   query_topology()
 
+  # jsrun options
+  #----------------------------------------
+  # Ref: https://hpc.llnl.gov/training/tutorials/using-lcs-sierra-system#jsrun
+  #----------------------------------------
+  # Basic:
+  # -n Total number of cores
+  #
+  # Using resource sets:
+  # -a Number of tasks per resource set
+  # -n Total number of resource sets for the job
+  # -c Number of CPUs (cores) per resource set
+  # -g Number of GPUs per resource set
+  # -r Number of resource sets per node.
+  #
+  # Examples:
+  # - jsrun -a4 -c1 -g1  => 4 tasks on 4 cores that share 1 gpu.
+  # - jsrun -r4 -n8      => 2 nodes, 4 resource sets per node, 8 resource sets
+  #                         total
+  # - jsrun -a4 -c16 -g2 => 4 tasks, 16 cores, 2 gpus
+
   #
   # Setup for OMP plus MPI
   #

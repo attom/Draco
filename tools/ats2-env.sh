@@ -21,7 +21,7 @@ else
 fi
 
 # The following toolchains will be used when releasing code
-environments="gcc731env xl20190820"
+environments="gcc731env xl20191223"
 
 # Extra cmake options
 export CONFIG_BASE+=" -DCMAKE_VERBOSE_MAKEFILE=ON"
@@ -49,50 +49,17 @@ fi
 case $ddir in
 
   #------------------------------------------------------------------------------#
-  draco-7_4*)
+  draco-7_4* | draco-7_5*)
     function gcc731env()
     {
       run "module purge"
       run "module use /usr/gapps/jayenne/vendors-ec/spack.20190616/share/spack/lmod/linux-rhel7-ppc64le/Core"
       run "module load StdEnv"
-      run "module unload spectrum-mpi xl"
+      run "module unload cuda spectrum-mpi xl"
       run "module load gcc/7.3.1 spectrum-mpi/2019.06.24"
       run "module load python/3.7.2 cmake/3.14.5 git gsl numdiff random123 metis netlib-lapack"
       run "module load parmetis superlu-dist trilinos csk"
-      run "module load eospac/6.4.0"
-      # ndi quo
-      run "module list"
-      unset MPI_ROOT
-      CXX=`which g++`
-      CC=`which gcc`
-      FC=`which gfortran`
-    }
-    function xl20190820()
-    {
-      run "module purge"
-      run "module use /usr/gapps/jayenne/vendors-ec/spack.20190616/share/spack/lmod/linux-rhel7-ppc64le/Core"
-      run "module load StdEnv"
-      run "module unload spectrum-mpi"
-      run "module load spectrum-mpi/2019.06.24"
-      run "module load python/3.7.2 cmake/3.14.5 git gsl numdiff random123 metis netlib-lapack"
-      run "module load parmetis superlu-dist csk"
-      run "module load eospac/6.4.0"
-      # ndi quo
-      run "module list"
-      unset MPI_ROOT
-    }
-    ;;
-
-  #------------------------------------------------------------------------------#
-  draco-7_2* | draco-7_3* )
-    function gcc731env()
-    {
-      run "module purge"
-      run "module use /usr/gapps/jayenne/vendors-ec/spack.20190616/share/spack/lmod/linux-rhel7-ppc64le/Core"
-      run "module load StdEnv cuda python/3.7.2 gcc/7.3.1 spectrum-mpi/2019.01.30"
-      run "module load cmake/3.14.5 git gsl numdiff random123 metis netlib-lapack"
-      run "module load parmetis superlu-dist trilinos csk"
-      run "module load eospac/6.4.0"
+      run "module load eospac/6.4.0 libquo"
       # ndi
       run "module list"
       unset MPI_ROOT
@@ -100,22 +67,22 @@ case $ddir in
       CC=`which gcc`
       FC=`which gfortran`
     }
-    ;;
-
-  #------------------------------------------------------------------------------#
-  draco-7_1*)
-    function gcc731env()
+    function xl20191223()
     {
       run "module purge"
-      run "module use /usr/gapps/user_contrib/spack.20190314/share/spack/lmod/linux-rhel7-ppc64le/Core"
-      run "module load StdEnv cuda python gcc/7.3.1 spectrum-mpi cmake/3.12.1 git"
-      run "module load gsl numdiff random123 metis parmetis superlu-dist"
-      run "module load trilinos netlib-lapack numdiff"
+      run "module use /usr/gapps/jayenne/vendors-ec/spack.20190616/share/spack/lmod/linux-rhel7-ppc64le/Core"
+      run "module load StdEnv"
+      run "module unload cuda spectrum-mpi xl"
+      run "module load xl/2019.12.23 spectrum-mpi/2019.06.24"
+      run "module load python/3.7.2 cmake/3.14.5 git gsl numdiff random123 metis netlib-lapack"
+      run "module load parmetis superlu-dist csk"
+      run "module load eospac/6.4.0 libquo"
+      # ndi
+      # trilinos possible non-spack solution at:
+      # /usr/gapps/jayenne/vendors/trilinos-12.18.1/xl-2019.12.23-spectrum-mpi-2019.06.24
+      export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/usr/gapps/jayenne/vendors/trilinos-12.18.1/xl-2019.12.23-spectrum-mpi-2019.06.24
       run "module list"
       unset MPI_ROOT
-      CXX=`which g++`
-      CC=`which gcc`
-      FC=`which gfortran`
     }
     ;;
 
