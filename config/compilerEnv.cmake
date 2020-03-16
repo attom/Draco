@@ -399,9 +399,17 @@ endmacro()
 #------------------------------------------------------------------------------#
 macro(dbsSetupStaticAnalyzers)
 
-  set( DRACO_STATIC_ANALYZER "none" CACHE STRING "Enable a static analysis tool" )
+  set( DRACO_STATIC_ANALYZER "none" CACHE STRING "Enable a static analysis tool"
+    )
   set_property( CACHE DRACO_STATIC_ANALYZER PROPERTY STRINGS
     "none" "clang-tidy" "iwyu" "cppcheck" "cpplint" "iwyl" )
+
+  # Sanity Checks
+  if( "${DRACO_STATIC_ANALYZER}" STREQUAL "clang-tidy" AND
+      NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
+    message( FATAL_ERROR "When DRACO_STATIC_ANALYZER=clang-tidy, the CXX"
+      " compiler must be clang.")
+  endif()
 
   if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
 
@@ -417,6 +425,7 @@ macro(dbsSetupStaticAnalyzers)
         string(CONCAT CLANG_TIDY_IPATH ${CT_BPATH} "/include/c++/v1")
         unset( CT_BPATH )
       endif()
+
       if( CMAKE_CXX_CLANG_TIDY )
         if( NOT CLANG_TIDY_OPTIONS )
           set( CLANG_TIDY_OPTIONS "-header-filter=.*[.]hh" )
@@ -427,7 +436,8 @@ macro(dbsSetupStaticAnalyzers)
         if( NOT CLANG_TIDY_CHECKS )
           # -checks=mpi-*,bugprone-*,performance-*,modernize-*
           # See full list: `clang-tidy -check=* -list-checks'
-          set( CLANG_TIDY_CHECKS "-checks=modernize-*" )
+          # Default: all modernize checks; except use-triling-return-type.
+          set( CLANG_TIDY_CHECKS "-checks=modernize-*,-modernize-use-trailing-return-type" )
         endif()
         set( CLANG_TIDY_CHECKS "${CLANG_TIDY_CHECKS}" CACHE STRING
           "clang-tidy check options (eg: -checks=bugprone-*,mpi-*)" FORCE )

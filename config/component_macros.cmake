@@ -68,6 +68,10 @@ function( dbs_std_tgt_props target )
   # files from clang.
   get_target_property( tgt_sources ${target} SOURCES )
   if( "${DRACO_STATIC_ANALYZER}" MATCHES "clang-tidy" )
+    if( NOT CLANG_TIDY_IPATH )
+      message(FATAL_ERROR "Unable to configure clang-tidy build because"
+        " CLANG_TIDY_IPATH is empty.")
+    endif()
     set_source_files_properties( ${tgt_sources} PROPERTIES INCLUDE_DIRECTORIES
       ${CLANG_TIDY_IPATH} )
   endif()
