@@ -40,7 +40,7 @@ fi
 case $ddir in
 
   #------------------------------------------------------------------------------#
-  draco-7_3* | draco-7_4* | draco-7_5*)
+  draco-7_3* | draco-7_4* | draco-7_5* | draco-7_6*)
     function gcc830()
     {
       run "module load user_contrib friendly-testing"
@@ -65,7 +65,8 @@ case $ddir in
       run "module load trilinos/12.14.1-${cver}-${mver}-openblas"
       run "module load cray-python/3.6.5.6 qt"
       run "module use --append ${VENDOR_DIR}-ec/modulefiles-capulin"
-      run "module load csk/0.5.0-${cver} ndi"
+      run "module load csk/0.5.0-${cver} quo"
+      # ndi
       run "module list"
       export CC=`which cc`
       export CXX=`which CC`

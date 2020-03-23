@@ -199,12 +199,18 @@ int abort(int error) {
 }
 
 //----------------------------------------------------------------------------//
-// isScalar
+// Helpers
 //----------------------------------------------------------------------------//
 bool isScalar() { return !initialized; }
 bool isMpiInit() { return initialized; }
 
 } // end namespace rtt_c4
+
+//! Set c4's initialzed variable to true (called from Fortran tests)
+void setMpiInit() {
+  rtt_c4::initialized = true;
+  return;
+}
 
 #endif // C4_MPI
 

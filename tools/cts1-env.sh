@@ -42,7 +42,7 @@ fi
 case $ddir in
 
   #------------------------------------------------------------------------------#
-  draco-7_5*)
+  draco-7_5*|draco-7_6*)
     function intel1904env
     {
       run "module purge"

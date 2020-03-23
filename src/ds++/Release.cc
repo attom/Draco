@@ -105,15 +105,15 @@ const std::string author_list(bool const use_doxygen_formatting) {
   mmdevs current_developers;
   // not totally fair... KT got credit for LOC when svn repository was converted
   // to git.
-  current_developers.insert(fomdev(189645, "Kelly G. Thompson"));
-  current_developers.insert(fomdev(12436, "Kent G. Budge"));
+  current_developers.insert(fomdev(189354, "Kelly G. Thompson"));
+  current_developers.insert(fomdev(12432, "Kent G. Budge"));
   current_developers.insert(fomdev(3733, "Ryan T. Wollaeger"));
-  current_developers.insert(fomdev(3548, "Alex R. Long"));
-  current_developers.insert(fomdev(3251, "Ben R. Ryan"));
+  current_developers.insert(fomdev(3667, "Ben R. Ryan"));
+  current_developers.insert(fomdev(3545, "Alex R. Long"));
   current_developers.insert(fomdev(1750, "Kendra P. Long"));
   current_developers.insert(fomdev(1639, "James S. Warsa"));
-  current_developers.insert(fomdev(1573, "Matt A. Cleveland"));
-  current_developers.insert(fomdev(607, "Tim Kelley"));
+  current_developers.insert(fomdev(1636, "Matt A. Cleveland"));
+  current_developers.insert(fomdev(603, "Tim Kelley"));
   current_developers.insert(fomdev(379, "Jae H. Chang"));
   current_developers.insert(fomdev(173, "Andrew T. Till"));
   current_developers.insert(fomdev(98, "Seth D. Cook"));
@@ -122,11 +122,11 @@ const std::string author_list(bool const use_doxygen_formatting) {
 
   mmdevs prior_developers;
 
-  prior_developers.insert(fomdev(3935, "Gabriel M. Rockefeller"));
-  prior_developers.insert(fomdev(2019, "Allan B. Wollaber"));
+  prior_developers.insert(fomdev(3933, "Gabriel M. Rockefeller"));
+  prior_developers.insert(fomdev(2018, "Allan B. Wollaber"));
   prior_developers.insert(fomdev(476, "Rob B. Lowrie"));
   prior_developers.insert(fomdev(293, "Paul W. Talbot"));
-  prior_developers.insert(fomdev(196, "Katherine J. Wang"));
+  prior_developers.insert(fomdev(194, "Katherine J. Wang"));
   prior_developers.insert(fomdev(66, "Peter Ahrens"));
   prior_developers.insert(fomdev(24, "Daniel Holladay"));
   prior_developers.insert(fomdev(12, "Jeff D. Densmore"));
