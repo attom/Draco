@@ -539,7 +539,7 @@ void pack_data(FT const &field, std::vector<char> &packed) {
 
   // determine the number of bytes in the field
   Check(field_size * sizeof(typename FT::value_type) + sizeof(int) < INT32_MAX);
-  int const size = static_cast<int>(
+  auto const size = static_cast<int>(
       field_size * sizeof(typename FT::value_type) + sizeof(int));
 
   // make a vector<char> large enough to hold the packed field

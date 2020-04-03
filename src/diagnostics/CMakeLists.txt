@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2012 Aug 1
 # brief  Generate build project files for diagnostics.
-# note   Copyright (C) 2016-2019, Triad National Security, LLC.
+# note   Copyright (C) 2016-2020, Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.9.0)
@@ -76,7 +76,7 @@ add_component_executable(
   PREFIX       Draco
   )
 
-if( QT_FOUND )
+if( Qt5Core_DIR AND NOT "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "ppc64le" )
   add_subdirectory( qt )
 endif()
 

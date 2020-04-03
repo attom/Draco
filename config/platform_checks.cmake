@@ -161,43 +161,43 @@ endmacro()
 macro( query_have_gethostname )
     # Platform checks for gethostname()
     include( CheckIncludeFiles )
-    check_include_files( unistd.h    HAVE_UNISTD_H )
-    check_include_files( limits.h    HAVE_LIMITS_H )
-    check_include_files( winsock2.h  HAVE_WINSOCK2_H )
-    check_include_files( direct.h    HAVE_DIRECT_H )
-    check_include_files( sys/param.h HAVE_SYS_PARAM_H )
-    # Used to demangle symbols for stack trace
-    # check_include_files( cxxabi.h    HAVE_CXXABI_H )
+    if( WIN32 )
+      check_include_files( winsock2.h  HAVE_WINSOCK2_H )
+    else()
+      check_include_files( unistd.h    HAVE_UNISTD_H )
+      check_include_files( sys/param.h HAVE_SYS_PARAM_H )
+    endif()
 
     # -------------- Checks for hostname and len(hostname) ---------------- #
-    # gethostname()
+
     include( CheckFunctionExists )
-    check_function_exists( gethostname HAVE_GETHOSTNAME )
+    if( NOT WIN32 )
+      check_function_exists( gethostname HAVE_GETHOSTNAME )
 
-    # HOST_NAME_MAX
-    include( CheckSymbolExists )
-    unset( hlist )
-    if( HAVE_UNISTD_H )
-       list( APPEND hlist unistd.h )
-    endif()
-    if( HAVE_WINSOCK2_H )
-       list( APPEND hlist winsock2.h )
-    endif()
-    if( HAVE_LIMITS_H )
-       list( APPEND hlist limits.h )
-    endif()
-    check_symbol_exists( HOST_NAME_MAX "${hlist}" HAVE_HOST_NAME_MAX )
-    if( NOT HAVE_HOST_NAME_MAX )
-       unset( HAVE_GETHOSTNAME )
-    endif()
+      # HOST_NAME_MAX
+      include( CheckSymbolExists )
+      unset( hlist )
+      if( HAVE_UNISTD_H )
+         list( APPEND hlist unistd.h )
+      endif()
+      if( HAVE_WINSOCK2_H )
+         list( APPEND hlist winsock2.h )
+      endif()
+      list( APPEND hlist limits.h )
 
-    check_symbol_exists( _POSIX_HOST_NAME_MAX "posix1_lim.h"
-      HAVE_POSIX_HOST_NAME_MAX )
+      check_symbol_exists( HOST_NAME_MAX "${hlist}" HAVE_HOST_NAME_MAX )
+      if( NOT HAVE_HOST_NAME_MAX )
+         unset( HAVE_GETHOSTNAME )
+      endif()
 
-    # HOST_NAME_MAX
-    check_symbol_exists( MAXHOSTNAMELEN "sys/param.h" HAVE_MAXHOSTNAMELEN )
-    if( NOT HAVE_MAXHOSTNAMELEN )
-       unset( HAVE_MAXHOSTNAMELEN )
+      check_symbol_exists( _POSIX_HOST_NAME_MAX "posix1_lim.h"
+        HAVE_POSIX_HOST_NAME_MAX )
+
+      # HOST_NAME_MAX
+      check_symbol_exists( MAXHOSTNAMELEN "sys/param.h" HAVE_MAXHOSTNAMELEN )
+      if( NOT HAVE_MAXHOSTNAMELEN )
+         unset( HAVE_MAXHOSTNAMELEN )
+      endif()
     endif()
 
 endmacro()
@@ -209,20 +209,20 @@ endmacro()
 ## Used by ds++/SystemCall.cc and ds++/path.cc
 ##---------------------------------------------------------------------------##
 macro( query_have_maxpathlen )
+    include(CheckSymbolExists)
+
     # MAXPATHLEN
     unset( hlist )
     if( HAVE_UNISTD_H )
        list( APPEND hlist unistd.h )
     endif()
-    if( HAVE_LIMITS_H )
-       list( APPEND hlist limits.h )
-    endif()
+    list( APPEND hlist limits.h )
     if( HAVE_SYS_PARAM_H )
        list( APPEND hlist sys/param.h )
     endif()
     check_symbol_exists( MAXPATHLEN "${hlist}" HAVE_MAXPATHLEN )
     if( NOT HAVE_MAXPATHLEN )
-        unset( HAVE_MAXPATHLEN )
+      unset( HAVE_MAXPATHLEN )
     endif()
 endmacro()
 
@@ -349,7 +349,7 @@ macro( query_fma_on_hardware )
     #   # - looking at $ENV{PROCESSOR_IDENTIFIER}. This will be something like:
     #   #   "Intel64 Family 6 Model 45 Stepping 7, GenuineIntel" This string
     #   #   would need to be decoded to know if the processor supports FMA.
-    #   # - running 'wmic cpu get * /fomrat:list'. This lists a lot of
+    #   # - running 'wmic cpu get * /format:list'. This lists a lot of
     #   #   information about the cpu, but it does not itemize features like
     #   #   fma. Optionally, 'wmic cpu get name'
     #   # - run a 3rd party application like cpuz64.

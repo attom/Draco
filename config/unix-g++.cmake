@@ -86,8 +86,9 @@ endif()
 
 if( NOT CXX_FLAGS_INITIALIZED )
   set( CXX_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using draco settings." )
-
   set( CMAKE_C_FLAGS                "-Wcast-align -Wpointer-arith -Wall -pedantic" )
+  string( APPEND CMAKE_C_FLAGS " -Wfloat-equal -Wunused-macros" )
+  string( APPEND CMAKE_C_FLAGS " -fsanitize=bounds-strict -Wshadow -Wformat=2")
   if( CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0 )
     string( APPEND CMAKE_C_FLAGS    " -Wno-expansion-to-defined -Wnarrowing" )
   endif()

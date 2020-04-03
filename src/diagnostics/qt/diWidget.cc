@@ -5,11 +5,9 @@
  * \date   Monday, Aug 11, 2016, 17:05 pm
  * \brief  Implementation for draco info widget.
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
 #include "diWidget.hh"
 #include "../draco_info.hh"
 

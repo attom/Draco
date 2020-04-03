@@ -124,7 +124,7 @@ add_component_library(
    LIBRARY_NAME ds++
    SOURCES      "${sources}"
    HEADERS      "${dsxx_headers};${dsxx_terminal_headers}" )
-if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+if( WIN32 )
   target_link_libraries( Lib_dsxx PUBLIC ${Lib_win_winsock})
 else()
   target_link_libraries( Lib_dsxx PUBLIC coverage_config )

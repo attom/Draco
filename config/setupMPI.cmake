@@ -254,7 +254,7 @@ macro( setupOpenMPI )
   endif()
 
   # Setting mpi_paffinity_alone to 0 allows parallel ctest to work correctly.
-  # MPIEXEC_POSTFLAGS only affects MPI-only tests (and not MPI+OpenMP tests).
+  # MPIEXEC_PREFLAGS only affects MPI-only tests (and not MPI+OpenMP tests).
   # . --oversubscribe is only available for openmpi version >= 3.0
   # . -H localhost,localhost,localhost,localhost might work for older versions.
   if( "$ENV{GITLAB_CI}" STREQUAL "true" OR "$ENV{TRAVIS}" STREQUAL "true")
@@ -266,7 +266,7 @@ macro( setupOpenMPI )
 
   # (2017-01-13) Bugs in openmpi-1.10.x are mostly fixed. Remove flags used
   # to work around bugs: '-mca btl self,vader -mca timer_require_monotonic 0'
-  set( MPIEXEC_POSTFLAGS "-bind-to none ${runasroot}" CACHE STRING
+  set( MPIEXEC_PREFLAGS "-bind-to none ${runasroot}" CACHE STRING
     "extra mpirun flags (list)." FORCE)
 
   # Find cores/cpu, cpu/node, hyper-threading
@@ -277,13 +277,13 @@ macro( setupOpenMPI )
   #
   if( NOT APPLE )
     # -bind-to fails on OSX, See #691
-    set( MPIEXEC_OMP_POSTFLAGS
+    set( MPIEXEC_OMP_PREFLAGS
       "--map-by ppr:${MPI_CORES_PER_CPU}:socket --report-bindings ${runasroot}" )
     # "-bind-to socket --map-by ppr:${MPI_CORES_PER_CPU}:socket
     # --report-bindings ${runasroot}"
   endif()
 
-  set( MPIEXEC_OMP_POSTFLAGS ${MPIEXEC_OMP_POSTFLAGS}
+  set( MPIEXEC_OMP_PREFLAGS ${MPIEXEC_OMP_PREFLAGS}
     CACHE STRING "extra mpirun flags (list)." FORCE )
 
   mark_as_advanced( MPI_CPUS_PER_NODE MPI_CORES_PER_CPU
@@ -340,12 +340,12 @@ macro( setupCrayMPI )
   #           simultaneously, this option is required to be set or they will
   #           stomp on the same cores.
 
-  set(postflags " ") # -N 1 --cpu_bind=verbose,cores
-  string(APPEND postflags " --gres=craynetwork:0") # --exclusive
-  set( MPIEXEC_POSTFLAGS ${postflags} CACHE STRING
+  set(preflags " ") # -N 1 --cpu_bind=verbose,cores
+  string(APPEND preflags " --gres=craynetwork:0") # --exclusive
+  set( MPIEXEC_PREFLAGS ${preflags} CACHE STRING
     "extra mpirun flags (list)." FORCE)
 
-  set( MPIEXEC_OMP_POSTFLAGS "${MPIEXEC_POSTFLAGS} -c ${MPI_CORES_PER_CPU}"
+  set( MPIEXEC_OMP_PREFLAGS "${MPIEXEC_PREFLAGS} -c ${MPI_CORES_PER_CPU}"
     CACHE STRING "extra mpirun flags (list)." FORCE)
 
 endmacro()
@@ -383,10 +383,10 @@ macro( setupSpectrumMPI )
   #
 
   if( DEFINED ENV{OMP_NUM_THREADS} )
-    set( MPIEXEC_OMP_POSTFLAGS "-c $ENV{OMP_NUM_THREADS}" )
+    set( MPIEXEC_OMP_PREFLAGS "-c $ENV{OMP_NUM_THREADS}" )
   endif()
 
-  set( MPIEXEC_OMP_POSTFLAGS ${MPIEXEC_OMP_POSTFLAGS}
+  set( MPIEXEC_OMP_PREFLAGS ${MPIEXEC_OMP_PREFLAGS}
     CACHE STRING "extra mpirun flags (list)." FORCE )
 
   mark_as_advanced( MPI_CPUS_PER_NODE MPI_CORES_PER_CPU
@@ -487,7 +487,7 @@ The Draco build system doesn't know how to configure the build for
     TYPE RECOMMENDED
     PURPOSE "If not available, all Draco components will be built as scalar applications."  )
 
-  mark_as_advanced( MPIEXEC_OMP_POSTFLAGS MPI_LIBRARIES )
+  mark_as_advanced( MPIEXEC_OMP_PREFLAGS MPI_LIBRARIES )
 
 endmacro()
 
@@ -651,7 +651,7 @@ macro( setupMPILibrariesWindows )
           "Are we using hyper-threading?" FORCE )
       endif()
 
-      set( MPIEXEC_OMP_POSTFLAGS "-exitcodes"
+      set( MPIEXEC_OMP_PREFLAGS "-exitcodes"
         CACHE STRING "extra mpirun flags (list)." FORCE )
     endif()
 
@@ -757,7 +757,7 @@ macro( setupMPILibrariesWindows )
     message(STATUS "Looking for MPI.......not found")
   endif()
 
-  mark_as_advanced( MPI_FLAVOR MPIEXEC_OMP_POSTFLAGS MPI_LIBRARIES )
+  mark_as_advanced( MPI_FLAVOR MPIEXEC_OMP_PREFLAGS MPI_LIBRARIES )
 
 endmacro( setupMPILibrariesWindows )
 

@@ -5,19 +5,12 @@
  * \date   Monday, Aug 11, 2016, 17:05 pm
  * \brief  Implementation for draco info main Qt window.
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
 #include "mainwindow.hh"
+#include "ui_mainwindow.h"
 #include <QStatusBar>
-//#include "ui_mainwindow.h"
-
-// Compiling with high warning levels will produce this warning:
-// warning: base class 'class Ui_MainWindow' has a non-virtual destructor [-Weffc++]
-//     class MainWindow: public Ui_MainWindow {};
-// This cannot be fixed because ui_mainwindow.h is generated automatically by Qt.
 
 //----------------------------------------------------------------------------//
 //! Constructor

@@ -3,41 +3,30 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2015 June 26
 # brief  Generate build project files for diagnostics/qt
-# note   Copyright (C) 2016-2019, Triad National Security, LLC.
+# note   Copyright (C) 2016-2020, Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
-cmake_minimum_required( VERSION 3.9.0 )
+cmake_minimum_required( VERSION 3.17.0 )
 project( diagnostics_qt CXX )
 
 # ---------------------------------------------------------------------------- #
 # Special options for Qt applications
 # ---------------------------------------------------------------------------- #
 
-# Find generated files in the corresponding build directories:
-# 1. <file>.ui files generate ui_<file>.h headers in the build directory via the
-#    qt5_wrap_ui macro.
-# 2. <file>.qrc files generate qrc_<file>.cpp in the build directory via the
-#    qt5_add_resources macro.
-
 # Instruct CMake to run moc automatically when needed (only for subdirectories
 # that need Qt)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 # ---------------------------------------------------------------------------- #
 # Source files
 # ---------------------------------------------------------------------------- #
 
-file( GLOB sources   *.cc *.cpp )
-file( GLOB headers   *.hh *.h )
-file( GLOB ui_files  *.ui )
-#file( GLOB resources *.qrc )
-
-# Use moc to convert *.ui files into ui_*.h files:
-qt5_wrap_ui( ui_headers ${ui_files} )
-
-# use rcc to convert *.qrc files into qrc_*.cpp files:
-qt5_add_resources( qrc_sources ${resources} )
-list( APPEND sources ${qrc_sources} )
+file( GLOB sources   main.cc mainwindow.cc diWidget.cc)
+file( GLOB headers   mainwindow.hh diWidget.hh)
+file( GLOB ui_files  mainwindow.ui )
+# file( GLOB resources *.qrc )
 
 # ---------------------------------------------------------------------------- #
 # Build package library
@@ -49,11 +38,18 @@ list( APPEND sources ${qrc_sources} )
 add_component_executable(
   TARGET      Exe_draco_info_gui
   TARGET_DEPS "Lib_diagnostics;Qt5::Widgets"
-  SOURCES     "${sources}"
+  SOURCES     "${sources};${ui_files}"
   PREFIX       Draco
   FOLDER       diagnostics
-  NOCOMMANDWINDOW
-  )
+  NOCOMMANDWINDOW )
+
+# Disable IPO for appliations that link to Qt SDK, as this causes compile
+# warnings for the Intel compiler (and it refuses to run IPO for this
+# application anyway).
+if( CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+  set_target_properties( Exe_draco_info_gui PROPERTIES
+    INTERPROCEDURAL_OPTIMIZATION_RELEASE OFF )
+endif()
 
 # Copy Qt dll files to build directory
 # copy_dll_link_libraries_to_build_dir( Exe_draco_info_gui )

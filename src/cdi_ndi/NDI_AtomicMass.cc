@@ -69,15 +69,16 @@ double NDI_AtomicMass::get_amw(const int zaid) const {
       NDI2_set_option_gendir(gendir_handle, NDI_LIBRARY_DEFAULT, "mendf71x");
   Require(ndi_error == 0);
 
-  int size = NDI2_get_size_x(gendir_handle, NDI_AT_WGT,
-                             std::to_string(zaid).c_str(), &ndi_error);
+  std::string zaid_formatted = std::to_string(zaid) + ".";
+
+  int size = NDI2_get_size_x(gendir_handle, NDI_AT_WGT, zaid_formatted.c_str(),
+                             &ndi_error);
   Require(ndi_error == 0);
   Insist(size == 1, "NDI returned more or fewer than one atomic weight?");
 
   std::array<double, 1> arr;
-  ndi_error =
-      NDI2_get_float64_vec_x(gendir_handle, NDI_AT_WGT,
-                             std::to_string(zaid).c_str(), arr.data(), size);
+  ndi_error = NDI2_get_float64_vec_x(gendir_handle, NDI_AT_WGT,
+                                     zaid_formatted.c_str(), arr.data(), size);
   Require(ndi_error == 0);
 
   ndi_error = NDI2_close_gendir(gendir_handle);

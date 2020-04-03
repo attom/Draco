@@ -232,6 +232,8 @@ macro(dbsSetupCxx)
           "${CMAKE_C_COMPILER_ID}"   STREQUAL "Clang")
     if( APPLE )
       include( apple-clang )
+    elseif( MSVC )
+      include( windows-clang )
     else()
       include( unix-clang )
     endif()
@@ -242,8 +244,8 @@ macro(dbsSetupCxx)
           "${CMAKE_C_COMPILER_ID}"   STREQUAL "MSVC" )
     include( windows-cl )
   else()
-    # missing CMAKE_CXX_COMPILER_ID? - try to match the the compiler path+name
-    # to a string.
+    # missing CMAKE_CXX_COMPILER_ID? - try to match the compiler path+name to
+    # a string.
     if( "${my_cxx_compiler}" MATCHES "pgCC" OR
         "${my_cxx_compiler}" MATCHES "pgc[+][+]" )
       include( unix-pgi )
@@ -267,7 +269,8 @@ macro(dbsSetupCxx)
     elseif( "${my_cxx_compiler}" MATCHES "[cg][+x]+" )
       include( unix-g++ )
     else()
-      message(FATAL_ERROR "Build system does not support CXX=${my_cxx_compiler}")
+      message(FATAL_ERROR "Build system does not support "
+        "CXX=${my_cxx_compiler}")
     endif()
   endif()
 

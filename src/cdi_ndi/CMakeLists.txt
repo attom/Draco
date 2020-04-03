@@ -7,15 +7,18 @@
 cmake_minimum_required(VERSION 3.9.0)
 project( cdi_ndi CXX )
 
+# No ndi in the Docker image used by Travis CI.
 if( NDI_FOUND AND NOT DEFINED ENV{TRAVIS} )
 
 if( NOT DEFINED NDI_ROOT_DIR AND DEFINED $ENV{NDI_ROOT_DIR})
   set(NDI_ROOT_DIR $ENV{NDI_ROOT_DIR})
 endif()
+
 if( NOT DEFINED NDI_ROOT_DIR )
-  message(FATAL_ERROR "NDI_ROOT_DIR not set. cdi_ndi requires the variable \
-          NDI_ROOT_DIR to be set in the environment or with the -DNDI_ROOT_DIR \
-          flag if the ndi library is found.")
+  # if not set in the environment (by modulefile?), set NDI_ROOT_DIR to the
+  # prefix_path for NDI
+  get_filename_component(NDI_ROOT_DIR "${NDI_LIBRARY}" DIRECTORY)
+  get_filename_component(NDI_ROOT_DIR "${NDI_LIBRARY}" DIRECTORY CACHE)
 endif()
 
 # ---------------------------------------------------------------------------- #

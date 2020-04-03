@@ -41,6 +41,21 @@
       "cmakeToolchain": "C:/work/vendors64/vs2019-toolchain.cmake",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "variables": []
+    },
+    {
+      "name": "x64-Clang-Debug",
+      "generator": "Visual Studio 16 2019 Win64",
+      "configurationType": "Debug",
+      "buildRoot": "c:/work/vs2019-${name}/draco",
+      "installRoot": "c:/work/vs2019-${name}/draco/install",
+      "cmakeExecutable": "C:/Program Files/CMake/bin/cmake.exe",
+      "cmakeCommandArgs": "-DCMAKE_C_COMPILER:FILEPATH=\"C:/PROGRAM FILES (X86)/MICROSOFT VISUAL STUDIO/2019/PREVIEW/VC/Tools/Llvm/x64/bin/clang-cl.exe\"",
+      "buildCommandArgs": "-v:m -m:8",
+      "ctestCommandArgs": "-j 8 --output-on-failure",
+      "cmakeToolchain": "C:/work/vendors64/vs2019-toolchain.cmake",
+      "inheritEnvironments": [ "clang_cl_x64_x64" ],
+      "intelliSenseMode": "windows-clang-x64",
+      "variables": []
     }
   ]
 }

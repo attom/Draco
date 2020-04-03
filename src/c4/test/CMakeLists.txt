@@ -11,7 +11,6 @@ project( c4_test CXX )
 # ---------------------------------------------------------------------------- #
 # Source files
 # ---------------------------------------------------------------------------- #
-
 file( GLOB test_sources *.cc )
 
 # ---------------------------------------------------------------------------- #
@@ -31,8 +30,7 @@ add_parallel_tests(
    PE_LIST   "1;2;4"
    TEST_ARGS "hello"
    PASS_REGEX "Hello"
-   FAIL_REGEX "cruel"
-   )
+   FAIL_REGEX "cruel" )
 list( REMOVE_ITEM test_sources ${special_test} )
 
 # This tests runs with extra arguments
@@ -42,27 +40,21 @@ add_parallel_tests(
    DEPS      Lib_c4
    PE_LIST   "1;2;4"
    TEST_ARGS "--version;--dummy; "
-   PASS_REGEX "tstParallelUnitTest[.ex]*: version"
-   )
+   PASS_REGEX "tstParallelUnitTest[.ex]*: version" )
 list( REMOVE_ITEM test_sources ${special_test} )
 
 # This test uses MPI+OMP:
 # - Bullseye doesn't like some OMP directives.
-# - Timing tests are broken if the test has to be pushed to a virtual
-#   machine (aprun).
+# - Timing tests are broken if the test has to be pushed to a virtual machine 
+#   (aprun).
 set( special_test ${PROJECT_SOURCE_DIR}/tstOMP.cc )
 list( REMOVE_ITEM test_sources ${special_test} )
-if( NOT OPENMP_FOUND )
-   # no-op
-elseif( DBS_CXX_IS_BULLSEYE )
-   # no-op
-else()
+if( OPENMP_FOUND AND NOT DBS_CXX_IS_BULLSEYE )
    add_parallel_tests(
       SOURCES   "${special_test}"
       DEPS      Lib_c4
       PE_LIST   "1;2"
-      MPI_PLUS_OMP
-      )
+      MPI_PLUS_OMP )
 endif()
 
 # Tests that expect exactly 2 PE (omit for DRACO_C4=SCALAR builds):
@@ -73,8 +65,7 @@ if( NOT ${DRACO_C4} STREQUAL "SCALAR" )
   add_parallel_tests(
     SOURCES   "${two_pe_tests}"
     DEPS      Lib_c4
-    PE_LIST   "2"
-    )
+    PE_LIST   "2" )
 endif()
 
 # Tests that expect exactly 4 PE (omit for DRACO_C4=SCALAR builds):
@@ -89,7 +80,7 @@ if( NOT ${DRACO_C4} STREQUAL "SCALAR" )
   if( NOT DEFINED MPI_MAX_NUMPROCS_PHYSICAL )
     message(FATAL_ERROR "need max procs in c4/tests/CMakeLists.txt")
   endif()
-  # Over-ride PROCESSORS propety.  Use 'mpirun -np 4 ...' but reserve all cores.
+  # Override PROCESSORS property.  Use 'mpirun -np 4 ...' but reserve all cores.
   set_tests_properties( c4_tstQuoWrapper_4 PROPERTIES
     PROCESSORS "${MPI_MAX_NUMPROCS_PHYSICAL}" )
 endif()
@@ -97,38 +88,36 @@ endif()
 # Exclude tstTime from valgrind checks.
 set( nomemcheck_tests
   ${PROJECT_SOURCE_DIR}/tstTime.cc
-  ${PROJECT_SOURCE_DIR}/tstGlobalTimer.cc
-  )
+  ${PROJECT_SOURCE_DIR}/tstGlobalTimer.cc )
 list( REMOVE_ITEM test_sources ${nomemcheck_tests} )
 add_parallel_tests(
   SOURCES   "${nomemcheck_tests}"
   DEPS      Lib_c4
   PE_LIST   "1;2;4"
-  LABEL     "nomemcheck"
-  )
+  LABEL     "nomemcheck" )
 
 # The remainder of the tests
 add_parallel_tests(
    SOURCES   "${test_sources}"
    DEPS      Lib_c4
-   PE_LIST   "1;2;4"
-   )
+   PE_LIST   "1;2;4" )
 
 #------------------------------------------------------------------------------#
 # Python based test runners
 #------------------------------------------------------------------------------#
-if( NOT APPLE )
-  include( ApplicationUnitTest )
+include( ApplicationUnitTest )
+if(OPENMP_FOUND)
+  # xthi depends on OpenMP.  If OpenMP is not found, xthi will not be compiled.
   add_app_unit_test(
     DRIVER    ${CMAKE_CURRENT_SOURCE_DIR}/tstXthi.py
     APP       $<TARGET_FILE_DIR:Exe_xthi>/$<TARGET_FILE_NAME:Exe_xthi>
     PE_LIST   "1;2" )
-  add_app_unit_test(
-    DRIVER    ${CMAKE_CURRENT_SOURCE_DIR}/tstYthi.py
-    APP       $<TARGET_FILE_DIR:Exe_ythi>/$<TARGET_FILE_NAME:Exe_ythi>
-    TEST_ARGS 2
-    PE_LIST   "1;2" )
 endif()
+add_app_unit_test(
+  DRIVER    ${CMAKE_CURRENT_SOURCE_DIR}/tstYthi.py
+  APP       $<TARGET_FILE_DIR:Exe_ythi>/$<TARGET_FILE_NAME:Exe_ythi>
+  TEST_ARGS 2
+  PE_LIST   "1;2" )
 
 #------------------------------------------------------------------------------#
 # End src/c4/test/CMakeLists.txt

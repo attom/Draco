@@ -315,41 +315,15 @@ endmacro()
 macro( setupQt )
   message( STATUS "Looking for Qt SDK...." )
 
-  # The CMake package information should be found in
-  # $QTDIR/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake.  On CCS Linux
-  # machines, QTDIR is set when loading the qt module
-  # (QTDIR=/ccs/codes/radtran/vendors/Qt53/5.3/gcc_64):
-  if( "${QTDIR}notset" STREQUAL "notset" AND EXISTS "$ENV{QTDIR}" )
-    set( QTDIR $ENV{QTDIR} CACHE PATH "This path should include /lib/cmake/Qt5Widgets" )
-  endif()
-  set( CMAKE_PREFIX_PATH_QT "$ENV{QTDIR}/lib/cmake/Qt5Widgets" )
+  # Find the QtWidgets library
+  find_package(Qt5 COMPONENTS Widgets QUIET)
 
-  if( NOT EXISTS ${CMAKE_PREFIX_PATH_QT}/Qt5WidgetsConfig.cmake )
-    # message( FATAL_ERROR "Could not find cQt cmake macros.  Try
-    # setting CMAKE_PREFIX_PATH_QT to the path that contains
-    # Qt5WidgetsConfig.cmake" )
-    message( STATUS "Looking for Qt SDK....not found." )
-  else()
-    file( TO_CMAKE_PATH "${CMAKE_PREFIX_PATH_QT}" CMAKE_PREFIX_PATH_QT )
-    list( APPEND CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH_QT}" )
-    find_package(Qt5Widgets)
-    find_package(Qt5Core)
-    get_target_property(QtCore_location Qt5::Core LOCATION)
-    if( Qt5Widgets_FOUND )
-      set( QT_FOUND 1 )
-      # Instruct CMake to run moc automatically when needed (only for
-      # subdirectories that need Qt)
-      # set(CMAKE_AUTOMOC ON)
-      message( STATUS "Looking for Qt SDK....found ${QTDIR}." )
-    else()
-      set( QT_FOUND "QT-NOTFOUND" )
-      message( STATUS "Looking for Qt SDK....not found." )
-    endif()
-  endif()
-
-  if( QT_FOUND )
+  if( Qt5Core_DIR )
     mark_as_advanced( Qt5Core_DIR Qt5Gui_DIR Qt5Gui_EGL_LIBRARY
       Qt5Widgets_DIR QTDIR)
+    message( STATUS "Looking for Qt SDK....found ${Qt5Core_DIR}" )
+  else()
+    message( STATUS "Looking for Qt SDK....not found." )
   endif()
 
   set_package_properties( Qt PROPERTIES

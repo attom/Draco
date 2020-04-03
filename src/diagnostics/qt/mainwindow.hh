@@ -5,19 +5,16 @@
  * \date   Monday, Aug 11, 2016, 17:05 pm
  * \brief  Declarations for draco info main Qt window.
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
 #ifndef diagnostics_qt_mainwindow_hh
 #define diagnostics_qt_mainwindow_hh
 
 #include "diWidget.hh"
 #include <QMainWindow>
 
-//namespace Ui
-//{
+//namespace Ui {
 //   class MainWindow;
 //}
 
@@ -26,18 +23,20 @@ class MainWindow : public QMainWindow {
 
 public:
   explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow(){};
+  ~MainWindow() = default;
+
+  // disable copy/move construction
+  MainWindow(MainWindow const &rhs) = delete;
+  MainWindow(MainWindow const &&rhs) = delete;
+
+  // disable assignment and move-assignment
+  MainWindow &operator=(MainWindow const &rhs) = delete;
+  MainWindow &operator=(MainWindow const &&hs) = delete;
 
 private slots:
   // None
 
 private:
-  // disable copy construction
-  MainWindow(MainWindow const &rhs);
-
-  // disable assignment
-  MainWindow &operator=(MainWindow const &rhs);
-
   // Forms
   //Ui::MainWindow *ui;
 

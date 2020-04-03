@@ -376,7 +376,7 @@ macro( add_app_unit_test )
     if( "${MPIEXEC_EXECUTABLE}" MATCHES "aprun" )
       set( RUN_CMD "aprun -n" )
     else()
-      set( RUN_CMD "${MPIEXEC_EXECUTABLE} ${MPIEXEC_POSTFLAGS} ${MPIEXEC_NUMPROC_FLAG}")
+      set( RUN_CMD "${MPIEXEC_EXECUTABLE} ${MPIEXEC_PREFLAGS} ${MPIEXEC_NUMPROC_FLAG}")
     endif()
 
   else()
@@ -385,7 +385,7 @@ macro( add_app_unit_test )
     if( "${MPIEXEC_EXECUTABLE}" MATCHES "aprun" OR
         "${MPIEXEC_EXECUTABLE}" MATCHES "jsrun" OR
         "${MPIEXEC_EXECUTABLE}" MATCHES "srun" )
-      set( RUN_CMD "${MPIEXEC_EXECUTABLE} ${MPIEXEC_POSTFLAGS} ${MPIEXEC_NUMPROC_FLAG} 1" )
+      set( RUN_CMD "${MPIEXEC_EXECUTABLE} ${MPIEXEC_PREFLAGS} ${MPIEXEC_NUMPROC_FLAG} 1" )
     endif()
   endif()
 

@@ -5,11 +5,9 @@
  * \date   Monday, Aug 11, 2016, 17:05 pm
  * \brief  Declaration of draco info widget.
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
 #ifndef diwidget_hh
 #define diwidget_hh
 
@@ -23,7 +21,15 @@ class diWidget : public QWidget {
 
 public:
   explicit diWidget(QWidget *parent = 0);
-  ~diWidget(){/* empty */};
+  ~diWidget() = default;
+
+  // disable copy/move construction
+  diWidget(diWidget const &rhs) = delete;
+  diWidget(diWidget const &&rhs) = delete;
+
+  // disable assignment and move-assignment
+  diWidget &operator=(diWidget const &rhs) = delete;
+  diWidget &operator=(diWidget const &&rhs) = delete;
 
 private slots:
   /* void on_actionAbout_triggered(); */
@@ -34,12 +40,6 @@ private:
   QGridLayout *layout;
   QLabel *label1;
   QPushButton *pushbutton1;
-
-  // disable copy construction
-  diWidget(diWidget const &rhs);
-
-  // disable assignment
-  diWidget &operator=(diWidget const &rhs);
 };
 
 #endif // diwidget_hh

@@ -62,7 +62,7 @@ constexpr inline
     passed = false;
 
   // second chance for passing if reference is within machine error of zero
-  T const ztol = static_cast<T>(1.0e-14);
+  auto const ztol = static_cast<T>(1.0e-14);
   if (!passed && (fabs(reference) < ztol))
     if (fabs(value) < precision)
       passed = true;

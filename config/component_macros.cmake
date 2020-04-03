@@ -35,8 +35,8 @@ set(Draco_std_target_props_CXX
 set(Draco_std_target_props_CUDA
   CUDA_STANDARD 14              # Force strict C++ 14 standard
   CUDA_EXTENSIONS OFF
-  CUDA_STANDARD_REQUIRED ON
-  CUDA_SEPARABLE_COMPILATION ON)
+  CUDA_STANDARD_REQUIRED ON)
+#  CUDA_SEPARABLE_COMPILATION ON)
 #  CUDA_RESOLVE_DEVICE_SYMBOLS ON )
 # target_include_directories (my lib
 #     PUBLIC $<BUILD_INTERFACE:${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}> )
@@ -584,11 +584,11 @@ macro( register_parallel_test targetname numPE command cmd_args )
   unset( RUN_CMD )
 
   if( addparalleltest_MPI_PLUS_OMP )
-    string( REPLACE " " ";" mpiexec_omp_postflags_list "${MPIEXEC_OMP_POSTFLAGS}" )
+    string( REPLACE " " ";" mpiexec_omp_preflags_list "${MPIEXEC_OMP_PREFLAGS}" )
     add_test(
       NAME    ${targetname}
       COMMAND ${RUN_CMD} ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${numPE}
-              ${mpiexec_omp_postflags_list}
+              ${mpiexec_omp_preflags_list}
               ${command}
               ${cmdarg}
               )
@@ -596,7 +596,7 @@ macro( register_parallel_test targetname numPE command cmd_args )
     add_test(
       NAME    ${targetname}
       COMMAND ${RUN_CMD} ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${numPE}
-              ${MPIRUN_POSTFLAGS}
+              ${MPIRUN_PREFLAGS}
               ${command}
               ${cmdarg}
               )
@@ -652,9 +652,9 @@ endmacro()
 # -----------------------------------------------------------------------------#
 # copy_dll_link_libraries_to_build_dir( target )
 #
-# For Win32 with shared libraries, all dll dependencies must be located in the 
-# PATH or in the application directory.  This cmake function creates POST_BUILD 
-# rules for unit tests and applications to ensure that the most up-to-date 
+# For Win32 with shared libraries, all dll dependencies must be located in the
+# PATH or in the application directory.  This cmake function creates POST_BUILD
+# rules for unit tests and applications to ensure that the most up-to-date
 # versions of all dependencies are in the same directory as the application.
 #------------------------------------------------------------------------------#
 function( copy_dll_link_libraries_to_build_dir target )
@@ -667,7 +667,7 @@ function( copy_dll_link_libraries_to_build_dir target )
 
   # Debug dependencies for a particular target (uncomment the next line and
   # provide the targetname): "Ut_${compname}_${testname}_exe"
-  if( "Ut_FortranChecks_cppmain_exe" STREQUAL ${target} )
+  if( "Ut_FortranChecks_foo_exe" STREQUAL ${target} )
      set(lverbose ON)
   endif()
   if( lverbose )
@@ -730,7 +730,7 @@ function( copy_dll_link_libraries_to_build_dir target )
           message("lib = ${lib} is NOTFOUND --> remove it from the list")
         endif()
       elseif( "${lib}" MATCHES "[$]<")
-        # We have a generator expression.  This routine does not support this, 
+        # We have a generator expression.  This routine does not support this,
         # so drop it.
         list( REMOVE_ITEM link_libs ${lib} )
         if( lverbose )
@@ -810,7 +810,7 @@ function( copy_dll_link_libraries_to_build_dir target )
               "skip it.")
           endif()
           continue()
-        else()       
+        else()
           set(target_loc "$<TARGET_FILE:${lib}>")
         endif()
         get_target_property(target_gnutoms ${lib} GNUtoMS)
@@ -907,10 +907,10 @@ macro( add_scalar_tests test_sources )
   # ------------------------------------------------------------
   # On some platforms (Trinity, Sierra), even scalar tests must be run
   # underneath MPIEXEC_EXECUTABLE (srun, jsrun, lrun):
-  separate_arguments(MPIEXEC_POSTFLAGS)
+  separate_arguments(MPIEXEC_PREFLAGS)
   if( "${MPIEXEC_EXECUTABLE}" MATCHES "srun" OR
       "${MPIEXEC_EXECUTABLE}" MATCHES "jsrun" )
-    set( RUN_CMD ${MPIEXEC_EXECUTABLE} ${MPIEXEC_POSTFLAGS} -n 1 )
+    set( RUN_CMD ${MPIEXEC_EXECUTABLE} ${MPIEXEC_PREFLAGS} -n 1 )
   else()
     unset( RUN_CMD )
   endif()
@@ -1096,11 +1096,11 @@ macro( add_parallel_tests )
 
   # Override MPI Flags upon user request
   if ( NOT DEFINED addparalleltest_MPIFLAGS )
-    set( MPIRUN_POSTFLAGS ${MPIEXEC_POSTFLAGS} )
+    set( MPIRUN_PREFLAGS ${MPIEXEC_PREFLAGS} )
   else()
-    set( MPIRUN_POSTFLAGS "${addparalleltest_MPIFLAGS}" )
+    set( MPIRUN_PREFLAGS "${addparalleltest_MPIFLAGS}" )
   endif()
-  separate_arguments( MPIRUN_POSTFLAGS )
+  separate_arguments( MPIRUN_PREFLAGS )
 
   # Loop over each test source files:
   # 1. Compile the executable
