@@ -5,18 +5,13 @@
  * \date   Mon Mar 25 2019
  * \brief  Show how code can be called from GPU and host
  * \note   Copyright (C) 2019-2020 Triad National Security, LLC.
- *         All rights reserved.
- */
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
 #ifndef rtt_device_test_Dual_Call_hh
 #define rtt_device_test_Dual_Call_hh
 
 #include "device/config.h"
-#include <algorithm>
-#include <numeric>
-#include <stdio.h>
-#include <vector>
 
 namespace rtt_device_test {
 

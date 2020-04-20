@@ -34,11 +34,9 @@ void determinate_swap(std::vector<unsigned> const &outgoing_pid,
   Require(&outgoing_data != &incoming_data);
 
   Check(incoming_pid.size() < UINT_MAX);
-  unsigned incoming_processor_count =
-      static_cast<unsigned>(incoming_pid.size());
+  auto incoming_processor_count = static_cast<unsigned>(incoming_pid.size());
   Check(outgoing_pid.size() < UINT_MAX);
-  unsigned outgoing_processor_count =
-      static_cast<unsigned>(outgoing_pid.size());
+  auto outgoing_processor_count = static_cast<unsigned>(outgoing_pid.size());
 
   // This block is a no-op for with-c4=scalar. Ditto when the vectors are of
   // zero-length.
@@ -50,7 +48,7 @@ void determinate_swap(std::vector<unsigned> const &outgoing_pid,
       Check(outgoing_data[p].size() < INT_MAX);
       Check(outgoing_pid[p] < INT_MAX);
       outgoing_C4_Req[p] = rtt_c4::send_async(
-          (outgoing_data[p].size() > 0 ? &outgoing_data[p][0] : NULL),
+          (outgoing_data[p].size() > 0 ? &outgoing_data[p][0] : nullptr),
           static_cast<int>(outgoing_data[p].size()),
           static_cast<int>(outgoing_pid[p]), tag);
     }
@@ -61,18 +59,18 @@ void determinate_swap(std::vector<unsigned> const &outgoing_pid,
       Check(incoming_data[p].size() < INT_MAX);
       Check(incoming_pid[p] < INT_MAX);
       incoming_C4_Req[p] = receive_async(
-          (incoming_data[p].size() > 0 ? &incoming_data[p][0] : NULL),
+          (incoming_data[p].size() > 0 ? &incoming_data[p][0] : nullptr),
           static_cast<int>(incoming_data[p].size()),
           static_cast<int>(incoming_pid[p]), tag);
     }
 
     // Wait for all the receives to complete.
     wait_all(incoming_processor_count,
-             incoming_processor_count > 0 ? &incoming_C4_Req[0] : NULL);
+             incoming_processor_count > 0 ? &incoming_C4_Req[0] : nullptr);
 
     // Wait until all the posted sends have completed.
     wait_all(outgoing_processor_count,
-             outgoing_processor_count > 0 ? &outgoing_C4_Req[0] : NULL);
+             outgoing_processor_count > 0 ? &outgoing_C4_Req[0] : nullptr);
   }
   return;
 }
@@ -96,7 +94,7 @@ void determinate_swap(std::vector<std::vector<T>> const &outgoing_data,
         Check(outgoing_data[p].size() < INT_MAX);
         Check(p < INT_MAX);
         outgoing_C4_Req[p] = rtt_c4::send_async(
-            (outgoing_data[p].size() > 0 ? &outgoing_data[p][0] : NULL),
+            (outgoing_data[p].size() > 0 ? &outgoing_data[p][0] : nullptr),
             static_cast<int>(outgoing_data[p].size()), static_cast<int>(p),
             tag);
       }
@@ -109,7 +107,7 @@ void determinate_swap(std::vector<std::vector<T>> const &outgoing_data,
         Check(incoming_data[p].size() < INT_MAX);
         Check(p < INT_MAX);
         incoming_C4_Req[p] = receive_async(
-            (incoming_data[p].size() > 0 ? &incoming_data[p][0] : NULL),
+            (incoming_data[p].size() > 0 ? &incoming_data[p][0] : nullptr),
             static_cast<int>(incoming_data[p].size()), static_cast<int>(p),
             tag);
       }
@@ -134,11 +132,9 @@ void semideterminate_swap(std::vector<unsigned> const &outgoing_pid,
   Require(&outgoing_data != &incoming_data);
 
   Check(incoming_pid.size() < UINT_MAX);
-  unsigned incoming_processor_count =
-      static_cast<unsigned>(incoming_pid.size());
+  auto incoming_processor_count = static_cast<unsigned>(incoming_pid.size());
   Check(outgoing_pid.size() < UINT_MAX);
-  unsigned outgoing_processor_count =
-      static_cast<unsigned>(outgoing_pid.size());
+  auto outgoing_processor_count = static_cast<unsigned>(outgoing_pid.size());
 
   { // This block is a no-op for with-c4=scalar
 
@@ -162,7 +158,7 @@ void semideterminate_swap(std::vector<unsigned> const &outgoing_pid,
       Check(outgoing_data[p].size() < INT_MAX);
       Check(outgoing_pid[p] < INT_MAX);
       outgoing_C4_Req[p] = rtt_c4::send_async(
-          (outgoing_data[p].size() > 0 ? &outgoing_data[p][0] : NULL),
+          (outgoing_data[p].size() > 0 ? &outgoing_data[p][0] : nullptr),
           static_cast<int>(outgoing_data[p].size()),
           static_cast<int>(outgoing_pid[p]), tag);
     }
@@ -175,7 +171,7 @@ void semideterminate_swap(std::vector<unsigned> const &outgoing_pid,
       Check(incoming_data[p].size() < INT_MAX);
       Check(incoming_pid[p] < INT_MAX);
       incoming_C4_Req[p] = receive_async(
-          (incoming_data[p].size() > 0 ? &incoming_data[p][0] : NULL),
+          (incoming_data[p].size() > 0 ? &incoming_data[p][0] : nullptr),
           static_cast<int>(incoming_data[p].size()),
           static_cast<int>(incoming_pid[p]), tag);
     }

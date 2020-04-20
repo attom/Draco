@@ -20,15 +20,11 @@
 namespace rtt_c4 {
 
 #ifdef C4_MPI
-
-typedef MPI_Datatype C4_Datatype;
-
+using C4_Datatype = MPI_Datatype;
 #else
 
 // If serial, make this a brain-dead type. It won't actually be used.
-
-typedef void *C4_Datatype;
-
+using C4_Datatype = void *;
 #endif
 
 } // end namespace rtt_c4

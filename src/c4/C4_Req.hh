@@ -43,25 +43,34 @@ class C4_ReqRefRep {
   friend class C4_Req;
 
   // number of ref counts
-  int n;
+  int n{0};
 
   // if true, we hold a request
-  bool assigned;
+  bool assigned{false};
 
 #ifdef C4_MPI
   MPI_Request r;
 #endif
 
 private:
-  // Disallowed methods
-  C4_ReqRefRep(const C4_ReqRefRep &rep) = delete;
-  C4_ReqRefRep &operator=(const C4_ReqRefRep &rep) = delete;
-
   // Private default constructor and destructor for access from C4_Req only.
   C4_ReqRefRep();
-  ~C4_ReqRefRep();
+
+  /*! \brief Destructor.
+   *
+   * It is important that all existing requests are cleared before the
+   * destructor is called.  We used to have a wait() in here; however, this
+   * causes exception safety problems.  In any case, it is probably a bad idea
+   * to clean up communication by going out of scope. */
+  ~C4_ReqRefRep() = default;
 
 public:
+  // Disallowed assignment, move assignment, copy ctor and move ctor methods.
+  C4_ReqRefRep(const C4_ReqRefRep &rep) = delete;
+  C4_ReqRefRep(const C4_ReqRefRep &&rep) = delete;
+  C4_ReqRefRep &operator=(const C4_ReqRefRep &rep) = delete;
+  C4_ReqRefRep &operator=(const C4_ReqRefRep &&rep) = delete;
+
   void wait(C4_Status *status = nullptr);
   bool complete(C4_Status *status = nullptr);
   void free();
@@ -114,7 +123,14 @@ public:
   void wait(C4_Status *status = nullptr) { p->wait(status); }
   bool complete(C4_Status *status = nullptr) { return p->complete(status); }
   void free() { p->free(); }
-  bool inuse() const { return p->inuse(); }
+  bool inuse() const {
+#ifndef __clang_analyzer__
+    Insist(p != nullptr, "attempting to use freed memory.");
+    return p->inuse();
+#else
+    return false;
+#endif
+  }
 
 private:
   void set() { p->set(); }

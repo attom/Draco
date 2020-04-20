@@ -25,8 +25,8 @@ Console_Token_Stream::Console_Token_Stream() {
 /*!
  * \param ws User-defined whitespace characters.
  *
- * \param no_nonbreaking_ws Treat spaces and tabs as breaking whitespace. This 
- *           has the effect of forcing all keywords to consist of a single 
+ * \param no_nonbreaking_ws Treat spaces and tabs as breaking whitespace. This
+ *           has the effect of forcing all keywords to consist of a single
  *           identifier.
  */
 Console_Token_Stream::Console_Token_Stream(set<char> const &ws,
@@ -40,7 +40,7 @@ Console_Token_Stream::Console_Token_Stream(set<char> const &ws,
 
 //----------------------------------------------------------------------------//
 /*!
- * For a Console_Token_Stream, location is not a terribly  meaningful concept.  
+ * For a Console_Token_Stream, location is not a terribly  meaningful concept.
  * So we return "input" as the location, which is true enough.
  *
  * \return The string "input".
@@ -125,11 +125,10 @@ void Console_Token_Stream::comment(string const &message) {
 void Console_Token_Stream::rewind() {
   cin.clear(); // Must clear the error/end flag bits.
 
-  // [2015-09-01 KT] After talking to Kent about this implementation, we
-  // decided that it does not make sense to rewind an interactive standard
-  // input buffer.  In fact, if this is done under an MPI environment
-  // (e.g. mpirun -np 1, aprun -n 1, etc. ), the seekg() will return an error
-  // condition.
+  // [2015-09-01 KT] After talking to Kent about this implementation, we decided
+  // that it does not make sense to rewind an interactive standard input buffer.
+  // In fact, if this is done under an MPI environment (e.g. mpirun -np 1, aprun
+  // -n 1, etc. ), the seekg() will return an error condition.
 
   // cin.seekg(0);
 
@@ -141,29 +140,19 @@ void Console_Token_Stream::rewind() {
 }
 
 //----------------------------------------------------------------------------//
-/*!
- * Console_Token_Stream does not presently support the include directive.
- */
+//! Console_Token_Stream does not presently support the include directive.
 void Console_Token_Stream::push_include(std::string &) {
   report_syntax_error("#include not supported for Console_Token_Stream");
 }
 
-#ifdef _BullseyeCoverage
-#pragma BullseyeCoverage off
-#endif
 //----------------------------------------------------------------------------//
-/*!
- * Console_Token_Stream does not presently support the include directive.
- */
+//! Console_Token_Stream does not presently support the include directive.
 void Console_Token_Stream::pop_include() {
   /* this function should be unreachable. Please note this in code coverage. */
 }
-#ifdef _BullseyeCoverage
-#pragma BullseyeCoverage on
-#endif
 
 } // namespace rtt_parser
 
-//---------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // end of Console_Token_Stream.cc
-//---------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

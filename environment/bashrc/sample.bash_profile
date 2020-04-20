@@ -34,7 +34,6 @@ fi
   # export NAME="First Last"
   # export EDITOR="emacs -nw"
   # export LPDEST=gumibears
-  # export COVFILE=${HOME}/test.cov
   # export NO_AT_BRIDGE=1          # Silence warnings from GTK/Gnome
   # export LIBGL_ALWAYS_INDIRECT=1 # Fixes issues with FastX and OpenGL
 

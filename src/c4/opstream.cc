@@ -40,7 +40,7 @@ void opstream::mpibuf::send() {
   } else {
 
     Check(buffer_.size() < UINT_MAX);
-    unsigned N = static_cast<unsigned>(buffer_.size());
+    auto N = static_cast<unsigned>(buffer_.size());
     rtt_c4::send(&N, 1, 0);
     if (N > 0)
       rtt_c4::send(&buffer_[0], N, 0);
@@ -52,16 +52,16 @@ void opstream::mpibuf::send() {
 //----------------------------------------------------------------------------//
 /*! Add the specified character to the buffer.
  *
- * For simplicity, opstream is currently implemented by treating every
- * character write as an overflow which is intercepted and added to the
- * internal buffer. This is not actually that inefficient for this class,
- * since it means that when the stream using the buffer wants to insert
- * data, it checks the buffer's cursor pointer, always finds that it is null,
- * and calls overflow instead. These are not expensive operations. Should
- * we see any evidence this class is taking significant time, which should not
- * happen for its intended use (synchronizing diagnostic output), we can
- * re-implement to let the stream do explicitly buffered insertions without
- * this change affecting any user code -- this interface is all private.
+ * For simplicity, opstream is currently implemented by treating every character
+ * write as an overflow which is intercepted and added to the internal
+ * buffer. This is not actually that inefficient for this class, since it means
+ * that when the stream using the buffer wants to insert data, it checks the
+ * buffer's cursor pointer, always finds that it is null, and calls overflow
+ * instead. These are not expensive operations. Should we see any evidence this
+ * class is taking significant time, which should not happen for its intended
+ * use (synchronizing diagnostic output), we can re-implement to let the stream
+ * do explicitly buffered insertions without this change affecting any user code
+ * -- this interface is all private.
  *
  * \param[in] c Next character to add to the internal buffer.
  *

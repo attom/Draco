@@ -3,7 +3,7 @@
  * \file   c4/test/tstBroadcast.cc
  * \author Thomas M. Evans
  * \date   Tue Apr  2 15:57:11 2002
- * \brief  Ping Pong communication test.
+ * \brief  c4 Broadcast communication test.
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC.
  *         All rights reserved. */
 //----------------------------------------------------------------------------//
@@ -25,7 +25,6 @@ using rtt_dsxx::soft_equiv;
 //----------------------------------------------------------------------------//
 
 void test_simple(rtt_dsxx::UnitTest &ut) {
-  using std::vector;
 
   char c = 0;
   unsigned char uc = 0;
@@ -109,10 +108,10 @@ void test_simple(rtt_dsxx::UnitTest &ut) {
   try {
     string badmsg; // length never set.
     broadcast(msg.begin(), msg.end(), badmsg.begin(), badmsg.end());
-    // The above command should throw on all procs.
+    // The above command should throw on all processors.
     FAIL_IF_NOT(rtt_c4::node() == 0);
-  } catch (std::exception & /*error*/) {
-    std::ostringstream mymsg;
+  } catch (exception & /*error*/) {
+    ostringstream mymsg;
     mymsg << "Successfully caught a range violation in broadcast on PE "
           << rtt_c4::node();
     PASSMSG(mymsg.str());
@@ -122,7 +121,7 @@ void test_simple(rtt_dsxx::UnitTest &ut) {
 
   if (ut.numFails == 0) {
     ostringstream m;
-    m << "test_simple() ok on " << rtt_c4::node();
+    m << "test_simple() okay on " << rtt_c4::node();
     PASSMSG(m.str());
   }
   return;
@@ -135,8 +134,8 @@ void test_loop(rtt_dsxx::UnitTest &ut) {
   // save state
   unsigned const nf(ut.numFails);
 
-  // >>> kmax controls how much data is broadcast.  If kmax is too big (like
-  // >>> 10000000), shmem will fail.
+  // kmax controls how much data is broadcast.  If kmax is too big (like
+  // 10000000), shmem will fail.
   int const kmax = 10;
 
   if (rtt_c4::node() == 0) // host proc
@@ -147,16 +146,16 @@ void test_loop(rtt_dsxx::UnitTest &ut) {
       double foo = k + 0.5;
       Insist(!broadcast(&foo, 1, 0), "MPI Error");
     }
-  } else // all other procs
+  } else // all other processors
   {
     // Use sleep() if you want the host processor to fill up the buffers.  We
     // comment out the sleep() command here because it's not supported on all
-    // all platforms.
+    // platforms.
 
     // sleep(10);
 
-    int kk;
-    double foofoo;
+    int kk = 0;
+    double foofoo = 0.0;
     for (int k = 0; k < kmax; ++k) {
       kk = -1;
       foofoo = -2.0;
@@ -169,7 +168,7 @@ void test_loop(rtt_dsxx::UnitTest &ut) {
 
   if (ut.numFails == nf) {
     ostringstream m;
-    m << "test_loop() ok on " << rtt_c4::node();
+    m << "test_loop() okay on " << rtt_c4::node();
     PASSMSG(m.str());
   }
   return;

@@ -33,7 +33,7 @@ void tst2Procs(rtt_dsxx::UnitTest &ut) {
     FAIL_IF_NOT(rtt_c4::isMpiInit());
   }
 
-  C4_Status status;
+  C4_Status status{};
   C4_Req request;
 
   const int num_int = 2;
@@ -41,43 +41,43 @@ void tst2Procs(rtt_dsxx::UnitTest &ut) {
   const int tag = 101;
 
   if (my_proc == 0) {
-    std::vector<int> send_buffer(num_int);
-    std::vector<double> recv_buffer(num_double);
+    vector<int> send_buffer(num_int);
+    vector<double> recv_buffer(num_double);
     rtt_c4::receive_async(request, &recv_buffer[0], num_double,
                           rtt_c4::any_source, tag);
     rtt_c4::send_async(&send_buffer[0], num_int, 1, tag);
     request.wait(&status);
     if (status.get_source() == 1)
-      PASSMSG("get_source() passed on proc 0");
+      PASSMSG("get_source() passed on processor 0");
     else
-      FAILMSG("get_source() failed on proc 0");
+      FAILMSG("get_source() failed on processor 0");
     if (status.get_message_size() == num_double * sizeof(double))
-      PASSMSG("get_message_size() passed on proc 0");
+      PASSMSG("get_message_size() passed on processor 0");
     else
-      FAILMSG("get_message_size() failed on proc 0");
+      FAILMSG("get_message_size() failed on processor 0");
     if (status.get_status_obj())
-      PASSMSG("get_status_obj() passed on proc 0");
+      PASSMSG("get_status_obj() passed on processor 0");
     else
-      FAILMSG("get_status_obj() failed on proc 0");
+      FAILMSG("get_status_obj() failed on processor 0");
   } else { // my_proc == 1
-    std::vector<double> send_buffer(num_double);
-    std::vector<int> recv_buffer(num_int);
+    vector<double> send_buffer(num_double);
+    vector<int> recv_buffer(num_int);
     rtt_c4::receive_async(request, &recv_buffer[0], num_int, rtt_c4::any_source,
                           tag);
     rtt_c4::send_async(&send_buffer[0], num_double, 0, tag);
     request.wait(&status);
     if (status.get_source() == 0)
-      PASSMSG("get_source() passed on proc 1");
+      PASSMSG("get_source() passed on processor 1");
     else
-      FAILMSG("get_source() failed on proc 1");
+      FAILMSG("get_source() failed on processor 1");
     if (status.get_message_size() == num_int * sizeof(int))
-      PASSMSG("get_message_size() passed on proc 1");
+      PASSMSG("get_message_size() passed on processor 1");
     else
-      FAILMSG("get_message_size() failed on proc 1");
+      FAILMSG("get_message_size() failed on processor 1");
     if (status.get_status_obj())
-      PASSMSG("get_status_obj() passed on proc 1");
+      PASSMSG("get_status_obj() passed on processor 1");
     else
-      FAILMSG("get_status_obj() failed on proc 1");
+      FAILMSG("get_status_obj() failed on processor 1");
   }
 
   if (ut.numFails == 0)
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
     if (rtt_c4::nodes() == 2)
       tst2Procs(ut);
     else
-      FAILMSG("tstC4_Status should only be run on 2 procs!");
+      FAILMSG("tstC4_Status should only be run on 2 processors!");
   }
   UT_EPILOG(ut);
 }

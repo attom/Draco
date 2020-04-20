@@ -369,10 +369,10 @@ void elemental_reduction(rtt_dsxx::UnitTest &ut) {
 #pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
-    short xshort = static_cast<short>(rtt_c4::node() + 1);
+    auto xshort = static_cast<short>(rtt_c4::node() + 1);
     global_sum(xshort);
 
-    short xshort_send = static_cast<short>(rtt_c4::node() + 1);
+    auto xshort_send = static_cast<short>(rtt_c4::node() + 1);
     short xshort_recv = 0;
     C4_Req short_request;
     global_isum(xshort_send, xshort_recv, short_request);
@@ -415,10 +415,10 @@ void elemental_reduction(rtt_dsxx::UnitTest &ut) {
 
   { // T = unsigned
 
-    unsigned xunsigned = static_cast<unsigned>(rtt_c4::node() + 1);
+    auto xunsigned = static_cast<unsigned>(rtt_c4::node() + 1);
     global_sum(xunsigned);
 
-    unsigned xunsigned_send = static_cast<unsigned>(rtt_c4::node() + 1);
+    auto xunsigned_send = static_cast<unsigned>(rtt_c4::node() + 1);
     unsigned xunsigned_recv = 0;
     C4_Req unsigned_request;
     global_isum(xunsigned_send, xunsigned_recv, unsigned_request);
@@ -457,11 +457,10 @@ void elemental_reduction(rtt_dsxx::UnitTest &ut) {
 
   { // T = unsigned long
 
-    unsigned long xunsigned = static_cast<unsigned long>(rtt_c4::node() + 1);
+    auto xunsigned = static_cast<unsigned long>(rtt_c4::node() + 1);
     global_sum(xunsigned);
 
-    unsigned long xunsigned_send =
-        static_cast<unsigned long>(rtt_c4::node() + 1);
+    auto xunsigned_send = static_cast<unsigned long>(rtt_c4::node() + 1);
     unsigned long xunsigned_recv = 0;
     C4_Req unsigned_request;
     global_isum(xunsigned_send, xunsigned_recv, unsigned_request);
@@ -500,10 +499,10 @@ void elemental_reduction(rtt_dsxx::UnitTest &ut) {
 
   { // T = long long
 
-    long long xunsigned = static_cast<long long>(rtt_c4::node() + 1);
+    auto xunsigned = static_cast<long long>(rtt_c4::node() + 1);
     global_sum(xunsigned);
 
-    long long xunsigned_send = static_cast<long long>(rtt_c4::node() + 1);
+    auto xunsigned_send = static_cast<long long>(rtt_c4::node() + 1);
     long long xunsigned_recv = 0;
     C4_Req unsigned_request;
     global_isum(xunsigned_send, xunsigned_recv, unsigned_request);
@@ -542,12 +541,10 @@ void elemental_reduction(rtt_dsxx::UnitTest &ut) {
 
   { // T = unsigned long long
 
-    unsigned long long xunsigned =
-        static_cast<unsigned long long>(rtt_c4::node() + 1);
+    auto xunsigned = static_cast<unsigned long long>(rtt_c4::node() + 1);
     global_sum(xunsigned);
 
-    unsigned long long xunsigned_send =
-        static_cast<unsigned long long>(rtt_c4::node() + 1);
+    auto xunsigned_send = static_cast<unsigned long long>(rtt_c4::node() + 1);
     unsigned long long xunsigned_recv = 0;
     C4_Req unsigned_request;
     global_isum(xunsigned_send, xunsigned_recv, unsigned_request);
@@ -590,11 +587,10 @@ void elemental_reduction(rtt_dsxx::UnitTest &ut) {
 #pragma GCC diagnostic ignored "-Wconversion"
 #endif
 
-    unsigned short xunsigned = static_cast<unsigned short>(rtt_c4::node() + 1);
+    auto xunsigned = static_cast<unsigned short>(rtt_c4::node() + 1);
     global_sum(xunsigned);
 
-    unsigned short xunsigned_send =
-        static_cast<unsigned short>(rtt_c4::node() + 1);
+    auto xunsigned_send = static_cast<unsigned short>(rtt_c4::node() + 1);
     unsigned short xunsigned_recv = 0;
     C4_Req unsigned_request;
     global_isum(xunsigned_send, xunsigned_recv, unsigned_request);
@@ -1193,7 +1189,7 @@ void test_prefix_sum(rtt_dsxx::UnitTest &ut) {
     ITFAILS;
 
   // test floats
-  float xfloat = static_cast<float>(rtt_c4::node() + 0.01);
+  auto xfloat = static_cast<float>(rtt_c4::node() + 0.01);
   float xfloat_prefix_sum = prefix_sum(xfloat);
 
   float float_answer = 0.0;

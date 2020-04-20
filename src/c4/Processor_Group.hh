@@ -23,10 +23,10 @@ namespace rtt_c4 {
  * \class Processor_Group
  * \brief Representation of subgroup of processors
  *
- * This class provides a parallel interface for a group of processors that is
- * a subset of the entire process set.  This allows communications libraries
- * to do things like sums over process groups efficiently.  In other words,
- * this class is essentially a representation of an MPI communicator.
+ * This class provides a parallel interface for a group of processors that is a
+ * subset of the entire process set.  This allows communications libraries to do
+ * things like sums over process groups efficiently.  In other words, this class
+ * is essentially a representation of an MPI communicator.
  */
 //============================================================================//
 
@@ -41,6 +41,12 @@ public:
 
   //! Destructor.
   ~Processor_Group();
+
+  //! Copy/Move assignment/construction Not implemented
+  Processor_Group(const Processor_Group &rhs) = delete;
+  Processor_Group(const Processor_Group &&rhs) = delete;
+  Processor_Group &operator=(const Processor_Group &rhs) = delete;
+  Processor_Group &operator=(const Processor_Group &&rhs) = delete;
 
   // ACCESSORS
 
@@ -72,16 +78,6 @@ public:
                        unsigned const N) const;
 
 private:
-  // NESTED CLASSES AND TYPEDEFS
-
-  // IMPLEMENTATION
-
-  //! Not implemented
-  Processor_Group(const Processor_Group &rhs) = delete;
-
-  //! Not implemented
-  Processor_Group &operator=(const Processor_Group &rhs) = delete;
-
   // DATA
 
   unsigned size_;

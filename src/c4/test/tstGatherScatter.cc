@@ -423,8 +423,8 @@ void topology_report(UnitTest &ut) {
     vector<string> unique_processor_names;
     for (size_t i = 0; i < mpi_ranks; ++i) {
       bool found(false);
-      for (size_t j = 0; j < unique_processor_names.size(); ++j)
-        if (procnames[i] == unique_processor_names[j])
+      for (const auto &unique_procname : unique_processor_names)
+        if (procnames[i] == unique_procname)
           found = true;
       if (!found)
         unique_processor_names.push_back(procnames[i]);
@@ -459,7 +459,7 @@ void topology_report(UnitTest &ut) {
     for (size_t j = 0; j < unique_processor_names.size(); ++j) {
       std::cout << "\n  - Node " << j << " (" << unique_processor_names[j]
                 << "): ";
-      for (size_t i = 0; i < map_proc_to_ranks[j].size(); ++i)
+      for (auto const i : map_proc_to_ranks[j])
         std::cout << map_proc_to_ranks[j][i] << ",";
     }
     std::cout << std::endl;

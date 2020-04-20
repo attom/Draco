@@ -128,15 +128,10 @@ associated software packages may are listed below:
    algorithms for partitioning unstructured graphs, meshes, and for computing
    fill-reducing orderings of sparse matrices.
 
-9. SuperLU-DIST - http://crd-legacy.lbl.gov/~xiaoye/SuperLU/
+9. ds++/terminal.h and ds++/terminal_base.h developed by Ondřej Čertík
+   https://github.com/certik/terminal
+   MIT License
 
-   A general purpose library for the direct solution of large, sparse,
-   nonsymmetric systems of linear equations on high performance machines.
-
-10. ds++/terminal.h and ds++/terminal_base.h developed by Ondřej Čertík
-    https://github.com/certik/terminal
-    MIT License
-
-11. experimental/mdspan - https://github.com/kokkos/mdspan
+10. experimental/mdspan - https://github.com/kokkos/mdspan
     Kokkos v. 2.0, Copyright (2019) Sandia Corporation, BSD-3 License
     Git version hash: a7990884f090365787a90cdc12e689822d642c65

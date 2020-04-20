@@ -78,7 +78,7 @@ public:
   ParallelUnitTest(ParallelUnitTest &&rhs) = delete;
 
   //! Destructor.
-  virtual ~ParallelUnitTest();
+  ~ParallelUnitTest() override;
 
   // MANIPULATORS
 
@@ -89,10 +89,10 @@ public:
   // ACCESSORS
 
   //! Provide a report of the number of unit test passes and fails.
-  void status(void);
+  void status();
 
-  virtual bool check_all(bool good, std::string const &checkmsg,
-                         bool fatal = false);
+  bool check_all(bool good, std::string const &checkmsg,
+                 bool fatal = false) override;
 };
 
 //----------------------------------------------------------------------------//
@@ -106,7 +106,7 @@ public:
  * \return EXIT_SUCCESS or EXIT_FAILURE as appropriate.
  */
 template <typename... Lambda, typename Release>
-int do_parallel_unit_test(int argc, char *argv[], Release release,
+int do_parallel_unit_test(int argc, char **argv, Release release,
                           Lambda const &... lambda);
 
 } // end namespace rtt_c4

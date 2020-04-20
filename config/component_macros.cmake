@@ -65,13 +65,15 @@ function( dbs_std_tgt_props target )
   endforeach()
 
   # Helper for clang-tidy that points to very old gcc STL files.  We need STL
-  # files from clang.
-  get_target_property( tgt_sources ${target} SOURCES )
-  if( "${DRACO_STATIC_ANALYZER}" MATCHES "clang-tidy" )
+  # files from clang (at least for llvm-6.  llvm-9 doesn't need this and it
+  # actually causes issues).
+  if( "${DRACO_STATIC_ANALYZER}" MATCHES "clang-tidy" AND
+      CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0 )
     if( NOT CLANG_TIDY_IPATH )
       message(FATAL_ERROR "Unable to configure clang-tidy build because"
         " CLANG_TIDY_IPATH is empty.")
     endif()
+    get_target_property( tgt_sources ${target} SOURCES )
     set_source_files_properties( ${tgt_sources} PROPERTIES INCLUDE_DIRECTORIES
       ${CLANG_TIDY_IPATH} )
   endif()
@@ -138,12 +140,12 @@ macro( add_component_executable )
   # Prefix for export
   if( NOT DEFINED ace_PREFIX AND NOT DEFINED ace_NOEXPORT)
     message( FATAL_ERROR
-      "add_component_executable requires a PREFIX value to allow EXPORT of this target
-or the target must be labeled NOEXPORT.")
+      "add_component_executable requires a PREFIX value to allow EXPORT of this 
+target or the target must be labeled NOEXPORT.")
   endif()
 
   # Default link language is C++
-  if( "${ace_LINK_LANGUAGE}x" STREQUAL "x" )
+  if( NOT DEFINED ace_LINK_LANGUAGE )
     set( ace_LINK_LANGUAGE CXX )
   endif()
 
@@ -292,10 +294,6 @@ or the target must be labeled NOEXPORT.")
       "${${ace_PREFIX}_EXPORT_TARGET_PROPERTIES}" PARENT_SCOPE)
     unset(desc)
   endif()
-
-  # If Win32, copy dll files into binary directory.
-  copy_dll_link_libraries_to_build_dir( ${ace_TARGET} )
-
 endmacro()
 
 #------------------------------------------------------------------------------
@@ -647,202 +645,6 @@ macro( register_parallel_test targetname numPE command cmd_args )
   unset( lverbose )
 endmacro()
 
-#------------------------------------------------------------------------------#
-# Special post-build options for Win32 platforms
-# -----------------------------------------------------------------------------#
-# copy_dll_link_libraries_to_build_dir( target )
-#
-# For Win32 with shared libraries, all dll dependencies must be located in the
-# PATH or in the application directory.  This cmake function creates POST_BUILD
-# rules for unit tests and applications to ensure that the most up-to-date
-# versions of all dependencies are in the same directory as the application.
-#------------------------------------------------------------------------------#
-function( copy_dll_link_libraries_to_build_dir target )
-
-  if( NOT MSVC )
-    # Win32 platforms require all dll libraries to be in the local directory
-    # (or $PATH)
-    return()
-  endif()
-
-  # Debug dependencies for a particular target (uncomment the next line and
-  # provide the targetname): "Ut_${compname}_${testname}_exe"
-  if( "Ut_FortranChecks_foo_exe" STREQUAL ${target} )
-     set(lverbose ON)
-  endif()
-  if( lverbose )
-     include(print_target_properties)
-  endif()
-
-  # For Win32 with shared libraries, the package dll must be located in the test
-  # directory.
-
-  # Discover all library dependencies for this unit test.
-  get_target_property( link_libs ${target} LINK_LIBRARIES )
-  if( lverbose )
-    message("\nDebugging dependencies for target ${target}")
-    message("  Dependencies = ${link_libs}\n")
-  endif()
-  if( "${link_libs}" MATCHES NOTFOUND )
-     return() # nothing to do
-  endif()
-
-  set( old_link_libs "" )
-  # Walk through the library dependencies to build a list of all .dll
-  # dependencies.
-  while( NOT "${old_link_libs}" STREQUAL "${link_libs}" )
-    if(lverbose)
-       message("Found new libraries (old_link_libs != link_libs).  Restarting"
-       " search loop...\n")
-    endif()
-    set( old_link_libs ${link_libs} )
-    foreach( lib ${link_libs} )
-      if( lverbose )
-        # message("\n  examine dependencies for lib           = ${lib}\n")
-        print_targets_properties("${lib}")
-      endif()
-      # $lib will either be a cmake target (e.g.: Lib_dsxx, Lib_c4) or an actual
-      # path to a library (c:\lib\gsl.lib).
-      if( NOT EXISTS ${lib} AND TARGET ${lib} )
-          # Must be a CMake target... find it's dependencies...
-          # The target may be
-          # 1. A target defined within the current build system (e.g.: Lib_c4),
-          #    or
-          # 2. an 'imported' targets like GSL::gsl.
-          get_target_property( isimp ${lib} IMPORTED )
-          if(isimp)
-            get_target_property( link_libs3 ${lib} INTERFACE_LINK_LIBRARIES)
-          else()
-            get_target_property( link_libs2 ${lib} LINK_LIBRARIES )
-          endif()
-          list( APPEND link_libs ${link_libs2} )
-          list( APPEND link_libs ${link_libs3} )
-      endif()
-    endforeach()
-    # Loop through all current dependencies, remove static libraries
-    #(they do not need to be in the run directory).
-    list( REMOVE_DUPLICATES link_libs )
-    foreach( lib ${link_libs} )
-      if( "${lib}" MATCHES "NOTFOUND" )
-        # nothing to add so remove from list
-        list( REMOVE_ITEM link_libs ${lib} )
-        if( lverbose )
-          message("lib = ${lib} is NOTFOUND --> remove it from the list")
-        endif()
-      elseif( "${lib}" MATCHES "[$]<")
-        # We have a generator expression.  This routine does not support this,
-        # so drop it.
-        list( REMOVE_ITEM link_libs ${lib} )
-        if( lverbose )
-          message("lib = ${lib} is a generator expression --> remove it from"
-            " the list")
-        endif()
-      elseif( "${lib}" MATCHES ".[lL]ib$" )
-        # We have a path to a static library. Static libraries do not
-        # need to be copied.
-        list( REMOVE_ITEM link_libs ${lib} )
-        if( lverbose )
-          message("lib = ${lib} is a static lib --> remove it from the list")
-        endif()
-        # However, if there is a corresponding dll, we should add it
-        # to the list.
-        string( REPLACE ".lib" ".dll" dll_lib ${lib} )
-        if( ${dll_lib} MATCHES "[.]dll$" AND EXISTS ${dll_lib} )
-          list( APPEND link_libs "${dll_lib}" )
-          if( lverbose )
-            message("lib = ${lib} has a dll --> replace it with ${dll_lib}")
-          endif()
-        endif()
-      endif()
-    endforeach()
-    if( lverbose )
-      message("Updated dependencies list: ${target} --> ${link_libs}\n")
-    endif()
-
-  endwhile()
-
-  list( REMOVE_DUPLICATES link_libs )
-  # if( ${compname} MATCHES Fortran )
-  # message("   ${compname}_${testname} --> ${link_libs}")
-  # endif()
-
-  if( lverbose )
-    message("Creating post build commands for target = ${target}")
-  endif()
-
-  # Add a post-build command to copy each dll into the test directory.
-  foreach( lib ${link_libs} )
-    # We do not need to the post_build copy command for Draco Lib_* files.
-    # These should already be in the correct location.
-    if( NOT ${lib} MATCHES "Lib_" )
-      if( lverbose )
-        message("  looking at ${lib}")
-      endif()
-      unset( target_loc )
-      if( NOT TARGET ${lib})
-        if (lverbose )
-          message("  ${lib} is not a target. skip it.")
-        endif()
-        continue()
-      endif()
-      # TYPE = {STATIC_LIBRARY, MODULE_LIBRARY, SHARED_LIBRARY,
-      #         INTERFACE_LIBRARY, EXECUTABLE}
-      # We cannot query INTERFACE_LIBRARY targets.
-      get_target_property(lib_type ${lib} TYPE )
-      if( ${lib_type} STREQUAL "INTERFACE_LIBRARY" )
-        if( lverbose )
-          message("  I think ${lib} is an INTERFACE_LIBRARY. Skipping to next "
-            "dependency.")
-        endif()
-        continue()
-      endif()
-      get_target_property(is_imported ${lib} IMPORTED )
-      if( is_imported )
-        get_target_property(target_loc_rel ${lib} IMPORTED_LOCATION_RELEASE )
-        get_target_property(target_loc_deb ${lib} IMPORTED_LOCATION_DEBUG )
-        get_target_property(target_loc ${lib} IMPORTED_LOCATION )
-        if( ${target_loc_rel} MATCHES "NOTFOUND" AND
-            ${target_loc_deb} MATCHES "NOTFOUND" AND
-            ${target_loc} MATCHES "NOTFOUND" )
-          # path not found, ignore.
-          if (lverbose )
-            message("  ${lib} does not have an IMPORTED_LOCATION value. "
-              "skip it.")
-          endif()
-          continue()
-        else()
-          set(target_loc "$<TARGET_FILE:${lib}>")
-        endif()
-        get_target_property(target_gnutoms ${lib} GNUtoMS)
-      elseif( EXISTS ${lib} )
-        # If $lib is a full path to a library, add it to the list
-        if (lverbose )
-          message("  ${lib} is the full path to a library; adding to the list.")
-        endif()
-        set( target_loc ${lib} )
-        set( target_gnutoms NOTFOUND )
-      else()
-        if (lverbose )
-          message("  ${lib} is a target that points to $<TARGET:${lib}>.")
-        endif()
-        set( target_loc $<TARGET_FILE:${lib}> )
-        get_target_property( target_gnutoms ${lib} GNUtoMS )
-      endif()
-
-      add_custom_command( TARGET ${target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${target_loc}
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR} )
-
-      if( lverbose )
-        message("  CMAKE_COMMAND -E copy_if_different ${target_loc} "
-          "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_CFG_INTDIR}")
-      endif()
-
-    endif()
-  endforeach()
-  unset( lverbose )
-endfunction( copy_dll_link_libraries_to_build_dir )
-
 #----------------------------------------------------------------------#
 # add_scalar_tests
 #
@@ -985,13 +787,7 @@ macro( add_scalar_tests test_sources )
     target_link_libraries(
       Ut_${compname}_${testname}_exe
       ${test_lib_target_name}
-      ${addscalartest_DEPS}
-      )
-
-    # Special post-build options for Win32 platforms
-    # ------------------------------------------------------------
-    copy_dll_link_libraries_to_build_dir( Ut_${compname}_${testname}_exe )
-
+      ${addscalartest_DEPS} )
   endforeach()
 
   # Register the unit test
@@ -1030,8 +826,8 @@ endmacro(add_scalar_tests)
 # Optional parameters that require arguments.
 #
 #    SOURCES         - semi-colon delimited list of files.
-#    PE_LIST         - semi-colon deliminte list of integers (number
-#                      of MPI ranks).
+#    PE_LIST         - semi-colon delimited list of integers (number of MPI
+#                      ranks).
 #    DEPS            - CMake target dependencies.
 #    TEST_ARGS       - Command line arguments to use when running the test.
 #    PASS_REGEX      - This regex must exist in the output to produce
@@ -1151,12 +947,7 @@ macro( add_parallel_tests )
     target_link_libraries(
       Ut_${compname}_${testname}_exe
       ${test_lib_target_name}
-      ${addparalleltest_DEPS}
-      )
-
-    # Special post-build options for Win32 platforms
-    # ------------------------------------------------------------
-    copy_dll_link_libraries_to_build_dir( Ut_${compname}_${testname}_exe )
+      ${addparalleltest_DEPS} )
 
   endforeach()
 
@@ -1260,6 +1051,9 @@ macro( provide_aux_files )
       endif()
     endif()
     set( outfile ${PROJECT_BINARY_DIR}/${srcfilenameonly} )
+    if( "${file}x" STREQUAL "x" OR "${outfile}x" STREQUAL "x")
+    message( FATAL_ERROR " COMMAND ${CMAKE_COMMAND} -E copy_if_different ${file} ${outfile}")
+    endif()
     add_custom_command(
       OUTPUT  ${outfile}
       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${file} ${outfile}

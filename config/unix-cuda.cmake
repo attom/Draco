@@ -43,9 +43,12 @@ endif()
 # -Xcudafe --diag_suppress=1427: suppress "warning: offsetof applied to non-POD"
 
 if( NOT CUDA_FLAGS_INITIALIZED )
-  set( CUDA_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using draco settings." )
 
+  set( CUDA_FLAGS_INITIALIZED "yes" CACHE INTERNAL "using draco settings." )
   set( CMAKE_CUDA_FLAGS                "${Draco_CUDA_ARCH} -g -G --expt-relaxed-constexpr")
+  if( CMAKE_CXX_COMPILER_ID MATCHES "XL")
+    string(APPEND CMAKE_CUDA_FLAGS " -ccbin xlC -Xcompiler -std=c++14 -Xcompiler --gcc-toolchain=/usr/tce/packages/gcc/gcc-8.3.1 -Xcompiler -qxflag=disable__cplusplusOverride")
+  endif()
   set( CMAKE_CUDA_FLAGS_DEBUG          "-O0 -Xcudafe --display_error_number -Xcudafe --diag_suppress=1427")
   set( CMAKE_CUDA_FLAGS_RELEASE        "-O2")
   set( CMAKE_CUDA_FLAGS_MINSIZEREL     "-O2")

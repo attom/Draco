@@ -44,6 +44,11 @@ add_scalar_tests(
    DEPS    Lib_dsxx
    )
 
+# tstatomics will use 19 hw threads. Help ctest schedule this job by setting
+# test properties. We don't need to reserve 19 cores, but let's reserve 10
+# (assume 2 hw threads per physical core.)
+set_tests_properties( dsxx_tstatomics PROPERTIES PROCESSORS 10 )
+
 # (2013-11-13 KT):: tstdbc intentionally divides by zero (to test the isinfinity
 # function). PGI issues a warning for this case that we don't care about.  Since
 # PGI does not appear to use pragmas to suppress warnings, I am turning off

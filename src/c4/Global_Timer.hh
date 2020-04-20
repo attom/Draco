@@ -51,19 +51,22 @@ private:
   DLL_PUBLIC_c4 static bool global_active_;
 
   struct timer_entry {
-    bool is_active; // permits activation of timers not yet constructed.
-    Global_Timer *timer;
-
-    timer_entry() : is_active(false), timer(nullptr) {}
+    bool is_active{false}; // permits activation of timers not yet constructed.
+    Global_Timer *timer{nullptr};
+    timer_entry() = default; // ctor
   };
 
-  typedef std::map<std::string, timer_entry> active_list_type;
+  using active_list_type = std::map<std::string, timer_entry>;
 
   //! Selected Global_Timers are active
   static active_list_type active_list_;
 
-  //! Disable default construction
-  Global_Timer() = delete;
+public:
+  // Constructors & Destructors
+
+  explicit Global_Timer(char const *name); //! default constructor
+  ~Global_Timer() override = default;      //! default destructor
+  Global_Timer() = delete;                 //! Disable default construction
 
   //! Disable copy/move construction
   Global_Timer(Global_Timer const &rhs) = delete;
@@ -72,12 +75,6 @@ private:
   // Disable copy/move assignment
   Global_Timer operator=(Global_Timer const &rhs) = delete;
   Global_Timer operator=(Global_Timer &&rhs) = delete;
-
-public:
-  // Constructors & Destructors
-
-  explicit Global_Timer(char const *name); //! default constructor
-  virtual ~Global_Timer(){};               //! default destructor
 
   // Accessors
 

@@ -11,6 +11,7 @@
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
 #include "ds++/SystemCall.hh"
+#include <array>
 #include <cstdlib>
 #include <functional> // std::function
 #include <map>
@@ -27,8 +28,8 @@ using env_store_t = std::map<std::string, env_store_value>;
 env_store_t clean_env() {
   // for each key, is it defined? If so, record the value, then unset it. If
   // not, note that.
-  std::string slurm_keys[] = {"SLURM_CPUS_PER_TASK", "SLURM_NTASKS",
-                              "SLURM_JOB_NUM_NODES"};
+  std::array<std::string, 3> slurm_keys = {
+      "SLURM_CPUS_PER_TASK", "SLURM_NTASKS", "SLURM_JOB_NUM_NODES"};
   env_store_t store{};
   for (auto &k : slurm_keys) {
     // We're assuming none of those flags were set to something like 2 billion

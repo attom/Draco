@@ -14,6 +14,7 @@
 #include "c4/gatherv.hh"
 #include "ds++/Release.hh"
 #include "ds++/Soft_Equivalence.hh"
+#include <array>
 #include <complex>
 #include <numeric>
 
@@ -24,7 +25,7 @@ using namespace rtt_c4;
 //----------------------------------------------------------------------------//
 
 //----------------------------------------------------------------------------//
-bool topology_report(void) {
+bool topology_report() {
   size_t const mpi_ranks = rtt_c4::nodes();
   size_t const my_mpi_rank = rtt_c4::node();
 
@@ -49,8 +50,8 @@ bool topology_report(void) {
     std::vector<std::string> unique_processor_names;
     for (size_t i = 0; i < mpi_ranks; ++i) {
       bool found(false);
-      for (size_t j = 0; j < unique_processor_names.size(); ++j)
-        if (procnames[i] == unique_processor_names[j])
+      for (const auto &unique_processor_name : unique_processor_names)
+        if (procnames[i] == unique_processor_name)
           found = true;
       if (!found)
         unique_processor_names.push_back(procnames[i]);
@@ -75,21 +76,20 @@ bool topology_report(void) {
 }
 
 //----------------------------------------------------------------------------//
-
 void topo_report(rtt_dsxx::UnitTest &ut, bool &one_mpi_rank_per_node) {
   // Determine if MPI ranks are on unique machine nodes:
   //
   // If there are multiple MPI ranks per machine node, then don't use OMP
   // because OMP can't restrict its threads to running only on an MPI rank's
-  // cores.  The OMP threads will be distributed over the whole machine
-  // node.  For example, we might choose to use 4 MPI ranks on a machine
-  // node with 16 cores.  Ideally, we could allow each MPI rank to use 4 OMP
-  // threads for a maximum of 4x4=16 OMP threads on the 16 core node.
-  // However, because OMP doesn't know about the MPI ranks sharing the 16
-  // cores, the even distribution of OMP threads is not guaranteed.
+  // cores.  The OMP threads will be distributed over the whole machine node.
+  // For example, we might choose to use 4 MPI ranks on a machine node with 16
+  // cores.  Ideally, we could allow each MPI rank to use 4 OMP threads for a
+  // maximum of 4x4=16 OMP threads on the 16 core node.  However, because OMP
+  // doesn't know about the MPI ranks sharing the 16 cores, the even
+  // distribution of OMP threads is not guaranteed.
   //
-  // So - if we have more than one MPI rank per machine node, then turn off
-  // OMP threads.
+  // So - if we have more than one MPI rank per machine node, then turn off OMP
+  // threads.
   one_mpi_rank_per_node = topology_report();
 
   std::string procname = rtt_c4::get_processor_name();
@@ -103,17 +103,7 @@ void topo_report(rtt_dsxx::UnitTest &ut, bool &one_mpi_rank_per_node) {
   int tid(-1);
   int nthreads(-1), maxthreads(-1);
 
-  // if( one_mpi_rank_per_node )
-  // {
   maxthreads = omp_get_max_threads();
-  // nthreads   = omp_get_num_threads();
-  // }
-  // else
-  // {
-  //     // More than 1 MPI rank per node --> turn off OMP.
-  //     maxthreads = 1;
-  //     omp_set_num_threads( maxthreads );
-  // }
 
 #pragma omp parallel private(tid)
   {
@@ -134,8 +124,7 @@ void topo_report(rtt_dsxx::UnitTest &ut, bool &one_mpi_rank_per_node) {
                 << "\n"
                 << std::endl;
     }
-    if (tid < 0 || tid >= nthreads)
-      ITFAILS;
+    FAIL_IF(tid < 0 || tid >= nthreads);
   }
 #else
   { // not OMP
@@ -211,7 +200,6 @@ void sample_sum(rtt_dsxx::UnitTest &ut, bool const omrpn) {
     }
 
 #pragma omp parallel for shared(foo, bar)
-
     for (int i = 0; i < N; ++i) {
       foo[i] = 99.00 + i;
       bar[i] = 0.99 * i;
@@ -286,19 +274,22 @@ int MandelbrotCalculate(std::complex<double> c, int maxiter) {
   return n;
 }
 
+//----------------------------------------------------------------------------//
 void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
+  using namespace std;
+
   const int width = 78;
   const int height = 44;
   const int num_pixels = width * height;
-  const std::complex<double> center(-0.7, 0.0);
-  const std::complex<double> span(2.7, -(4 / 3.0) * 2.7 * height / width);
-  const std::complex<double> begin = center - span / 2.0;
-  // const std::complex<double> end   = center+span/2.0;
+  const complex<double> center(-0.7, 0.0);
+  const complex<double> span(2.7, -(4 / 3.0) * 2.7 * height / width);
+  const complex<double> begin = center - span / 2.0;
+  // const complex<double> end   = center+span/2.0;
   const int maxiter = 100000;
 
   // Use OMP threads
   Timer t;
-  std::ostringstream image1, image2;
+  ostringstream image1, image2;
   t.start();
 
   int nthreads(-1);
@@ -307,9 +298,9 @@ void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
   {
     if (node() == 0 && omp_get_thread_num() == 0) {
       nthreads = omp_get_num_threads();
-      std::cout << "\nNow Generating Mandelbrot image (" << nthreads
-                << " OMP threads)...\n"
-                << std::endl;
+      cout << "\nNow Generating Mandelbrot image (" << nthreads
+           << " OMP threads)...\n"
+           << endl;
     }
   }
 
@@ -318,9 +309,9 @@ void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
     const int x = pix % width;
     const int y = pix / width;
 
-    std::complex<double> c =
-        begin + std::complex<double>(x * span.real() / (width + 1.0),
-                                     y * span.imag() / (height + 1.0));
+    complex<double> c =
+        begin + complex<double>(x * span.real() / (width + 1.0),
+                                y * span.imag() / (height + 1.0));
 
     int n = MandelbrotCalculate(c, maxiter);
     if (n == maxiter)
@@ -330,12 +321,14 @@ void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
     {
       char cc = ' ';
       if (n > 0) {
-        static const char charset[] = ".,c8M@jawrpogOQEPGJ";
-        cc = charset[n % (sizeof(charset) - 1)];
+        array<char, 19> const charset = {'.', ',', 'c', '8', 'M', '@', 'j',
+                                         'a', 'w', 'r', 'p', 'o', 'g', 'O',
+                                         'Q', 'E', 'P', 'G', 'J'};
+        cc = charset[n % (charset.size() - 1)];
       }
       image1 << cc;
       if (x + 1 == width)
-        image1 << "|\n"; //std::puts("|");
+        image1 << "|\n"; //puts("|");
     }
   }
 #endif // OPENMP_FOUND
@@ -345,7 +338,7 @@ void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
 
   // Repeat for serial case
   if (rtt_c4::node() == 0)
-    std::cout << "\nGenerating Mandelbrot image (Serial)...\n" << std::endl;
+    cout << "\nGenerating Mandelbrot image (Serial)...\n" << endl;
 
   t.reset();
   t.start();
@@ -354,9 +347,9 @@ void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
     const int x = pix % width;
     const int y = pix / width;
 
-    std::complex<double> c =
-        begin + std::complex<double>(x * span.real() / (width + 1.0),
-                                     y * span.imag() / (height + 1.0));
+    complex<double> c =
+        begin + complex<double>(x * span.real() / (width + 1.0),
+                                y * span.imag() / (height + 1.0));
 
     int n = MandelbrotCalculate(c, maxiter);
     if (n == maxiter)
@@ -365,13 +358,15 @@ void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
     {
       char cc = ' ';
       if (n > 0) {
-        static const char charset[] = ".,c8M@jawrpogOQEPGJ";
-        cc = charset[n % (sizeof(charset) - 1)];
+        array<char, 19> const charset = {'.', ',', 'c', '8', 'M', '@', 'j',
+                                         'a', 'w', 'r', 'p', 'o', 'g', 'O',
+                                         'Q', 'E', 'P', 'G', 'J'};
+        cc = charset[n % (charset.size() - 1)];
       }
-      // std::putchar(c);
+      // putchar(c);
       image2 << cc;
       if (x + 1 == width)
-        image2 << "|\n"; //std::puts("|");
+        image2 << "|\n"; //puts("|");
     }
   }
   t.stop();
@@ -379,18 +374,18 @@ void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
 
 #ifdef OPENMP_FOUND
   if (image1.str() == image2.str()) {
-    // std::cout << image1.str() << std::endl;
+    // cout << image1.str() << endl;
     PASSMSG("Scalar and OMP generated Mandelbrot images match.");
   } else {
     FAILMSG("Scalar and OMP generated Mandelbrot images do not match.");
   }
 #endif
 
-  std::cout << "\nTime to generate Mandelbrot:"
-            << "\n   Normal: " << gen_time_serial << " sec." << std::endl;
+  cout << "\nTime to generate Mandelbrot:"
+       << "\n   Normal: " << gen_time_serial << " sec." << endl;
 
   if (nthreads > 4) {
-    std::cout << "   OMP   : " << gen_time_omp << " sec." << std::endl;
+    cout << "   OMP   : " << gen_time_omp << " sec." << endl;
     if (gen_time_omp < gen_time_serial)
       PASSMSG("OMP generation of Mandelbrot image is faster.");
     else
@@ -401,7 +396,6 @@ void MandelbrotDriver(rtt_dsxx::UnitTest &ut) {
 }
 
 //----------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, rtt_dsxx::release);
   try {

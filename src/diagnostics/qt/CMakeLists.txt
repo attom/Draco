@@ -13,7 +13,7 @@ project( diagnostics_qt CXX )
 # Special options for Qt applications
 # ---------------------------------------------------------------------------- #
 
-# Instruct CMake to run moc automatically when needed (only for subdirectories
+# Instruct CMake to run MOC automatically when needed (only for subdirectories
 # that need Qt)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -43,7 +43,7 @@ add_component_executable(
   FOLDER       diagnostics
   NOCOMMANDWINDOW )
 
-# Disable IPO for appliations that link to Qt SDK, as this causes compile
+# Disable IPO for applications that link to Qt SDK, as this causes compile
 # warnings for the Intel compiler (and it refuses to run IPO for this
 # application anyway).
 if( CMAKE_CXX_COMPILER_ID MATCHES "Intel")
@@ -51,13 +51,9 @@ if( CMAKE_CXX_COMPILER_ID MATCHES "Intel")
     INTERPROCEDURAL_OPTIMIZATION_RELEASE OFF )
 endif()
 
-# Copy Qt dll files to build directory
-# copy_dll_link_libraries_to_build_dir( Exe_draco_info_gui )
-if (WIN32)
-  file( GLOB qtdlls ${QTDIR}/bin/*.dll )
+# Copy necessary dll files to build directory
+if (WIN32)  
   add_custom_command( TARGET Exe_draco_info_gui POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${qtdlls}
-            $<TARGET_FILE_DIR:Exe_draco_info_gui>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Lib_dsxx>
             $<TARGET_FILE_DIR:Exe_draco_info_gui>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Lib_c4>

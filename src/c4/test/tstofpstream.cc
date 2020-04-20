@@ -36,7 +36,7 @@ void tstofpstream(UnitTest &ut) {
 
   {
     // Test dynamic object creation and destruction
-    ofpstream *ptr_out = new ofpstream("tstofpstreams.txt");
+    auto *ptr_out = new ofpstream("tstofpstreams.txt");
     delete ptr_out;
   }
 

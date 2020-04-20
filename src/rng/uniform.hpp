@@ -224,9 +224,6 @@ R123_CUDA_DEVICE R123_STATIC_INLINE Ftype u01fixedpt(Itype in) {
     // 2015-09-26 KT - Suppress warnings for the following expressions (see
     // https://rtt.lanl.gov/redmine/issues/416)
     //
-    // Basically, GCC under BullseyeCoverage issues the following warning every
-    // time this file is included:
-    //
     // Counter_RNG.hh:124:65:   required from here
     // uniform.hpp:200:48: warning: second operand of conditional expression
     // has no effect [-Wunused-value]

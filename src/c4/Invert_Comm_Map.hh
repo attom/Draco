@@ -17,7 +17,7 @@
 namespace rtt_c4 {
 
 //! Map type for Invert_Comm_Map functions
-typedef std::map<int, size_t> Invert_Comm_Map_t;
+using Invert_Comm_Map_t = std::map<int, size_t>;
 
 //----------------------------------------------------------------------------//
 /**

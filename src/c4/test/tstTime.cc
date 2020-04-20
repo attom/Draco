@@ -78,13 +78,12 @@ void wall_clock_test(rtt_dsxx::UnitTest &ut) {
   //   error          = 0.0160977
   //   prec           = 0.002
   //
-  // This may be due to the system being busy or scans done by LANL IT.  I'm
-  // not really sure what is going on.  It always passes for interactive
-  // jobs.
+  // This may be due to the system being busy or scans done by LANL IT.  I'm not
+  // really sure what is going on.  It always passes for interactive jobs.
   //
   // In any case, I am making the prec value for Win32 10x the Linux value.
-  // This should keep the tests passing and is still valid because the
-  // relative error is less than 10% for this very short time interval.
+  // This should keep the tests passing and is still valid because the relative
+  // error is less than 10% for this very short time interval.
   double const prec(20.0 * t.posix_err());
 #else
   double const prec(2.0 * t.posix_err());
@@ -102,7 +101,7 @@ void wall_clock_test(rtt_dsxx::UnitTest &ut) {
   std::vector<double> foo(len);
   double sum(0);
   for (size_t i = 0; i < len; ++i) {
-    double const d(static_cast<double>(i + 1));
+    auto const d(static_cast<double>(i + 1));
     foo[i] = std::sqrt(std::log(d * 3.14) * std::fabs(std::cos(d / 3.14)));
     sum += foo[i];
   }
@@ -126,13 +125,12 @@ void wall_clock_test(rtt_dsxx::UnitTest &ut) {
     FAILMSG(msg.str());
   }
 
-  //---------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // Ensure that system + user <= wall
   //
-  // Due to round off errors, the wall clock time might be less than the
-  // system + user time.  But this difference should never exceed
-  // t.posix_err().
-  //---------------------------------------------------------------------//
+  // Due to round off errors, the wall clock time might be less than the system
+  // + user time.  But this difference should never exceed t.posix_err().
+  // -------------------------------------------------------------------------//
 
   double const deltaWallTime(t.wall_clock() - (t.system_cpu() + t.user_cpu()));
 #ifdef _MSC_VER
@@ -253,8 +251,8 @@ void wall_clock_test(rtt_dsxx::UnitTest &ut) {
     FAILMSG("PAPI metrics did not return 0 when PAPI was not available.");
 #endif
 
-  // Exercise the global report and reset. Unfortunately, there's no easy
-  // way to check the validity of the output except to eyeball.
+  // Exercise the global report and reset. Unfortunately, there's no easy way to
+  // check the validity of the output except to eyeball.
 
   do_timer.stop();
   Global_Timer::report_all(cout);

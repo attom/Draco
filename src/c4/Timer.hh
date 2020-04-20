@@ -108,10 +108,10 @@ namespace rtt_c4 {
 class Timer {
 private:
   //! Beginning wall clock time.
-  double begin;
+  double begin{0.0};
 
   //! Ending wall clock time.
-  double end;
+  double end{0.0};
 
   //! POSIX tms structure for beginning time.
   DRACO_TIME_TYPE tms_begin;
@@ -123,22 +123,22 @@ private:
   int const posix_clock_ticks_per_second;
 
   //! Flag determining if timer is currently on.
-  bool timer_on;
+  bool timer_on{false};
 
   //! True if we can access MPI timers.
   bool const isMPIWtimeAvailable;
 
   //! sum of wall clock time over all intervals.
-  double sum_wall;
+  double sum_wall{0.0};
 
   //! sum of system clock time over all intervals.
-  double sum_system;
+  double sum_system{0.0};
 
   //! sum of system clock time over all intervals.
-  double sum_user;
+  double sum_user{0.0};
 
   //! number of time intervals.
-  int num_intervals;
+  int num_intervals{0};
 
   //! determine if MPI Wtime is available.
   bool setIsMPIWtimeAvailable() const;
@@ -183,11 +183,11 @@ public:
   Timer(); //! default constructor
   // Disable copy and assignment operators
   Timer const &
-  operator=(Timer const &rhs) = delete;         //! copy assignment operator
-  Timer const &operator=(Timer &&rhs) = delete; //! move assignment operator
-  Timer(Timer const &rhs) = delete;             //! copy constructor
-  Timer(Timer &&rhs) = delete;                  //! move constructor
-  virtual ~Timer(){/* empty */};
+  operator=(Timer const &rhs) = delete;         //!< copy assignment operator
+  Timer const &operator=(Timer &&rhs) = delete; //!< move assignment operator
+  Timer(Timer const &rhs) = delete;             //!< copy constructor
+  Timer(Timer &&rhs) = delete;                  //!< move constructor
+  virtual ~Timer() = default;
   inline void start();
   inline void stop();
   inline double wall_clock() const;
@@ -252,7 +252,7 @@ public:
 
   inline void merge(Timer const &);
 
-  static void initialize(int &argc, char *argv[]);
+  static void initialize(int &argc, char **argv);
 };
 
 //----------------------------------------------------------------------------//

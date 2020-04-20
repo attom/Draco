@@ -43,9 +43,9 @@ add_scalar_tests(
 
 # Special case for driver4tstConsole_Token_Stream
 # 1. This test doesn't work under Xcode
-# 2. This test must have unique access to tstConsole_Token_Stream and
-#    we will use a RESOURCE_LOCK to prevent multiple simultaneous
-#    instances during parallel ctest.
+# 2. This test must have unique access to tstConsole_Token_Stream and we will
+#    use a RESOURCE_LOCK to prevent multiple simultaneous instances during
+#    parallel ctest.
 if( NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
   include( ApplicationUnitTest )
   add_app_unit_test(

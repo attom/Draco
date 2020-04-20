@@ -190,10 +190,6 @@ void wait_all(unsigned count, C4_Req *requests) {
 // ABORT
 //----------------------------------------------------------------------------//
 int abort(int error) {
-  // This test is not recorded as tested by BullseyeCoverage because abort
-  // terminates the execution and BullseyeCoverage only reports coverage for
-  // function that return control to main().
-
   int rerror = MPI_Abort(communicator, error);
   return rerror;
 }

@@ -106,20 +106,17 @@ void tstDeterminateSwap(UnitTest &ut) {
   outgoing_data.resize(rtt_c4::nodes());
   incoming_data.resize(0);
   incoming_data.resize(rtt_c4::nodes());
-  for (unsigned i = 0; i < outgoing_pid.size(); ++i) {
-    unsigned const pid = outgoing_pid[i];
+  for (unsigned int pid : outgoing_pid) {
     outgoing_data[pid].resize(2);
     outgoing_data[pid][0] = rtt_c4::node();
     outgoing_data[pid][1] = pid;
   }
-  for (unsigned i = 0; i < incoming_pid.size(); ++i) {
-    unsigned const pid = incoming_pid[i];
+  for (unsigned int pid : incoming_pid) {
     incoming_data[pid].resize(2);
   }
   rtt_c4::determinate_swap(outgoing_data, incoming_data);
 
-  for (unsigned i = 0; i < incoming_pid.size(); ++i) {
-    unsigned const pid = incoming_pid[i];
+  for (unsigned int pid : incoming_pid) {
     if (incoming_data[pid].size() != 2) {
       ut.failure("Incoming data is NOT correct size");
     } else {

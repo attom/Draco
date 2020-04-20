@@ -72,9 +72,9 @@ template <typename T> int broadcast(T * /*buffer*/, int /*size*/, int /*root*/);
 template <typename ForwardIterator, typename OutputIterator>
 void broadcast(ForwardIterator first, ForwardIterator last,
                OutputIterator result) {
-  typedef typename std::iterator_traits<ForwardIterator>::value_type value_type;
-  typedef
-      typename std::iterator_traits<ForwardIterator>::difference_type diff_type;
+  using value_type = typename std::iterator_traits<ForwardIterator>::value_type;
+  using diff_type =
+      typename std::iterator_traits<ForwardIterator>::difference_type;
 
   // Proc 0 does not copy any data into the result iterator.
 
@@ -85,7 +85,7 @@ void broadcast(ForwardIterator first, ForwardIterator last,
   Remember(int check =) broadcast(&size, 1, 0);
   Check(check == MPI_SUCCESS);
 
-  value_type *buf = new value_type[size];
+  auto *buf = new value_type[size];
   if (node() == 0)
     std::copy(first, last, buf);
 
@@ -100,6 +100,7 @@ void broadcast(ForwardIterator first, ForwardIterator last,
   return;
 }
 
+//----------------------------------------------------------------------------//
 // safer version of broadcast using stl ranges
 template <typename ForwardIterator, typename OutputIterator>
 void broadcast(ForwardIterator first, ForwardIterator last,

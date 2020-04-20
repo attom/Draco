@@ -20,7 +20,7 @@ using namespace std;
 
 void test_mpi_comm_dup(rtt_dsxx::UnitTest &ut) {
 
-// we only run this particular test when mpi is on
+// we only run this particular test when MPI is on
 #ifdef C4_MPI
 
   Require(rtt_c4::nodes() == 4);
@@ -29,7 +29,12 @@ void test_mpi_comm_dup(rtt_dsxx::UnitTest &ut) {
   int snode = 0;
 
   // split up nodes (two communicators) 0 -> 0, 2 -> 1 and 1 -> 0, 3 -> 1
-  MPI_Comm new_comm;
+#if defined(OMPI_MAJOR_VERSION)
+  MPI_Comm new_comm = nullptr;
+#else
+  // if defined(MSMPI_VER) || defined(CRAY_MPICH_VERSION)
+  MPI_Comm new_comm = 0; // MS_MPI: 'typedef int MPI_Comm;'
+#endif
 
   if (node == 1) {
     MPI_Comm_split(MPI_COMM_WORLD, 0, 0, &new_comm);
@@ -45,7 +50,7 @@ void test_mpi_comm_dup(rtt_dsxx::UnitTest &ut) {
   // we haven't set the communicator yet so we should still have 4 nodes
   FAIL_IF_NOT(rtt_c4::nodes() == 4);
 
-  // now dup the communicator on each processor
+  // now duplicate the communicator on each processor
   rtt_c4::inherit(new_comm);
 
   // each processor should see two nodes
@@ -116,7 +121,7 @@ void test_comm_dup(rtt_dsxx::UnitTest &ut) {
 
   int node = rtt_c4::node();
 
-  // now dup the communicator on each processor
+  // now duplicate the communicator on each processor
   rtt_c4::inherit(node);
 
   // check the number of nodes
@@ -128,7 +133,7 @@ void test_comm_dup(rtt_dsxx::UnitTest &ut) {
   FAIL_IF_NOT(rtt_c4::nodes() == 1);
 
   if (ut.numFails == 0)
-    PASSMSG("Scalar Comm duplication/free works ok.");
+    PASSMSG("Scalar Comm duplication/free works okay.");
 
 #endif
 
@@ -158,7 +163,7 @@ void test_comm_dup(rtt_dsxx::UnitTest &ut) {
   FAIL_IF_NOT(y == 20 * nodes);
 
   if (ut.numFails == 0)
-    PASSMSG("MPI_COMM_WORLD Comm duplication/free works ok.");
+    PASSMSG("MPI_COMM_WORLD Comm duplication/free works okay.");
 
 #endif
   return;

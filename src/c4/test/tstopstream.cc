@@ -44,7 +44,7 @@ void tstopstream(UnitTest &ut) {
 
   {
     // Test dynamic object creation and destruction
-    opstream *ptr_pout = new opstream;
+    auto *ptr_pout = new opstream;
     delete ptr_pout;
   }
 

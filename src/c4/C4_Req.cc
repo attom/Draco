@@ -28,7 +28,7 @@ C4_Req::C4_Req() : p(new C4_ReqRefRep) { ++p->n; }
  * Attach to an existing message request.
  */
 //----------------------------------------------------------------------------//
-C4_Req::C4_Req(const C4_Req &req) : p(NULL) {
+C4_Req::C4_Req(const C4_Req &req) : p(nullptr) {
   if (req.inuse())
     p = req.p;
   else
@@ -55,7 +55,7 @@ C4_Req::~C4_Req() { free_(); }
  */
 //----------------------------------------------------------------------------//
 C4_Req &C4_Req::operator=(const C4_Req &req) {
-  free_();
+  this->free_();
 
   if (req.inuse())
     p = req.p;
@@ -97,26 +97,11 @@ void C4_ReqRefRep::free() {
  */
 //----------------------------------------------------------------------------//
 C4_ReqRefRep::C4_ReqRefRep()
-    : n(0), assigned(false)
 #ifdef C4_MPI
-      ,
-      r(MPI_Request())
+    : r(MPI_Request())
 #endif
 {
   // empty
-}
-
-//----------------------------------------------------------------------------//
-/*!
- * \brief Destructor.
- *
- * It is important that all existing requests are cleared before the destructor
- * is called.  We used to have a wait() in here; however, this causes exception
- * safety problems.  In any case, it is probably a bad idea to clean up
- * communication by going out of scope.
- */
-//----------------------------------------------------------------------------//
-C4_ReqRefRep::~C4_ReqRefRep() { /* empty */
 }
 
 //----------------------------------------------------------------------------//
@@ -126,9 +111,16 @@ C4_ReqRefRep::~C4_ReqRefRep() { /* empty */
  *
  * This function is non-const because it updates the underlying request data
  * member.
+ *
+ * \bug Clang-analyzer via clang-tidy issues a false positive for this code
+ * \code
+ * draco/src/c4/C4_Req.cc:125:5: warning: Request  has no matching nonblocking\
+ *   call.  [clang-analyzer-optin.mpi.MPI-Checker]
+ * MPI_Wait(&r, s);
+ * \endcode
  */
 // ---------------------------------------------------------------------------//
-#ifdef C4_MPI
+#if defined(C4_MPI) && !defined(__clang_analyzer__)
 
 void C4_ReqRefRep::wait(C4_Status *status) {
   if (assigned) {

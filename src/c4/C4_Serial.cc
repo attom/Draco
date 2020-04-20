@@ -132,10 +132,6 @@ unsigned wait_any(unsigned /*count*/, C4_Req * /*requests*/) {
 #endif
 
 int abort(int error) {
-  // This test is not recorded as tested by BullseyeCoverage because abort
-  // terminates the execution and BullseyeCoverage only reports coverage for
-  // function that return control to main().
-
   // call system exit
   std::abort();
   return error; // unreachable

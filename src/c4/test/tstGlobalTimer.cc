@@ -34,15 +34,13 @@ void test_Global_Timer(rtt_dsxx::UnitTest &ut) {
   std::this_thread::sleep_for(500ms);
 
   // This seems to report nothing, but it runs w/o error.
-  // This is used by Rocotillo and Serrano -- but I don't understand how it
-  // works.
   rtt_c4::Global_Timer::report_all(std::cout);
 
   rtt_c4::Global_Timer::set_global_activity(false);
 
   {
     // Test dynamic object creation and destruction
-    rtt_c4::Global_Timer *ptr_gt = new rtt_c4::Global_Timer("foo");
+    auto *ptr_gt = new rtt_c4::Global_Timer("foo");
     delete ptr_gt;
   }
 

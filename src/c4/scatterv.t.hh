@@ -37,7 +37,7 @@ void indeterminate_scatterv(vector<vector<T>> &outgoing_data,
       unsigned total_count = 0;
       for (unsigned p = 0; p < N; ++p) {
         Check(outgoing_data[p].size() < UINT_MAX);
-        unsigned const n = static_cast<unsigned>(outgoing_data[p].size());
+        auto const n = static_cast<unsigned>(outgoing_data[p].size());
         counts[p] = n;
         displs[p] = total_count;
         total_count += n;
@@ -54,20 +54,20 @@ void indeterminate_scatterv(vector<vector<T>> &outgoing_data,
              sendbuf.begin() + displs[p]);
       }
       Remember(check =) rtt_c4::scatterv(
-          (sendbuf.size() > 0 ? &sendbuf[0] : NULL),
-          (counts.size() > 0 ? &counts[0] : NULL),
-          (displs.size() > 0 ? &displs[0] : NULL),
-          (incoming_data.size() > 0 ? &incoming_data[0] : NULL), count);
+          (sendbuf.size() > 0 ? &sendbuf[0] : nullptr),
+          (counts.size() > 0 ? &counts[0] : nullptr),
+          (displs.size() > 0 ? &displs[0] : nullptr),
+          (incoming_data.size() > 0 ? &incoming_data[0] : nullptr), count);
       Check(check == MPI_SUCCESS);
     } else {
       int count;
-      Remember(int check =) scatter(static_cast<int *>(NULL), &count, 1);
+      Remember(int check =) scatter(static_cast<int *>(nullptr), &count, 1);
       Check(check == MPI_SUCCESS);
       incoming_data.resize(count);
       Remember(check =) rtt_c4::scatterv(
-          static_cast<T *>(NULL), static_cast<int *>(NULL),
-          static_cast<int *>(NULL),
-          (incoming_data.size() > 0 ? &incoming_data[0] : NULL), count);
+          static_cast<T *>(nullptr), static_cast<int *>(nullptr),
+          static_cast<int *>(nullptr),
+          (incoming_data.size() > 0 ? &incoming_data[0] : nullptr), count);
       Check(check == MPI_SUCCESS);
     }
   }
@@ -97,7 +97,7 @@ void determinate_scatterv(vector<vector<T>> &outgoing_data,
       unsigned total_count = 0;
       for (unsigned p = 0; p < N; ++p) {
         Check(outgoing_data[p].size() < UINT_MAX);
-        unsigned const n = static_cast<unsigned>(outgoing_data[p].size());
+        auto const n = static_cast<unsigned>(outgoing_data[p].size());
         counts[p] = n;
         displs[p] = total_count;
         total_count += n;
@@ -111,13 +111,13 @@ void determinate_scatterv(vector<vector<T>> &outgoing_data,
              sendbuf.begin() + displs[p]);
       }
       rtt_c4::scatterv(
-          (sendbuf.size() > 0 ? &sendbuf[0] : NULL), &counts[0], &displs[0],
-          (incoming_data.size() > 0 ? &incoming_data[0] : NULL), count);
+          (sendbuf.size() > 0 ? &sendbuf[0] : nullptr), &counts[0], &displs[0],
+          (incoming_data.size() > 0 ? &incoming_data[0] : nullptr), count);
     } else {
       Check(incoming_data.size() < INT_MAX);
-      int count = static_cast<int>(incoming_data.size());
-      rtt_c4::scatterv(static_cast<T *>(NULL), static_cast<int *>(NULL),
-                       static_cast<int *>(NULL), &incoming_data[0], count);
+      auto count = static_cast<int>(incoming_data.size());
+      rtt_c4::scatterv(static_cast<T *>(nullptr), static_cast<int *>(nullptr),
+                       static_cast<int *>(nullptr), &incoming_data[0], count);
     }
   }
 #else

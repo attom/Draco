@@ -4,10 +4,7 @@
  * \author Mike Buksas
  * \date   Thu May  1 14:47:00 2008
  * \note   Copyright (C) 2016-2020 Triad National Security, LLC
- *         All rights reserved.
- */
-//----------------------------------------------------------------------------//
-
+ *         All rights reserved. */
 //----------------------------------------------------------------------------//
 
 #include "c4/Compare.hh"
@@ -30,43 +27,36 @@ void test_equivalence(rtt_dsxx::UnitTest &ut, const T value,
   // Test requires more than one node:
   if (rtt_c4::nodes() > 1) {
     // at this point all processors should have the same value
-    if (!check_global_equiv(local_value))
-      ITFAILS;
+    FAIL_IF_NOT(check_global_equiv(local_value));
 
     // now change the first processor's value
     if (rtt_c4::node() == 0)
       local_value = alt_value;
 
     if (rtt_c4::node() > 0) {
-      if (!check_global_equiv(local_value))
-        ITFAILS;
+      FAIL_IF_NOT(check_global_equiv(local_value));
     } else {
-      if (check_global_equiv(local_value))
-        ITFAILS;
+      FAIL_IF(check_global_equiv(local_value));
     }
 
     // Reset to given value
     local_value = value;
-    if (!check_global_equiv(local_value))
-      ITFAILS;
+    FAIL_IF_NOT(check_global_equiv(local_value));
 
     // Change the last processor:
     if (rtt_c4::node() == rtt_c4::nodes() - 1)
       local_value = alt_value;
 
     if (rtt_c4::node() == rtt_c4::nodes() - 2) {
-      if (check_global_equiv(local_value))
-        ITFAILS;
+      FAIL_IF(check_global_equiv(local_value));
     } else {
-      if (!check_global_equiv(local_value))
-        ITFAILS;
+      FAIL_IF_NOT(check_global_equiv(local_value));
     }
   }
 
   // Reset to given value
   local_value = value;
-  if (!check_global_equiv(local_value))
-    ITFAILS;
+  FAIL_IF_NOT(check_global_equiv(local_value));
 
   // Test valid on two nodes or more:
   if (rtt_c4::nodes() > 2) {
@@ -75,27 +65,22 @@ void test_equivalence(rtt_dsxx::UnitTest &ut, const T value,
       local_value = alt_value;
 
     if (rtt_c4::node() == rtt_c4::nodes() / 2 - 1) {
-      if (check_global_equiv(local_value))
-        ITFAILS;
+      FAIL_IF(check_global_equiv(local_value));
     } else if (rtt_c4::node() == rtt_c4::nodes() / 2) {
-      if (check_global_equiv(local_value))
-        ITFAILS;
+      FAIL_IF(check_global_equiv(local_value));
     } else {
-      if (!check_global_equiv(local_value))
-        ITFAILS;
+      FAIL_IF_NOT(check_global_equiv(local_value));
     }
   }
 
   // Reset
   local_value = value;
-  if (!check_global_equiv(local_value))
-    ITFAILS;
+  FAIL_IF_NOT(check_global_equiv(local_value));
 
   // Check 1 node. trivial, but check anyway.
   if (rtt_c4::nodes() == 1) {
     local_value = alt_value;
-    if (!check_global_equiv(local_value))
-      ITFAILS;
+    FAIL_IF_NOT(check_global_equiv(local_value));
   }
 
   if (ut.numFails == 0) {
@@ -106,8 +91,8 @@ void test_equivalence(rtt_dsxx::UnitTest &ut, const T value,
   }
   return;
 }
-//----------------------------------------------------------------------------//
 
+//----------------------------------------------------------------------------//
 int main(int argc, char *argv[]) {
   rtt_c4::ParallelUnitTest ut(argc, argv, rtt_dsxx::release);
   try {

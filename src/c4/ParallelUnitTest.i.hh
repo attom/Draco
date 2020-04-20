@@ -13,7 +13,7 @@
 namespace rtt_c4 {
 
 template <typename... Lambda, typename Release>
-int do_parallel_unit_test(int argc, char *argv[], Release release,
+int do_parallel_unit_test(int argc, char **argv, Release release,
                           Lambda const &... lambda) {
   rtt_c4::ParallelUnitTest ut(argc, argv, release);
   try {

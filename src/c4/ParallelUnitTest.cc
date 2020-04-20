@@ -42,7 +42,7 @@ ParallelUnitTest::ParallelUnitTest(int &argc, char **&argv,
   initialize(argc, argv);
 
   Require(argc > 0);
-  Require(release != NULL);
+  Require(release != nullptr);
 
   // header
 

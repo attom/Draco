@@ -23,7 +23,7 @@ namespace rtt_c4 {
 //----------------------------------------------------------------------------//
 template <typename RandomAccessContainer>
 void Processor_Group::sum(RandomAccessContainer &x) {
-  typedef typename RandomAccessContainer::value_type T;
+  using T = typename RandomAccessContainer::value_type;
 
   // copy data into send buffer
   std::vector<T> y(x.begin(), x.end());

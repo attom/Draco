@@ -28,7 +28,7 @@ if( ${CMAKE_GENERATOR} MATCHES "Unix Makefiles")
   if( DEFINED ENV{FC} OR DEFINED CMAKE_Fortran_COMPILER )
     enable_language( Fortran OPTIONAL )
   endif()
-  if( DEFINED ENV{CUDADIR} OR DEFINED ENV{CUDACXX} )
+  if( DEFINED ENV{CUDADIR} OR DEFINED ENV{CUDACXX} OR DEFINED ENV{CUDA_HOME} )
     enable_language( CUDA OPTIONAL )
   endif()
 endif()
@@ -102,15 +102,6 @@ if( TARGET Exe_draco_info )
   add_subdirectory( autodoc ) # This must be processed after 'src'
 endif()
 add_subdirectory( config )  # This must be processed after 'src'
-
-#
-# Dashboard/Regression setup
-#
-# CTest/CDash custom configuration file
-configure_file(
-  ${PROJECT_SOURCE_DIR}/CTestCustom.cmake
-  ${PROJECT_BINARY_DIR}/CTestCustom.cmake
-  COPYONLY )
 
 # install top level documents
 install(

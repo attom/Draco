@@ -77,7 +77,7 @@ private:
     void send();
     void shrink_to_fit();
 
-    virtual int_type overflow(int_type c);
+    int_type overflow(int_type c) override;
 
     std::vector<char> buffer_;
     ios_base::openmode mode_;

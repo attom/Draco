@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2010 Nov 2
 # brief  Install the config directory in the target directory
-# note   Copyright (C) 2016-2019, Triad National Security, LLC.
+# note   Copyright (C) 2016-2020, Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 cmake_minimum_required(VERSION 3.14.0)
@@ -12,6 +12,7 @@ project( config )
 include(CMakePackageConfigHelpers)
 
 file( GLOB CMake_src *.cmake )
+file( GLOB config_helper_sh *.sh )
 file( GLOB Python_src *.py )
 set( CMake_in
    cmake_uninstall.cmake.in
@@ -64,6 +65,7 @@ set( file_list
 
 install( FILES ${file_list}  DESTINATION cmake )
 install( FILES ${CMake_AFSD} DESTINATION cmake/CMakeAddFortranSubdirectory )
+install( PROGRAMS ${config_helper_sh} DESTINATION cmake )
 
 ##---------------------------------------------------------------------------##
 ## End of config/CMakeLists.txt

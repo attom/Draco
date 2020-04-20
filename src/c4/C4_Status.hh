@@ -26,17 +26,17 @@ namespace rtt_c4 {
  * \class C4_Status
  * \brief Status container for communications.
  *
- * This class contains the status information for communications.  For MPI,
- * this class wraps MPI_Status.
+ * This class contains the status information for communications.  For MPI, this
+ * class wraps MPI_Status.
  */
 //============================================================================//
 
 class C4_Status {
 
 #ifdef C4_MPI
-  typedef MPI_Status status_type;
+  using status_type = MPI_Status;
 #else
-  typedef int status_type;
+  using status_type = int;
 #endif
 
   status_type d_status;
