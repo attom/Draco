@@ -1,0 +1,20 @@
+#!/bin/bash
+##-*- Mode: bash -*-
+##---------------------------------------------------------------------------##
+## File  : environment/bashrc/.bashrc_vm
+## Date  :  April 22, 2020
+## Author: Jae Chang <jhchang@lanl.gov>
+## Note  : Copyright (C) 2020, Triad National Security, LLC.
+##         All rights are reserved.
+##
+##  Bash configuration file upon bash shell startup.  Used when working
+##  in the LAP virutal environment.
+##---------------------------------------------------------------------------##
+
+export dracomodules="gcc cmake python openmpi intel-mkl trilinos superlu-dist metis numdiff numactl parmetis gsl random123 eospac csk ndi libquo"
+
+
+##---------------------------------------------------------------------------##
+## end of .bashrc_vm
+##---------------------------------------------------------------------------##
+
