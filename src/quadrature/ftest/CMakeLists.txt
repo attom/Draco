@@ -6,7 +6,7 @@
 # note   Copyright (C) 2016-2019, Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.17.0)
 project( quadrature_ftest C Fortran )
 
 # ---------------------------------------------------------------------------- #
@@ -43,7 +43,7 @@ if(NOT TARGET Lib_dsxx)
 
   include(CMakeAddFortranSubdirectory)
 
-  get_filename_component( draco_BINARY_DIR ${PROJECT_BINARY_DIR}/../../.. 
+  get_filename_component( draco_BINARY_DIR ${PROJECT_BINARY_DIR}/../../..
     ABSOLUTE )
   cafs_create_imported_targets( Lib_dsxx
     "rtt_ds++"       "${draco_BINARY_DIR}/src/ds++"       CXX )
@@ -87,7 +87,7 @@ set( f90sources
 # Build library for test directory
 # ---------------------------------------------------------------------------- #
 
-# Xcode: Since cafs_create_imported_targets does not set all of the 
+# Xcode: Since cafs_create_imported_targets does not set all of the
 # dependencies between the imported libraries, we need to list them explicitly.
 set(target_deps
     Lib_quadrature_test

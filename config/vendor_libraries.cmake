@@ -36,9 +36,6 @@ endmacro()
 
 #------------------------------------------------------------------------------#
 # Helper macros for Random123
-#
-# Providers: Linux - use spack to install netlib-lapack
-#                    https://github.com/spack/spack
 #------------------------------------------------------------------------------#
 macro( setupRandom123 )
 

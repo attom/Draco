@@ -93,15 +93,27 @@ macro( dbsSetDefaults )
 
   if( CMAKE_CONFIGURATION_TYPES )
     # This generator expression will be expanded when the project is installed
-    # (CMake-3.4.0+)
     set(DBSCFGDIR "\$<CONFIG>/" CACHE STRING
       "Install subdirectory for multiconfig build tools.")
+    set(DBSCFGDIR_LIBRARY "\$<CONFIG>/bin" CACHE STRING
+      "Shared object library install subdirectory for multiconfig build tools.")
+    set(DBSCFG_IMPORT_PREFIX
+      "$<INSTALL_PREFIX>/$<CONFIG>/include"
+      CACHE STRING
+      "Prefix hack to properly set path to header files listed in draco-targets cmake.")
     # Generate a complete installation directory structure to avoid errors of
     # the form "imported target includes non-existent path" when configuring
     # Jayenne.
     foreach( config ${CMAKE_CONFIGURATION_TYPES} )
       file( MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${config}/include )
     endforeach()
+  else()
+    set(DBSCFGDIR_LIBRARY "lib" CACHE STRING
+      "Shared object library install subdirectory for multiconfig build tools.")
+    set(DBSCFG_IMPORT_PREFIX
+      "$<INSTALL_PREFIX>/include"
+      CACHE STRING
+      "Prefix hack to properly set path to header files listed in draco-targets cmake.")
   endif()
 
   # ----------------------------------------

@@ -72,7 +72,7 @@ set(Draco_MPIEXEC_NUMPROC_FLAG "@MPIEXEC_NUMPROC_FLAG@")
 set(Draco_MPI_C_WORKS "@MPI_C_WORKS@") # Used to help CAFS setup on Win32
 
 # CUDA
-set( HAVE_CUDA "@HAVE_CUDA@" )
+option( HAVE_CUDA "Should we build Cuda parts of the project?" @HAVE_CUDA@ )
 set( USE_CUDA "@USE_CUDA@" )
 set( COMPILE_WITH_CUDA "@COMPILE_WITH_CUDA@" )
 set( CUDA_DBS_STRING "@CUDA_DBS_STRING@")

@@ -108,15 +108,6 @@ install(
   FILES ChangeLog LICENSE.md README.md
   DESTINATION ${CMAKE_INSTALL_PREFIX} )
 
-# Add support for the 'uninstall' target
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/config/cmake_uninstall.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-  @ONLY )
-add_custom_target( uninstall
-  COMMAND "${CMAKE_COMMAND}" -P
-          "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" )
-
 # Export targets
 install(
   EXPORT draco-targets

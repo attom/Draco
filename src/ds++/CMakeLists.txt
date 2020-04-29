@@ -130,12 +130,10 @@ else()
   target_link_libraries( Lib_dsxx PUBLIC coverage_config )
 endif()
 target_include_directories( Lib_dsxx
-  # source directory or install location
   PUBLIC
     $<BUILD_INTERFACE:${Draco_SOURCE_DIR}/src>
-    $<INSTALL_INTERFACE:include>
-  # generated include directive files (config.h)
-  PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}> )
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:${DBSCFG_IMPORT_PREFIX}> )
 
 # ---------------------------------------------------------------------------- #
 # Installation instructions

@@ -140,7 +140,7 @@ macro( add_component_executable )
   # Prefix for export
   if( NOT DEFINED ace_PREFIX AND NOT DEFINED ace_NOEXPORT)
     message( FATAL_ERROR
-      "add_component_executable requires a PREFIX value to allow EXPORT of this 
+      "add_component_executable requires a PREFIX value to allow EXPORT of this
 target or the target must be labeled NOEXPORT.")
   endif()
 
@@ -215,85 +215,6 @@ target or the target must be labeled NOEXPORT.")
       INTERFACE_INCLUDE_DIRECTORIES "${ace_VENDOR_INCLUDE_DIRS}")
   endif()
 
-  #
-  # Register the library for exported library support
-  #
-
-  # Find target file name and location
-  get_target_property( impname ${ace_TARGET} OUTPUT_NAME )
-
-  # the above command returns the location in the build tree.  We
-  # need to convert this to the install location.
-  # get_filename_component( imploc ${imploc} NAME )
-  if( ${DRACO_SHARED_LIBS} )
-    set( imploc "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${impname}${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  else()
-    set( imploc "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}${impname}${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  endif()
-
-  set( ilil "")
-  if( "${ace_TARGET_DEPS}x" STREQUAL "x" AND  "${ace_VENDOR_LIBS}x" STREQUAL "x")
-    # do nothing
-  elseif( "${ace_TARGET_DEPS}x" STREQUAL "x" )
-    set( ilil "${ace_VENDOR_LIBS}" )
-  elseif( "${ace_VENDOR_LIBS}x" STREQUAL "x")
-    set( ilil "${ace_TARGET_DEPS}" )
-  else()
-    set( ilil "${ace_TARGET_DEPS};${ace_VENDOR_LIBS}" )
-  endif()
-
-  # For non-test libraries, save properties to the project-config.cmake file
-  get_target_property( iid ${ace_TARGET} INTERFACE_INCLUDE_DIRECTORIES )
-  if( iid )
-    list(APPEND iid "${CMAKE_INSTALL_PREFIX}/${DBSCFGDIR}include" )
-  else()
-    set( iid "${CMAKE_INSTALL_PREFIX}/${DBSCFGDIR}include" )
-  endif()
-  list(REMOVE_DUPLICATES iid)
-  set( ${ace_PREFIX}_EXPORT_TARGET_PROPERTIES
-    "${${ace_PREFIX}_EXPORT_TARGET_PROPERTIES}
-  set_target_properties(${ace_TARGET} PROPERTIES
-    IMPORTED_LINK_INTERFACE_LANGUAGES \"${ace_LINK_LANGUAGE}\"
-    INTERFACE_INCLUDE_DIRECTORIES     \"${iid}\" )
-  ")
-  unset(iid)
-
-  # Only publish information to draco-config.cmake for non-test libraries.
-  # Also, omit any libraries that are marked as NOEXPORT
-  if( NOT ${ace_NOEXPORT} AND
-      NOT "${CMAKE_CURRENT_SOURCE_DIR}" MATCHES "test" )
-
-    list( APPEND ${ace_PREFIX}_EXECUTABLES ${ace_TARGET} )
-    list( APPEND ${ace_PREFIX}_TPL_LIST ${ace_VENDOR_LIST} )
-    list( APPEND ${ace_PREFIX}_TPL_INCLUDE_DIRS ${ace_VENDOR_INCLUDE_DIRS} )
-    list( APPEND ${ace_PREFIX}_TPL_LIBRARIES ${ace_VENDOR_LIBS} )
-    if( ${ace_PREFIX}_TPL_INCLUDE_DIRS )
-      list( REMOVE_DUPLICATES ${ace_PREFIX}_TPL_INCLUDE_DIRS )
-    endif()
-    if( ${ace_PREFIX}_TPL_LIBRARIES )
-      list( REMOVE_DUPLICATES ${ace_PREFIX}_TPL_LIBRARIES )
-    endif()
-    if( ${ace_PREFIX}_TPL_LIST )
-      list( REMOVE_DUPLICATES ${ace_PREFIX}_TPL_LIST )
-    endif()
-    if( ${ace_PREFIX}_EXECUTABLES )
-      list( REMOVE_DUPLICATES ${ace_PREFIX}_EXECUTABLES )
-    endif()
-
-    set( ${ace_PREFIX}_EXECUTABLES "${${ace_PREFIX}_EXECUTABLES}"  CACHE
-      INTERNAL "List of component targets" FORCE)
-    set( ${ace_PREFIX}_TPL_LIST "${${ace_PREFIX}_TPL_LIST}"  CACHE INTERNAL
-      "List of third party libraries known by ${ace_PREFIX}" FORCE)
-    set(desc "List of include paths used by ${ace_PREFIX} to find third")
-    string(APPEND desc " party vendor header files.")
-    set( ${ace_PREFIX}_TPL_INCLUDE_DIRS "${${ace_PREFIX}_TPL_INCLUDE_DIRS}"
-      CACHE INTERNAL ${desc} FORCE)
-    set( ${ace_PREFIX}_TPL_LIBRARIES "${${ace_PREFIX}_TPL_LIBRARIES}" CACHE
-      INTERNAL "List of third party libraries used by ${ace_PREFIX}." FORCE)
-    set( ${ace_PREFIX}_EXPORT_TARGET_PROPERTIES
-      "${${ace_PREFIX}_EXPORT_TARGET_PROPERTIES}" PARENT_SCOPE)
-    unset(desc)
-  endif()
 endmacro()
 
 #------------------------------------------------------------------------------
@@ -419,93 +340,6 @@ macro( add_component_library )
   if( acl_VENDOR_INCLUDE_DIRS )
     set_property(TARGET ${acl_TARGET} APPEND PROPERTY
       INTERFACE_INCLUDE_DIRECTORIES "${acl_VENDOR_INCLUDE_DIRS}")
-  endif()
-
-  #
-  # Register the library for exported library support
-  #
-
-  # Defaults
-  if( "${acl_PREFIX}x" STREQUAL "x" )
-    set( acl_PREFIX "Draco" )
-  endif()
-
-  # Find target file name and location
-  get_target_property( impname ${acl_TARGET} OUTPUT_NAME )
-
-  # the above command returns the location in the build tree.  We need to
-  # convert this to the install location.
-  if( ${DRACO_SHARED_LIBS} )
-    set( imploc "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${impname}${CMAKE_SHARED_LIBRARY_SUFFIX}" )
-  else()
-    set( imploc "${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}${impname}${CMAKE_STATIC_LIBRARY_SUFFIX}" )
-  endif()
-
-  set( ilil "")
-  if( "${acl_TARGET_DEPS}x" STREQUAL "x" AND "${acl_VENDOR_LIBS}x" STREQUAL "x")
-    # do nothing
-  elseif( "${acl_TARGET_DEPS}x" STREQUAL "x" )
-    set( ilil "${acl_VENDOR_LIBS}" )
-  elseif( "${acl_VENDOR_LIBS}x" STREQUAL "x")
-    set( ilil "${acl_TARGET_DEPS}" )
-  else()
-    set( ilil "${acl_TARGET_DEPS};${acl_VENDOR_LIBS}" )
-  endif()
-
-  # For non-test libraries, save properties to the project-config.cmake file
-  get_target_property( iid ${acl_TARGET} INTERFACE_INCLUDE_DIRECTORIES )
-  if( iid )
-    list(APPEND iid "${CMAKE_INSTALL_PREFIX}/${DBSCFGDIR}include" )
-  else()
-    set( iid "${CMAKE_INSTALL_PREFIX}/${DBSCFGDIR}include" )
-  endif()
-  list(REMOVE_DUPLICATES iid)
-  set( ${acl_PREFIX}_EXPORT_TARGET_PROPERTIES
-    "${${acl_PREFIX}_EXPORT_TARGET_PROPERTIES}
-  set_target_properties(${acl_TARGET} PROPERTIES
-    IMPORTED_LINK_INTERFACE_LANGUAGES \"${acl_LINK_LANGUAGE}\"
-    INTERFACE_INCLUDE_DIRECTORIES     \"${iid}\" )
-  ")
-  unset(iid)
-
-  # Only publish information to draco-config.cmake for non-test libraries.
-  # Also, omit any libraries that are marked as NOEXPORT
-  if( NOT ${acl_NOEXPORT} AND
-      NOT "${acl_TARGET}" MATCHES "test" )
-
-    list( APPEND ${acl_PREFIX}_LIBRARIES ${acl_TARGET} )
-    string( REPLACE "Lib_" "" compname ${acl_TARGET} )
-    list( APPEND ${acl_PREFIX}_PACKAGE_LIST ${compname} )
-
-    list( APPEND ${acl_PREFIX}_TPL_LIST ${acl_VENDOR_LIST} )
-    list( APPEND ${acl_PREFIX}_TPL_INCLUDE_DIRS ${acl_VENDOR_INCLUDE_DIRS} )
-    list( APPEND ${acl_PREFIX}_TPL_LIBRARIES ${acl_VENDOR_LIBS} )
-    if( ${acl_PREFIX}_TPL_INCLUDE_DIRS )
-      list( REMOVE_DUPLICATES ${acl_PREFIX}_TPL_INCLUDE_DIRS )
-    endif()
-    if( ${acl_PREFIX}_TPL_LIBRARIES )
-      list( REMOVE_DUPLICATES ${acl_PREFIX}_TPL_LIBRARIES )
-    endif()
-    if( ${acl_PREFIX}_TPL_LIST )
-      list( REMOVE_DUPLICATES ${acl_PREFIX}_TPL_LIST )
-    endif()
-
-    set( ${acl_PREFIX}_LIBRARIES "${${acl_PREFIX}_LIBRARIES}" CACHE INTERNAL
-      "List of component targets" FORCE)
-    set( ${acl_PREFIX}_PACKAGE_LIST "${${acl_PREFIX}_PACKAGE_LIST}" CACHE
-      INTERNAL "List of known ${acl_PREFIX} targets" FORCE)
-    set( ${acl_PREFIX}_TPL_LIST "${${acl_PREFIX}_TPL_LIST}"  CACHE INTERNAL
-      "List of third party libraries known by ${acl_PREFIX}" FORCE)
-    set(desc "List of include paths used by ${acl_PREFIX} to find third")
-    string(APPEND desc " party vendor header files.")
-    set( ${acl_PREFIX}_TPL_INCLUDE_DIRS "${${acl_PREFIX}_TPL_INCLUDE_DIRS}"
-      CACHE INTERNAL ${desc} FORCE)
-    set( ${acl_PREFIX}_TPL_LIBRARIES "${${acl_PREFIX}_TPL_LIBRARIES}" CACHE
-      INTERNAL "List of third party libraries used by ${acl_PREFIX}." FORCE)
-    set( ${acl_PREFIX}_EXPORT_TARGET_PROPERTIES
-      "${${acl_PREFIX}_EXPORT_TARGET_PROPERTIES}" PARENT_SCOPE)
-
-    unset(desc)
   endif()
 
 endmacro()

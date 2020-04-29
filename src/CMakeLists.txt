@@ -6,7 +6,7 @@
 # note   Copyright (C) 2016-2020 Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.17.0)
 project( draco_src_dir )
 
 # Provide helper functions used by component CMakeLists.txt files

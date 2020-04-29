@@ -3,7 +3,7 @@
 # author Kelly Thompson <kgt@lanl.gov>
 # date   2016 May 24
 # brief  Generate build project files for quadrature/fctest
-# note   Copyright (C) 2016, Triad National Security, LLC.
+# note   Copyright (C) 2016-2020, Triad National Security, LLC.
 #        All rights reserved.
 #------------------------------------------------------------------------------#
 project( quadrature_fctest CXX )
@@ -11,10 +11,7 @@ project( quadrature_fctest CXX )
 # ---------------------------------------------------------------------------- #
 # Source files
 # ---------------------------------------------------------------------------- #
-
 file( GLOB test_sources *.cc )
-#list( REMOVE_ITEM test_sources ${test_lib_sources} )
-#file( GLOB input_files *.inp )
 
 # ---------------------------------------------------------------------------- #
 # Directories to search for include directives
@@ -38,4 +35,3 @@ add_scalar_tests(
 # ---------------------------------------------------------------------------- #
 # end quadrature/fctest/CMakeLists.txt
 # ---------------------------------------------------------------------------- #
-
