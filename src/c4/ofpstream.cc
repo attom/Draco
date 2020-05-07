@@ -60,7 +60,7 @@ void ofpstream::mpibuf::send() {
         rtt_c4::receive(&buffer_[0], N, i);
       }
       if (mode_ == ios_base::binary) {
-        if (buffer_.size() > 0) {
+        if (N > 0) {
           out_.write(&buffer_[0], buffer_.size());
         }
       } else {

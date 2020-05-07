@@ -29,7 +29,9 @@
 case ${-} in
   *i*)
     export INTERACTIVE=true
-    if test -n "${verbose}"; then echo "in draco/environment/bashrc/.bashrc"; fi
+    if [[ "${verbose:=false}" == "true" ]]; then
+      echo "in draco/environment/bashrc/.bashrc";
+    fi
 
     # Shell options
     shopt -s checkwinsize # autocorrect window size
@@ -224,7 +226,9 @@ fi
 # sessions.
 source ${DRACO_ENV_DIR}/bashrc/bash_functions2.sh
 
-if test -n "${verbose}"; then echo "done with draco/environment/bashrc/.bashrc"; fi
+if [[ "${verbose:=false}" == "true" ]]; then
+  echo "done with draco/environment/bashrc/.bashrc";
+fi
 
 ##---------------------------------------------------------------------------##
 ## end of .bashrc

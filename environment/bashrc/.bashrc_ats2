@@ -15,12 +15,8 @@ fi
 ulimit -s unlimited
 
 # Where is the vendor directory
-if test "${VENDOR_DIR}x" == "x"; then
-  if test -d /usr/gapps/jayenne/vendors; then
-    export VENDOR_DIR=/usr/gapps/jayenne/vendors
-    export PATH=$VENDOR_DIR/bin:$PATH
-  fi
-fi
+export PATH=${VENDOR_DIR:=/usr/gapps/jayenne/vendors}/bin:$PATH
+export VENDOR_DIR
 
 #
 # MODULES
