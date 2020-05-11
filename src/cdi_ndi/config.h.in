@@ -13,11 +13,14 @@
 /* Draco/Cmake build system variables */
 /*---------------------------------------------------------------------------*/
 
-/* NDI_ROOT_DIR location, for accessing gendir.all */
+/* Prefix path for NDI libraries and include files */
+#cmakedefine NDI_DATA_DIR "@NDI_DATA_DIR@"
+
+/* NDI_ROOT_DIR location, for accessing gendir */
 #cmakedefine NDI_ROOT_DIR "@NDI_ROOT_DIR@"
 
+/* Activate NDI calls found in cdi_ndi, otherwise, use code stubs. */
 #cmakedefine NDI_FOUND
-
 #ifdef NDI_FOUND
  #include "ndi.h"
 #endif

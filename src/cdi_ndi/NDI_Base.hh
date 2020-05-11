@@ -28,16 +28,17 @@ namespace rtt_cdi_ndi {
 /*!
  * \class NDI_Base
  *
- * \brief Base class for wrapping NDI calls to NDI data. Reads data, constructs
- *        internal storage amenable to radiation calculations, and provides
- *        accessors. Instantiated only through a data type-specific derived
- *        class. Energies and temperatures are in units of keV. Velocity-
- *        averaged cross sections are in units of cm^3 sh^-1. Probability
- *        density functions sum to unity. Unit conversions from NDI data are
- *        done when data is initially read in. For more details on NDI, see
- *        https://xweb.lanl.gov/projects/data/nuclear/ndi/ndi.html
- *        Currently only multigroup data is supported, continuous energy data
- *        is probably best added through a refactor.
+ * \brief Base class for wrapping NDI calls to NDI data.
+ *
+ * Reads data, constructs internal storage amenable to radiation calculations,
+ * and provides accessors. Instantiated only through a data type-specific
+ * derived class. Energies and temperatures are in units of keV. Velocity-
+ * averaged cross sections are in units of cm^3 sh^-1. Probability density
+ * functions sum to unity. Unit conversions from NDI data are done when data is
+ * initially read in. For more details on NDI, see
+ * https://xweb.lanl.gov/projects/data/nuclear/ndi/ndi.html Currently only
+ * multigroup data is supported, continuous energy data is probably best added
+ * through a refactor.
  */
 //============================================================================//
 

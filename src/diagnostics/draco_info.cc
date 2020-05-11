@@ -48,8 +48,8 @@ DracoInfo::DracoInfo(void)
   mpi = true;
   mpirun_cmd = std::string(MPIEXEC_EXECUTABLE) + std::string(" ") +
                std::string(MPIEXEC_NUMPROC_FLAG) + std::string(" <N> ");
-#ifdef MPIEXEC_POSTFLAGS
-  mpirun_cmd += std::string(MPIEXEC_POSTFLAGS);
+#ifdef MPIEXEC_PREFLAGS
+  mpirun_cmd += std::string(MPIEXEC_PREFLAGS);
 #endif
 #endif
 #ifdef OPENMP_FOUND

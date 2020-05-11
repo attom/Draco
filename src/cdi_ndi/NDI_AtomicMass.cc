@@ -7,38 +7,47 @@
  * \note   Copyright (C) 2020 Triad National Security, LLC.
  *         All rights reserved. */
 //----------------------------------------------------------------------------//
+
 #include "NDI_AtomicMass.hh"
 #include "cdi_ndi/config.h" // definition of NDI_FOUND
-#include "ds++/Assert.hh"
-#include "ds++/path.hh"
+#include "ds++/SystemCall.hh"
 #include <array>
 
 namespace rtt_cdi_ndi {
 
-//----------------------------------------------------------------------------//
-// CONSTRUCTORS
-//----------------------------------------------------------------------------//
+//============================================================================//
+// Stubbed implementation when NDI is unavailable.
+//============================================================================//
 
-/*!
- * \brief Constructor for NDI atomic mass weight reader, using custom path to
- *        NDI gendir file.
- * \param[in] gendir_path_in path to gendir file
- */
-NDI_AtomicMass::NDI_AtomicMass(const std::string &gendir_path_in)
-    : gendir_path(gendir_path_in) {
-  Require(rtt_dsxx::fileExists(gendir_path));
+#ifndef NDI_FOUND
+
+//! When NDI is not available, this constructor throws an assertion.
+NDI_AtomicMass::NDI_AtomicMass() {
+  Insist(0, "NDI lib must be available to use default gendir path.");
 }
-#ifdef NDI_FOUND
+
+//! When NDI is not available, this method throws an assertion.
+double NDI_AtomicMass::get_amw(const int /*zaid*/) const {
+  Insist(0, "NDI lib must be available to retrieve amw.");
+}
+
+#else
+
+//============================================================================//
+// Normal implementation
+//============================================================================//
+
 /*!
  * \brief Constructor for NDI atomic mass weight reader, using default path to
  *        NDI gendir file.
  */
 NDI_AtomicMass::NDI_AtomicMass()
     : gendir_path(rtt_dsxx::getFilenameComponent(
-          std::string(NDI_ROOT_DIR) + "/share/gendir.all",
+          std::string(NDI_DATA_DIR) + rtt_dsxx::dirSep + "gendir",
           rtt_dsxx::FilenameComponent::FC_NATIVE)) {
   Require(rtt_dsxx::fileExists(gendir_path));
 }
+
 //----------------------------------------------------------------------------//
 /*!
  * \brief Get atomic mass weight of an isotope with given ZAID. Use method due
@@ -84,23 +93,11 @@ double NDI_AtomicMass::get_amw(const int zaid) const {
 
   return arr[0] * pc.amu();
 }
-#else
-/*!
- * \brief When NDI is not available, this constructor throws an assertion.
- */
-NDI_AtomicMass::NDI_AtomicMass() {
-  Insist(0, "NDI lib must be available to use default gendir path.");
-}
 
-//----------------------------------------------------------------------------//
-/*!
- * \brief When NDI is not available, this method throws an assertion.
- */
-double NDI_AtomicMass::get_amw(const int /*zaid*/) const {
-  Insist(0, "NDI lib must be available to retrieve amw.");
-}
-#endif // NDI_FOUND
+#endif
+
 } // namespace rtt_cdi_ndi
+
 //----------------------------------------------------------------------------//
 // End cdi_ndi/NDI_AtomicMass.cc
 //----------------------------------------------------------------------------//

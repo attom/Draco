@@ -166,7 +166,7 @@ if( CAFS_Fortran_COMPILER )
 endif()
 if( "${DRACO_C4}" STREQUAL "MPI" )
   hanging_indent( 100 5
-  "mpirun command: ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} N ${MPIEXEC_POSTFLAGS}")
+  "mpirun command: ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} N ${MPIEXEC_PREFLAGS}")
 endif()
 message("Library Type: ${DRACO_LIBRARY_TYPE}
 ")

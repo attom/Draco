@@ -12,6 +12,7 @@
 #include "cdi_ndi/NDI_TNReaction.hh"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
+#include "ds++/SystemCall.hh"
 #include "ds++/dbc.hh"
 #include <fstream>
 #include <iostream>
@@ -129,6 +130,7 @@ void gendir_test(rtt_dsxx::UnitTest &ut) {
   }
 }
 
+//----------------------------------------------------------------------------//
 void gendir_default_test(rtt_dsxx::UnitTest &ut) {
   std::string library_in = "lanl04";
   std::string reaction_in = "d+t->n+a";
@@ -137,20 +139,19 @@ void gendir_default_test(rtt_dsxx::UnitTest &ut) {
   NDI_TNReaction tn(library_in, reaction_in, mg_e_bounds);
 
   if (ut.numFails == 0) {
-    PASSMSG("NDI_TNReaction (default gendir.all path) test passes.");
+    PASSMSG("NDI_TNReaction (default gendir path) test passes.");
   } else {
-    FAILMSG("NDI_TNReaction (default gendir.all path) test fails.");
+    FAILMSG("NDI_TNReaction (default gendir path) test fails.");
   }
 }
 
 //----------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_dsxx::ScalarUnitTest ut(argc, argv, rtt_dsxx::release);
   try {
     gendir_test(ut);
     std::string gendir_default = rtt_dsxx::getFilenameComponent(
-        std::string(NDI_ROOT_DIR) + "share/gendir.all",
+        std::string(NDI_DATA_DIR) + rtt_dsxx::dirSep + "gendir",
         rtt_dsxx::FilenameComponent::FC_NATIVE);
 
     if (rtt_dsxx::fileExists(gendir_default)) {

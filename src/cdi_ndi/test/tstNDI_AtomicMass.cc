@@ -13,6 +13,7 @@
 #include "cdi_ndi/config.h"
 #include "ds++/Release.hh"
 #include "ds++/ScalarUnitTest.hh"
+#include "ds++/SystemCall.hh"
 #include "ds++/dbc.hh"
 #include "ds++/path.hh"
 #include <fstream>
@@ -63,6 +64,7 @@ void amw_test(rtt_dsxx::UnitTest &ut) {
   }
 }
 
+//----------------------------------------------------------------------------//
 void amw_default_test(rtt_dsxx::UnitTest &ut) {
 
   NDI_AtomicMass ndi_amw;
@@ -79,20 +81,19 @@ void amw_default_test(rtt_dsxx::UnitTest &ut) {
   FAIL_IF_NOT(soft_equiv(electron_amw, 9.109382909999999302e-28, 1.e-8));
 
   if (ut.numFails == 0) {
-    PASSMSG("NDI_AtomicMass (default gendir.all path) test passes.");
+    PASSMSG("NDI_AtomicMass (default gendir path) test passes.");
   } else {
-    FAILMSG("NDI_AtomicMass (default_gendir.all path) test fails.");
+    FAILMSG("NDI_AtomicMass (default_gendir path) test fails.");
   }
 }
 
 //----------------------------------------------------------------------------//
-
 int main(int argc, char *argv[]) {
   rtt_dsxx::ScalarUnitTest ut(argc, argv, rtt_dsxx::release);
   try {
     amw_test(ut);
     std::string gendir_default = rtt_dsxx::getFilenameComponent(
-        std::string(NDI_ROOT_DIR) + "share/gendir.all",
+        std::string(NDI_DATA_DIR) + rtt_dsxx::dirSep + "gendir",
         rtt_dsxx::FilenameComponent::FC_NATIVE);
 
     if (rtt_dsxx::fileExists(gendir_default)) {

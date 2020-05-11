@@ -11,6 +11,8 @@
 #ifndef cdi_ndi_NDI_AtomicMass_hh
 #define cdi_ndi_NDI_AtomicMass_hh
 
+#include "ds++/Assert.hh"
+#include "ds++/path.hh"
 #include "units/PhysicalConstexprs.hh"
 #include <string>
 
@@ -34,8 +36,15 @@ public:
   //! Constructor (default gendir path)
   NDI_AtomicMass();
 
-  //! Constructor (overridden gendir path)
-  NDI_AtomicMass(const std::string &gendir_path_in);
+  /*!
+   * \brief Constructor for NDI atomic mass weight reader, using custom path to
+   *        NDI gendir file.
+   * \param[in] gendir_path_in path to gendir file
+   */
+  NDI_AtomicMass(const std::string &gendir_path_in)
+      : gendir_path(gendir_path_in) {
+    Require(rtt_dsxx::fileExists(gendir_path));
+  }
 
   //! Retrieve atomic mass weight for isotope with given ZAID
   double get_amw(const int zaid) const;
