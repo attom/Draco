@@ -76,11 +76,11 @@ private:
   typedef std::vector<value_type> InternalRep; // NOLINT
 
 public:
-  // A SortPermutation can not be modified; therefor,
-  // always use a const_iterator.
+  // A SortPermutation can not be modified; therefor, always use a
+  // const_iterator.
 
   typedef InternalRep::const_iterator iterator;       // NOLINT
-  typedef InternalRep::const_iterator const_iterator; //NOLINT
+  typedef InternalRep::const_iterator const_iterator; // NOLINT
 
 private:
   // Forward Declarations
@@ -101,11 +101,9 @@ private:
 
   public:
     Proxy(SortPermutation::value_type pos_, const std::vector<IT> &iters_)
-        : pos(pos_), iters(iters_) { /* empty */
-    }
-
+        : pos(pos_), iters(iters_) {}
+    Proxy(Proxy const &rhs) noexcept : pos(rhs.pos), iters(rhs.iters){};
     Proxy &operator=(Proxy const &rhs) {
-      // std::cout << "assigning " << pos << "=" << rhs.pos << std::endl;
       pos = rhs.pos;
       return *this;
     }
@@ -136,8 +134,6 @@ private:
 public:
   // CREATORS
 
-  //    SortPermutation() { /* empty */ }
-
   template <typename IT, class COMP>
   SortPermutation(IT first, IT last, const COMP &comp)
       : indexTable_m(std::distance(first, last)),
@@ -152,13 +148,6 @@ public:
     typedef typename std::iterator_traits<IT>::value_type vtype; // NOLINT
     createPermutation(first, last, std::less<vtype>());
   }
-
-  //Defaulted: SortPermutation(const SortPermutation &rhs);
-  //Defaulted: ~SortPermutation();
-
-  // MANIPULATORS
-
-  //Defaulted: SortPermutation& operator=(const SortPermutation &rhs);
 
   // ACCESSORS
 

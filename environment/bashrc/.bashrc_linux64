@@ -39,6 +39,9 @@ case $target in
   ccscs[1-9]*)
     # Add /scratch/vendors/Modules.lmod (totalview, ddt, etc.)
     # Add /scratch/vendors/Modules.core (spack generated modules).
+    if [[ "${MODULEPATH}x" == "x" ]]; then
+      export MODULEPATH=/etc/modulefiles:/usr/share/modulefiles:/ccs/opt/modulefiles
+    fi
     module load user_contrib
     if [[ -d $HOME/privatemodules ]]; then
       module use --append $HOME/privatemodules
