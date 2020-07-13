@@ -47,7 +47,8 @@ function( setMPIflavorVer )
   elseif( "${MPIEXEC_EXECUTABLE}" MATCHES "mvapich2")
     set( MPI_FLAVOR "mvapich2" )
   elseif( "${MPIEXEC_EXECUTABLE}" MATCHES "spectrum-mpi" OR
-      "${MPIEXEC_EXECUTABLE}" MATCHES "lrun" )
+      "${MPIEXEC_EXECUTABLE}" MATCHES "lrun" OR
+      "${MPIEXEC_EXECUTABLE}" MATCHES "jsrun" )
     set( MPI_FLAVOR "spectrum")
   endif()
 
@@ -341,6 +342,7 @@ macro( setupCrayMPI )
   string(APPEND preflags " --gres=craynetwork:0") # --exclusive
   set( MPIEXEC_PREFLAGS ${preflags} CACHE STRING
     "extra mpirun flags (list)." FORCE)
+  # consider adding '-m=cyclic'
   set( MPIEXEC_PREFLAGS_PERFBENCH ${preflags} CACHE STRING
     "extra mpirun flags (list)." FORCE)
 
@@ -377,7 +379,12 @@ macro( setupSpectrumMPI )
   #                         total
   # - jsrun -a4 -c16 -g2 => 4 tasks, 16 cores, 2 gpus
 
-  set( MPIEXEC_PREFLAGS "--threads=1 --bind=off -v")
+  if( MPIEXEC_EXECUTABLE MATCHES jsrun )
+    # 1 resource set; 1 thread; no gpu; no binding --nrs 1
+    set( MPIEXEC_PREFLAGS "-c 1 -g 0 --bind none")
+  elseif( MPIEXEC_EXECUTABLE MATCHES lrun )
+    set( MPIEXEC_PREFLAGS "--threads=1 --bind=off -v")
+  endif()
   # --pack ==> -c 1 -g 0.  This is actually bad for us. Disable
   # lrun -n 2 -c 10 --threads=10 --bind=off ==>
   # jsrun --np 1 --nrs 1 -c ALL_CPUS -g ALL_GPUS -d plane:1 -b rs -X 1
@@ -388,8 +395,12 @@ macro( setupSpectrumMPI )
   #
 
   if( DEFINED ENV{OMP_NUM_THREADS} )
-#    set( MPIEXEC_OMP_PREFLAGS "-c $ENV{OMP_NUM_THREADS}" )
-    set( MPIEXEC_OMP_PREFLAGS "-c $ENV{OMP_NUM_THREADS} --threads=$ENV{OMP_NUM_THREADS} --bind=off -v" )
+    if( MPIEXEC_EXECUTABLE MATCHES jsrun )
+      # 1 resource set; OMP_NUM_THREADS tasks; no gpu; no binding
+      set( MPIEXEC_OMP_PREFLAGS "--nrs 1 -c $ENV{OMP_NUM_THREADS} -g 0 --bind none")
+    elseif( MPIEXEC_EXECUTABLE MATCHES lrun )
+      set( MPIEXEC_OMP_PREFLAGS "-c $ENV{OMP_NUM_THREADS} --threads=$ENV{OMP_NUM_THREADS} --bind=off -v" )
+    endif()
   endif()
 
   set( MPIEXEC_OMP_PREFLAGS ${MPIEXEC_OMP_PREFLAGS}
@@ -436,12 +447,12 @@ macro( setupMPILibrariesUnix )
     elseif( DEFINED ENV{SYS_TYPE} AND
         "$ENV{SYS_TYPE}" MATCHES "ppc64le_ib_p9" ) # ATS-2
       if( NOT EXISTS ${MPIEXEC_EXECUTABLE} )
-        find_program( MPIEXEC_EXECUTABLE lrun )
+        find_program( MPIEXEC_EXECUTABLE jsrun )
       endif()
       set( MPIEXEC_EXECUTABLE ${MPIEXEC_EXECUTABLE} CACHE STRING
         "Program to execute MPI parallel programs." FORCE )
-      set( MPIEXEC_NUMPROC_FLAG "-n" CACHE STRING
-        "mpirun flag used to specify the number of processors to use")
+      set( MPIEXEC_NUMPROC_FLAG "--np" CACHE STRING
+        "mpirun flag used to specify the number of processors to use" FORCE)
     endif()
 
     # Call the standard CMake FindMPI macro.
