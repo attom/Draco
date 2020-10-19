@@ -97,6 +97,7 @@ message(" ")
 message( STATUS "Configuring Level 5 packages --" )
 add_dir_if_exists( mesh )       # needs c4, ds++, mesh_element
 add_dir_if_exists( quadrature ) # needs mesh_element, parser, special_functions
+add_dir_if_exists( compton2 )     # needs ds++, units, cdi_analtyic
 
 # Deprecated
 add_dir_if_exists( plot2D )
