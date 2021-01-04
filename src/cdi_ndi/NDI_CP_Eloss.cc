@@ -124,6 +124,7 @@ NDI_CP_Eloss::NDI_CP_Eloss(const std::string &library_in, rtt_cdi::CParticle tar
  * see https://xweb.lanl.gov/projects/data/nuclear/ndi/ndi.html
  */
 void NDI_CP_Eloss::load_ndi() {
+#if NDI_DEDX_SUPPORT
   int gendir_handle = -1;
   int dataset_handle = -1;
   int ndi_error = -9999;
@@ -147,6 +148,7 @@ void NDI_CP_Eloss::load_ndi() {
 
   //! Set projectile isotope
   ndi_error = NDI2_set_isotope(dataset_handle, std::to_string(projectile.get_zaid()).c_str());
+  Require(ndi_error == 0);
 
   int num_targets = 0;
   ndi_error = NDI2_get_int_val(dataset_handle, NDI_NUM_TARGET, &num_targets);
@@ -234,6 +236,10 @@ void NDI_CP_Eloss::load_ndi() {
   for (auto &temperature : temperatures) {
     temperature = exp(temperature);
   }
+#else
+  Insist(0,
+         "NDI version " + std::string(NDI_VERSION_STRING) + " does not support stopping powers!");
+#endif // NDI_DEDX_SUPPORT
 }
 //----------------------------------------------------------------------------//
 /*!

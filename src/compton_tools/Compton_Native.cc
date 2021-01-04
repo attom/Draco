@@ -8,14 +8,10 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "compton_tools/Compton_Native.hh"
-#include "c4/C4_Functions.hh"
 #include "c4/global.hh"
 #include "ds++/Assert.hh"
-#include <algorithm>
 #include <array>
-#include <cstring>
 #include <fstream>
-#include <iostream>
 
 using UINT64 = uint64_t;
 using FP = double;
@@ -208,8 +204,8 @@ int Compton_Native::read_binary(const std::string &filename) {
   // (using vector of char to avoid using C-style strings)
   std::array<char, 6> expected = {' ', 'c', 's', 'k', ' ', '\0'};
   std::array<char, 6> actual;
-  for (size_t i = 0; i < actual.size(); ++i)
-    fin.read(&actual[i], sizeof(actual[i]));
+  for (char &c : actual)
+    fin.read(&c, sizeof(char));
   if (!std::equal(expected.begin(), expected.end(), actual.begin())) {
     std::cerr << "Expecting binary file " << filename << " to start with '";
     for (char c : expected)
@@ -238,13 +234,13 @@ int Compton_Native::read_binary(const std::string &filename) {
   for (size_t i = 0; i < n; ++i)
     fin.read(reinterpret_cast<char *>(&szs[i]), sizeof(szs[i]));
   size_t j = 0;
-  auto tsz = static_cast<size_t>(szs[j++]);
-  auto gsz = static_cast<size_t>(szs[j++]);
-  auto lsz = static_cast<size_t>(szs[j++]);
-  auto esz = static_cast<size_t>(szs[j++]);
-  auto fgsz = static_cast<size_t>(szs[j++]);
-  auto isz = static_cast<size_t>(szs[j++]);
-  auto dsz = static_cast<size_t>(szs[j++]);
+  size_t tsz = szs[j++];
+  size_t gsz = szs[j++];
+  size_t lsz = szs[j++];
+  size_t esz = szs[j++];
+  size_t fgsz = szs[j++];
+  size_t isz = szs[j++];
+  size_t dsz = szs[j++];
 
   num_temperatures_ = tsz;
   num_groups_ = gsz;
@@ -271,14 +267,14 @@ int Compton_Native::read_binary(const std::string &filename) {
     // Convert from FP (type in the binary file) to double
     FP tmp;
     fin.read(reinterpret_cast<char *>(&tmp), sizeof(FP));
-    Ts_[i] = static_cast<double>(tmp);
+    Ts_[i] = tmp;
   }
 
   Egs_.resize(egsz);
   for (size_t i = 0; i < egsz; ++i) {
     FP tmp;
     fin.read(reinterpret_cast<char *>(&tmp), sizeof(FP));
-    Egs_[i] = static_cast<double>(tmp);
+    Egs_[i] = tmp;
   }
 
   first_groups_.resize(fgsz);
@@ -286,28 +282,28 @@ int Compton_Native::read_binary(const std::string &filename) {
     // Convert from UINT (type in binary file) to size_t
     UINT64 tmp;
     fin.read(reinterpret_cast<char *>(&tmp), sizeof(UINT64));
-    first_groups_[i] = static_cast<size_t>(tmp);
+    first_groups_[i] = tmp;
   }
 
   indexes_.resize(isz);
   for (size_t i = 0; i < isz; ++i) {
     UINT64 tmp;
     fin.read(reinterpret_cast<char *>(&tmp), sizeof(UINT64));
-    indexes_[i] = static_cast<size_t>(tmp);
+    indexes_[i] = tmp;
   }
 
   data_.resize(dsz);
   for (size_t i = 0; i < dsz; ++i) {
     FP tmp;
     fin.read(reinterpret_cast<char *>(&tmp), sizeof(FP));
-    data_[i] = static_cast<double>(tmp);
+    data_[i] = tmp;
   }
 
   derivs_.resize(dsz);
   for (size_t i = 0; i < dsz; ++i) {
     FP tmp;
     fin.read(reinterpret_cast<char *>(&tmp), sizeof(FP));
-    derivs_[i] = static_cast<double>(tmp);
+    derivs_[i] = tmp;
   }
 
   fin.close();
